@@ -9,6 +9,8 @@ const OrderListPage = () => {
     search: "",
   });
 
+  const [searchShipBy, setSearchShipBy] = useState();
+
   const handleFilterChange = (filterType, value) => {
     onFilterChange((prev) => {
       const newData = { ...prev };
@@ -32,12 +34,17 @@ const OrderListPage = () => {
                     month: "",
                     search: "",
                   });
+                  setSearchShipBy("");
                 }}
               />
             </div>
           </div>
           <div>
-            <OrderList filterValue={filterValue} />
+            <OrderList
+              setSearchShipBy={setSearchShipBy}
+              searchShipBy={searchShipBy}
+              filterValue={filterValue}
+            />
             {/* <OrderStatusFormSection /> */}
           </div>
         </div>

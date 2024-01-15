@@ -8,7 +8,7 @@ import Pagination from "../Pagination/Pagination";
 
 let PageSize = 10;
 
-function OrderList({ filterValue }) {
+function OrderList({ filterValue, setSearchShipBy, searchShipBy }) {
   const [orders, setOrders] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,24 +19,26 @@ function OrderList({ filterValue }) {
     });
     return data;
   }
-  const orderData=useMemo(()=>{
-    return orders
-    // Manufacturer filter
-    ?.filter(
-      (order) =>
-        !filterValue.manufacturer ||
-        filterValue.manufacturer === order.ManufacturerId__c
-    )
-    // Search by account filter
-    ?.filter((order) => {
-      return (
-        !filterValue?.search?.length ||
-        order.AccountName?.toLowerCase().includes(
-          filterValue?.search?.toLowerCase()
+  const orderData = useMemo(() => {
+    return (
+      orders
+        // Manufacturer filter
+        ?.filter(
+          (order) =>
+            !filterValue.manufacturer ||
+            filterValue.manufacturer === order.ManufacturerId__c
         )
-      );
-    })
-  },[filterValue,orders])
+        // Search by account filter
+        ?.filter((order) => {
+          return (
+            !filterValue?.search?.length ||
+            order.AccountName?.toLowerCase().includes(
+              filterValue?.search?.toLowerCase()
+            )
+          );
+        })
+    );
+  }, [filterValue, orders]);
   useEffect(() => {
     setLoaded(false);
     GetAuthData()
@@ -74,6 +76,8 @@ function OrderList({ filterValue }) {
                 currentPage={currentPage}
                 PageSize={PageSize}
                 data={orderData}
+                setSearchShipBy={setSearchShipBy}
+                searchShipBy={searchShipBy}
               />
             </div>
             <Pagination
