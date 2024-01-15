@@ -27,10 +27,14 @@ export function POGenerator() {
   let currentMonth = padNumber(date.getMonth() + 1, true);
   let currentDate = padNumber(date.getDate(), true);
   let beg = fetchBeg();
+  console.log("beg", beg);
   let AcCode = getStrCode(beg?.Account?.name);
   let MaCode = getStrCode(beg?.Manufacturer?.name);
 
   let orderCount = padNumber(count);
+  if(beg?.orderList?.[0]?.productType==="pre-order")
+  return `PRE-${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
+  else
   return `${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
 }
 

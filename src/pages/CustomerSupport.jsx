@@ -71,7 +71,7 @@ const CustomerSupport = () => {
                 }))}
                 onChange={(value) => setManufacturerFilter(value)}
               />
-              <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by case number"} minWidth="173px" />
+              <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by case number"} minWidth="201px" />
 
               <button
                 className="border px-2.5 py-1 leading-tight"

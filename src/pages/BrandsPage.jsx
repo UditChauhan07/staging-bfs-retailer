@@ -109,7 +109,7 @@ const BrandsPage = () => {
                 ]}
                 onChange={(value) => setHighestRetailers(value)}
               />
-              <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by brand"} minWidth={"125px"} />
+              <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by brands"} minWidth={"155px"} />
               <button
                 className="border px-2.5 py-1 leading-tight"
                 onClick={() => {
