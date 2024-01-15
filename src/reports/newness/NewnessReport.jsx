@@ -7,9 +7,9 @@ import Footer from "../../components/Footer/Footer";
 import FiltersInNewness from "../../components/All Headers/filters/FiltersInNewness";
 import { useNavigate } from "react-router";
 import MobileHeader from "../../components/All Headers/mobileHeader/MobileHeader";
-import Page from '../sales_report/index.module.css'
+import Page from "../sales_report/index.module.css";
 import Layout from "../../components/Layout/Layout";
-
+import AppLayout from "../../components/AppLayout";
 
 const NewnessReport = () => {
   const navigate = useNavigate();
@@ -20,22 +20,10 @@ const NewnessReport = () => {
     }
   }, []);
   return (
-    <div>
-      <Layout>
-        <div>
-          {/* <div className="col-12">
-                    <div className="filter-container  ">
-                    </div>
-                </div> */}
-          <div>
-            <FiltersInNewness />
-            {/* <OrderStatusFormSection /> */}
-          </div>
-        </div>
-      </Layout>
-
-
-    </div>
+    <AppLayout>
+      <FiltersInNewness />
+      {/* <OrderStatusFormSection /> */}
+    </AppLayout>
   );
 };
 

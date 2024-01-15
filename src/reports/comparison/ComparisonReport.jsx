@@ -9,7 +9,7 @@ import Footer from "../../components/Footer/Footer";
 // import useSalesReport from "../../api/useSalesReport";
 import FiltersInComparison from "../../components/All Headers/filters/FiltersInComparison";
 import Layout from "../../components/Layout/Layout";
-
+import AppLayout from "../../components/AppLayout";
 
 const ComparisonReport = () => {
   // // for sales report
@@ -27,21 +27,10 @@ const ComparisonReport = () => {
   // }, []);
 
   return (
-    <div>
-<Layout>
-            <div>
-                {/* <div className="col-12">
-                    <div className="filter-container  ">
-                    </div>
-                </div> */}
-                <div>
-                <FiltersInComparison />
-                    {/* <OrderStatusFormSection /> */}
-                </div>
-            </div>
-        </Layout>
-
-    </div>
+    <AppLayout>
+      <FiltersInComparison />
+      {/* <OrderStatusFormSection /> */}
+    </AppLayout>
   );
 };
 
