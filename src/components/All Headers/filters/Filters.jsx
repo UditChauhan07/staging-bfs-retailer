@@ -98,13 +98,12 @@ const Filters = ({ salesReportData, manufacturers }) => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Sales Report ${new Date()}` + fileExtension);
   };
-
+  length = filter.selectedManufacturer.length <= 10 ? filter.selectedManufacturer.length * 14.5 : filter.selectedManufacturer.length * 12;
   return (
     <>
       <div className={`${styles.heightFix} d-flex bg-black justify-content-center  align-items-center  gap-5 `}>
         {/* all manufactures */}
         <div className="d-flex">
-          {(length = filter.selectedManufacturer.length <= 10 ? filter.selectedManufacturer.length * 14.5 : filter.selectedManufacturer.length * 12)}
           <select className={`${styles.text} bg-black`} style={{ outline: "none", maxWidth: `${length}px` }} onChange={handleManufacturerChange} value={filter.selectedManufacturer}>
             <option value="All Manufacturers" className={`${styles.option}`}>
               All Manufacturers

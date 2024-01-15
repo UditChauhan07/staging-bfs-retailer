@@ -9,20 +9,25 @@ import Loading from "../../Loading";
 import { DestoryAuth } from "../../../lib/store";
 const FiltersInNewness = () => {
   let currentDate = new Date().toJSON().slice(0, 10);
-  console.log({currentDate});
+  function subtract6Months(date) {
+    date.setMonth(date.getMonth() - 6);
+    return date;
+  }
+  let past6monthDate= subtract6Months(new Date());
+  // console.log(currentDate,past6monthDate.toJSON().slice(0, 10));
   const [filter, setFilter] = useState({
     ManufacturerId__c: "a0O3b00000p7zqKEAQ",
     toDate: currentDate,
-    fromDate: "2024-01-01",
+    fromDate: past6monthDate.toJSON().slice(0, 10),
     dataDisplay: "quantity",
     selectedManufacturer: "BOBBI BROWN",
   });
   const originalApiData = useNewnessReport(filter);
-
+  
   const { data: manufacturers, isLoading, error } = useManufacturer();
-  console.log({manufacturers:manufacturers.status});
-  if(manufacturers.status != 200){
-    DestoryAuth();
+  // console.log({manufacturers:manufacturers.status});
+  if(manufacturers?.status !== 200){
+    // DestoryAuth();
   }
   const [newnessData, setNewnessData] = useState(originalApiData || {});
   const [loading, setLoading] = useState(false);
@@ -148,13 +153,13 @@ const FiltersInNewness = () => {
           </select>
           {/* First Calender Filter-- from date */}
           <p className={`m-0 ${styles.text} d-flex gap-1 justify-content-center align-items-center`}>
-            start date
-            <input type="date" className={`${styles.text} bg-black`} defaultValue={filter.fromDate} onChange={handleFromDate} style={{ outline: "none", maxWidth: "80px", colorScheme: "dark" }} />
+            start date : 
+            <input type="date" className={`${styles.text} bg-black`} defaultValue={filter.fromDate} onChange={handleFromDate} style={{ outline: "none", maxWidth: "93px", colorScheme: "dark" }} />
           </p>
           {/* Second Calender Filter -- to date */}
           <p className={`m-0 ${styles.text} ${styles.text2}  d-flex gap-1 justify-content-center align-items-center`}>
-            end date
-            <input type="date" className={`${styles.text} bg-black`} style={{ maxWidth: "80px", colorScheme: "dark", outline: "none" }} onChange={handleToDate} defaultValue={filter.toDate} />
+            end date : 
+            <input type="date" className={`${styles.text} bg-black`} style={{ maxWidth: "93px", colorScheme: "dark", outline: "none" }} onChange={handleToDate} defaultValue={filter.toDate} />
           </p>
 
           {/* clear and apply filters */}
