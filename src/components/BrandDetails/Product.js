@@ -316,7 +316,7 @@ function Product() {
                     setProductTypeFilter(value);
                   }}
                 />
-                <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Enter Product name"} minWidth="155px" />
+                <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Enter Product name"} minWidth="179px" />
                 <button
                   className="border px-2.5 py-1 leading-tight"
                   onClick={() => {
