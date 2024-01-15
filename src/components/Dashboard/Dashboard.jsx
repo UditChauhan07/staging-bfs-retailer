@@ -405,21 +405,117 @@ function Dashboard({ dashboardData }) {
                 <option value="3">December</option> */}
           </select>
           <hr className="w-100" />
+          <div className="row mt-2 justify-between">
+            {/* Monthly SALESBYREP */}
+            <div className="col-lg-6 my-2" >
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Month till date(MTD): Sales By Rep</p>
+                <div className={Styles.goaltable}>
+                  <div className="">
+                    <div className={Styles.table_scroll}>
+                      <table className="table table-borderless ">
+                        <thead>
+                          <tr className={Styles.tablerow}>
+                            <th scope="col" className="ps-3">
+                              Opportunity Owner
+                            </th>
+                            <th scope="col">Sum of Amount</th>
+                          </tr>
+                        </thead>
 
+                        {Monthlydataa ? (
+                          <tbody>
+                            {Monthlydataa?.map((e) => {
+                              return (
+                                <tr key={e}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
+                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                  </td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        ) : (
+                          <tbody>
+                            <td></td>
+                            <td>
+                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
+                              </div>
+                            </td>
+                            <td></td>
+                          </tbody>
+                        )}
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Yearly SALESBYREP */}
+            <div className="col-lg-6 my-2">
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Year till date(YTD): Sales By Rep</p>
+                <div className={Styles.goaltable}>
+                  <div className="">
+                    <div className={Styles.table_scroll}>
+                      <table className="table table-borderless ">
+                        <thead>
+                          <tr className={Styles.tablerow}>
+                            <th scope="col" className="ps-3">
+                              Opportunity Owner
+                            </th>
+                            <th scope="col">Sum of Amount</th>
+                          </tr>
+                        </thead>
+
+                        {Yearlydataa ? (
+                          <tbody>
+                            {Yearlydataa?.map((e) => {
+                              return (
+                                <tr key={e}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
+                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                  </td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        ) : (
+                          <tbody>
+                            <td></td>
+                            <td>
+                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
+                              </div>
+                            </td>
+                            <td></td>
+                          </tbody>
+                        )}
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="row justify-between ">
             {/* monthly data goal by brand*/}
             <div className="col-lg-6 col-sm-12 my-2" >
               <div className={Styles.DashboardWidth}>
-                <p className={Styles.Tabletext}>Month bill date(MTD): Goal by Brand</p>
+                <p className={Styles.Tabletext}>Month till date(MTD): Goal by Brand</p>
                 <div className={Styles.goaltable}>
                   <div className={Styles.table_scroll}>
                     <table className="table table-borderless ">
                       <thead>
                         <tr className={Styles.tablerow}>
                           <th className="ps-3">Manufacturer</th>
-                          <th>Total Order</th>
+                          {/* <th>Total Order</th> */}
                           <th>Sale</th>
                           <th>Sale Target</th>
+                          <th>Sale Diff</th>
                         </tr>
                       </thead>
 
@@ -429,9 +525,10 @@ function Dashboard({ dashboardData }) {
                             return (
                               <tr key={e}>
                                 <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
-                                <td className={Styles.tabletd}>{e.totalOrder}</td>
-                                <td className={Styles.tabletd}>${Number(e.sale).toFixed(2)}K</td>
-                                <td className={Styles.tabletd}>${e.target}K</td>
+                                {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
+                                <td className={Styles.tabletd}>${Number(e.sale).toFixed(2)}</td>
+                                <td className={Styles.tabletd}>${e.target}</td>
+                                <td className={Styles.tabletd}>${e.target-e.sale}</td>
                               </tr>
                             );
                           })
@@ -499,103 +596,6 @@ function Dashboard({ dashboardData }) {
                         </tbody>
                       )}
                     </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="row mt-2 justify-between">
-            {/* Monthly SALESBYREP */}
-            <div className="col-lg-6 my-2" >
-              <div className={Styles.DashboardWidth}>
-                <p className={Styles.Tabletext}>Month bill date(MTD): Sales By Rep</p>
-                <div className={Styles.goaltable}>
-                  <div className="">
-                    <div className={Styles.table_scroll}>
-                      <table className="table table-borderless ">
-                        <thead>
-                          <tr className={Styles.tablerow}>
-                            <th scope="col" className="ps-3">
-                              Opportunity Owner
-                            </th>
-                            <th scope="col">Sum of Amount</th>
-                          </tr>
-                        </thead>
-
-                        {Monthlydataa ? (
-                          <tbody>
-                            {Monthlydataa?.map((e) => {
-                              return (
-                                <tr key={e}>
-                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
-                                  </td>
-                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        ) : (
-                          <tbody>
-                            <td></td>
-                            <td>
-                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
-                              </div>
-                            </td>
-                            <td></td>
-                          </tbody>
-                        )}
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Yearly SALESBYREP */}
-            <div className="col-lg-6 my-2">
-              <div className={Styles.DashboardWidth}>
-                <p className={Styles.Tabletext}>Year bill date(MTD): Sales By Rep</p>
-                <div className={Styles.goaltable}>
-                  <div className="">
-                    <div className={Styles.table_scroll}>
-                      <table className="table table-borderless ">
-                        <thead>
-                          <tr className={Styles.tablerow}>
-                            <th scope="col" className="ps-3">
-                              Opportunity Owner
-                            </th>
-                            <th scope="col">Sum of Amount</th>
-                          </tr>
-                        </thead>
-
-                        {Yearlydataa ? (
-                          <tbody>
-                            {Yearlydataa?.map((e) => {
-                              return (
-                                <tr key={e}>
-                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
-                                  </td>
-                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        ) : (
-                          <tbody>
-                            <td></td>
-                            <td>
-                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
-                              </div>
-                            </td>
-                            <td></td>
-                          </tbody>
-                        )}
-                      </table>
-                    </div>
                   </div>
                 </div>
               </div>

@@ -30,7 +30,7 @@ function MyBagFinal() {
 
   const getOrderDetails = async () => {
     const response = await axios.post(`https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`, BodyContent, headersList);
-    // console.log("response",response);
+    console.log({response,aa:Key.data.access_token});
     setOrderData(response.data.data);
     setIsLoading(true);
   };
