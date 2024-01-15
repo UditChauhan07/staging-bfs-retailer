@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
                     <TopNav />
                 </div>
                 <hr className="hrBgColor" />
-                <div className="col-12">
+                <div className="col-12 sticky-top">
             <LogoHeader />
             <Header />
             <MobileHeader/>
