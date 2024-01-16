@@ -298,11 +298,10 @@ function MyBagFinal() {
                         }}
                       />
                     ) : null}
-
                     <div className={Styles.ShipBut}>
                       <button
                         onClick={() => {
-                          if (total) {
+                          if (Object.keys(orders).length) {
                             if (PONumber.length) {
                               orderPlaceHandler();
                             } else {
