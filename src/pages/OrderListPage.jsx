@@ -42,7 +42,6 @@ const OrderListPage = () => {
         searchShipBy={searchShipBy}
         filterValue={filterValue}
       />
-      {/* <OrderStatusFormSection /> */}
     </AppLayout>
   );
 };
