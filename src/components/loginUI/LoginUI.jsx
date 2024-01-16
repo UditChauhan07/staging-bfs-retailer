@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./index.module.css";
 import Loading from "../Loading";
 import useLogin from "../../api/useLogin";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ModalPage from "../Modal UI";
 import { useAuth } from "../../context/UserContext";
 import { ErrorMessage, Field, Form, Formik } from "formik";
@@ -106,18 +106,21 @@ const LoginUI = () => {
                   </button>
                 </div>
               </Form>
-
-              <div className={styles.SignUpW}>
+              <Link to={"/sign-up"} >
+              <div className={styles.SignUpW} onClick={()=>navigate("/sign-up")}>
                 <p>
                   Don’t have an account ? <span>Sign up.</span>
                 </p>
               </div>
+              </Link>
             </div>
+            
             <div className={styles.PolicyA}>
               <p>
                 By signing in or clicking "Login", you agree to our <span>Terms of Service </span> Please also read our<span> Privacy Policy </span>
               </p>
             </div>
+            
           </div>
         </div>
       </Formik>

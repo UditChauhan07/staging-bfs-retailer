@@ -27,10 +27,14 @@ export function POGenerator() {
   let currentMonth = padNumber(date.getMonth() + 1, true);
   let currentDate = padNumber(date.getDate(), true);
   let beg = fetchBeg();
+  console.log("beg", beg);
   let AcCode = getStrCode(beg?.Account?.name);
   let MaCode = getStrCode(beg?.Manufacturer?.name);
 
   let orderCount = padNumber(count);
+  if(beg?.orderList?.[0]?.productType==="pre-order")
+  return `PRE-${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
+  else
   return `${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
 }
 
@@ -179,13 +183,18 @@ export async function getOrderList({ user, month }) {
 }
 
 export async function getDashboardata({ user }) {
-  let headersList = {
-    Accept: "*/*",
-  };
+  let headersList = {};
+  if(user.headers){
+    headersList = user.headers||{}
+  }else{
+    headersList = {
+      Accept: "*/*",
+    }
+  }
 
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);
-  bodyContent.append("salesRepId", "00530000005AdvsAAC"||user.Sales_Rep__c);
+  bodyContent.append("salesRepId", user.Sales_Rep__c);
 
   let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",

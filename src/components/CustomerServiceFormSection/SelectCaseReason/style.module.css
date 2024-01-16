@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1021;
 }
 /* ModalRadio End */
 
@@ -202,7 +203,7 @@ align-items: center;
     width: 80%;
   }
 }
-select {
+.select {
   -webkit-appearance: none;
   outline: none;
   padding: 15px;
@@ -211,7 +212,7 @@ select {
   width: 100%;
   /* height: 60px; */
 }
-select::placeholder {
+.select::placeholder {
   color: #9c9c9c;
   font-family: Arial;
   font-size: 14px;
@@ -240,9 +241,10 @@ select::placeholder {
   font-weight: 400;
   line-height: normal;
   letter-spacing: 1.12px;
-  width: fit-content;
+  width:30%;
   margin: 0px;
   padding: 3px 6px;
+
 }
 
 .selectDiv select{

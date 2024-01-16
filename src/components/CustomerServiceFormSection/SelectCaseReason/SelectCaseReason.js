@@ -10,10 +10,10 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const [accountList, setAccountList] = useState([]);
   const [orders, setOrders] = useState([]);
   const [orderIdChild, setOrderIdChild] = useState([]);
-  const [typeId, setTypeId] = useState(recordType.id)
-  const [desc, setDesc] = useState()
-  const [subject, setSubject] = useState()
-  const [selectedOrderItem,setSelectOrderItem] = useState({id:null,value:null})
+  const [typeId, setTypeId] = useState(recordType.id);
+  const [desc, setDesc] = useState();
+  const [subject, setSubject] = useState();
+  const [selectedOrderItem, setSelectOrderItem] = useState({ id: null, value: null });
   const [orderData, setOrderData] = useState({
     accountId: null,
     orderNumber: null,
@@ -21,9 +21,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     manufacturerId: null,
     opportunityId: null,
     actualAmount: null,
-    invoiceNumber: null
-  })
-  const [reason, setReason] = useState(null)
+    invoiceNumber: null,
+  });
+  const [reason, setReason] = useState(null);
   const [rawData, setRawData] = useState({
     orderStatusForm: {
       salesRepId: null,
@@ -32,7 +32,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       priority: "Medium",
       sendEmail: false,
     },
-  })
+  });
   const [step, setStep] = useState(0);
   useEffect(() => {
     GetAuthData()
@@ -50,19 +50,21 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           .catch((error) => {
             console.log({ error });
           });
-        getAllAccount({ user: response }).then((accounts) => {
-          setAccountList(accounts)
-        }).catch((actError) => {
-          console.error({ actError });
-        })
+        getAllAccount({ user: response })
+          .then((accounts) => {
+            setAccountList(accounts);
+          })
+          .catch((actError) => {
+            console.error({ actError });
+          });
       })
       .catch((err) => {
         console.log({ err });
       });
   }, [step]);
   const onChangeHandler = (e) => {
-    setReason(e.target.value)
-    setSelectOrderItem({id:null,value:null})
+    setReason(e.target.value);
+    setSelectOrderItem({ id: null, value: null });
     setOrderData({
       accountId: null,
       orderNumber: null,
@@ -70,13 +72,13 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       manufacturerId: null,
       opportunityId: null,
       actualAmount: null,
-      invoiceNumber: null
-    })
-    setStep(1)
+      invoiceNumber: null,
+    });
+    setStep(1);
   };
   const onOrderChangeHandler = (e) => {
-    let id = e.target.value
-    setSelectOrderItem({id:null,value:null})
+    let id = e.target.value;
+    setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
         setOrderData({
@@ -86,61 +88,65 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           manufacturerId: element.ManufacturerId__c,
           opportunityId: element.Id,
           actualAmount: element.Amount,
-          invoiceNumber: element.Wholesale_Invoice__c
+          invoiceNumber: element.Wholesale_Invoice__c,
         });
-        setOrderIdChild(element.OpportunityLineItems.records)
-        setStep(2)
-        return element
+        setOrderIdChild(element.OpportunityLineItems.records);
+        setStep(2);
+        return element;
       }
     });
-  }
+  };
   const onChnageAccountHander = (e) => {
-    setOrderData({ accountId: e.target.value })
-    setStep(2)
-  }
+    setOrderData({ accountId: e.target.value });
+    setStep(2);
+  };
   const onChnageOrderItemHander = (e) => {
     let orderItemDetails = orderIdChild.filter(function (element) {
-      let id = e.target.value
+      let id = e.target.value;
       if (element.Id === id) {
-        setSelectOrderItem({id:element.Id,value:element.Quantity});
-        return element
+        setSelectOrderItem({ id: element.Id, value: element.Quantity });
+        return element;
       }
     });
-  }
+  };
   const submitForm = () => {
-    GetAuthData().then((user) => {
-      if (user) {
-        let rawData = {
-          orderStatusForm: {
-            typeId,
-            salesRepId: user.Sales_Rep__c,
-            reason,
-            accountId: orderData.accountId,
-            orderNumber: orderData?.orderNumber,
-            poNumber: orderData.poNumber,
-            manufacturerId: orderData.manufacturerId,
-            desc,
-            opportunityId: orderData.opportunityId,
-            priority: "Medium",
-            sendEmail: false,
-            subject
-          },
-          key: user.x_access_token
+    GetAuthData()
+      .then((user) => {
+        if (user) {
+          let rawData = {
+            orderStatusForm: {
+              typeId,
+              salesRepId: user.Sales_Rep__c,
+              reason,
+              accountId: orderData.accountId,
+              orderNumber: orderData?.orderNumber,
+              poNumber: orderData.poNumber,
+              manufacturerId: orderData.manufacturerId,
+              desc,
+              opportunityId: orderData.opportunityId,
+              priority: "Medium",
+              sendEmail: false,
+              subject,
+            },
+            key: user.x_access_token,
+          };
+          postSupportAny({ rawData })
+            .then((response) => {
+              if (response) {
+                navigate("/CustomerSupportDetails?id=" + response);
+              }
+            })
+            .catch((err) => {
+              console.error({ err });
+            });
+        } else {
+          DestoryAuth();
         }
-        postSupportAny({ rawData }).then((response) => {
-          if (response) {
-            navigate("/CustomerSupportDetails?id=" + response)
-          }
-        }).catch((err) => {
-          console.error({ err });
-        })
-      } else {
-        DestoryAuth()
-      }
-    }).catch((error) => {
-      DestoryAuth()
-    })
-  }
+      })
+      .catch((error) => {
+        DestoryAuth();
+      });
+  };
   return (
     <>
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
@@ -181,7 +187,8 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                   <select
                     onChange={(e) => {
                       onOrderChangeHandler(e);
-                    }} className="mb-[10px] "
+                    }}
+                    className={`mb-[10px] ${Styles.select}`}
                   >
                     <option>Search Order</option>
 
@@ -196,14 +203,23 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                       })}
                   </select>
                 )}
-                {reason == "Update Account Info" && <select onChange={(e) => { onChnageAccountHander(e) }}>
-                  <option>Search Account</option>
-                  {accountList.length > 0 && accountList.map((element) => {
-                    return (<option value={element.Id}>{element.Name}</option>)
-                  })}
-                </select>}
+                {reason == "Update Account Info" && (
+                  <select
+                    onChange={(e) => {
+                      onChnageAccountHander(e);
+                    }}
+                    className={`${Styles.select}`}
+                  >
+                    <option>Search Account</option>
+                    {accountList.length > 0 &&
+                      accountList.map((element) => {
+                        return <option value={element.Id}>{element.Name}</option>;
+                      })}
+                  </select>
+                )}
               </div>
-            </div>)}
+            </div>
+          )}
           {step == 2 && (
             <div className={Styles.fadeInUp}>
               <div style={{ width: "100%" }}>
@@ -211,21 +227,30 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                   <div className={Styles.labelAmountDiv}>
                     <div className="d-flex justify-content-start align-items-center gap-3" style={{ width: "40%", borderRight: "1px solid #D9D9D9" }}>
                       <label className={Styles.label}>Actual Amount:</label>
-                      <input type="text" className={Styles.labelInput} value={Number(orderData.actualAmount).toFixed(2)} />
+                      <input type="text" className={Styles.labelInput} value={`$${Number(orderData.actualAmount).toFixed(2)}`} />
                     </div>
                     <div className="d-flex justify-content-center align-items-center gap-3 ms-3">
                       <label className={Styles.label}>Associated Invoice Number:</label>
-                      <input type="text" value={orderData.invoiceNumber ? orderData.invoiceNumber : 'NA'} className={Styles.labelInput} />
+                      <input type="text" value={orderData.invoiceNumber ? orderData.invoiceNumber : "NA"} className={Styles.labelInput} />
                     </div>
                   </div>
                 )}
                 {(reason == "Product Missing" || reason == "Product Overage") && (
                   <div>
-                    <select onChange={(e) => { onChnageOrderItemHander(e) }} className="mt-[10px] mb-[10px] ">
+                    <select
+                      onChange={(e) => {
+                        onChnageOrderItemHander(e);
+                      }}
+                      className={`my-[10px] ${Styles.select}`}
+                    >
                       <option>Search Product</option>
                       {orderIdChild.length > 0 &&
                         orderIdChild.map((element) => {
-                          return <option value={element.Id} selected={selectedOrderItem.id == element.Id}>{element.Name}</option>;
+                          return (
+                            <option value={element.Id} selected={selectedOrderItem.id == element.Id}>
+                              {element.Name}
+                            </option>
+                          );
                         })}
                     </select>
                     <div>
@@ -234,10 +259,24 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                   </div>
                 )}
                 <div>
-                  <input className={Styles.input} type="text" placeholder="Provide One line Subject" onKeyDown={(e) => { setSubject(e.target.value) }} />
+                  <input
+                    className={Styles.input}
+                    type="text"
+                    placeholder="Provide One line Subject"
+                    onKeyDown={(e) => {
+                      setSubject(e.target.value);
+                    }}
+                  />
                 </div>
                 <div>
-                  <textarea className={Styles.input} rows={3} placeholder="Describe your issues" onKeyDown={(e) => { setDesc(e.target.value) }}></textarea>
+                  <textarea
+                    className={Styles.input}
+                    rows={3}
+                    placeholder="Describe your issues"
+                    onKeyDown={(e) => {
+                      setDesc(e.target.value);
+                    }}
+                  ></textarea>
                 </div>
               </div>
             </div>

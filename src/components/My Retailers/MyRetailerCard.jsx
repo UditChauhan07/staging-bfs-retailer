@@ -8,9 +8,9 @@ const bgColors = {
   "Bumble and Bumble": "BumbleandBumbleBg",
   "BY TERRY": "BYTERRYBg",
   "Bobbi Brown": "BobbiBrownBg",
-  ReVive: "ReViveBg",
+  "ReVive": "ReViveBg",
   "Maison Margiela": "MaisonMargielaBg",
-  Smashbox: "SmashboxBg",
+  "Smashbox": "SmashboxBg",
   "RMS Beauty": "RMSBeautyBg",
   "ESTEE LAUDER": "esteeLauderBg",
 };

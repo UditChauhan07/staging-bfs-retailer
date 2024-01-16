@@ -7,8 +7,8 @@ import Loading from "../components/Loading";
 import { useNavigate } from "react-router";
 import Layout from "../components/Layout/Layout";
 
-
-import Page from './page.module.css'
+import Page from "./page.module.css";
+import AppLayout from "../components/AppLayout";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -30,7 +30,7 @@ const brandsImageMap = {
   ARAMIS: "Aramis.png",
   "Victoria Beckham Beauty": "victoria.png",
   "Re-Nutriv": "Re-Nutriv-2.png",
-  "L'Occitane":"Looctaine.png"
+  "L'Occitane": "Looctaine.png",
 };
 
 const defaultImage = "default.jpg";
@@ -39,6 +39,8 @@ const BrandsPage = () => {
   const { data: manufacturers, isLoading, error } = useManufacturer();
   const [highestRetailers, setHighestRetailers] = useState(true);
   const [searchBy, setSearchBy] = useState("");
+  const [sortBy, setSortBy] = useState("");
+
   const navigate = useNavigate();
   useEffect(() => {
     const userData = localStorage.getItem("Name");
@@ -62,14 +64,37 @@ const BrandsPage = () => {
     } else {
       newValues = newValues?.sort((a, b) => a.Accounds - b.Accounds);
     }
+    if (sortBy) {
+      if (sortBy === "a-z") {
+        newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
+      } else if (sortBy === "z-a") {
+        newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
+      }
+    }
     return newValues;
-  }, [highestRetailers, searchBy, manufacturers]);
+  }, [highestRetailers, searchBy, manufacturers, sortBy]);
   return (
     <>
-    <Layout>
-            <div>
-                <div className="col-12">
-                <div className="filter-container">
+      <AppLayout
+        filterNodes={
+          <>
+            <FilterItem
+              label="Sort by"
+              value={sortBy}
+              options={[
+                {
+                  label: "A-Z",
+                  value: "a-z",
+                },
+                {
+                  label: "Z-A",
+                  value: "z-a",
+                },
+              ]}
+              onChange={(value) => {
+                setSortBy(value);
+              }}
+            />
             <FilterItem
               minWidth="220px"
               label="Lowest Retailers"
@@ -89,69 +114,58 @@ const BrandsPage = () => {
             <FilterSearch
               onChange={(e) => setSearchBy(e.target.value)}
               value={searchBy}
-              placeholder={"Search by brand"}
-              minWidth={"125px"}
+              placeholder={"Search by brands"}
+              minWidth={"155px"}
             />
             <button
               className="border px-2.5 py-1 leading-tight"
               onClick={() => {
                 setHighestRetailers(true);
                 setSearchBy("");
+                setSortBy("");
               }}
             >
               CLEAR ALL
             </button>
+          </>
+        }
+      >
+        {isLoading ? (
+          <Loading height={"70vh"} />
+        ) : (
+          <div>
+            <div
+              className="uppercase text-center flex justify-center items-center tracking-[1.8px] my-[48px]"
+              style={{ fontFamily: "Montserrat-500" }}
+            >
+              Below are the Brands available with “Beauty Fashions Sales Group”
+            </div>
+            {/* <div className="widthGivenBrandDetailPage grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4  m-auto">    */}
+            <div className={` ${Page.widthGivenBrandDetailPage}`}>
+              {filteredPageData?.length ? (
+                <>
+                  {filteredPageData?.map((brand, index) => (
+                    <BrandCard
+                      key={index}
+                      image={brandsImageMap[brand?.Name] || defaultImage}
+                      brand={brand}
+                    />
+                  ))}
+                </>
+              ) : null}
+            </div>
+            {!filteredPageData?.length && (
+              <div className="lg:min-h-[300px] xl:min-h-[380px]">
+                <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
+                  No data found
+                </div>
+              </div>
+            )}
           </div>
-
-
-                </div>
-                <div>
-
-                <div className="col-12 p-0">
-          {isLoading ? (
-            <Loading height={"70vh"} />
-          ) : (
-            <div>
-              <div
-                className="uppercase text-center flex justify-center items-center tracking-[1.8px] my-[48px]"
-                style={{ fontFamily: "Montserrat-500" }}
-              >
-                Below are the Brands available with “Beauty Fashions Sales
-                Group”
-              </div>
-              {/* <div className="widthGivenBrandDetailPage grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4  m-auto">    */}   
-              <div className={` ${Page.widthGivenBrandDetailPage}`}> 
-                {filteredPageData?.length ? (
-                  <>
-                    {filteredPageData?.map((brand, index) => (
-                      <BrandCard key={index}
-                        image={brandsImageMap[brand?.Name] || defaultImage}
-                        brand={brand}
-                      />
-                    ))}
-                  </>
-                ) : null}
-              </div>
-              {!filteredPageData?.length && (
-                <div className="lg:min-h-[300px] xl:min-h-[380px]">
-                  <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
-                    No data found
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-                    {/* <OrderStatusFormSection /> */}
-                </div>
-            </div>
-        </Layout>
-
-
-
-        </>
-  )
-  ;
+        )}
+      </AppLayout>
+    </>
+  );
 };
 
 export default BrandsPage;

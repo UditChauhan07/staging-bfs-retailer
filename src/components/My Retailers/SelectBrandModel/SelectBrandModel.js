@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Styles from "./style.module.css";
 import { useNavigate } from "react-router-dom";
+import { CloseButton } from "../../../lib/svg";
 
 const SelectBrandModel = ({ brands, onClose }) => {
   // const [selectedBrandAccountId, setSelectedBrandAccountId] = useState();
@@ -13,7 +14,9 @@ const SelectBrandModel = ({ brands, onClose }) => {
       <div className="px-[68px] pb-[67px] pt-[40px] max-w-[900px]">
         <section>
           <div className="d-flex align-items-center justify-content-end gap-5">
-          <button type="button" className="btn-close" onClick={onClose}></button>
+          <button type="button" onClick={onClose}>
+              <CloseButton />
+            </button>
           </div>
           <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] mb-[20px]">Choose the Manufacturer</h1>
           
@@ -28,15 +31,15 @@ const SelectBrandModel = ({ brands, onClose }) => {
                     onChange={() => {
                       // setSelectedBrandAccountId(brand.AccountId__c);
                       setSelectedBrandManufacturer(true);
-                      localStorage.setItem("manufacturer", brand.ManufacturerName__c);
-                      localStorage.setItem("ManufacturerId__c", brand.ManufacturerId__c);
+                      localStorage.setItem("manufacturer", brand.ManufacturerName__c|| brand.Name);
+                      localStorage.setItem("ManufacturerId__c", brand.ManufacturerId__c||  brand.Id);
                       // if (selectedBrandManufacturer) {
                         navigate(`/product`);
                       // } 
                     }}
-                    id={brand.ManufacturerName__c}
+                    id={brand.ManufacturerName__c||brand.Name}
                   />
-                  <label htmlFor={brand.ManufacturerName__c}>{brand.ManufacturerName__c}</label>
+                  <label htmlFor={brand.ManufacturerName__c||brand.Name}>{brand.ManufacturerName__c||brand.Name}</label>
                 </div>
               ))}
             </div>
