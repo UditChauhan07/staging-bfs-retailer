@@ -18,6 +18,7 @@ import { useBag } from "../../context/BagContext";
 import { fetchBeg } from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow } from "../../lib/svg";
+import AppLayout from "../AppLayout";
 const groupBy = function (xs, key) {
   return xs?.reduce(function (rv, x) {
     (rv[x[key]] = rv[x[key]] || []).push(x);
@@ -63,7 +64,10 @@ function Product() {
     return groupedData;
   };
 
-  const formattedData = useMemo(() => groupProductDataByCategory(data?.data?.records), [data?.data?.records]);
+  const formattedData = useMemo(
+    () => groupProductDataByCategory(data?.data?.records),
+    [data?.data?.records]
+  );
 
   const formattedFilterData = useMemo(() => {
     let finalFilteredProducts = { ...formattedData };
@@ -111,7 +115,10 @@ function Product() {
         const value = finalFilteredProducts[key];
 
         value?.sort((a, b) => {
-          return +a?.usdRetail__c?.replace("$", "") - +b?.usdRetail__c?.replace("$", "");
+          return (
+            +a?.usdRetail__c?.replace("$", "") -
+            +b?.usdRetail__c?.replace("$", "")
+          );
         });
       });
     }
@@ -120,7 +127,11 @@ function Product() {
       let newData = {};
       Object.keys(finalFilteredProducts)?.forEach((key) => {
         const value = finalFilteredProducts[key];
-        value?.sort((a, b) => +b?.usdRetail__c?.replace("$", "") - +a?.usdRetail__c?.replace("$", ""));
+        value?.sort(
+          (a, b) =>
+            +b?.usdRetail__c?.replace("$", "") -
+            +a?.usdRetail__c?.replace("$", "")
+        );
       });
     }
 
@@ -128,7 +139,12 @@ function Product() {
   }, [formattedData, categoryFilters, productTypeFilter, sortBy, searchBy]);
 
   useEffect(() => {
-    if (!(localStorage.getItem("ManufacturerId__c") && localStorage.getItem("AccountId__c"))) {
+    if (
+      !(
+        localStorage.getItem("ManufacturerId__c") &&
+        localStorage.getItem("AccountId__c")
+      )
+    ) {
       setRedirect(true);
     }
   }, []);
@@ -140,7 +156,11 @@ function Product() {
   };
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
-    if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
+    if (
+      begValue?.Account?.id &&
+      begValue?.Manufacturer?.id &&
+      Object.values(begValue.orderList).length > 0
+    ) {
       let bagPrice = 0;
       let bagTesterPrice = 0;
       Object.values(begValue.orderList).map((product) => {
@@ -155,14 +175,28 @@ function Product() {
           productPrice = parseFloat(splitPrice[0]);
         }
         if (productCategories && productCategories.toUpperCase() === "TESTER") {
-          console.log(productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100);
-          bagTesterPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100;
+          console.log(
+            productPrice * productQuantity -
+              (productPrice * productQuantity * product.discount.testerMargin) /
+                100
+          );
+          bagTesterPrice +=
+            productPrice * productQuantity -
+            (productPrice * productQuantity * product.discount.testerMargin) /
+              100;
           bagPrice += bagTesterPrice;
           setTesterInBag(true);
-        } else if (productCategories && productCategories.toUpperCase() === "SAMPLES") {
-          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.sample) / 100;
+        } else if (
+          productCategories &&
+          productCategories.toUpperCase() === "SAMPLES"
+        ) {
+          bagPrice +=
+            productPrice * productQuantity -
+            (productPrice * productQuantity * product.discount.sample) / 100;
         } else {
-          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.margin) / 100;
+          bagPrice +=
+            productPrice * productQuantity -
+            (productPrice * productQuantity * product.discount.margin) / 100;
         }
       });
       setAlert(0);
@@ -208,7 +242,7 @@ function Product() {
           onClose={() => setRedirect(false)}
         />
       ) : (
-        <div className="container p-0 ">
+        <>
           {alert == 1 && (
             <ModalPage
               open
@@ -216,9 +250,14 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>Please Select Products of Minimum Order Amount</p>
+                    <p className={` ${Styles.ModalContent}`}>
+                      Please Select Products of Minimum Order Amount
+                    </p>
                     <div className="d-flex justify-content-center">
-                      <button className={`${Styles.modalButton}`} onClick={() => setAlert(0)}>
+                      <button
+                        className={`${Styles.modalButton}`}
+                        onClick={() => setAlert(0)}
+                      >
                         OK
                       </button>
                     </div>
@@ -235,9 +274,14 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>Please Select Tester Product of Minimum Order Amount</p>
+                    <p className={` ${Styles.ModalContent}`}>
+                      Please Select Tester Product of Minimum Order Amount
+                    </p>
                     <div className="d-flex justify-content-center">
-                      <button className={`${Styles.modalButton}`} onClick={() => setAlert(0)}>
+                      <button
+                        className={`${Styles.modalButton}`}
+                        onClick={() => setAlert(0)}
+                      >
                         OK
                       </button>
                     </div>
@@ -256,9 +300,14 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>No Product in your bag</p>
+                    <p className={` ${Styles.ModalContent}`}>
+                      No Product in your bag
+                    </p>
                     <div className="d-flex justify-content-center">
-                      <button className={`${Styles.modalButton}`} onClick={() => setEmptyBag(false)}>
+                      <button
+                        className={`${Styles.modalButton}`}
+                        onClick={() => setEmptyBag(false)}
+                      >
                         OK
                       </button>
                     </div>
@@ -270,18 +319,9 @@ function Product() {
               }}
             />
           )}
-
-          <div className="row p-0 m-0 d-flex flex-column justify-content-around align-items-center col-12">
-            {/* TopNav */}
-            <div className="col-12">
-              <TopNav />
-            </div>
-            <hr className="hrBgColor"></hr>
-            {/* all headers */}
-            <div className="col-12">
-              <LogoHeader />
-              <Header />
-              <div className="filter-container">
+          <AppLayout
+            filterNodes={
+              <>
                 <FilterItem
                   label="Sort by"
                   value={sortBy}
@@ -316,7 +356,12 @@ function Product() {
                     setProductTypeFilter(value);
                   }}
                 />
-                <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Enter Product name"} minWidth="179px" />
+                <FilterSearch
+                  onChange={(e) => setSearchBy(e.target.value)}
+                  value={searchBy}
+                  placeholder={"Enter Product name"}
+                  minWidth="179px"
+                />
                 <button
                   className="border px-2.5 py-1 leading-tight"
                   onClick={() => {
@@ -327,85 +372,77 @@ function Product() {
                 >
                   CLEAR ALL
                 </button>
-              </div>
-            </div>
-            {/* brand list accordion */}
-            <div className="col-12">
-              {isLoading ? (
-                <Loading height={"70vh"} />
-              ) : (
-                <div>
-                  <section className="py-[34px]">
-                    <div className="">
-                      <div className={styles.BrandTopShow}>
-                        <h4 className="flex justify-center items-center gap-4 uppercase font-[Montserrat-500] tracking-[2.20px]">
-                          <button
-                            onClick={() => {
-                              navigate("/my-retailers");
-                            }}
-                          >
-                            <BackArrow />
-                          </button>
-                          {brandName}
-                        </h4>
+              </>
+            }
+          >
+            {isLoading ? (
+              <Loading height={"70vh"} />
+            ) : (
+              <div>
+                <section className="py-[34px]">
+                  <div className="">
+                    <div className={styles.BrandTopShow}>
+                      <h4 className="flex justify-center items-center gap-4 uppercase font-[Montserrat-500] tracking-[2.20px]">
+                        <button
+                          onClick={() => {
+                            navigate("/my-retailers");
+                          }}
+                        >
+                          <BackArrow />
+                        </button>
+                        {brandName}
+                      </h4>
 
-                        <p>
-                          <span>Account</span>: {localStorage.getItem("Account")}
-                        </p>
+                      <p>
+                        <span>Account</span>: {localStorage.getItem("Account")}
+                      </p>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-lg-3 col-md-4 col-sm-12">
+                        <FilterPage
+                          data={data}
+                          formattedData={formattedData}
+                          setCategoryFilters={setCategoryFilters}
+                          categoryFilters={categoryFilters}
+                          setProductTypeFilter={setProductTypeFilter}
+                          productTypeFilter={productTypeFilter}
+                          setSortBy={setSortBy}
+                          sortBy={sortBy}
+                        ></FilterPage>
                       </div>
 
-                      <div className="row">
-                        <div className="col-lg-3 col-md-4 col-sm-12">
-                        
-                            <FilterPage
-                              data={data}
-                              formattedData={formattedData}
-                              setCategoryFilters={setCategoryFilters}
-                              categoryFilters={categoryFilters}
-                              setProductTypeFilter={setProductTypeFilter}
-                              productTypeFilter={productTypeFilter}
-                              setSortBy={setSortBy}
-                              sortBy={sortBy}
-                            ></FilterPage>
-                        
+                      <div className="col-lg-9 col-md-8 col-sm-12 ">
+                        <div
+                          className={`${styles.AccorBorder} overflow-auto`}
+                          style={{
+                            height: "64vh",
+                            border: "1px dashed black",
+                          }}
+                        >
+                          <Accordion
+                            data={data}
+                            formattedData={formattedFilterData}
+                          ></Accordion>
                         </div>
-
-                        <div className="col-lg-9 col-md-8 col-sm-12 ">
-                          <div
-                            className={`${styles.AccorBorder} overflow-auto`}
-                            style={{
-                              height: "64vh",
-                              border: "1px dashed black",
+                        <div className={`${styles.TotalSide} `}>
+                          <h4>Total Number of Products : {orderQuantity}</h4>
+                          <button
+                            onClick={() => {
+                              generateOrderHandler();
                             }}
                           >
-                            <Accordion data={data} formattedData={formattedFilterData}></Accordion>
-                          </div>
-                          <div className={`${styles.TotalSide} `}>
-                            <h4>Total Number of Products : {orderQuantity}</h4>
-                            <button
-                              onClick={() => {
-                                generateOrderHandler();
-                              }}
-                            >
-                              Generate Order
-                            </button>
-                          </div>
+                            Generate Order
+                          </button>
                         </div>
                       </div>
                     </div>
-                  </section>
-                </div>
-              )}
-            </div>
-            {/* footer */}
-            <div className="col-12">
-              <HelpSection />
-            </div>
-            <div className="col-12">
-              <Footer />
-            </div>
-          </div>
-        </div>
+                  </div>
+                </section>
+              </div>
+            )}
+          </AppLayout>
+        </>
       )}
     </>
   );

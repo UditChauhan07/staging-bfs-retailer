@@ -57,7 +57,15 @@ const dataa = {
     dataLabels: {
       enabled: false,
     },
-    colors: ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#76a5af", "#6fa8dc", "#d5a6bd"],
+    colors: [
+      "#ea9999",
+      "#f9cb9c",
+      "#ffe599",
+      "#b6d7a8",
+      "#76a5af",
+      "#6fa8dc",
+      "#d5a6bd",
+    ],
     fill: {
       type: "gradient",
       gradient: {
@@ -67,7 +75,17 @@ const dataa = {
     },
 
     xaxis: {
-      categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September"],
+      categories: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+      ],
     },
     yaxis: {
       title: {
@@ -199,7 +217,7 @@ function Dashboard({ dashboardData }) {
       labels: [],
     },
   });
-  const [brandData, setBrandData]=useState([])
+  const [brandData, setBrandData] = useState([]);
   const RADIAN = Math.PI / 180;
   const needle_data = [
     { name: "A", value: 80, color: "#16BC4E" },
@@ -230,7 +248,14 @@ function Dashboard({ dashboardData }) {
     const xp = x0 + length * cos;
     const yp = y0 + length * sin;
 
-    return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
+    return [
+      <circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />,
+      <path
+        d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`}
+        stroke="#none"
+        fill={color}
+      />,
+    ];
   };
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
@@ -247,9 +272,11 @@ function Dashboard({ dashboardData }) {
                 let dashboardData = JSON.parse(dashboard?.details);
                 setDashboardRelatedData(dashboardData);
                 setSalesByBrandData({
-                  series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
-                    return value.totalOrder;
-                  }),
+                  series: Object.values(dashboardData.brandSalesByRep.data).map(
+                    (value) => {
+                      return value.totalOrder;
+                    }
+                  ),
                   options: {
                     chart: {
                       type: "donut",
@@ -274,7 +301,9 @@ function Dashboard({ dashboardData }) {
                               formatter: function (w) {
                                 const t = w.globals.seriesTotals;
                                 const result = t.reduce((a, b) => a + b, 0);
-                                return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
+                                return result < 1000
+                                  ? result.toFixed(1)
+                                  : `${(result / 1000).toFixed(1)}K`;
                               },
                             },
                           },
@@ -292,8 +321,12 @@ function Dashboard({ dashboardData }) {
                         },
                       },
                     ],
-                    colors: getRandomColors(Object.values(dashboardData.brandSalesByRep.data).length),
-                    labels: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
+                    colors: getRandomColors(
+                      Object.values(dashboardData.brandSalesByRep.data).length
+                    ),
+                    labels: Object.values(
+                      dashboardData.brandSalesByRep.data
+                    ).map((value) => {
                       return value.ManufacturerName;
                     }),
                   },
@@ -302,7 +335,9 @@ function Dashboard({ dashboardData }) {
                 let filteredAarray = [];
                 setIsLoading(true);
                 const values = dashboardData;
-                let key = Object.keys(values.brandSalesByRep.data).map((ele) => ele);
+                let key = Object.keys(values.brandSalesByRep.data).map(
+                  (ele) => ele
+                );
                 let ans = values.brandSalesByRep.raw.map((ele) => {
                   key.map((item) => {
                     if (ele === item) {
@@ -380,6 +415,7 @@ function Dashboard({ dashboardData }) {
     ?.slice(0)
     .reverse()
     .map((ele) => ele);
+
     return (
       <>
         {isLoading ? (
@@ -588,8 +624,13 @@ function Dashboard({ dashboardData }) {
                           <tbody>
                             <td></td>
                             <td>
-                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
+                              <div
+                                className={`d-flex justify-content-start align-items-center`}
+                                style={{ minHeight: "230px" }}
+                              >
+                                <p className={`${Styles.tablenodata}`}>
+                                  No Data Found
+                                </p>
                               </div>
                             </td>
                             <td></td>

@@ -6,6 +6,7 @@ import { useRetailersData } from "../api/useRetailersData";
 import FilterSearch from "../components/FilterSearch";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
+import AppLayout from "../components/AppLayout";
 
 const MyRetailersPage = () => {
   const { data: manufacturers } = useManufacturer();
@@ -32,64 +33,70 @@ const MyRetailersPage = () => {
   }, []);
 
   return (
-    <>
-      <Layout>
-        <div>
-          <div className="col-12">
-            <div className="filter-container  ">
-              <FilterItem
-                label="Sort by"
-                value={sortBy}
-                options={[
-                  {
-                    label: "A-Z",
-                    value: "a-z",
-                  },
-                  {
-                    label: "Z-A",
-                    value: "z-a",
-                  },
-                ]}
-                onChange={(value) => {
-                  setSortBy(value);
-                }}
-              />
-              <FilterItem
-                minWidth="220px"
-                label="Manufacturer"
-                value={manufacturerFilter}
-                options={manufacturers?.data?.map((manufacturer) => ({
-                  label: manufacturer.Name,
-                  value: manufacturer.Id,
-                }))}
-                onChange={(value) => setManufacturerFilter(value)}
-              />
-              <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
-              <button
-                className="border px-2.5 py-1 leading-tight"
-                onClick={() => {
-                  setSortBy(null);
-                  setManufacturerFilter(null);
-                  setSearchBy("");
-                }}
-              >
-                CLEAR ALL
-              </button>
-            </div>
-          </div>
-          <div>
-            <MyRetailers
-              pageData={data?.data}
-              sortBy={sortBy}
-              searchBy={searchBy}
-              isLoading={isLoading}
-              filterBy={manufacturerFilter ? manufacturers?.data?.find((manufacturer) => manufacturer.Id === manufacturerFilter) : null}
-            />
-            {/* <OrderStatusFormSection /> */}
-          </div>
-        </div>
-      </Layout>
-    </>
+    <AppLayout
+      filterNodes={
+        <>
+          <FilterItem
+            label="Sort by"
+            value={sortBy}
+            options={[
+              {
+                label: "A-Z",
+                value: "a-z",
+              },
+              {
+                label: "Z-A",
+                value: "z-a",
+              },
+            ]}
+            onChange={(value) => {
+              setSortBy(value);
+            }}
+          />
+          <FilterItem
+            minWidth="220px"
+            label="Manufacturer"
+            value={manufacturerFilter}
+            options={manufacturers?.data?.map((manufacturer) => ({
+              label: manufacturer.Name,
+              value: manufacturer.Id,
+            }))}
+            onChange={(value) => setManufacturerFilter(value)}
+          />
+          <FilterSearch
+            onChange={(e) => setSearchBy(e.target.value)}
+            value={searchBy}
+            placeholder={"Search by account"}
+            minWidth={"167px"}
+          />
+          <button
+            className="border px-2.5 py-1 leading-tight"
+            onClick={() => {
+              setSortBy(null);
+              setManufacturerFilter(null);
+              setSearchBy("");
+            }}
+          >
+            CLEAR ALL
+          </button>
+        </>
+      }
+    >
+      <MyRetailers
+        pageData={data?.data}
+        sortBy={sortBy}
+        searchBy={searchBy}
+        isLoading={isLoading}
+        filterBy={
+          manufacturerFilter
+            ? manufacturers?.data?.find(
+                (manufacturer) => manufacturer.Id === manufacturerFilter
+              )
+            : null
+        }
+      />
+      {/* <OrderStatusFormSection /> */}
+    </AppLayout>
   );
 };
 
