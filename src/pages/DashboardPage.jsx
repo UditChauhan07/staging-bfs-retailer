@@ -3,8 +3,7 @@ import Dashboard from "../components/Dashboard/Dashboard";
 import { useNavigate } from "react-router-dom";
 import { AuthCheck } from "../lib/store";
 import Layout from "../components/Layout/Layout";
-
-
+import AppLayout from "../components/AppLayout";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -14,21 +13,10 @@ const DashboardPage = () => {
     }
   }, []);
   return (
-    <>
-
-      <Layout>
-        <div>
-          <div className="col-12">
-            {/* <div className="filter-container  ">
-                    </div> */}
-          </div>
-          <div>
-            <Dashboard />
-            {/* <OrderStatusFormSection /> */}
-          </div>
-        </div>
-      </Layout>
-    </>
+    <AppLayout>
+      <Dashboard />
+      {/* <OrderStatusFormSection /> */}
+    </AppLayout>
   );
 };
 
