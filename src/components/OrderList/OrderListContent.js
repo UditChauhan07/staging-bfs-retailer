@@ -5,14 +5,7 @@ import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
 import { GetAuthData, supportShare } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
-function OrderListContent({
-  data,
-  PageSize,
-  currentPage,
-  searchShipBy,
-  setSearchShipBy,
-}) {
-  const [shipByText, setShipByText] = useState("");
+function OrderListContent({ data }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
@@ -36,39 +29,6 @@ function OrderListContent({
     localStorage.setItem("OpportunityId", JSON.stringify(id));
   };
 
-  useEffect(() => {
-    setShipByText(searchShipBy);
-  }, [searchShipBy]);
-
-  const filteredOrders = useMemo(() => {
-    let filteredData = data?.filter((order) => {
-      if (searchShipBy) {
-        const orderItems = order.OpportunityLineItems?.records;
-        if (orderItems?.length) {
-          return (
-            orderItems?.some((item) => {
-              return item.Name?.toLowerCase().includes(
-                searchShipBy?.toLowerCase()
-              );
-            }) ||
-            order.PO_Number__c?.toLowerCase().includes(
-              searchShipBy?.toLowerCase()
-            )
-          );
-        }
-        return false;
-      }
-      return true;
-    });
-    let newData =
-      filteredData.length < 10
-        ? filteredData
-        : filteredData.slice(
-            (currentPage - 1) * PageSize,
-            currentPage * PageSize
-          );
-    return newData;
-  }, [data, searchShipBy, currentPage, PageSize]);
   const generateSuportHandler = ({ data, value }) => {
     let beg = {
       orderStatusForm: {
@@ -96,29 +56,6 @@ function OrderListContent({
 
   return (
     <>
-      <div className={Styles.inorderflex}>
-        <div>
-          <h2>Your Orders</h2>
-        </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSearchShipBy(e.target.elements.searchShipBy.value);
-          }}
-        >
-          <div className={`d-flex align-items-center ${Styles.InputControll}`}>
-            <input
-              type="text"
-              name="searchShipBy"
-              onChange={(e) => setShipByText(e.target.value)}
-              value={shipByText}
-              placeholder="Search All Orders"
-            />
-            <button>Search Orders</button>
-          </div>
-        </form>
-      </div>
-
       {/* TRACKING MODAL */}
 
       <div
@@ -130,9 +67,6 @@ function OrderListContent({
       >
         <div className="modal-dialog modal-xl modal-lg">
           <div className={`${Styles.modalContrlWidth} modal-content`}>
-            {/* <div className="modal-header">
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div> */}
             <div className="modal-body  ">
               <TrackingStatus data={modalData} />
             </div>
@@ -161,8 +95,8 @@ function OrderListContent({
         </div>
       </div>
 
-      {filteredOrders?.length ? (
-        filteredOrders?.map((item, index) => {
+      {data?.length ? (
+        data?.map((item, index) => {
           // let date = new Date(item.CreatedDate);
           let cdate = `${currentDate.getDate()} ${
             months[currentDate.getMonth()]
@@ -267,7 +201,10 @@ function OrderListContent({
                   <div className={Styles.Status1}>
                     <h2
                       onClick={(e) =>
-                        generateSuportHandler({ data: item, value: "Charges" })
+                        generateSuportHandler({
+                          data: item,
+                          value: "Charges",
+                        })
                       }
                     >
                       Charges
@@ -285,7 +222,10 @@ function OrderListContent({
                     </h3>
                     <h4
                       onClick={(e) =>
-                        generateSuportHandler({ data: item, value: "Invoice" })
+                        generateSuportHandler({
+                          data: item,
+                          value: "Invoice",
+                        })
                       }
                     >
                       Invoice{" "}
