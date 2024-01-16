@@ -25,7 +25,6 @@ function MyBagFinal() {
     getOrderDetails();
   }, []);
 
-
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json;charset=UTF-8",
@@ -34,23 +33,25 @@ function MyBagFinal() {
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-
+  console.log("dede", Key.data.access_token, OrderId);
   const getOrderDetails = async () => {
-    const response = await axios.post(`https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`, BodyContent, headersList);
+    const response = await axios.post(
+      `https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`,
+      BodyContent,
+      headersList
+    );
     setOrderData(response.data.data);
     setIsLoading(true);
+    console.log(response.data.data);
   };
   const handleback = () => {
     navigate("/order-list");
   };
   const invoiceHandler = () => {
     if (false) {
-
     } else {
       let ticket = {
-        orderStatusForm
-          :
-        {
+        orderStatusForm: {
           accountId: OrderData?.AccountId,
           contactId: null,
           desc: null,
@@ -61,18 +62,18 @@ function MyBagFinal() {
           priority: "Medium",
           reason: "Invoice",
           salesRepId: null,
-          sendEmail: false
-        }
-      }
+          sendEmail: false,
+        },
+      };
       let statusOfSupport = supportShare(ticket)
-      .then((response) => {
-        if (response) navigate("/orderStatusForm");
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
+        .then((response) => {
+          if (response) navigate("/orderStatusForm");
+        })
+        .catch((error) => {
+          console.error({ error });
+        });
     }
-  }
+  };
   if (!isLoading) return <Loading />;
 
   return (
@@ -82,7 +83,15 @@ function MyBagFinal() {
           <div>
             <div className={Styles.MyBagFinalTop}>
               <div className={Styles.MyBagFinalRight}>
-                <svg xmlns="http://www.w3.org/2000/svg" style={{ cursor: "pointer" }} width="24" height="16" viewBox="0 0 24 16" fill="none" onClick={handleback}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ cursor: "pointer" }}
+                  width="24"
+                  height="16"
+                  viewBox="0 0 24 16"
+                  fill="none"
+                  onClick={handleback}
+                >
                   <path
                     d="M8.94284 2.27615C9.46349 1.75544 9.46349 0.911229 8.94284 0.390521C8.42213 -0.130174 7.57792 -0.130174 7.05721 0.390521L2.3911 5.05666C2.39092 5.05684 2.39128 5.05648 2.3911 5.05666L0.390558 7.05721C0.153385 7.29442 0.024252 7.59868 0.00313201 7.90895C-0.00281464 7.99562 -0.000321319 8.08295 0.010852 8.17002C0.0431986 8.42308 0.148118 8.66868 0.325638 8.87322C0.348651 8.89975 0.372651 8.92535 0.397585 8.94989L7.05721 15.6095C7.57792 16.1302 8.42213 16.1302 8.94284 15.6095C9.46349 15.0888 9.46349 14.2446 8.94284 13.7239L4.55231 9.33335H22.6667C23.4031 9.33335 24 8.73642 24 8.00002C24 7.26362 23.4031 6.66668 22.6667 6.66668H4.55231L8.94284 2.27615Z"
                     fill="black"
@@ -99,52 +108,56 @@ function MyBagFinal() {
                 <h5>
                   PO Number <b>{OrderData.PO_Number__c}</b>{" "}
                 </h5>
-
               </div>
             </div>
             <div className={Styles.MyBagFinalMain}>
               <div className="row">
                 <div className="col-lg-7 col-md-8 col-sm-12">
                   <div className={Styles.MainBag}>
-                    <h3>Order Details ({OrderData?.OpportunityLineItems?.length})</h3>
+                    <h3>
+                      Order Details ({OrderData?.OpportunityLineItems?.length})
+                    </h3>
                     <div className={Styles.scrollP}>
                       <div className={Styles.MainInner}>
-                      
-                        
-                            <div className={Styles.Mainbox3}>
-                              {OrderData.OpportunityLineItems?.length > 0 ? (
-                                OrderData.OpportunityLineItems?.map((item) => {
-                                  return (
-                                    <div className={Styles.Mainbox}>
-                                      <div className={Styles.Mainbox1M}>
-                                        <div className={Styles.Mainbox2}>
-                                          <img src={Img1} alt="" />
-                                        </div>
-                                        <div className={Styles.Mainbox3}>
-                                          <h2>{item.Name.split(OrderData.Name)}</h2>
-                                          <p>
-                                            <span className={Styles.Span1}>${Number(item.ListPrice).toFixed(2)}</span>
-                                            <span className={Styles.Span2}>${Number(item.UnitPrice).toFixed(2)}</span>
-                                          </p>
-                                        </div>
-                                      </div>
-
-                                      <div className={Styles.Mainbox2M}>
-                                        <div className={Styles.Mainbox5}>
-                                          <button className={Styles.qtyLabelHolder} style={{ cursor: "default" }}>
-                                            {item.Quantity}
-                                          </button>
-                                        </div>
-                                      </div>
+                        <div className={Styles.Mainbox3}>
+                          {OrderData.OpportunityLineItems?.length > 0 ? (
+                            OrderData.OpportunityLineItems?.map((item) => {
+                              return (
+                                <div className={Styles.Mainbox}>
+                                  <div className={Styles.Mainbox1M}>
+                                    <div className={Styles.Mainbox2}>
+                                      <img src={Img1} alt="" />
                                     </div>
-                                  );
-                                })
-                              ) : (
-                                <>No Products.</>
-                              )}
-                            </div>
-                          
-                        
+                                    <div className={Styles.Mainbox3}>
+                                      <h2>{item.Name.split(OrderData.Name)}</h2>
+                                      <p>
+                                        <span className={Styles.Span1}>
+                                          ${Number(item.ListPrice).toFixed(2)}
+                                        </span>
+                                        <span className={Styles.Span2}>
+                                          ${Number(item.UnitPrice).toFixed(2)}
+                                        </span>
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div className={Styles.Mainbox2M}>
+                                    <div className={Styles.Mainbox5}>
+                                      <button
+                                        className={Styles.qtyLabelHolder}
+                                        style={{ cursor: "default" }}
+                                      >
+                                        {item.Quantity}
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <>No Products.</>
+                          )}
+                        </div>
                       </div>
 
                       <div className={Styles.TotalPricer}>
@@ -165,10 +178,16 @@ function MyBagFinal() {
                       <p>
                         {OrderData?.Shipping_Street__c ? (
                           <>
-                            {OrderData?.Shipping_Street__c}, {OrderData?.Shipping_City__c} <br />
-                            {OrderData?.Shipping_State__c}, {OrderData?.Shipping_Country__c} {OrderData?.Shipping_Zip__c}
+                            {OrderData?.Shipping_Street__c},{" "}
+                            {OrderData?.Shipping_City__c} <br />
+                            {OrderData?.Shipping_State__c},{" "}
+                            {OrderData?.Shipping_Country__c}{" "}
+                            {OrderData?.Shipping_Zip__c}
                             <br />
-                            {OrderData?.email} {OrderData?.contact ? ` | ${OrderData?.contact}` : null}
+                            {OrderData?.email}{" "}
+                            {OrderData?.contact
+                              ? ` | ${OrderData?.contact}`
+                              : null}
                           </>
                         ) : (
                           "No Shipping Address"
@@ -178,21 +197,27 @@ function MyBagFinal() {
 
                     <div className={Styles.ShipAdress2}>
                       <label>NOTE</label>
-                      <p className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0" style={{ minHeight: "119px" }}>{OrderData.Description}</p>
+                      <p
+                        className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0"
+                        style={{ minHeight: "119px" }}
+                      >
+                        {OrderData.Description}
+                      </p>
                     </div>
-
-
                   </div>
 
-                  {true &&<div className={Styles.ShipBut}>
-                    <button className="py-1" onClick={() => invoiceHandler()}>INVOICE</button>
-                  </div>}
+                  {true && (
+                    <div className={Styles.ShipBut}>
+                      <button className="py-1" onClick={() => invoiceHandler()}>
+                        INVOICE
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </section>
     </div>
   );
