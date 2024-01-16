@@ -27,7 +27,7 @@ const FiltersInNewness = () => {
   const { data: manufacturers, isLoading, error } = useManufacturer();
   // console.log({manufacturers:manufacturers.status});
   if(manufacturers?.status !== 200){
-    // DestoryAuth();
+    DestoryAuth();
   }
   const [newnessData, setNewnessData] = useState(originalApiData || {});
   const [loading, setLoading] = useState(false);
