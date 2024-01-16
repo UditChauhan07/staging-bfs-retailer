@@ -422,8 +422,7 @@ function Dashboard({ dashboardData }) {
           <Loading height="80vh" />
         ) : (
           <div className="">
-            <div className={Styles.head_topp}></div>
-            <select className={`mt-3  ${Styles.drpp}`} aria-label="Default select example">
+            <select className={`mt-3 ${Styles.drpp}`} aria-label="Default select example">
               <option selected className="">
                 {current}
               </option>

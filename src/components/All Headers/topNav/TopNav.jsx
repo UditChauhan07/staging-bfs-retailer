@@ -35,7 +35,7 @@ const TopNav = () => {
               <div className={styles.vr}></div>
               <p className={`m-0 ${styles.language}`}>EN</p>
               <p className={`m-0 ${styles.language} ${styles.text} flex`}>
-                <div className="dropdown d-flex justify-content-center align-items-center " role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div className="dropdown d-flex justify-content-center align-items-center " role="button" data-bs-toggle="dropdown" style={{zIndex:1021}}>
                   Need Help?&nbsp; <NeedHelp />
                   {/* </a> */}
                   <ul className="dropdown-menu">
