@@ -31,10 +31,10 @@ function MyBagFinal() {
 
   const getOrderDetails = async () => {
     const response = await axios.post(`https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`, BodyContent, headersList);
-    console.log({ response, aa: Key.data.access_token });
     setOrderData(response.data.data);
     setIsLoading(true);
   };
+  console.log({OrderData});
 
   const handleback = () => {
     navigate("/order-list");
@@ -180,9 +180,9 @@ function MyBagFinal() {
 
                   </div>
 
-                  <div className={Styles.ShipBut}>
+                  {OrderData?.invoiceContent?.length>0 &&<div className={Styles.ShipBut}>
                     <button className="py-1" onClick={() => invoiceHandler()}>INVOICE</button>
-                  </div>
+                  </div>}
                 </div>
               </div>
             </div>
