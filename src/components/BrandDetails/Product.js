@@ -2,11 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import styles from "./styles.module.css";
 import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
-import TopNav from "../All Headers/topNav/TopNav";
-import LogoHeader from "../All Headers/logoHeader/LogoHeader";
-import Header from "../All Headers/header/Header";
-import HelpSection from "../Footer/HelpSection";
-import Footer from "../Footer/Footer";
+
 import { useProductList } from "../../api/useProductList";
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -413,8 +409,7 @@ function Product() {
                       </div>
 
                       <div className="col-lg-9 col-md-8 col-sm-12 ">
-                        <div
-                          className={`${styles.AccorBorder} overflow-auto`}
+                        <div className={`${styles.AccorBorder} overflow-auto `}
                           style={{
                             height: "64vh",
                             border: "1px dashed black",
