@@ -183,9 +183,14 @@ export async function getOrderList({ user, month }) {
 }
 
 export async function getDashboardata({ user }) {
-  let headersList = {
-    Accept: "*/*",
-  };
+  let headersList = {};
+  if(user.headers){
+    headersList = user.headers||{}
+  }else{
+    headersList = {
+      Accept: "*/*",
+    }
+  }
 
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);

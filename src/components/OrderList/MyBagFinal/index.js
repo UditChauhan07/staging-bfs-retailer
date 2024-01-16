@@ -5,6 +5,7 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
+import { supportShare } from "../../../lib/store";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -30,7 +31,7 @@ function MyBagFinal() {
 
   const getOrderDetails = async () => {
     const response = await axios.post(`https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`, BodyContent, headersList);
-    console.log({response,aa:Key.data.access_token});
+    console.log({ response, aa: Key.data.access_token });
     setOrderData(response.data.data);
     setIsLoading(true);
   };
@@ -38,7 +39,36 @@ function MyBagFinal() {
   const handleback = () => {
     navigate("/order-list");
   };
+  const invoiceHandler = () => {
+    if (false) {
 
+    } else {
+      let ticket = {
+        orderStatusForm
+          :
+        {
+          accountId: OrderData?.AccountId,
+          contactId: null,
+          desc: null,
+          manufacturerId: OrderData.ManufacturerId__c,
+          opportunityId: OrderData.Id,
+          orderNumber: null,
+          poNumber: OrderData.PO_Number__c,
+          priority: "Medium",
+          reason: "Invoice",
+          salesRepId: null,
+          sendEmail: false
+        }
+      }
+      let statusOfSupport = supportShare(ticket)
+      .then((response) => {
+        if (response) navigate("/orderStatusForm");
+      })
+      .catch((error) => {
+        console.error({ error });
+      });
+    }
+  }
   if (!isLoading) return <Loading />;
 
   return (
@@ -65,7 +95,7 @@ function MyBagFinal() {
                 <h5>
                   PO Number <b>{OrderData.PO_Number__c}</b>{" "}
                 </h5>
-               
+
               </div>
             </div>
             <div className={Styles.MyBagFinalMain}>
@@ -134,7 +164,7 @@ function MyBagFinal() {
                             {OrderData?.Shipping_Street__c}, {OrderData?.Shipping_City__c} <br />
                             {OrderData?.Shipping_State__c}, {OrderData?.Shipping_Country__c} {OrderData?.Shipping_Zip__c}
                             <br />
-                            {OrderData?.email} {OrderData?.contact?` | ${OrderData?.contact}`:null}
+                            {OrderData?.email} {OrderData?.contact ? ` | ${OrderData?.contact}` : null}
                           </>
                         ) : (
                           "No Shipping Address"
@@ -144,21 +174,21 @@ function MyBagFinal() {
 
                     <div className={Styles.ShipAdress2}>
                       <label>NOTE</label>
-                      <p className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0" style={{minHeight:"119px"}}>{OrderData.Description}</p>
+                      <p className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0" style={{ minHeight: "119px" }}>{OrderData.Description}</p>
                     </div>
 
-                      
-                    </div>
 
-                    <div className={Styles.ShipBut}>
-                      <button className="py-1">INVOICE</button>
-                    </div>
+                  </div>
+
+                  <div className={Styles.ShipBut}>
+                    <button className="py-1" onClick={() => invoiceHandler()}>INVOICE</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        
+        </div>
+
       </section>
     </div>
   );
