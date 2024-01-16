@@ -5,8 +5,8 @@ const Modal = ({ isOpen, onClose, children }) => {
     <>
       {isOpen && (
         <div className={Styles.modalOverlay} onClick={onClose}>
-          <div
-            className={Styles.modal}
+          <div 
+            className={`${Styles.modal} `}
             onClick={(e) => {
               // do not close modal if anything inside modal content is clicked
               e.stopPropagation();

@@ -63,9 +63,14 @@
 
 .BrandInRadio {
   border-radius: 8px;
-  border: 1px solid #d5d9d9;
-  background: #f8fafb;
-  padding: 27px;
+  /* border: 1px solid #d5d9d9; */
+  /* background: #f8fafb; */
+  /* padding: 27px; */
+}
+
+.CaseReason{
+
+text-align: start !important;
 }
 
 .BrandName input[type="radio"],
@@ -239,6 +244,46 @@ select::placeholder {
   margin: 0px;
   padding: 3px 6px;
 }
+
+.selectDiv select{
+ transition: height 0.4s ease;;
+ transition: all 0.4s ease;
+}
+
+.ModalLast section {
+  /* background-color: #000000; */
+  padding: 30px 30px ;
+  /* height: 80vh;
+  overflow: auto; */
+}
+
+
+/* .Tdelay{
+
+} */
+.delaycontent{
+  -webkit-transition: max-height 3s; 
+  -moz-transition: max-height 3s; 
+  -ms-transition: max-height 3s; 
+  -o-transition: max-height 3s; 
+  transition: max-height 3s;  
+  }
+
+
+  .fadeInUp{
+    /* max-height: 80vh;
+    overflow: auto; */
+  }
+
+.fadeInUp
+
+{animation:fadeInUp 1s ease backwards;}
+@keyframes fadeInUp{
+  0%{transform:translate(0px, 00px); opacity: 0;}
+  100%{transform:translate(0px, 0); opacity: 1;}
+}
+
+
 @media (max-width: 900px) {
   .ModalResponsive {
     grid-template-columns: repeat(2, auto);
