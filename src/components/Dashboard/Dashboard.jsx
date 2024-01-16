@@ -563,8 +563,8 @@ function Dashboard({ dashboardData }) {
                                   <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
                                   {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
                                   <td className={Styles.tabletd}>${Number(e.sale).toFixed(2)}</td>
-                                  <td className={Styles.tabletd}>${e.target}</td>
-                                  <td className={Styles.tabletd}>${e.target-e.sale}</td>
+                                  <td className={Styles.tabletd}>${Number(e.target).toFixed(2)}</td>
+                                  <td className={Styles.tabletd}>${Number(e.target-e.sale).toFixed(2)}</td>
                                 </tr>
                               );
                             })
