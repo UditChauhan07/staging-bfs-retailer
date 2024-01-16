@@ -6,15 +6,15 @@ import * as XLSX from "xlsx";
 import { useNewnessReport } from "../../../api/useNewnessReport";
 import { useManufacturer } from "../../../api/useManufacturer";
 import Loading from "../../Loading";
-import { DestoryAuth } from "../../../lib/store";
+const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const fileExtension = ".xlsx";
 const FiltersInNewness = () => {
   let currentDate = new Date().toJSON().slice(0, 10);
-  function subtract6Months(date) {
+  const subtract6Months = (date) => {
     date.setMonth(date.getMonth() - 6);
     return date;
-  }
-  let past6monthDate= subtract6Months(new Date());
-  // console.log(currentDate,past6monthDate.toJSON().slice(0, 10));
+  };
+  let past6monthDate = subtract6Months(new Date());
   const [filter, setFilter] = useState({
     ManufacturerId__c: "a0O3b00000p7zqKEAQ",
     toDate: currentDate,
@@ -23,27 +23,26 @@ const FiltersInNewness = () => {
     selectedManufacturer: "BOBBI BROWN",
   });
   const originalApiData = useNewnessReport(filter);
-  
+
   const { data: manufacturers, isLoading, error } = useManufacturer();
-  // console.log({manufacturers:manufacturers.status});
-  if(manufacturers?.status !== 200){
-    DestoryAuth();
+  if (manufacturers?.status !== 200) {
+    // DestoryAuth();
   }
   const [newnessData, setNewnessData] = useState(originalApiData || {});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     // if(loading){
-      setLoading(true);
+    setLoading(true);
     setNewnessData(originalApiData);
     setLoading(false);
     // }
-  // }, []);
+    // }, []);
   }, [originalApiData, filter]);
 
   const applyFilters = () => {
     setLoading(true);
     // const data=await useNewnessReport(filter)
-    setNewnessData(originalApiData );
+    setNewnessData(originalApiData);
     setLoading(false);
   };
   const clearFilters = () => {
@@ -82,8 +81,6 @@ const FiltersInNewness = () => {
     }
     return finalData;
   };
-  const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-  const fileExtension = ".xlsx";
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(csvData());
@@ -121,8 +118,7 @@ const FiltersInNewness = () => {
     <>
       {/* {manufacturers?.status === 200 && manufacturers.data.length ? ( */}
       <>
-      
-        <div className= {`${styles.FliterNewNessNone}  bg-black justify-content-evenly  align-items-center  gap-2`}>
+        <div className={`${styles.FliterNewNessNone}  bg-black justify-content-evenly  align-items-center  gap-2`}>
           {/* filer manufacturer */}
           <select
             className={`${styles.text} bg-black`}
@@ -153,12 +149,12 @@ const FiltersInNewness = () => {
           </select>
           {/* First Calender Filter-- from date */}
           <p className={`m-0 ${styles.text} d-flex gap-1 justify-content-center align-items-center`}>
-            start date : 
+            start date :
             <input type="date" className={`${styles.text} bg-black`} defaultValue={filter.fromDate} onChange={handleFromDate} style={{ outline: "none", maxWidth: "93px", colorScheme: "dark" }} />
           </p>
           {/* Second Calender Filter -- to date */}
           <p className={`m-0 ${styles.text} ${styles.text2}  d-flex gap-1 justify-content-center align-items-center`}>
-            end date : 
+            end date :
             <input type="date" className={`${styles.text} bg-black`} style={{ maxWidth: "93px", colorScheme: "dark", outline: "none" }} onChange={handleToDate} defaultValue={filter.toDate} />
           </p>
 
@@ -178,7 +174,7 @@ const FiltersInNewness = () => {
             </button>
           </p>
         </div>
-        <br/>
+        <br />
         {loading ? <Loading height={"70vh"} /> : <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />}
       </>
     </>

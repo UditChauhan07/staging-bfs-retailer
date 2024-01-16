@@ -9,8 +9,7 @@ import * as FileSaver from "file-saver";
 import SalesReportTable from "../../components/sales report table/SalesReportTable";
 import Loading from "../../components/Loading";
 
-const fileType =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
 const SalesReport = () => {
@@ -23,14 +22,11 @@ const SalesReport = () => {
 
   const filteredSalesReportData = useMemo(() => {
     let filtered = salesReportData.filter((ele) => {
-      return (
-        !manufacturerFilter ||
-        !ele.ManufacturerName__c.localeCompare(manufacturerFilter)
-      );
+      return !manufacturerFilter || !ele.ManufacturerName__c.localeCompare(manufacturerFilter);
     });
 
     if (highestOrders) {
-      filtered = filtered?.map((ele) => {
+       filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.sort((a, b) => b.totalOrders - a.totalOrders);
         return {
           ...ele,
@@ -104,7 +100,7 @@ const SalesReport = () => {
     const result = await salesReportApi.salesReportData();
     setSalesReportData(result.data.data);
   };
-
+  //console.log("salesReportData", salesReportData);
   // api call
   useEffect(() => {
     const userData = localStorage.getItem("Name");
@@ -145,16 +141,10 @@ const SalesReport = () => {
             ]}
             onChange={(value) => setHighestOrders(value)}
           />
-          <button
-            className="border px-2.5 py-1 leading-tight"
-            onClick={resetFilter}
-          >
+          <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
             CLEAR ALL
           </button>
-          <button
-            className="border px-2.5 py-1 leading-tight"
-            onClick={exportToExcel}
-          >
+          <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
             EXPORT
           </button>
         </>
@@ -162,6 +152,8 @@ const SalesReport = () => {
     >
       {filteredSalesReportData?.length ? (
         <SalesReportTable salesData={filteredSalesReportData} />
+      ) : salesReportData.length ? (
+        <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (
         <Loading height={"70vh"} />
       )}

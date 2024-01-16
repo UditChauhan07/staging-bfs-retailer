@@ -8,7 +8,6 @@ export const useNewnessReport = (props) => {
   }, [props]);
 
   const fetchNewnessApiData = (ManufacturerId__c, fromDate, toDate) => {
-    console.log({ManufacturerId__c});
     fetch("https://dev.beautyfashionsales.com/newness", {
       method: "POST",
       headers: {
