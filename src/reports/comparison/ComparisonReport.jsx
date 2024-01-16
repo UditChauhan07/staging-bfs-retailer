@@ -63,6 +63,7 @@ const ComparisonReport = () => {
             }))}
             onChange={(value) => setFilter((prev) => ({ ...prev, ManufacturerId__c: value }))}
           />
+          {console.log({aa:originalApiData?.date?.yearList})}
           <FilterItem
             minWidth="220px"
             label="Months"
