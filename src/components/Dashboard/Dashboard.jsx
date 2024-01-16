@@ -14,6 +14,102 @@ import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import SelectBrandModel from "../My Retailers/SelectBrandModel/SelectBrandModel";
 import ModalPage from "../Modal UI/index";
+const monthList = [
+  {
+    name: "January - 2023",
+    value: "2023|1"
+  },
+  {
+    name: "February - 2023",
+    value: "2023|2"
+  }, {
+    name: "March - 2023",
+    value: "2023|3"
+  },
+  {
+    name: "April - 2023",
+    value: "2023|4"
+  },
+  {
+    name: "May - 2023",
+    value: "2023|5"
+  },
+  {
+    name: "June - 2023",
+    value: "2023|6"
+  },
+  {
+    name: "July - 2023",
+    value: "2023|7"
+  },
+  {
+    name: "August - 2023",
+    value: "2023|8"
+  },
+  {
+    name: "September - 2023",
+    value: "2023|9"
+  },
+  {
+    name: "October - 2023",
+    value: "2023|10"
+  },
+  {
+    name: "November - 2023",
+    value: "2023|11"
+  },
+  {
+    name: "December - 2023",
+    value: "2023|12"
+  },
+  {
+    name: "January - 2024",
+    value: "2024|1"
+  },
+  {
+    name: "February - 2024",
+    value: "2024|2"
+  }, {
+    name: "March - 2024",
+    value: "2024|3"
+  },
+  {
+    name: "April - 2024",
+    value: "2024|4"
+  },
+  {
+    name: "May - 2024",
+    value: "2024|5"
+  },
+  {
+    name: "June - 2024",
+    value: "2024|6"
+  },
+  {
+    name: "July - 2024",
+    value: "2024|7"
+  },
+  {
+    name: "August - 2024",
+    value: "2024|8"
+  },
+  {
+    name: "September - 2024",
+    value: "2024|9"
+  },
+  {
+    name: "October - 2024",
+    value: "2024|10"
+  },
+  {
+    name: "November - 2024",
+    value: "2024|11"
+  },
+  {
+    name: "December - 2024",
+    value: "2024|12"
+  },
+]
 const dataa = {
   series: [
     {
@@ -165,11 +261,13 @@ function Dashboard({ dashboardData }) {
     "RMS Beauty": "RMSBeautyBg",
     "ESTEE LAUDER": "esteeLauderBg",
   };
+  const [selMonth, setSelMonth] = useState("2024|1")
   const [tabledata, settabledata] = useState([]);
   const [leadsbybrand, setleadsbtbrand] = useState([]);
   const [Monthlydataa, setMonthlydata] = useState([]);
   const [Yearlydataa, setYearlydata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [dashboardRelatedData, setDashboardRelatedData] = useState({});
   const [salesByBrandData, setSalesByBrandData] = useState({
     series: [],
@@ -264,147 +362,156 @@ function Dashboard({ dashboardData }) {
 
   useEffect(() => {
     if (localStorage.getItem("Name")) {
-      GetAuthData()
-        .then((user) => {
-          getDashboardata({ user })
-            .then((dashboard) => {
-              if (dashboard?.details) {
-                let dashboardData = JSON.parse(dashboard?.details);
-                setDashboardRelatedData(dashboardData);
-                setSalesByBrandData({
-                  series: Object.values(dashboardData.brandSalesByRep.data).map(
-                    (value) => {
-                      return value.totalOrder;
-                    }
-                  ),
-                  options: {
-                    chart: {
-                      type: "donut",
-                    },
-                    labels: {
-                      show: true,
-                      name: {
-                        show: true,
-                        offsetY: 38,
-                        formatter: () => "out of 553 points",
-                      },
-                    },
-                    plotOptions: {
-                      pie: {
-                        donut: {
-                          labels: {
-                            show: true,
+      getDataHandler()
+    } else {
+      navigate("/");
+    }
+  }, []);
 
-                            total: {
-                              show: true,
-                              showAlways: true,
-                              formatter: function (w) {
-                                const t = w.globals.seriesTotals;
-                                const result = t.reduce((a, b) => a + b, 0);
-                                return result < 1000
-                                  ? result.toFixed(1)
-                                  : `${(result / 1000).toFixed(1)}K`;
-                              },
+
+  const getDataHandler = (headers = null) => {
+    setIsLoaded(false)
+    GetAuthData()
+      .then((user) => {
+        user.Sales_Rep__c = "00530000005AdvsAAC";
+        if (headers) {
+          user.headers = headers
+        }
+        getDashboardata({ user })
+          .then((dashboard) => {
+            if (dashboard?.details) {
+              let dashboardData = JSON.parse(dashboard?.details);
+              setDashboardRelatedData(dashboardData);
+              setSalesByBrandData({
+                series: Object.values(dashboardData.brandSalesByRep.data).map(
+                  (value) => {
+                    return value.totalOrder;
+                  }
+                ),
+                options: {
+                  chart: {
+                    type: "donut",
+                  },
+                  labels: {
+                    show: true,
+                    name: {
+                      show: true,
+                      offsetY: 38,
+                      formatter: () => "out of 553 points",
+                    },
+                  },
+                  plotOptions: {
+                    pie: {
+                      donut: {
+                        labels: {
+                          show: true,
+
+                          total: {
+                            show: true,
+                            showAlways: true,
+                            formatter: function (w) {
+                              const t = w.globals.seriesTotals;
+                              const result = t.reduce((a, b) => a + b, 0);
+                              return result < 1000
+                                ? result.toFixed(1)
+                                : `${(result / 1000).toFixed(1)}K`;
                             },
                           },
                         },
                       },
                     },
+                  },
 
-                    responsive: [
-                      {
-                        breakpoint: 100,
-                        options: {
-                          chart: {
-                            width: "100px",
-                          },
+                  responsive: [
+                    {
+                      breakpoint: 100,
+                      options: {
+                        chart: {
+                          width: "100px",
                         },
                       },
-                    ],
-                    colors: getRandomColors(
-                      Object.values(dashboardData.brandSalesByRep.data).length
-                    ),
-                    labels: Object.values(
-                      dashboardData.brandSalesByRep.data
-                    ).map((value) => {
-                      return value.ManufacturerName;
-                    }),
-                  },
+                    },
+                  ],
+                  colors: getRandomColors(
+                    Object.values(dashboardData.brandSalesByRep.data).length
+                  ),
+                  labels: Object.values(
+                    dashboardData.brandSalesByRep.data
+                  ).map((value) => {
+                    return value.ManufacturerName;
+                  }),
+                },
+              });
+              // GOAL BY BRAND (MONTHLY)
+              let filteredAarray = [];
+              setIsLoading(true);
+              const values = dashboardData;
+              let key = Object.keys(values.brandSalesByRep.data).map(
+                (ele) => ele
+              );
+              let ans = values.brandSalesByRep.raw.map((ele) => {
+                key.map((item) => {
+                  if (ele === item) {
+                    filteredAarray.push(values.brandSalesByRep.data[item]);
+                  } else {
+                  }
                 });
-                // GOAL BY BRAND (MONTHLY)
-                let filteredAarray = [];
-                setIsLoading(true);
-                const values = dashboardData;
-                let key = Object.keys(values.brandSalesByRep.data).map(
-                  (ele) => ele
-                );
-                let ans = values.brandSalesByRep.raw.map((ele) => {
-                  key.map((item) => {
-                    if (ele === item) {
-                      filteredAarray.push(values.brandSalesByRep.data[item]);
-                    } else {
-                    }
-                  });
+              });
+              settabledata(filteredAarray);
+
+              // LEADS BY BRAND || MONTHLY SALESBYREP || YEARLY SALESBYREP
+              let leadsdata = [];
+              let MonthlyData = [];
+              let YearlyData = [];
+              const valuess = dashboardData;
+              let keyy = Object.keys(values.lead.data).map((ele) => ele);
+              let anss = values.lead.raw.map((ele) => {
+                keyy.map((item) => {
+                  if (ele === item) {
+                    leadsdata.push(values.lead.data[item]);
+                  } else {
+                  }
                 });
-                settabledata(filteredAarray);
+              });
 
-                // LEADS BY BRAND || MONTHLY SALESBYREP || YEARLY SALESBYREP
-                let leadsdata = [];
-                let MonthlyData = [];
-                let YearlyData = [];
-                const valuess = dashboardData;
-                let keyy = Object.keys(values.lead.data).map((ele) => ele);
-                let anss = values.lead.raw.map((ele) => {
-                  keyy.map((item) => {
-                    if (ele === item) {
-                      leadsdata.push(values.lead.data[item]);
-                    } else {
-                    }
-                  });
+              //       // MONTHLY SALES BY REP
+              let keey = Object.keys(valuess.monthly.data).map((ele) => ele);
+              let annss = valuess.monthly.raw.map((ele) => {
+                keey.map((item) => {
+                  if (ele === item) {
+                    MonthlyData.push(valuess.monthly.data[item]);
+                  } else {
+                  }
                 });
+              });
 
-                //       // MONTHLY SALES BY REP
-                let keey = Object.keys(valuess.monthly.data).map((ele) => ele);
-                let annss = valuess.monthly.raw.map((ele) => {
-                  keey.map((item) => {
-                    if (ele === item) {
-                      MonthlyData.push(valuess.monthly.data[item]);
-                    } else {
-                    }
-                  });
+              //       // YEAR SALES BY REP
+              let KEY = Object.keys(values.yearly.data).map((ele) => ele);
+              let ANS = values.yearly.raw.map((ele) => {
+                keey.map((item) => {
+                  if (ele === item) {
+                    YearlyData.push(values.yearly.data[item]);
+                  } else {
+                  }
                 });
-
-                //       // YEAR SALES BY REP
-                let KEY = Object.keys(values.yearly.data).map((ele) => ele);
-                let ANS = values.yearly.raw.map((ele) => {
-                  keey.map((item) => {
-                    if (ele === item) {
-                      YearlyData.push(values.yearly.data[item]);
-                    } else {
-                    }
-                  });
-                });
-
-                setleadsbtbrand(leadsdata);
-                setMonthlydata(MonthlyData);
-                setYearlydata(YearlyData);
-
-                setIsLoading(false);
-              } else {
-                navigate("/");
-              }
-            })
-            .catch((err) => {
-              console.error({ err });
-            });
-        })
-        .catch((error) => {
-          console.error({ error });
-        });
-    } else {
-      navigate("/");
-    }
-  }, []);
+              });
+              setIsLoaded(true)
+              setleadsbtbrand(leadsdata);
+              setMonthlydata(MonthlyData);
+              setYearlydata(YearlyData);
+              setIsLoading(false);
+            } else {
+              navigate("/");
+            }
+          })
+          .catch((err) => {
+            console.error({ err });
+          });
+      })
+      .catch((error) => {
+        console.error({ error });
+      });
+  }
   const date = new Date();
   const options = {
     year: "numeric",
@@ -415,207 +522,62 @@ function Dashboard({ dashboardData }) {
     ?.slice(0)
     .reverse()
     .map((ele) => ele);
+  const changeMonthHandler = (e) => {
+    setIsLoading(false)
+    let { value } = e.target;
+    setSelMonth(value)
+    const valuePlit = value.split("|")
+    let month = valuePlit[1] || null;
+    let year = valuePlit[0] || null
+    getDataHandler({ month, year })
+  }
 
-    return (
-      <>
-        {isLoading ? (
-          <Loading height="80vh" />
-        ) : (
-          <div className="">
-            <div className={Styles.head_topp}></div>
-            <select className={`mt-3  ${Styles.drpp}`} aria-label="Default select example">
-              <option selected className="">
-                {current}
-              </option>
-              {/* <option value="1">January</option>
-                  <option value="2">February</option>
-                  <option value="3">March</option>
-                  <option value="3">April</option>
-                  <option value="3">May</option>
-                  <option value="3">June</option>
-                  <option value="3">July</option>
-                  <option value="3">August</option>
-                  <option value="3">September</option>
-                  <option value="3">October</option>
-                  <option value="3">November</option>
-                  <option value="3">December</option> */}
-            </select>
-            <hr className="w-100" />
-            <div className="row mt-2 justify-between">
-              {/* Monthly SALESBYREP */}
-              <div className="col-lg-6 my-2" >
-                <div className={Styles.DashboardWidth}>
-                  <p className={Styles.Tabletext}>Month till date(MTD): Sales By Rep</p>
-                  <div className={Styles.goaltable}>
-                    <div className="">
-                      <div className={Styles.table_scroll}>
-                        <table className="table table-borderless ">
-                          <thead>
-                            <tr className={Styles.tablerow}>
-                              <th scope="col" className="ps-3">
-                                Opportunity Owner
-                              </th>
-                              <th scope="col">Sum of Amount</th>
-                            </tr>
-                          </thead>
-  
-                          {Monthlydataa ? (
-                            <tbody>
-                              {Monthlydataa?.map((e) => {
-                                return (
-                                  <tr key={e}>
-                                    <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                      <img src={img5} className="h-100" alt="" /> {e.salesRepName}
-                                    </td>
-                                    <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          ) : (
-                            <tbody>
-                              <td></td>
-                              <td>
-                                <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                                  <p className={`${Styles.tablenodata}`}>No Data Found</p>
-                                </div>
-                              </td>
-                              <td></td>
-                            </tbody>
-                          )}
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Yearly SALESBYREP */}
-              <div className="col-lg-6 my-2">
-                <div className={Styles.DashboardWidth}>
-                  <p className={Styles.Tabletext}>Year till date(YTD): Sales By Rep</p>
-                  <div className={Styles.goaltable}>
-                    <div className="">
-                      <div className={Styles.table_scroll}>
-                        <table className="table table-borderless ">
-                          <thead>
-                            <tr className={Styles.tablerow}>
-                              <th scope="col" className="ps-3">
-                                Opportunity Owner
-                              </th>
-                              <th scope="col">Sum of Amount</th>
-                            </tr>
-                          </thead>
-  
-                          {Yearlydataa ? (
-                            <tbody>
-                              {Yearlydataa?.map((e) => {
-                                return (
-                                  <tr key={e}>
-                                    <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                      <img src={img5} className="h-100" alt="" /> {e.salesRepName}
-                                    </td>
-                                    <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          ) : (
-                            <tbody>
-                              <td></td>
-                              <td>
-                                <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                                  <p className={`${Styles.tablenodata}`}>No Data Found</p>
-                                </div>
-                              </td>
-                              <td></td>
-                            </tbody>
-                          )}
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row justify-between ">
-              {/* monthly data goal by brand*/}
-              <div className="col-lg-6 col-sm-12 my-2" >
-                <div className={Styles.DashboardWidth}>
-                  <p className={Styles.Tabletext}>Month till date(MTD): Goal by Brand</p>
-                  <div className={Styles.goaltable}>
+  return (
+    <>
+      {isLoading ? (
+        <Loading height="80vh" />
+      ) : (
+        <div className="">
+          <div className={Styles.head_topp}></div>
+          <select className={`mt-3  ${Styles.drpp}`} aria-label="Default select example" onChange={(e) => { changeMonthHandler(e) }}>
+            {monthList.map((month) => {
+              return (
+                <option value={month.value} selected={selMonth == month.value}>{month.name}</option>
+              )
+            })}
+          </select>
+          <hr className="w-100" />
+          <div className="row mt-2 justify-between">
+            {/* Monthly SALESBYREP */}
+            <div className="col-lg-6 my-2" >
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Month till date(MTD): Sales By Rep</p>
+                <div className={Styles.goaltable}>
+                  <div className="">
                     <div className={Styles.table_scroll}>
                       <table className="table table-borderless ">
                         <thead>
                           <tr className={Styles.tablerow}>
-                            <th className="ps-3">Manufacturer</th>
-                            {/* <th>Total Order</th> */}
-                            <th>Sale</th>
-                            <th>Sale Target</th>
-                            <th>Sale Diff</th>
+                            <th scope="col" className="ps-3">
+                              Opportunity Owner
+                            </th>
+                            <th scope="col">Sale</th>
+                            <th scope="col">Sale Target</th>
+                            <th scope="col">Sale Diff</th>
                           </tr>
                         </thead>
-  
-                        <tbody className={Styles.tbdy}>
-                          {tabledata.length ? (
-                            tabledata?.map((e) => {
+
+                        {Monthlydataa ? (
+                          <tbody>
+                            {Monthlydataa?.map((e) => {
                               return (
                                 <tr key={e}>
-                                  <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
-                                  {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
-                                  <td className={Styles.tabletd}>${Number(e.sale).toFixed(2)}</td>
-                                  <td className={Styles.tabletd}>${Number(e.target).toFixed(2)}</td>
-                                  <td className={Styles.tabletd}>${Number(e.target-e.sale).toFixed(2)}</td>
-                                </tr>
-                              );
-                            })
-                          ) : (
-                            <>
-                              <tr style={{ minHeight: "300px" }}>
-                                <td>
-                                  <ContentLoader />
-                                </td>
-                                <td>
-                                  <ContentLoader />
-                                </td>
-                                <td>
-                                  <ContentLoader />
-                                </td>
-                                <td>
-                                  <ContentLoader />
-                                </td>
-                                {/* <ContentLoader/> */}
-                              </tr>
-                            </>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* leads by brand*/}
-              <div className="col-lg-6 col-sm-12 my-2 ">
-                <div className={Styles.DashboardWidth}>
-                  <p className={Styles.Tabletext}>Leads by Brand</p>
-                  <div className={Styles.goaltable1}>
-                    <div className="">
-                      <table className="table table-borderless mt-2">
-                        <thead>
-                          <tr className={Styles.tablerow}>
-                            <th className="ps-3">Manufacturer</th>
-                            <th>Received</th>
-                            <th>Converted</th>
-                          </tr>
-                        </thead>
-  
-                        {leadsbybrand == true ? (
-                          <tbody className="position-relative">
-                            {leadsbybrand.map((element) => {
-                              return (
-                                <tr key={element}>
-                                  <td className={` ps-3 ${Styles.tabletd}`}>{element.ManufacturerName}</td>
-                                  <td className={Styles.tabletd}>{element.received}</td>
-                                  <td className={Styles.tabletd}>{element.converted}</td>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
+                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                  </td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total?.target || 0) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number((e.total?.target - e.total.revenue) || 0) / 1000).toFixed(0)}K</td>
                                 </tr>
                               );
                             })}
@@ -624,13 +586,8 @@ function Dashboard({ dashboardData }) {
                           <tbody>
                             <td></td>
                             <td>
-                              <div
-                                className={`d-flex justify-content-start align-items-center`}
-                                style={{ minHeight: "230px" }}
-                              >
-                                <p className={`${Styles.tablenodata}`}>
-                                  No Data Found
-                                </p>
+                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
                               </div>
                             </td>
                             <td></td>
@@ -642,177 +599,351 @@ function Dashboard({ dashboardData }) {
                 </div>
               </div>
             </div>
-  
-            <div className="my-5">
-              <div className={`row mt-1 justify-between ${Styles.topPerform2}`}>
-                <div className={`col-lg-6 col-sm-12 ${Styles.top_perform1}`} >
-                  <p className={Styles.Tabletext}>Top Performing Accounts</p>
-                  <div className="row">
-                    {/* TOP PERFORMANCE */}
-                    {dashboardRelatedData?.performance?.data?.map((ele, index) => {
-                      if (index < 4) {
-                        return (
-                          <div className="col-lg-6 col-md-6 col-sm-12 ">
-                            <div
-                              className={Styles.top_perform}
-                              onClick={() => {
-                                setModalOpen(true);
-                                setBrandData(ele.ManufacturerList)
-                                console.log("kkkkk",ele);
-                                localStorage.setItem("Account", ele.Name);
-                                localStorage.setItem("AccountId__c", ele.AccountId);
-                              }}
-                              id={index}
-                            >
-                              <div className={Styles.top_accnew}>
-                                <p className={Styles.top_accounttext}>{ele.Name}</p>
+            {/* Yearly SALESBYREP */}
+            <div className="col-lg-6 my-2">
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Year till date(YTD): Sales By Rep</p>
+                <div className={Styles.goaltable}>
+                  <div className="">
+                    <div className={Styles.table_scroll}>
+                      <table className="table table-borderless ">
+                        <thead>
+                          <tr className={Styles.tablerow}>
+                            <th scope="col" className="ps-3">
+                              Opportunity Owner
+                            </th>
+                            <th scope="col">Sale</th>
+                            <th scope="col">Sale Target</th>
+                            <th scope="col">Sale Diff</th>
+                          </tr>
+                        </thead>
+
+                        {Yearlydataa ? (
+                          <tbody>
+                            {Yearlydataa?.map((e) => {
+                              return (
+                                <tr key={e}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
+                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                  </td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.target) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.target - e.total.revenue) / 1000).toFixed(0)}K</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        ) : (
+                          <tbody>
+                            <td></td>
+                            <td>
+                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
                               </div>
-  
-                              <div className={` ${Styles.scrollbar}`}>
-                                {ele.ManufacturerList.map((itemm) => {
-                                  const bgcolor = bgColors[itemm.Name];
-                                  return <span className={`${Styles.account} ${Styles[bgcolor]}`}>{itemm.Name}</span>;
-                                })}
-                              </div>
-                              
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                </div>
-                <ModalPage open={modalOpen} onClose={() => setModalOpen(false)} content={<SelectBrandModel brands={brandData} onClose={() => setModalOpen(false)} />} />
-                <div className="col-lg-6 col-sm-12" style={{ width: "48%" }}>
-                  <p className={Styles.Tabletext1}>Low Performing Accounts</p>
-                  <div className="row">
-                    {/* LOW PERFORMANCE */}
-                    {lowPerformanceArray?.map((ele, index) => {
-                      if (index < 4) {
-                        return (
-                          <div className="col-lg-6 col-md-6 col-sm-12">
-                            <div className={Styles.top_perform2}  onClick={() => {
-                                setModalOpen(true);
-                                setBrandData(ele.ManufacturerList);
-                                localStorage.setItem("Account", ele.Name);
-                                localStorage.setItem("AccountId__c", ele.AccountId);
-                              }}>
-                              <div className={Styles.top_account}>
-                                <p className={Styles.top_accounttext}>{ele.Name}</p>
-                              </div>
-  
-                              <div className={` ${Styles.scrollbar}`}>
-                                {ele.ManufacturerList.map((item) => {
-                                  const bgcolor = bgColors[item.Name];
-                                  return <span className={`${Styles.account22} ${Styles[bgcolor]}`}>{item.Name}</span>;
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-  
-            <div className="row my-3">
-              <div className="col-lg-7">
-                <p className={Styles.Tabletext}>Sales By Brand</p>
-  
-                <div className={Styles.donuttop}>
-                  <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Ordered</p>
-                  <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
-                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
-                </div>
-              </div>
-              <div className="col-lg-5">
-                <p className={Styles.Tabletext}>Your Sales Performance Score in 2023</p>
-                <div className={Styles.donuttop1}>
-                  <div className="container">
-                    <p className={`text-end ${Styles.Tabletxt}`}>
-                      Your Target: <span className={Styles.Tabletext_head}>300k</span>
-                    </p>
-                    <p className={`text-end ${Styles.Tabletxt1}`}>
-                      Achieved Sales: <span className={Styles.Tabletext_head}>285k</span>
-                    </p>
-                    <div className={Styles.donutbox}>
-                      <PieChart width={400} height={400}>
-                        <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
-                          {needle_data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        {needle(value, salesByBrandData, cx, cy, iR, oR, "#000000")}
-                      </PieChart>
+                            </td>
+                            <td></td>
+                          </tbody>
+                        )}
+                      </table>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-  
-            <div className="row mt-2 g-4">
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className={Styles.dashbottom}>
-                  <div className={`text-center  ${Styles.active}`}>
-                    <img src={img1} alt="" className={`text-center ${Styles.iconactive}`} />
-                  </div>
-                  <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>ACTIVE RETAILERS</p>
-                    <h1 className={`text-end ${Styles.activetext1}`}>06</h1>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className={Styles.dashbottom}>
-                  <div className={`text-center  ${Styles.active}`}>
-                    <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
-                  </div>
-                  <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>GROWTH 2022 VS 2023</p>
-                    <h1 className={`text-end ${Styles.activetext1}`}>
-                      78<span>%</span>
-                    </h1>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className={Styles.dashbottom}>
-                  <div className={`text-center  ${Styles.active}`}>
-                    <img src={img3} alt="" className={`text-center ${Styles.iconactive3}`} />
-                  </div>
-                  <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
-                    <h1 className={`text-end ${Styles.activetext1}`}>135K</h1>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className={Styles.dashbottom}>
-                  <div className={`text-center  ${Styles.active}`}>
-                    <img src={img4} alt="" className={`text-center ${Styles.iconactive4}`} />
-                  </div>
-                  <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
-                    <h1 className={`text-end ${Styles.activetext1}`}>$680K</h1>
+          </div>
+          <div className="row justify-between ">
+            {/* monthly data goal by brand*/}
+            <div className="col-lg-6 col-sm-12 my-2" >
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Month till date(MTD): Goal by Brand</p>
+                <div className={Styles.goaltable}>
+                  <div className={Styles.table_scroll}>
+                    <table className="table table-borderless ">
+                      <thead>
+                        <tr className={Styles.tablerow}>
+                          <th className="ps-3">Manufacturer</th>
+                          {/* <th>Total Order</th> */}
+                          <th>Sale</th>
+                          <th>Sale Target</th>
+                          <th>Sale Diff</th>
+                        </tr>
+                      </thead>
+                      <tbody className={Styles.tbdy}>
+                        {true ? <>
+                          {tabledata.length ? (
+                            tabledata?.map((e) => {
+                              return (
+                                <tr key={e}>
+                                  <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
+                                  {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
+                                  <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number((e.target - e.sale || 0)) / 1000).toFixed(0)}K</td>
+                                </tr>
+                              );
+                            })
+                          ) : (
+                            <tr>
+                              <td className={` ps-3 ${Styles.tabletd}`}>No data Found.</td>
+                            </tr>
+                          )}</> : (<>
+                            <tr>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              {/* <ContentLoader/> */}
+                            </tr>
+                            <tr>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              {/* <ContentLoader/> */}
+                            </tr>
+                          </>)}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
-  
-            <div className="row mt-5">
-              <div className="">
-                <p className={Styles.Tabletext}>Total Sale By Brand</p>
-                <div className={Styles.graphmain}>
-                  <Chart options={dataa.options} series={dataa.series} type="area" width="100%" height="100%" />
+            {/* leads by brand*/}
+            <div className="col-lg-6 col-sm-12 my-2 ">
+              <div className={Styles.DashboardWidth}>
+                <p className={Styles.Tabletext}>Leads by Brand</p>
+                <div className={Styles.goaltable1}>
+                  <div className="">
+                    <table className="table table-borderless mt-2">
+                      <thead>
+                        <tr className={Styles.tablerow}>
+                          <th className="ps-3">Manufacturer</th>
+                          <th>Received</th>
+                          <th>Converted</th>
+                        </tr>
+                      </thead>
+
+                      {leadsbybrand == true ? (
+                        <tbody className="position-relative">
+                          {leadsbybrand.map((element) => {
+                            return (
+                              <tr key={element}>
+                                <td className={` ps-3 ${Styles.tabletd}`}>{element.ManufacturerName}</td>
+                                <td className={Styles.tabletd}>{element.received}</td>
+                                <td className={Styles.tabletd}>{element.converted}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          <td></td>
+                          <td>
+                            <div
+                              className={`d-flex justify-content-start align-items-center`}
+                              style={{ minHeight: "230px" }}
+                            >
+                              <p className={`${Styles.tablenodata}`}>
+                                No Data Found
+                              </p>
+                            </div>
+                          </td>
+                          <td></td>
+                        </tbody>
+                      )}
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </>
-    );
+
+          <div className="my-5">
+            <div className={`row mt-1 justify-between ${Styles.topPerform2}`}>
+              <div className={`col-lg-6 col-sm-12 ${Styles.top_perform1}`} >
+                <p className={Styles.Tabletext}>Top Performing Accounts</p>
+                <div className="row">
+                  {/* TOP PERFORMANCE */}
+                  {dashboardRelatedData?.performance?.data?.map((ele, index) => {
+                    if (index < 4) {
+                      return (
+                        <div className="col-lg-6 col-md-6 col-sm-12 ">
+                          <div
+                            className={Styles.top_perform}
+                            onClick={() => {
+                              setModalOpen(true);
+                              setBrandData(ele.ManufacturerList)
+                              console.log("kkkkk", ele);
+                              localStorage.setItem("Account", ele.Name);
+                              localStorage.setItem("AccountId__c", ele.AccountId);
+                            }}
+                            id={index}
+                          >
+                            <div className={Styles.top_accnew}>
+                              <p className={Styles.top_accounttext}>{ele.Name}</p>
+                            </div>
+
+                            <div className={` ${Styles.scrollbar}`}>
+                              {ele.ManufacturerList.map((itemm) => {
+                                const bgcolor = bgColors[itemm.Name];
+                                return <span className={`${Styles.account} ${Styles[bgcolor]}`}>{itemm.Name}</span>;
+                              })}
+                            </div>
+
+                          </div>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              </div>
+              <ModalPage open={modalOpen} onClose={() => setModalOpen(false)} content={<SelectBrandModel brands={brandData} onClose={() => setModalOpen(false)} />} />
+              <div className="col-lg-6 col-sm-12" style={{ width: "48%" }}>
+                <p className={Styles.Tabletext1}>Low Performing Accounts</p>
+                <div className="row">
+                  {/* LOW PERFORMANCE */}
+                  {lowPerformanceArray?.map((ele, index) => {
+                    if (index < 4) {
+                      return (
+                        <div className="col-lg-6 col-md-6 col-sm-12">
+                          <div className={Styles.top_perform2} onClick={() => {
+                            setModalOpen(true);
+                            setBrandData(ele.ManufacturerList);
+                            localStorage.setItem("Account", ele.Name);
+                            localStorage.setItem("AccountId__c", ele.AccountId);
+                          }}>
+                            <div className={Styles.top_account}>
+                              <p className={Styles.top_accounttext}>{ele.Name}</p>
+                            </div>
+
+                            <div className={` ${Styles.scrollbar}`}>
+                              {ele.ManufacturerList.map((item) => {
+                                const bgcolor = bgColors[item.Name];
+                                return <span className={`${Styles.account22} ${Styles[bgcolor]}`}>{item.Name}</span>;
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row my-3">
+            <div className="col-lg-7">
+              <p className={Styles.Tabletext}>Sales By Brand</p>
+
+              <div className={Styles.donuttop}>
+                <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Ordered</p>
+                <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
+                <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
+              </div>
+            </div>
+            <div className="col-lg-5">
+              <p className={Styles.Tabletext}>Your Sales Performance Score in 2023</p>
+              <div className={Styles.donuttop1}>
+                <div className="container">
+                  <p className={`text-end ${Styles.Tabletxt}`}>
+                    Your Target: <span className={Styles.Tabletext_head}>300k</span>
+                  </p>
+                  <p className={`text-end ${Styles.Tabletxt1}`}>
+                    Achieved Sales: <span className={Styles.Tabletext_head}>285k</span>
+                  </p>
+                  <div className={Styles.donutbox}>
+                    <PieChart width={400} height={400}>
+                      <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
+                        {needle_data.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      {needle(value, salesByBrandData, cx, cy, iR, oR, "#000000")}
+                    </PieChart>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row mt-2 g-4">
+            <div className="col-lg-3 col-md-6 col-sm-6">
+              <div className={Styles.dashbottom}>
+                <div className={`text-center  ${Styles.active}`}>
+                  <img src={img1} alt="" className={`text-center ${Styles.iconactive}`} />
+                </div>
+                <div className="">
+                  <p className={`text-end ${Styles.activetext}`}>ACTIVE RETAILERS</p>
+                  <h1 className={`text-end ${Styles.activetext1}`}>06</h1>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-6">
+              <div className={Styles.dashbottom}>
+                <div className={`text-center  ${Styles.active}`}>
+                  <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
+                </div>
+                <div className="">
+                  <p className={`text-end ${Styles.activetext}`}>GROWTH 2022 VS 2023</p>
+                  <h1 className={`text-end ${Styles.activetext1}`}>
+                    78<span>%</span>
+                  </h1>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-6">
+              <div className={Styles.dashbottom}>
+                <div className={`text-center  ${Styles.active}`}>
+                  <img src={img3} alt="" className={`text-center ${Styles.iconactive3}`} />
+                </div>
+                <div className="">
+                  <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
+                  <h1 className={`text-end ${Styles.activetext1}`}>135K</h1>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-6">
+              <div className={Styles.dashbottom}>
+                <div className={`text-center  ${Styles.active}`}>
+                  <img src={img4} alt="" className={`text-center ${Styles.iconactive4}`} />
+                </div>
+                <div className="">
+                  <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
+                  <h1 className={`text-end ${Styles.activetext1}`}>$680K</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row mt-5">
+            <div className="">
+              <p className={Styles.Tabletext}>Total Sale By Brand</p>
+              <div className={Styles.graphmain}>
+                <Chart options={dataa.options} series={dataa.series} type="area" width="100%" height="100%" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default Dashboard;

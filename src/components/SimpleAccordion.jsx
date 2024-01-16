@@ -37,7 +37,7 @@ const SimpleAccordion = ({ children, title, onChange }) => {
           <path
             d="M21.2847 17.1456L14.1897 10.2871L7.09467 17.1456"
             stroke="#403A35"
-            stroke-width="2"
+            strokeWidth="2"
           />
         </svg>
       </label>
