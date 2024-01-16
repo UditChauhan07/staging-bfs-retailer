@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import Page from "../pages/page.module.css";
 
 export const FilterItem = ({ label, options, onChange, minWidth, value }) => {
-  const [selectedOption, setSelectedOption] = useState();
   const [isOpen, setIsOpen] = useState(false);
 
   return (

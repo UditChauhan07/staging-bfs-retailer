@@ -522,7 +522,6 @@ function Dashboard({ dashboardData }) {
     ?.slice(0)
     .reverse()
     .map((ele) => ele);
-
   const changeMonthHandler = (e) => {
     setIsLoading(false)
     let { value } = e.target;

@@ -12,9 +12,9 @@ const MobileHeader = () => {
           <div className="dropdown">
             <div className={`dropdown-toggle ${styles["dropdown-toggle"]} ${styles.AfterRemove}`} type="button" data-bs-toggle="dropdown">
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-  <path d="M7.08301 9.9165H26.9163" stroke="black" stroke-width="2" stroke-linecap="round"/>
-  <path d="M7.08301 17H21.2497" stroke="black" stroke-width="2" stroke-linecap="round"/>
-  <path d="M7.08301 24.0835H15.583" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  <path d="M7.08301 9.9165H26.9163" stroke="black" strokeWidth="2" stroke-linecap="round"/>
+  <path d="M7.08301 17H21.2497" stroke="black" strokeWidth="2" stroke-linecap="round"/>
+  <path d="M7.08301 24.0835H15.583" stroke="black" strokeWidth="2" stroke-linecap="round"/>
 </svg>
             </div>
             <ul className="dropdown-menu" style={{ minWidth: "max-content" }}>
