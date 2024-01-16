@@ -181,6 +181,23 @@ export async function getOrderList({ user, month }) {
     return data.data;
   }
 }
+export async function getOrderDetailsBasedId({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", rawData.key);
+  bodyContent.append("opportunity_id", rawData.id);
+
+  let response = await fetch(url+"0DS68FOD7s", { 
+    method: "POST",
+    body: bodyContent,
+    headers: headersList
+  });
+  let data = JSON.parse(await response.text());
+  return data.data;
+}
 
 export async function getDashboardata({ user }) {
   let headersList = {};

@@ -5,7 +5,7 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
-import { supportShare } from "../../../lib/store";
+import { getOrderDetailsBasedId, supportShare } from "../../../lib/store";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -13,12 +13,18 @@ function MyBagFinal() {
 
   const navigate = useNavigate();
 
+  const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
+  const Key = JSON.parse(localStorage.getItem("Api Data"));
   useEffect(() => {
+    // let rawData = {key:Key.data.access_token,id:OrderId}
+    // getOrderDetailsBasedId({rawData}).then((res)=>{
+    //   console.warn({res});
+    // }).catch((error)=>{
+    //   console.warn({error});
+    // })
     getOrderDetails();
   }, []);
 
-  const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
-  const Key = JSON.parse(localStorage.getItem("Api Data"));
 
   let headersList = {
     Accept: "*/*",
@@ -31,11 +37,9 @@ function MyBagFinal() {
 
   const getOrderDetails = async () => {
     const response = await axios.post(`https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`, BodyContent, headersList);
-    console.log({ response, aa: Key.data.access_token });
     setOrderData(response.data.data);
     setIsLoading(true);
   };
-
   const handleback = () => {
     navigate("/order-list");
   };
@@ -180,9 +184,9 @@ function MyBagFinal() {
 
                   </div>
 
-                  <div className={Styles.ShipBut}>
+                  {true &&<div className={Styles.ShipBut}>
                     <button className="py-1" onClick={() => invoiceHandler()}>INVOICE</button>
-                  </div>
+                  </div>}
                 </div>
               </div>
             </div>

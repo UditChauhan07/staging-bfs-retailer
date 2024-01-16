@@ -68,7 +68,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                   </div>
                 </div>
 
-                <Link to={"/order-list"}>
+                <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <MarketingSupportIcon width={42} height={42} />
@@ -79,9 +79,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                       <p>Elevate Your Marketing with Proactive Solutions.</p>
                     </div>
                   </div>
-                </Link>
+                </div>
 
-                <Link to={"/order-list"}>
+                <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <DefaultSupportIcon width={42} height={42} />
@@ -92,9 +92,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                       <p>Empowering Solutions for Effective Management</p>
                     </div>
                   </div>
-                </Link>
+                </div>
 
-                <Link to={"/order-list"}>
+                <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <DIFTestIcon width={42} height={42} />
@@ -105,9 +105,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                       <p>Empowering Solutions for Effective Management</p>
                     </div>
                   </div>
-                </Link>
+                </div>
 
-                <Link to={"/order-list"}>
+                <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <DisplayIssuesIcon width={42} height={42} />
@@ -118,7 +118,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                       <p>Empowering Solutions for Effective Management</p>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             </div>
 
