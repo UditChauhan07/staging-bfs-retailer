@@ -27,7 +27,7 @@ function FullQuearyDetail({ data }) {
                     key: user.x_access_token,
                     comment: {
                         ParentId: data.Id,
-                        CommentBody: comment
+                        CommentBody: `${data.salesRepName} Wrote:\n${comment}`
                     }
                 }
                 postSupportComment({ rawData }).then((response) => {
@@ -73,19 +73,18 @@ function FullQuearyDetail({ data }) {
                             <div className={Detail.HeightGiven}>
                                 {data.CaseComments && data.CaseComments.records.length > 0 && <>
                                     {data.CaseComments.records.map((activity, index) => {
-                                        console.log({activity});
                                         const itemDate = new Date(activity.CreatedDate);
+                                        let desc = activity?.CommentBody.split("Wrote:\n");
+                                        console.log({ desc });
                                         return (<div className={Detail.ActivityBox}>
 
                                             <div className={`${Detail.ActivityProfile} ${activity?.CreatedById != "0053b00000DgEVEAA3" && Detail.ActiDark}`}>
                                                 <h6>{getStrCode(activity?.CreatedByname)}</h6>
                                             </div>
                                             <div className={Detail.ActivityContentImform}>
-                                                {console.log({ activity })}
-                                                <h2>BFS Portal</h2>
-                                                <p>Wrote By: <b>{activity?.CreatedByname}</b>,</p>
-                                                <p className={Detail.Para2} dangerouslySetInnerHTML={{ __html: activity?.CommentBody }} />
-
+                                                <h2>{activity?.CreatedByname}</h2>
+                                                {desc.length > 1 ? <><p>{desc[0]} Wrote:</p>
+                                                    <p className={Detail.Para2} dangerouslySetInnerHTML={{ __html: desc[1] }} /></> : <p className={Detail.Para2} dangerouslySetInnerHTML={{ __html: activity?.CommentBody }} />}
                                             </div>
                                             <div className={Detail.ActivityDate}>
                                                 <p>{itemDate.getDate()}/{monthNames[itemDate.getMonth()]}/{itemDate.getFullYear()} {formatAMPM(itemDate)}</p>
