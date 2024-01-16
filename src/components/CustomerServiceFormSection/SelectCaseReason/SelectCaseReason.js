@@ -149,16 +149,17 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   };
   return (
     <>
-      <div className="px-[68px] pb-[30px] pt-[30px] max-w-[900px]">
-        <section>
+      <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
           <div className="d-flex align-items-center justify-content-end gap-5">
             <button type="button" onClick={onClose}>
               <CloseButton />
             </button>
           </div>
+        <section className={` ${Styles.fadeInUp} `}>
           <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] mb-[20px]">{recordType.name}</h1>
 
           <div className={Styles.BrandInRadio}>
+            <p className={Styles.CaseReason}>Case Reason</p>
             <div className={Styles.ModalResponsive}>
               {Object.values(reasons)?.map((reason, index) => {
                 return (
@@ -180,7 +181,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           </div>
           <hr style={{ border: "1px dashed #D5D9D9" }}></hr>
           {step >= 1 && (
-            <div>
+            <div className={`${Styles.delay} ${Styles.fadeInUp} `} >
               <div className={Styles.selectDiv}>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
                   <select
@@ -220,7 +221,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             </div>
           )}
           {step == 2 && (
-            <div>
+            <div className={Styles.fadeInUp}>
               <div style={{ width: "100%" }}>
                 {reason == "Charges" && (
                   <div className={Styles.labelAmountDiv}>

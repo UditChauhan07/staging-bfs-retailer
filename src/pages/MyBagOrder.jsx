@@ -5,7 +5,7 @@ import AppLayout from "../components/AppLayout";
 function MyBagOrder(props) {
   return (
     <AppLayout>
-      <div className="col-10">
+      <div className="col-12">
         <MyBagFinal />
       </div>
     </AppLayout>

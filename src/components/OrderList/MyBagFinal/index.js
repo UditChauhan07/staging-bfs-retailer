@@ -78,7 +78,7 @@ function MyBagFinal() {
   return (
     <div>
       <section>
-        <div className="container mt-4">
+        <div className=" mt-4">
           <div>
             <div className={Styles.MyBagFinalTop}>
               <div className={Styles.MyBagFinalRight}>
@@ -109,8 +109,8 @@ function MyBagFinal() {
                     <h3>Order Details ({OrderData?.OpportunityLineItems?.length})</h3>
                     <div className={Styles.scrollP}>
                       <div className={Styles.MainInner}>
-                        <div className={Styles.Mainbox}>
-                          <div className={Styles.Mainbox1M}>
+                      
+                        
                             <div className={Styles.Mainbox3}>
                               {OrderData.OpportunityLineItems?.length > 0 ? (
                                 OrderData.OpportunityLineItems?.map((item) => {
@@ -143,8 +143,8 @@ function MyBagFinal() {
                                 <>No Products.</>
                               )}
                             </div>
-                          </div>
-                        </div>
+                          
+                        
                       </div>
 
                       <div className={Styles.TotalPricer}>
