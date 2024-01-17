@@ -8,13 +8,22 @@ import * as XLSX from "xlsx";
 import * as FileSaver from "file-saver";
 import SalesReportTable from "../../components/sales report table/SalesReportTable";
 import Loading from "../../components/Loading";
+import FilterDate from "../../components/FilterDate";
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
 const SalesReport = () => {
   const { data: manufacturers } = useManufacturer();
-  const salesReportApi = useSalesReport();
+  let currentDate = new Date().toJSON().slice(0, 10);
+  const subtract6Months = (date) => {
+    date.setMonth(date.getMonth() - 6);
+    return date.toJSON().slice(0, 10);
+  };
+  let past6monthDate = subtract6Months(new Date());
+  const [startDate, setStartDate] = useState(past6monthDate);
+  const [endDate, setEndDate] = useState(currentDate);
+  const salesReportApi = useSalesReport(startDate, endDate);
 
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [highestOrders, setHighestOrders] = useState(true);
@@ -26,7 +35,7 @@ const SalesReport = () => {
     });
 
     if (highestOrders) {
-       filtered = filtered?.map((ele) => {
+      filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.sort((a, b) => b.totalOrders - a.totalOrders);
         return {
           ...ele,
@@ -88,10 +97,11 @@ const SalesReport = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Sales Report ${new Date()}` + fileExtension);
   };
-
   const resetFilter = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
+    setStartDate(past6monthDate);
+    setEndDate(currentDate);
   };
 
   const navigate = useNavigate();
@@ -100,10 +110,10 @@ const SalesReport = () => {
     const result = await salesReportApi.salesReportData();
     setSalesReportData(result.data.data);
   };
-  //console.log("salesReportData", salesReportData);
-  // api call
+  console.log("salesReportData", salesReportData);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
+
     if (userData) {
       getSalesData();
     } else {
@@ -141,6 +151,25 @@ const SalesReport = () => {
             ]}
             onChange={(value) => setHighestOrders(value)}
           />
+          {/* First Calender Filter-- start date */}
+          <FilterDate
+            onChange={(e) => {
+              setStartDate(e.target.value);
+            }}
+            value={startDate}
+            label={"start date : "}
+            minWidth="95px"
+          />
+          {/* Second Calender Filter -- end date */}
+          <FilterDate
+            onChange={(e) => {
+              setEndDate(e.target.value);
+            }}
+            value={endDate}
+            label={"end date :"}
+            minWidth="95px"
+          />
+
           <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
             CLEAR ALL
           </button>
