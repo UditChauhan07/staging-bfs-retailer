@@ -306,7 +306,7 @@ function Dashboard({ dashboardData }) {
     setIsLoaded(false);
     GetAuthData()
       .then((user) => {
-        user.Sales_Rep__c = "00530000005AdvsAAC";
+        // user.Sales_Rep__c = "00530000005AdvsAAC";
         if (headers) {
           user.headers = headers;
         }
