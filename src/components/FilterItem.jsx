@@ -3,7 +3,6 @@ import Page from "../pages/page.module.css";
 
 export const FilterItem = ({ label, options, onChange, minWidth, value }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log("value", value);
   return (
     <div className={`relative filterItem ${Page.FilterNoneClass}`}>
       <div
