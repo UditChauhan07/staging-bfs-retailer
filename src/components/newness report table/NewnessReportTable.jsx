@@ -25,12 +25,14 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
                     <th className={`${styles.th} ${styles.stickyThirdColumnHeading1}`}>Sales Rep</th>
                     <th className={`${styles.month} ${styles.stickyMonth}`}>Account Status</th>
                     {newnessData?.header?.map((ele, index) => {
-                      length = ele?.length > 30 ? (ele?.length >= 38 ? ele?.length * 7.5 : ele?.length * 8) : ele?.length * 10;
+                      length = ele?.name?.length > 30 ? (ele?.name?.length >= 38 ? ele?.name?.length * 7.5 : ele?.name?.length * 8) : ele?.name?.length * 12;
                       return (
                         // ele?.length >= 45 ? ele?.length * 6 : ele?.length * 6
                         <>
                           <th key={index} className={`${styles.month} ${styles.stickyMonth}`} style={{ minWidth: `${length}px` }}>
-                            {ele}
+                            {ele.name}<br/>
+                          <small style={{fontSize:'10px'}}>on Counter Date: {ele.launchDate}</small><br/>
+                          <small style={{fontSize:'10px'}}>Shipment Date: {ele.shipDate}</small>
                           </th>
                         </>
                       );
