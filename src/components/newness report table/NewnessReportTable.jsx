@@ -52,7 +52,7 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
                           return (
                             <>
                               <td className={`${styles.td}`} key={innerIndex}>
-                                {handleTableDataDisplay(ele[item][dataDisplay === "quantity" ? "qty" : dataDisplay])}
+                                {handleTableDataDisplay(ele[item.name][dataDisplay === "quantity" ? "qty" : dataDisplay])}
                               </td>
                             </>
                           );
