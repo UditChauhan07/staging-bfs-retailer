@@ -175,11 +175,7 @@ export async function getOrderList({ user, month }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
-    return data.data;
-  }
+  return data.data;
 }
 export async function getOrderDetailsBasedId({ rawData }) {
   let headersList = {
