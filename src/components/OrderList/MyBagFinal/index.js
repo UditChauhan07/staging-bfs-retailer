@@ -5,7 +5,7 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
-import { getOrderDetailsBasedId, supportShare } from "../../../lib/store";
+import { getOrderDetailsBasedId, getOrderDetailsInvoice, supportShare } from "../../../lib/store";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -33,7 +33,11 @@ function MyBagFinal() {
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-  console.log("dede", Key.data.access_token, OrderId);
+  getOrderDetailsInvoice({rawData:{key:Key.data.access_token,id:OrderId}}).then((response)=>{
+    console.log({response});
+  }).catch((error)=>{
+    console.error({error});
+  })
   const getOrderDetails = async () => {
     const response = await axios.post(
       `https://dev.beautyfashionsales.com/beauty/0DS68FOD7s`,
