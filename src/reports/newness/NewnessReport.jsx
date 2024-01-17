@@ -25,21 +25,22 @@ const NewnessReport = () => {
     toDate: currentDate,
     fromDate: past6monthDate.toJSON().slice(0, 10),
     dataDisplay: "quantity",
-    // selectedManufacturer: "BOBBI BROWN",
   };
   const [filter, setFilter] = useState(initialValues);
-  const originalApiData = useNewnessReport(filter);
-  console.log({originalApiData});
+  const originalApiData = useNewnessReport();
+  // console.log({ originalApiData });
   const { data: manufacturers, isLoading, error } = useManufacturer();
-  const [newnessData, setNewnessData] = useState(originalApiData || {});
+  const [newnessData, setNewnessData] = useState({});
   const [loading, setLoading] = useState(false);
   // if (manufacturers?.status !== 200) {
   //   // DestoryAuth();
-  //   setNewnessData([]);
   // }
-
-  const resetFilter = () => {
+  const resetFilter = async() => {
+    setLoading(true);
     setFilter(initialValues);
+    const result = await originalApiData.fetchNewnessApiData(initialValues);
+    setNewnessData(result);
+    setLoading(false);
   };
   const PriceDisplay = (value) => {
     return `$${Number(value).toFixed(2)}`;
@@ -70,7 +71,7 @@ const NewnessReport = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Newness Report ${new Date()}` + fileExtension);
   };
-  console.log(filter);
+  // console.log(filter);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
     if (!userData) {
@@ -78,10 +79,14 @@ const NewnessReport = () => {
     }
   }, []);
   useEffect(() => {
+    sendApiCall();
+  }, []);
+  const sendApiCall = async () => {
     setLoading(true);
-    setNewnessData(originalApiData);
+    const result = await originalApiData.fetchNewnessApiData(filter);
+    setNewnessData(result);
     setLoading(false);
-  }, [filter,originalApiData]);
+  };
   return (
     <AppLayout
       filterNodes={
@@ -129,16 +134,25 @@ const NewnessReport = () => {
             minWidth="95px"
           />
           {/* Second Calender Filter -- to date */}
-          <FilterDate  onChange={(e) => {
+          <FilterDate
+            onChange={(e) => {
               setFilter((prev) => ({
                 ...prev,
                 toDate: e.target.value,
               }));
-            }} value={filter.toDate} label={"end date :"} minWidth="95px" />
-
-          <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
-            CLEAR ALL
-          </button>
+            }}
+            value={filter.toDate}
+            label={"end date :"}
+            minWidth="95px"
+          />
+          <div className="d-flex gap-3">
+            <button className="border px-2.5 py-1 leading-tight" onClick={sendApiCall}>
+              APPLY
+            </button>
+            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
+              CLEAR ALL
+            </button>
+          </div>
           <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
             EXPORT
           </button>

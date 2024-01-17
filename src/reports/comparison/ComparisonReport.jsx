@@ -9,16 +9,18 @@ import { FilterItem } from "../../components/FilterItem";
 import { useManufacturer } from "../../api/useManufacturer";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
+const date = new Date();
 const ComparisonReport = () => {
   const initialValues = {
     ManufacturerId__c: "a0O3b00000p7zqKEAQ",
-    month: 6,
-    year: 2023,
+    month: date.getMonth() + 1,
+    year: date.getFullYear(),
   };
   const { data: manufacturers } = useManufacturer();
   const [filter, setFilter] = useState(initialValues);
-  const originalApiData = useComparisonReport(filter);
-  const [apiData, setApiData] = useState(originalApiData || {});
+  const originalApiData = useComparisonReport();
+  const [apiData, setApiData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   //csv Data
   let csvData = [];
@@ -34,9 +36,9 @@ const ComparisonReport = () => {
     });
   }
   useEffect(() => {
-    setApiData(originalApiData);
-  }, [originalApiData, filter]);
-  console.log(apiData);
+    sendApiCall();
+  }, []);
+
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(csvData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
@@ -44,10 +46,19 @@ const ComparisonReport = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Comparison Report ${new Date()}` + fileExtension);
   };
-  const resetFilter = () => {
+  const resetFilter = async () => {
+    setIsLoading(true);
+    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+    setApiData(result);
     setFilter(() => initialValues);
+    setIsLoading(false);
   };
-  console.log(filter);
+  const sendApiCall = async () => {
+    setIsLoading(true);
+    const result = await originalApiData.fetchComparisonReportAPI(filter);
+    setApiData(result);
+    setIsLoading(false);
+  };
   return (
     <AppLayout
       filterNodes={
@@ -62,12 +73,11 @@ const ComparisonReport = () => {
             }))}
             onChange={(value) => setFilter((prev) => ({ ...prev, ManufacturerId__c: value }))}
           />
-          {console.log({aa:originalApiData?.date?.yearList})}
           <FilterItem
             minWidth="220px"
             label="Months"
             value={filter.month}
-            options={originalApiData?.date?.monthList?.map((month) => ({
+            options={apiData?.date?.monthList?.map((month) => ({
               label: month?.name,
               value: month.value,
             }))}
@@ -77,23 +87,27 @@ const ComparisonReport = () => {
             minWidth="220px"
             label="Year"
             value={filter.year}
-            options={originalApiData?.date?.yearList?.map((year) => ({
+            options={apiData?.date?.yearList?.map((year) => ({
               label: year?.name,
               value: year.value,
             }))}
             onChange={(value) => setFilter((prev) => ({ ...prev, year: value }))}
           />
-
-          <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
-            CLEAR ALL
-          </button>
+          <div className="d-flex gap-3">
+            <button className="border px-2.5 py-1 leading-tight" onClick={sendApiCall}>
+              APPLY
+            </button>
+            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
+              CLEAR ALL
+            </button>
+          </div>
           <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
             EXPORT
           </button>
         </>
       }
     >
-      {originalApiData?.status === 200 && apiData ? <ComparisonReportTable comparisonData={apiData} /> : <Loading height={"70vh"} />}
+      {!isLoading ? <ComparisonReportTable comparisonData={apiData} /> : <Loading height={"70vh"} />}
     </AppLayout>
   );
 };
