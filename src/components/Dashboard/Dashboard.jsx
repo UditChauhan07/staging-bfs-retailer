@@ -9,107 +9,111 @@ import img4 from "./Images/Group1.png";
 import img5 from "./Images/Rectangle 304.png";
 import { PieChart, Pie, Cell } from "recharts";
 import { useNavigate } from "react-router-dom";
-import { GetAuthData, getDashboardata } from "../../lib/store";
+import { AuthCheck, GetAuthData, getDashboardata } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import SelectBrandModel from "../My Retailers/SelectBrandModel/SelectBrandModel";
 import ModalPage from "../Modal UI/index";
+import AppLayout from "../AppLayout";
+import { FilterItem } from "../FilterItem";
 const monthList = [
   {
     name: "January - 2023",
-    value: "2023|1"
+    value: "2023|1",
   },
   {
     name: "February - 2023",
-    value: "2023|2"
-  }, {
+    value: "2023|2",
+  },
+  {
     name: "March - 2023",
-    value: "2023|3"
+    value: "2023|3",
   },
   {
     name: "April - 2023",
-    value: "2023|4"
+    value: "2023|4",
   },
   {
     name: "May - 2023",
-    value: "2023|5"
+    value: "2023|5",
   },
   {
     name: "June - 2023",
-    value: "2023|6"
+    value: "2023|6",
   },
   {
     name: "July - 2023",
-    value: "2023|7"
+    value: "2023|7",
   },
   {
     name: "August - 2023",
-    value: "2023|8"
+    value: "2023|8",
   },
   {
     name: "September - 2023",
-    value: "2023|9"
+    value: "2023|9",
   },
   {
     name: "October - 2023",
-    value: "2023|10"
+    value: "2023|10",
   },
   {
     name: "November - 2023",
-    value: "2023|11"
+    value: "2023|11",
   },
   {
     name: "December - 2023",
-    value: "2023|12"
+    value: "2023|12",
   },
   {
     name: "January - 2024",
-    value: "2024|1"
+    value: "2024|1",
   },
   {
     name: "February - 2024",
-    value: "2024|2"
-  }, {
+    value: "2024|2",
+  },
+  {
     name: "March - 2024",
-    value: "2024|3"
+    value: "2024|3",
   },
   {
     name: "April - 2024",
-    value: "2024|4"
+    value: "2024|4",
   },
   {
     name: "May - 2024",
-    value: "2024|5"
+    value: "2024|5",
   },
   {
     name: "June - 2024",
-    value: "2024|6"
+    value: "2024|6",
   },
   {
     name: "July - 2024",
-    value: "2024|7"
+    value: "2024|7",
   },
   {
     name: "August - 2024",
-    value: "2024|8"
+    value: "2024|8",
   },
   {
     name: "September - 2024",
-    value: "2024|9"
+    value: "2024|9",
   },
   {
     name: "October - 2024",
-    value: "2024|10"
+    value: "2024|10",
   },
   {
     name: "November - 2024",
-    value: "2024|11"
+    value: "2024|11",
   },
   {
     name: "December - 2024",
-    value: "2024|12"
+    value: "2024|12",
   },
-]
+];
 const dataa = {
   series: [
     {
@@ -153,15 +157,7 @@ const dataa = {
     dataLabels: {
       enabled: false,
     },
-    colors: [
-      "#ea9999",
-      "#f9cb9c",
-      "#ffe599",
-      "#b6d7a8",
-      "#76a5af",
-      "#6fa8dc",
-      "#d5a6bd",
-    ],
+    colors: ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#76a5af", "#6fa8dc", "#d5a6bd"],
     fill: {
       type: "gradient",
       gradient: {
@@ -171,17 +167,7 @@ const dataa = {
     },
 
     xaxis: {
-      categories: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-      ],
+      categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September"],
     },
     yaxis: {
       title: {
@@ -199,56 +185,6 @@ const dataa = {
   },
 };
 
-// const data = {
-//   series: [44, 55, 41, 17, 35], //static
-
-//   options: {
-//     chart: {
-//       type: "donut",
-//     },
-//     labels: {
-//       show: true,
-//       name: {
-//         show: true,
-//         offsetY: 38,
-//         formatter: () => "out of 553 points",
-//       },
-//     },
-//     plotOptions: {
-//       pie: {
-//         donut: {
-//           labels: {
-//             show: true,
-
-//             total: {
-//               show: true,
-//               showAlways: true,
-//               formatter: function (w) {
-//                 const t = w.globals.seriesTotals;
-//                 const result = t.reduce((a, b) => a + b, 0);
-//                 return (result / 10000).toFixed(1);
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-
-//     responsive: [
-//       {
-//         breakpoint: 480,
-//         options: {
-//           chart: {
-//             width: "100px",
-//           },
-//         },
-//       },
-//     ],
-//     colors: ["#ea9999", "#f9cb9c", "#6fa8dc", "#b6d7a8", "#76a5af"],
-//     labels: ["BY TERRY", "Bobbi Brown", "Bumble and Bumble", "ReVive", "RMS Beauty"],
-//   },
-// };
-
 function Dashboard({ dashboardData }) {
   const bgColors = {
     "Kevyn Aucoin Cosmetics": "KevynAucoinCosmeticsBg",
@@ -261,7 +197,7 @@ function Dashboard({ dashboardData }) {
     "RMS Beauty": "RMSBeautyBg",
     "ESTEE LAUDER": "esteeLauderBg",
   };
-  const [selMonth, setSelMonth] = useState("2024|1")
+  const [selMonth, setSelMonth] = useState("2024|1");
   const [tabledata, settabledata] = useState([]);
   const [leadsbybrand, setleadsbtbrand] = useState([]);
   const [Monthlydataa, setMonthlydata] = useState([]);
@@ -346,14 +282,7 @@ function Dashboard({ dashboardData }) {
     const xp = x0 + length * cos;
     const yp = y0 + length * sin;
 
-    return [
-      <circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />,
-      <path
-        d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`}
-        stroke="#none"
-        fill={color}
-      />,
-    ];
+    return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
@@ -362,20 +291,24 @@ function Dashboard({ dashboardData }) {
 
   useEffect(() => {
     if (localStorage.getItem("Name")) {
-      getDataHandler()
+      getDataHandler();
     } else {
       navigate("/");
     }
   }, []);
 
-
+  useEffect(() => {
+    if (!AuthCheck()) {
+      // navigate("/");
+    }
+  }, []);
   const getDataHandler = (headers = null) => {
-    setIsLoaded(false)
+    setIsLoaded(false);
     GetAuthData()
       .then((user) => {
         user.Sales_Rep__c = "00530000005AdvsAAC";
         if (headers) {
-          user.headers = headers
+          user.headers = headers;
         }
         getDashboardata({ user })
           .then((dashboard) => {
@@ -383,11 +316,9 @@ function Dashboard({ dashboardData }) {
               let dashboardData = JSON.parse(dashboard?.details);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
-                series: Object.values(dashboardData.brandSalesByRep.data).map(
-                  (value) => {
-                    return value.totalOrder;
-                  }
-                ),
+                series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
+                  return value.totalOrder;
+                }),
                 options: {
                   chart: {
                     type: "donut",
@@ -412,9 +343,7 @@ function Dashboard({ dashboardData }) {
                             formatter: function (w) {
                               const t = w.globals.seriesTotals;
                               const result = t.reduce((a, b) => a + b, 0);
-                              return result < 1000
-                                ? result.toFixed(1)
-                                : `${(result / 1000).toFixed(1)}K`;
+                              return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
                             },
                           },
                         },
@@ -432,12 +361,8 @@ function Dashboard({ dashboardData }) {
                       },
                     },
                   ],
-                  colors: getRandomColors(
-                    Object.values(dashboardData.brandSalesByRep.data).length
-                  ),
-                  labels: Object.values(
-                    dashboardData.brandSalesByRep.data
-                  ).map((value) => {
+                  colors: getRandomColors(Object.values(dashboardData.brandSalesByRep.data).length),
+                  labels: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
                     return value.ManufacturerName;
                   }),
                 },
@@ -446,9 +371,7 @@ function Dashboard({ dashboardData }) {
               let filteredAarray = [];
               setIsLoading(true);
               const values = dashboardData;
-              let key = Object.keys(values.brandSalesByRep.data).map(
-                (ele) => ele
-              );
+              let key = Object.keys(values.brandSalesByRep.data).map((ele) => ele);
               let ans = values.brandSalesByRep.raw.map((ele) => {
                 key.map((item) => {
                   if (ele === item) {
@@ -495,7 +418,7 @@ function Dashboard({ dashboardData }) {
                   }
                 });
               });
-              setIsLoaded(true)
+              setIsLoaded(true);
               setleadsbtbrand(leadsdata);
               setMonthlydata(MonthlyData);
               setYearlydata(YearlyData);
@@ -511,7 +434,7 @@ function Dashboard({ dashboardData }) {
       .catch((error) => {
         console.error({ error });
       });
-  }
+  };
   const date = new Date();
   const options = {
     year: "numeric",
@@ -522,33 +445,57 @@ function Dashboard({ dashboardData }) {
     ?.slice(0)
     .reverse()
     .map((ele) => ele);
-  const changeMonthHandler = (e) => {
-    setIsLoading(false)
-    let { value } = e.target;
-    setSelMonth(value)
-    const valuePlit = value.split("|")
+  const changeMonthHandler = (value) => {
+    setIsLoading(false);
+    setSelMonth(value);
+    const valuePlit = value.split("|");
     let month = valuePlit[1] || null;
-    let year = valuePlit[0] || null
-    getDataHandler({ month, year })
-  }
+    let year = valuePlit[0] || null;
+    getDataHandler({ month, year });
+  };
 
   return (
-    <>
+    <AppLayout
+      filterNodes={
+        <>
+          <FilterItem
+            minWidth="220px"
+            label="Month-Year"
+            value={selMonth}
+            options={monthList.map((month) => ({
+              label: month.name,
+              value: month.value,
+            }))}
+            onChange={(value) => {
+              changeMonthHandler(value);
+            }}
+          />
+        </>
+      }
+    >
       {isLoading ? (
         <Loading height="80vh" />
       ) : (
         <div className="">
-          <select className={`mt-3  ${Styles.drpp}`} aria-label="Default select example" onChange={(e) => { changeMonthHandler(e) }}>
+          {/* <select
+            className={`mt-3  ${Styles.drpp}`}
+            aria-label="Default select example"
+            onChange={(e) => {
+              changeMonthHandler(e);
+            }}
+          >
             {monthList.map((month) => {
               return (
-                <option value={month.value} selected={selMonth == month.value}>{month.name}</option>
-              )
+                <option value={month.value} selected={selMonth == month.value}>
+                  {month.name}
+                </option>
+              );
             })}
-          </select>
-          <hr className="w-100" />
-          <div className="row mt-2 justify-between">
+          </select> */}
+          {/* <hr className="w-100" /> */}
+          <div className="row mt-4 justify-between">
             {/* Monthly SALESBYREP */}
-            <div className="col-lg-6 my-2" >
+            <div className="col-lg-6 my-2">
               <div className={Styles.DashboardWidth}>
                 <p className={Styles.Tabletext}>Month till date(MTD): Sales By Rep</p>
                 <div className={Styles.goaltable}>
@@ -576,7 +523,7 @@ function Dashboard({ dashboardData }) {
                                   </td>
                                   <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
                                   <td className={Styles.tabletd}>${(Number(e.total?.target || 0) / 1000).toFixed(0)}K</td>
-                                  <td className={Styles.tabletd}>${(Number((e.total?.target - e.total.revenue) || 0) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total?.target - e.total.revenue || 0) / 1000).toFixed(0)}K</td>
                                 </tr>
                               );
                             })}
@@ -652,7 +599,7 @@ function Dashboard({ dashboardData }) {
           </div>
           <div className="row justify-between ">
             {/* monthly data goal by brand*/}
-            <div className="col-lg-6 col-sm-12 my-2" >
+            <div className="col-lg-6 col-sm-12 my-2">
               <div className={Styles.DashboardWidth}>
                 <p className={Styles.Tabletext}>Month till date(MTD): Goal by Brand</p>
                 <div className={Styles.goaltable}>
@@ -668,39 +615,28 @@ function Dashboard({ dashboardData }) {
                         </tr>
                       </thead>
                       <tbody className={Styles.tbdy}>
-                        {true ? <>
-                          {tabledata.length ? (
-                            tabledata?.map((e) => {
-                              return (
-                                <tr key={e}>
-                                  <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
-                                  {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
-                                  <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
-                                  <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
-                                  <td className={Styles.tabletd}>${(Number((e.target - e.sale || 0)) / 1000).toFixed(0)}K</td>
-                                </tr>
-                              );
-                            })
-                          ) : (
-                            <tr>
-                              <td className={` ps-3 ${Styles.tabletd}`}>No data Found.</td>
-                            </tr>
-                          )}</> : (<>
-                            <tr>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              {/* <ContentLoader/> */}
-                            </tr>
+                        {true ? (
+                          <>
+                            {tabledata.length ? (
+                              tabledata?.map((e) => {
+                                return (
+                                  <tr key={e}>
+                                    <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
+                                    {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
+                                    <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
+                                    <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
+                                    <td className={Styles.tabletd}>${(Number(e.target - e.sale || 0) / 1000).toFixed(0)}K</td>
+                                  </tr>
+                                );
+                              })
+                            ) : (
+                              <tr>
+                                <td className={` ps-3 ${Styles.tabletd}`}>No data Found.</td>
+                              </tr>
+                            )}
+                          </>
+                        ) : (
+                          <>
                             <tr>
                               <td>
                                 <ContentLoader />
@@ -716,7 +652,23 @@ function Dashboard({ dashboardData }) {
                               </td>
                               {/* <ContentLoader/> */}
                             </tr>
-                          </>)}
+                            <tr>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              <td>
+                                <ContentLoader />
+                              </td>
+                              {/* <ContentLoader/> */}
+                            </tr>
+                          </>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -754,13 +706,8 @@ function Dashboard({ dashboardData }) {
                         <tbody>
                           <td></td>
                           <td>
-                            <div
-                              className={`d-flex justify-content-start align-items-center`}
-                              style={{ minHeight: "230px" }}
-                            >
-                              <p className={`${Styles.tablenodata}`}>
-                                No Data Found
-                              </p>
+                            <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                              <p className={`${Styles.tablenodata}`}>No Data Found</p>
                             </div>
                           </td>
                           <td></td>
@@ -775,7 +722,7 @@ function Dashboard({ dashboardData }) {
 
           <div className="my-5">
             <div className={`row mt-1 justify-between ${Styles.topPerform2}`}>
-              <div className={`col-lg-6 col-sm-12 ${Styles.top_perform1}`} >
+              <div className={`col-lg-6 col-sm-12 ${Styles.top_perform1}`}>
                 <p className={Styles.Tabletext}>Top Performing Accounts</p>
                 <div className="row">
                   {/* TOP PERFORMANCE */}
@@ -787,7 +734,7 @@ function Dashboard({ dashboardData }) {
                             className={Styles.top_perform}
                             onClick={() => {
                               setModalOpen(true);
-                              setBrandData(ele.ManufacturerList)
+                              setBrandData(ele.ManufacturerList);
                               console.log("kkkkk", ele);
                               localStorage.setItem("Account", ele.Name);
                               localStorage.setItem("AccountId__c", ele.AccountId);
@@ -804,7 +751,6 @@ function Dashboard({ dashboardData }) {
                                 return <span className={`${Styles.account} ${Styles[bgcolor]}`}>{itemm.Name}</span>;
                               })}
                             </div>
-
                           </div>
                         </div>
                       );
@@ -821,12 +767,15 @@ function Dashboard({ dashboardData }) {
                     if (index < 4) {
                       return (
                         <div className="col-lg-6 col-md-6 col-sm-12">
-                          <div className={Styles.top_perform2} onClick={() => {
-                            setModalOpen(true);
-                            setBrandData(ele.ManufacturerList);
-                            localStorage.setItem("Account", ele.Name);
-                            localStorage.setItem("AccountId__c", ele.AccountId);
-                          }}>
+                          <div
+                            className={Styles.top_perform2}
+                            onClick={() => {
+                              setModalOpen(true);
+                              setBrandData(ele.ManufacturerList);
+                              localStorage.setItem("Account", ele.Name);
+                              localStorage.setItem("AccountId__c", ele.AccountId);
+                            }}
+                          >
                             <div className={Styles.top_account}>
                               <p className={Styles.top_accounttext}>{ele.Name}</p>
                             </div>
@@ -941,7 +890,7 @@ function Dashboard({ dashboardData }) {
           </div>
         </div>
       )}
-    </>
+    </AppLayout>
   );
 }
 
