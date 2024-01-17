@@ -252,40 +252,12 @@ function Dashboard({ dashboardData }) {
     },
   });
   const [brandData, setBrandData] = useState([]);
-  const RADIAN = Math.PI / 180;
-  const needle_data = [
-    { name: "A", value: 80, color: "#16BC4E" },
-    { name: "B", value: 45, color: "#C7C7C7" },
-  ];
-  const cx = 150;
-  const cy = 200;
-  const iR = 50;
-  const oR = 100;
-  const value = 50;
 
-  const needle = (value, data, cx, cy, iR, oR, color) => {
-    let total = 0;
-    needle_data.forEach((v) => {
-      total += v.value;
-    });
-    const ang = 180.0 * (1 - value / total);
-    const length = (iR + 2.4 * oR) / 3;
-    const sin = Math.sin(-RADIAN * ang);
-    const cos = Math.cos(-RADIAN * ang);
-    const r = 5;
-    const x0 = cx + 5;
-    const y0 = cy + 5;
-    const xba = x0 + r * sin;
-    const yba = y0 - r * cos;
-    const xbb = x0 - r * sin;
-    const ybb = y0 + r * cos;
-    const xp = x0 + length * cos;
-    const yp = y0 + length * sin;
-
-    return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
-  };
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [targetValue, setTargetValue] = useState();
+  const [achievedSales, setAchievedSales] = useState();
+  const [needle_data, setNeedle_data] = useState([]);
 
   // API INTEGRATION
 
@@ -302,11 +274,13 @@ function Dashboard({ dashboardData }) {
       navigate("/");
     }
   }, []);
+  const [salesRepId, setSalesRepId] = useState();
   const getDataHandler = (headers = null) => {
     setIsLoaded(false);
     GetAuthData()
       .then((user) => {
         user.Sales_Rep__c = "00530000005AdvsAAC";
+        setSalesRepId(user.Sales_Rep__c);
         if (headers) {
           user.headers = headers;
         }
@@ -314,6 +288,7 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
+              console.log("dashboardData", dashboardData);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
@@ -423,6 +398,7 @@ function Dashboard({ dashboardData }) {
               setMonthlydata(MonthlyData);
               setYearlydata(YearlyData);
               setIsLoading(false);
+              console.log(Monthlydataa);
             } else {
               navigate("/");
             }
@@ -435,6 +411,16 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
+  useEffect(() => {
+    setTargetValue(Number(Monthlydataa?.filter((ele) => ele.salesRepId === salesRepId)[0]?.total?.target / 1000).toFixed(0));
+    setAchievedSales(Number(Monthlydataa?.filter((ele) => ele.salesRepId === salesRepId)[0]?.total?.revenue / 1000).toFixed(0));
+  }, [Monthlydataa]);
+  useEffect(() => {
+    setNeedle_data([
+      { name: "A", value: parseInt(targetValue), color: "#16BC4E" },
+      { name: "B", value: parseInt(targetValue - achievedSales > 0 ? targetValue - achievedSales : 0), color: "#C7C7C7" },
+    ]);
+  }, [targetValue, achievedSales, Monthlydataa]);
   const date = new Date();
   const options = {
     year: "numeric",
@@ -445,6 +431,7 @@ function Dashboard({ dashboardData }) {
     ?.slice(0)
     .reverse()
     .map((ele) => ele);
+
   const changeMonthHandler = (value) => {
     setIsLoading(false);
     setSelMonth(value);
@@ -453,7 +440,40 @@ function Dashboard({ dashboardData }) {
     let year = valuePlit[0] || null;
     getDataHandler({ month, year });
   };
+  console.log("Monthlydataa", Monthlydataa);
+  const RADIAN = Math.PI / 180;
+  // const needle_data = [
+  //   { name: "A", value: targetValue, color: "#16BC4E" },
+  //   { name: "B", value: targetValue - achievedSales, color: "#C7C7C7" },
+  // ];
+  const cx = 150;
+  const cy = 200;
+  const iR = 50;
+  const oR = 100;
+  const value = targetValue;
+  console.log("Aaaaaaa", value, targetValue, achievedSales);
+  const needle = (value, data, cx, cy, iR, oR, color) => {
+    console.log(needle_data);
+    let total = 0;
+    needle_data.forEach((v) => {
+      total += v.value;
+    });
+    const ang = 180.0 * (1 - value / total);
+    const length = (iR + 2.4 * oR) / 3;
+    const sin = Math.sin(-RADIAN * ang);
+    const cos = Math.cos(-RADIAN * ang);
+    const r = 5;
+    const x0 = cx + 5;
+    const y0 = cy + 5;
+    const xba = x0 + r * sin;
+    const yba = y0 - r * cos;
+    const xbb = x0 - r * sin;
+    const ybb = y0 + r * cos;
+    const xp = x0 + length * cos;
+    const yp = y0 + length * sin;
 
+    return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
+  };
   return (
     <AppLayout
       filterNodes={
@@ -808,26 +828,32 @@ function Dashboard({ dashboardData }) {
             </div>
             <div className="col-lg-5">
               <p className={Styles.Tabletext}>Your Sales Performance Score in 2023</p>
-              <div className={Styles.donuttop1}>
-                <div className="container">
-                  <p className={`text-end ${Styles.Tabletxt}`}>
-                    Your Target: <span className={Styles.Tabletext_head}>300k</span>
-                  </p>
-                  <p className={`text-end ${Styles.Tabletxt1}`}>
-                    Achieved Sales: <span className={Styles.Tabletext_head}>285k</span>
-                  </p>
-                  <div className={Styles.donutbox}>
-                    <PieChart width={400} height={400}>
-                      <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
-                        {needle_data.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      {needle(value, salesByBrandData, cx, cy, iR, oR, "#000000")}
-                    </PieChart>
+              {targetValue && achievedSales && Monthlydataa ? (
+                <>
+                  <div className={Styles.donuttop1}>
+                    <div className="container">
+                      <p className={`text-end ${Styles.Tabletxt}`}>
+                        Your Target: <span className={Styles.Tabletext_head}>{targetValue}K</span>
+                      </p>
+                      <p className={`text-end ${Styles.Tabletxt1}`}>
+                        Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales}K</span>
+                      </p>
+                      <div className={Styles.donutbox}>
+                        <PieChart width={400} height={400}>
+                          <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
+                            {needle_data.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          {needle(value, needle_data, cx, cy, iR, oR, "#000000")}
+                        </PieChart>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 
