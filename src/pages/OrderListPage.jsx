@@ -91,11 +91,12 @@ const OrderListPage = () => {
         getOrderList({
           user: {
             key: response.x_access_token,
-            Sales_Rep__c: true ? "00530000005AdvsAAC" : response.Sales_Rep__c,
+            Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
           },
           month: filterValue.month,
         })
           .then((order) => {
+            console.log({order});
             let sorting = sortingList(order);
             setOrders(sorting);
             setLoaded(true);

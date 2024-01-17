@@ -42,7 +42,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             key: response.x_access_token,
             Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
           },
-          month: 2024,
+          month: "",
         })
           .then((order) => {
             setOrders(order);
@@ -183,6 +183,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           {step >= 1 && (
             <div className={`${Styles.delay} ${Styles.fadeInUp} `} >
               <div className={Styles.selectDiv}>
+              <p className={Styles.CaseReason}>Select Order for last 6 month</p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
                   <select
                     onChange={(e) => {

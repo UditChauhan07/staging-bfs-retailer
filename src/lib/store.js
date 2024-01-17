@@ -175,11 +175,7 @@ export async function getOrderList({ user, month }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
-    return data.data;
-  }
+  return data.data;
 }
 export async function getOrderDetailsBasedId({ rawData }) {
   let headersList = {
@@ -191,6 +187,24 @@ export async function getOrderDetailsBasedId({ rawData }) {
   bodyContent.append("opportunity_id", rawData.id);
 
   let response = await fetch(url+"0DS68FOD7s", { 
+    method: "POST",
+    body: bodyContent,
+    headers: headersList
+  });
+  let data = JSON.parse(await response.text());
+  return data.data;
+}
+
+export async function getOrderDetailsInvoice({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", rawData.key);
+  bodyContent.append("opportunity_id", rawData.id);
+
+  let response = await fetch(url+"3JlgPqaeYIveHd6", { 
     method: "POST",
     body: bodyContent,
     headers: headersList
