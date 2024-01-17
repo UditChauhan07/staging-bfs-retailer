@@ -16,6 +16,9 @@
   position: relative;
   padding-bottom: 4px;
 }
+.onHoverCursor{
+  cursor: pointer;
+}
 .sticky-top{
   z-index: 99!important;
 }
