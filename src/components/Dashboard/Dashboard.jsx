@@ -299,7 +299,7 @@ function Dashboard({ dashboardData }) {
 
   useEffect(() => {
     if (!AuthCheck()) {
-      // navigate("/");
+      navigate("/");
     }
   }, []);
   const getDataHandler = (headers = null) => {
