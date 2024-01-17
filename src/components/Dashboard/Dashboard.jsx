@@ -279,7 +279,7 @@ function Dashboard({ dashboardData }) {
     setIsLoaded(false);
     GetAuthData()
       .then((user) => {
-        user.Sales_Rep__c = "00530000005AdvsAAC";
+        // user.Sales_Rep__c = "00530000005AdvsAAC";
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
           user.headers = headers;
@@ -288,7 +288,6 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
-              console.log("dashboardData", dashboardData);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
@@ -398,7 +397,6 @@ function Dashboard({ dashboardData }) {
               setMonthlydata(MonthlyData);
               setYearlydata(YearlyData);
               setIsLoading(false);
-              console.log(Monthlydataa);
             } else {
               navigate("/");
             }
@@ -440,20 +438,13 @@ function Dashboard({ dashboardData }) {
     let year = valuePlit[0] || null;
     getDataHandler({ month, year });
   };
-  console.log("Monthlydataa", Monthlydataa);
   const RADIAN = Math.PI / 180;
-  // const needle_data = [
-  //   { name: "A", value: targetValue, color: "#16BC4E" },
-  //   { name: "B", value: targetValue - achievedSales, color: "#C7C7C7" },
-  // ];
   const cx = 150;
   const cy = 200;
   const iR = 50;
   const oR = 100;
   const value = targetValue;
-  console.log("Aaaaaaa", value, targetValue, achievedSales);
   const needle = (value, data, cx, cy, iR, oR, color) => {
-    console.log(needle_data);
     let total = 0;
     needle_data.forEach((v) => {
       total += v.value;
@@ -755,7 +746,6 @@ function Dashboard({ dashboardData }) {
                             onClick={() => {
                               setModalOpen(true);
                               setBrandData(ele.ManufacturerList);
-                              console.log("kkkkk", ele);
                               localStorage.setItem("Account", ele.Name);
                               localStorage.setItem("AccountId__c", ele.AccountId);
                             }}
