@@ -9,7 +9,6 @@ import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
 import MyRetailersPage from "./pages/MyRetailersPage";
-import DashboardPage from "./pages/DashboardPage";
 import { UserProvider } from "./context/UserContext";
 import BrandsPage from "./pages/BrandsPage";
 
@@ -29,6 +28,7 @@ import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import CustomerServiceForm from "./pages/CustomerServiceForm";
 import SignUp from "./pages/SignUp";
+import Dashboard from "./components/Dashboard/Dashboard";
 function App() {
   // const Redirect = ({ href }) => {
   //   window.location.href = href;
@@ -51,7 +51,7 @@ function App() {
             <Route path="/" element={<Login />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
             <Route path="/my-retailers" element={<MyRetailersPage />}></Route>
-            <Route path="/dashboard" element={<DashboardPage />}></Route>
+            <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/product" element={<Product />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
             <Route path="/brand" element={<BrandsPage />}></Route>
