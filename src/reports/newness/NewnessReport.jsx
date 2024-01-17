@@ -29,6 +29,7 @@ const NewnessReport = () => {
   };
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useNewnessReport(filter);
+  console.log({originalApiData});
   const { data: manufacturers, isLoading, error } = useManufacturer();
   const [newnessData, setNewnessData] = useState(originalApiData || {});
   const [loading, setLoading] = useState(false);
