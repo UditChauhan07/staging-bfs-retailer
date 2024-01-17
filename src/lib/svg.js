@@ -18,6 +18,12 @@ export function UserChecked() {
     </svg>
   );
 }
+export function UserIcon({width=25,height=25}){
+  return(<svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 12 12" fill="none">
+  <path d="M1 12C1 12 0 12 0 11C0 10 1 7 6 7C11 7 12 10 12 11C12 12 11 12 11 12H1Z" fill="black"/>
+  <path d="M6 6C7.65685 6 9 4.65685 9 3C9 1.34315 7.65685 0 6 0C4.34315 0 3 1.34315 3 3C3 4.65685 4.34315 6 6 6Z" fill="black"/>
+  </svg>)
+}
 export function SupportStatusYellow() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="33" viewBox="0 0 35 33" fill="none">

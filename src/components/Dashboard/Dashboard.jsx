@@ -16,6 +16,7 @@ import SelectBrandModel from "../My Retailers/SelectBrandModel/SelectBrandModel"
 import ModalPage from "../Modal UI/index";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
+import { UserIcon } from "../../lib/svg";
 const monthList = [
   {
     name: "January - 2023",
@@ -276,7 +277,7 @@ function Dashboard({ dashboardData }) {
   }, []);
   const [salesRepId, setSalesRepId] = useState();
   const getDataHandler = (headers = null) => {
-    setIsLoaded(false);
+    setIsLoaded(true)
     GetAuthData()
       .then((user) => {
         // user.Sales_Rep__c = "00530000005AdvsAAC";
@@ -356,7 +357,7 @@ function Dashboard({ dashboardData }) {
                 });
               });
               settabledata(filteredAarray);
-
+              setIsLoaded(false)
               // LEADS BY BRAND || MONTHLY SALESBYREP || YEARLY SALESBYREP
               let leadsdata = [];
               let MonthlyData = [];
@@ -393,7 +394,6 @@ function Dashboard({ dashboardData }) {
                   }
                 });
               });
-              setIsLoaded(true);
               setleadsbtbrand(leadsdata);
               setMonthlydata(MonthlyData);
               setYearlydata(YearlyData);
@@ -463,9 +463,40 @@ function Dashboard({ dashboardData }) {
     const ybb = y0 + r * cos;
     const xp = x0 + length * cos;
     const yp = y0 + length * sin;
-
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
+  function IsTableLoading (){
+    return(<>
+      <tr>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+        <td>
+          <ContentLoader />
+        </td>
+      </tr>
+    </>)
+  }
   return (
     <AppLayout
       filterNodes={
@@ -519,22 +550,22 @@ function Dashboard({ dashboardData }) {
                             <th scope="col" className="ps-3">
                               Opportunity Owner
                             </th>
-                            <th scope="col">Sale</th>
                             <th scope="col">Sale Target</th>
-                            <th scope="col">Sale Diff</th>
+                            <th scope="col">Sale Amount</th>
+                            <th scope="col">Diff.</th>
                           </tr>
                         </thead>
-
+                        {isLoaded ?<IsTableLoading />:<>
                         {Monthlydataa ? (
                           <tbody>
                             {Monthlydataa?.map((e) => {
                               return (
                                 <tr key={e}>
                                   <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                    <UserIcon/> {e.salesRepName}
                                   </td>
-                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
                                   <td className={Styles.tabletd}>${(Number(e.total?.target || 0) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
                                   <td className={Styles.tabletd}>${(Number(e.total?.target - e.total.revenue || 0) / 1000).toFixed(0)}K</td>
                                 </tr>
                               );
@@ -551,6 +582,7 @@ function Dashboard({ dashboardData }) {
                             <td></td>
                           </tbody>
                         )}
+                        </>}
                       </table>
                     </div>
                   </div>
@@ -570,22 +602,22 @@ function Dashboard({ dashboardData }) {
                             <th scope="col" className="ps-3">
                               Opportunity Owner
                             </th>
-                            <th scope="col">Sale</th>
                             <th scope="col">Sale Target</th>
-                            <th scope="col">Sale Diff</th>
+                            <th scope="col">Sale Amount</th>
+                            <th scope="col">Diff.</th>
                           </tr>
                         </thead>
-
+                        {isLoaded ?<IsTableLoading />:<>
                         {Yearlydataa ? (
                           <tbody>
                             {Yearlydataa?.map((e) => {
                               return (
                                 <tr key={e}>
                                   <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                    <img src={img5} className="h-100" alt="" /> {e.salesRepName}
+                                  <UserIcon/> {e.salesRepName}
                                   </td>
-                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
                                   <td className={Styles.tabletd}>${(Number(e.total.target) / 1000).toFixed(0)}K</td>
+                                  <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
                                   <td className={Styles.tabletd}>${(Number(e.total.target - e.total.revenue) / 1000).toFixed(0)}K</td>
                                 </tr>
                               );
@@ -602,6 +634,7 @@ function Dashboard({ dashboardData }) {
                             <td></td>
                           </tbody>
                         )}
+                        </>}
                       </table>
                     </div>
                   </div>
@@ -621,13 +654,15 @@ function Dashboard({ dashboardData }) {
                         <tr className={Styles.tablerow}>
                           <th className="ps-3">Manufacturer</th>
                           {/* <th>Total Order</th> */}
-                          <th>Sale</th>
-                          <th>Sale Target</th>
-                          <th>Sale Diff</th>
+                          <th scope="col">Sale Target</th>
+                            <th scope="col">Sale Amount</th>
+                            <th scope="col">Diff.</th>
                         </tr>
                       </thead>
                       <tbody className={Styles.tbdy}>
-                        {true ? (
+                        {isLoaded ? (
+                          <IsTableLoading />
+                        ):(
                           <>
                             {tabledata.length ? (
                               tabledata?.map((e) => {
@@ -635,8 +670,8 @@ function Dashboard({ dashboardData }) {
                                   <tr key={e}>
                                     <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
                                     {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
-                                    <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
                                     <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
+                                    <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
                                     <td className={Styles.tabletd}>${(Number(e.target - e.sale || 0) / 1000).toFixed(0)}K</td>
                                   </tr>
                                 );
@@ -646,39 +681,6 @@ function Dashboard({ dashboardData }) {
                                 <td className={` ps-3 ${Styles.tabletd}`}>No data Found.</td>
                               </tr>
                             )}
-                          </>
-                        ) : (
-                          <>
-                            <tr>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              {/* <ContentLoader/> */}
-                            </tr>
-                            <tr>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              <td>
-                                <ContentLoader />
-                              </td>
-                              {/* <ContentLoader/> */}
-                            </tr>
                           </>
                         )}
                       </tbody>
@@ -701,7 +703,7 @@ function Dashboard({ dashboardData }) {
                           <th>Converted</th>
                         </tr>
                       </thead>
-
+                      {isLoaded ?<IsTableLoading />:<>
                       {leadsbybrand == true ? (
                         <tbody className="position-relative">
                           {leadsbybrand.map((element) => {
@@ -725,6 +727,7 @@ function Dashboard({ dashboardData }) {
                           <td></td>
                         </tbody>
                       )}
+                      </>}
                     </table>
                   </div>
                 </div>
@@ -738,10 +741,11 @@ function Dashboard({ dashboardData }) {
                 <p className={Styles.Tabletext}>Top Performing Accounts</p>
                 <div className="row">
                   {/* TOP PERFORMANCE */}
+                  {isLoaded ?<Loading />:<>
                   {dashboardRelatedData?.performance?.data?.map((ele, index) => {
                     if (index < 4) {
                       return (
-                        <div className="col-lg-6 col-md-6 col-sm-12 ">
+                        <div className="col-lg-6 col-md-6 col-sm-12 onHoverCursor">
                           <div
                             className={Styles.top_perform}
                             onClick={() => {
@@ -767,6 +771,7 @@ function Dashboard({ dashboardData }) {
                       );
                     }
                   })}
+                  </>}
                 </div>
               </div>
               <ModalPage open={modalOpen} onClose={() => setModalOpen(false)} content={<SelectBrandModel brands={brandData} onClose={() => setModalOpen(false)} />} />
@@ -774,10 +779,11 @@ function Dashboard({ dashboardData }) {
                 <p className={Styles.Tabletext1}>Low Performing Accounts</p>
                 <div className="row">
                   {/* LOW PERFORMANCE */}
+                  {isLoaded ?<Loading />:<>
                   {lowPerformanceArray?.map((ele, index) => {
                     if (index < 4) {
                       return (
-                        <div className="col-lg-6 col-md-6 col-sm-12">
+                        <div className="col-lg-6 col-md-6 col-sm-12 onHoverCursor">
                           <div
                             className={Styles.top_perform2}
                             onClick={() => {
@@ -802,6 +808,7 @@ function Dashboard({ dashboardData }) {
                       );
                     }
                   })}
+                  </>}
                 </div>
               </div>
             </div>
@@ -809,16 +816,19 @@ function Dashboard({ dashboardData }) {
 
           <div className="row my-3">
             <div className="col-lg-7">
-              <p className={Styles.Tabletext}>Sales By Brand</p>
+              <p className={Styles.Tabletext}>Your Sales By Brand</p>
 
               <div className={Styles.donuttop}>
-                <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Ordered</p>
+                {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
                 <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
+                {isLoaded ?<Loading />:<>
                 <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
+                </>}
               </div>
             </div>
             <div className="col-lg-5">
               <p className={Styles.Tabletext}>Your Sales Performance Score in 2023</p>
+              {isLoaded ?<Loading />:<>
               {targetValue && achievedSales && Monthlydataa ? (
                 <>
                   <div className={Styles.donuttop1}>
@@ -845,6 +855,7 @@ function Dashboard({ dashboardData }) {
               ) : (
                 ""
               )}
+              </>}
             </div>
           </div>
 
