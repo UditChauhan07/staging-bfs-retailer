@@ -23,8 +23,8 @@ const SalesReport = () => {
   let past6monthDate = subtract6Months(new Date());
   const [startDate, setStartDate] = useState(past6monthDate);
   const [endDate, setEndDate] = useState(currentDate);
-  const salesReportApi = useSalesReport(startDate, endDate);
-
+  const salesReportApi = useSalesReport();
+  const [isLoading, setIsLoading] = useState(false);
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [highestOrders, setHighestOrders] = useState(true);
   const [salesReportData, setSalesReportData] = useState([]);
@@ -100,26 +100,31 @@ const SalesReport = () => {
   const resetFilter = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
+    getSalesData(past6monthDate,currentDate);
     setStartDate(past6monthDate);
     setEndDate(currentDate);
   };
 
   const navigate = useNavigate();
 
-  const getSalesData = async () => {
-    const result = await salesReportApi.salesReportData();
+  const getSalesData = async (startDate, endDate) => {
+    setIsLoading(true);
+    const result = await salesReportApi.salesReportData({ startDate, endDate });
     setSalesReportData(result.data.data);
+    setIsLoading(false);
   };
-  console.log("salesReportData", salesReportData);
+  // console.log("salesReportData", salesReportData);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
-
     if (userData) {
       getSalesData();
     } else {
       navigate("/");
     }
   }, []);
+  const sendApiCall = () => {
+    getSalesData(startDate, endDate);
+  };
 
   return (
     <AppLayout
@@ -170,18 +175,23 @@ const SalesReport = () => {
             minWidth="95px"
           />
 
-          <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
-            CLEAR ALL
-          </button>
+          <div className="d-flex gap-3">
+            <button className="border px-2.5 py-1 leading-tight" onClick={sendApiCall}>
+              APPLY
+            </button>
+            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
+              CLEAR ALL
+            </button>
+          </div>
           <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
             EXPORT
           </button>
         </>
       }
     >
-      {filteredSalesReportData?.length ? (
+      {filteredSalesReportData?.length && !isLoading ? (
         <SalesReportTable salesData={filteredSalesReportData} />
-      ) : salesReportData.length ? (
+      ) : salesReportData.length && !isLoading ? (
         <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (
         <Loading height={"70vh"} />
