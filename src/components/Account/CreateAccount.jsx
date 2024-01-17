@@ -1,7 +1,5 @@
 import React from "react";
-import NavbarHeader from "../Navbar";
 import style from "./accountStyle.module.css";
-import HeaderTwo from "../../pages/HeaderTwo";
 import {
   COntactName,
   ChooseBrand,
@@ -12,11 +10,10 @@ import {
   Gmail,
 } from "./svgIcon";
 
-function CreateAccount() {
+function CreateAccountForm() {
   return (
     <div>
       <section>
-        <HeaderTwo />
         <div className="container">
           <div className={style.WholesaleFormMain}>
             <h3>Apply for a Wholesale Account with BFSG</h3>
@@ -294,4 +291,4 @@ function CreateAccount() {
   );
 }
 
-export default CreateAccount;
+export default CreateAccountForm;

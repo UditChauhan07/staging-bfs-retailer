@@ -14,8 +14,7 @@ const monthNames = [
   "Nov",
   "Dec",
 ];
-function LaunchCalendar({brand}) {
-  console.log({brand});
+function LaunchCalendar() {
   return (
     <div id="Calendar">
       {/* <div class="container"> */}
@@ -26,7 +25,7 @@ function LaunchCalendar({brand}) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul class="timeline mt-4">
-            {(!brand || brand == "RMS Beauty")&&<li>
+              <li>
                 <span className="timelineHolder02">
                   {monthNames[new Date("2022/01/29").getMonth()]}
                 </span>
@@ -114,9 +113,9 @@ function LaunchCalendar({brand}) {
 
                   </div>
                 </div>
-              </li>}
+              </li>
 
-              {(!brand || brand == "RMS Beauty")&&<li>
+              <li>
                 <span className="timelineHolder">
                   {monthNames[new Date("2024/02/05").getMonth()]}
                 </span>
@@ -177,12 +176,12 @@ function LaunchCalendar({brand}) {
 
                   </div>
                 </div>
-              </li>}
-              {(!brand || brand == "Kevyn Aucoin Cosmetics"|| brand == "Smashbox")&&<li>
+              </li>
+              <li>
                 <span className="timelineHolder03">
                   {monthNames[new Date("2022/03/05").getMonth()]}
                 </span>
-                {(!brand || brand == "Kevyn Aucoin Cosmetics")&&<div class="timeline-content">
+                <div class="timeline-content">
                   <div className="ProductInfo">
                     <div class="DateCurrent03">01/MAR/2024</div>
                     <div class="d-flex mt-2">
@@ -209,8 +208,8 @@ function LaunchCalendar({brand}) {
                     <img src={"/assets/images/kevy_logo.png"} alt="img" />
 
                   </div>
-                </div>}
-                {(!brand || brand == "Smashbox")&&<div class="timeline-content">
+                </div>
+                <div class="timeline-content">
                   <div className="ProductInfo">
                     <div class="DateCurrent03">02/MAR/2024</div>
                     <div class="d-flex mt-2">
@@ -236,15 +235,15 @@ function LaunchCalendar({brand}) {
                     <img src={"/assets/images/smashbox_logo.png"} alt="img" />
 
                   </div>
-                </div>}
+                </div>
                 
-              </li>}
+              </li>
 
-              {(!brand || brand == "RMS Beauty"|| brand == "BY TERRY")&&<li>
+              <li>
                 <span className="timelineHolder">
                   {monthNames[new Date("2022/05/05").getMonth()]}
                 </span>
-                {(!brand || brand == "BY TERRY")&&<div class="timeline-content">
+                <div class="timeline-content">
                   <div className="ProductInfo">
                     <div class="DateCurrent01">05/MAY/2024</div>
                     <div class="d-flex mt-2">
@@ -271,8 +270,8 @@ function LaunchCalendar({brand}) {
                     <img src={"/assets/images/Byterry_logo.png"} alt="img" />
 
                   </div>
-                </div>}
-                {(!brand || brand == "RMS Beauty")&&<div class="timeline-content">
+                </div>
+                <div class="timeline-content">
                   <div className="ProductInfo">
                     <div class="DateCurrent01">09/MAY/2024</div>
                     <div class="d-flex mt-2">
@@ -299,9 +298,9 @@ function LaunchCalendar({brand}) {
                     <img src={"/assets/images/rms-beauty.png"} alt="img" />
                     
                   </div>
-                </div>}
-              </li>}
-              {(!brand || brand == "BY TERRY")&& <li>
+                </div>
+              </li>
+              <li>
                 <span className="timelineHolder02">
                   {monthNames[new Date("2022/06/05").getMonth()]}
                 </span>
@@ -333,7 +332,7 @@ function LaunchCalendar({brand}) {
 
                   </div>
                 </div>
-              </li>}
+              </li>
             </ul>
 
             {/* <div class="text-center mt-4">
