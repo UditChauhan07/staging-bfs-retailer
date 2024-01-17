@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import FiltersInComparison from "../../components/All Headers/filters/FiltersInComparison";
 import AppLayout from "../../components/AppLayout";
 import Loading from "../../components/Loading";
 import ComparisonReportTable from "../../components/comparison report table/ComparisonReportTable";
