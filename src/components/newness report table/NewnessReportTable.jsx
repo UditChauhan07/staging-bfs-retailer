@@ -31,7 +31,7 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
                         <>
                           <th key={index} className={`${styles.month} ${styles.stickyMonth}`} style={{ minWidth: `${length}px` }}>
                             {ele.name}<br/>
-                          <small style={{fontSize:'10px'}}>on Counter Date: {ele.launchDate}</small><br/>
+                          <small style={{fontSize:'10px'}}>On Counter Date: {ele.launchDate}</small><br/>
                           <small style={{fontSize:'10px'}}>Shipment Date: {ele.shipDate}</small>
                           </th>
                         </>
