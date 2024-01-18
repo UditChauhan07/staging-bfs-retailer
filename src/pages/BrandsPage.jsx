@@ -12,12 +12,12 @@ import AppLayout from "../components/AppLayout";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
-  Byredo: "Byredo.png",
+  Byredo: "Byredo-1.png",
   "Maison Margiela": "Maison Margiela.png",
   "Bobbi Brown": "Bobbi Brown.png",
   "ESTEE LAUDER": "Estee Lauder.png",
   "RMS Beauty": "rmsbeauty.png",
-  ReVive: "revive.png",
+  ReVive: "revive-1.png",
   "R Co ": "R co.png",
   "R Co Bleu": "R co Bleu.png",
   "Bumble and Bumble": "Bumblea and Bumble.png",
