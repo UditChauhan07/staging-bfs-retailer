@@ -105,7 +105,7 @@ align-items: center;
 
 .labelDetail label input[type="radio"] {
     fill: #FFF;
-stroke-width: 1px;
+strokeWidth: 1px;
 stroke: #000;
 }
 
@@ -152,7 +152,7 @@ stroke: #000;
     height: 57px;
     background-color: transparent;
     /* color: #474747; */
-    border: 1px dashed #000;
+    border-right: 1px dashed #000;
     bottom: 0;
     right: 50%;
     top: 43px;
