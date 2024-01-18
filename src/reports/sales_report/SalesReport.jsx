@@ -27,6 +27,7 @@ const SalesReport = () => {
   const [searchBy, setSearchBy] = useState("");
   const [searchBySalesRep, setSearchBySalesRep] = useState("");
   const [salesRepList,setSalesRepList] = useState([]);
+  const [yearForTableSort,setYearForTableSort] = useState(2024)
   const filteredSalesReportData = useMemo(() => {
     let filtered = salesReportData.filter((ele) => {
       return !manufacturerFilter || !ele.ManufacturerName__c.localeCompare(manufacturerFilter);
@@ -129,12 +130,14 @@ const SalesReport = () => {
     setYearFor(2024);
     setSearchBy("")
     setSearchBySalesRep("")
+    setYearForTableSort(2024)
   };
 
   const navigate = useNavigate();
 
   const getSalesData = async (yearFor) => {
     setIsLoading(true);
+    setYearForTableSort(yearFor)
     const result = await salesReportApi.salesReportData({ yearFor });
     let salesListName = [];
     let salesList = [];
@@ -255,7 +258,7 @@ const SalesReport = () => {
         </div>
       </div>
       {filteredSalesReportData?.length && !isLoading ? (
-        <SalesReportTable salesData={filteredSalesReportData} year={yearFor}/>
+        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort}/>
       ) : salesReportData.length && !isLoading ? (
         <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (
