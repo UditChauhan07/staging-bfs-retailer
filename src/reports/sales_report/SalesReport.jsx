@@ -253,7 +253,7 @@ const SalesReport = () => {
               <option value={2023} selected={yearFor == 2023 ? true : false}>2023</option>
               <option value={2024} selected={yearFor == 2024 ? true : false}>2024</option>
             </select>
-            <button onClick={() => sendApiCall()}>Search Orders</button>
+            <button onClick={() => sendApiCall()}>Search Sales</button>
           </div>
         </div>
       </div>
