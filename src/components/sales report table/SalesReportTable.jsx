@@ -152,7 +152,7 @@ const SalesReportTable = ({ salesData, year }) => {
                         <td
                           className={`${styles.td} ${styles.stickySecondColumn}`}
                         >
-                          {item?.Name}
+                          {item?.AccountName}
                         </td>
                         <td
                           className={`${styles.td} ${styles.stickyThirdColumn}`}
