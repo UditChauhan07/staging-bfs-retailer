@@ -14,12 +14,12 @@ function CreateAccountForm() {
   return (
     <div>
       <section>
-        <div className="container">
+        <div className="">
           <div className={style.WholesaleFormMain}>
-            <h3>Apply for a Wholesale Account with BFSG</h3>
+            <h3 className="mt-4">Apply for a Wholesale Account with BFSG</h3>
             <div className={style.accountCre}>
               <h5>Advantages of Account Creation :</h5>
-              <ul>
+              <ul style={{listStyle:"inside"}}>
                 <li>Express Checkout</li>
                 <li>Monitor Your Orders</li>
                 <li>Add favorite items to your wish list</li>
@@ -271,13 +271,13 @@ function CreateAccountForm() {
                       </div>
                       <div className={style.BySigning}>
                         <p>
-                          <input type="checkbox" />
+                          <input type="checkbox" checked/>
                           By signing in or clicking "Apply for an Account", you
-                          agree to our Terms of Service Please also read our
-                          Privacy Policy
+                          agree to our Terms of Service. Please also read our
+                          Privacy Policy.
                         </p>
 
-                        <button>Apply Now</button>
+                        <button className="mt-2">Apply Now</button>
                       </div>
                     </div>
                   </div>
