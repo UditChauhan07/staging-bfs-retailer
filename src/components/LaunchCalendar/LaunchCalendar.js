@@ -87,7 +87,6 @@ function LaunchCalendar({ brand }) {
           size: "N/A",
           description:
             "When used with Vitamin Enriched Face Base, it helps plump skin and smooth makeup application.",
-
           brandLogo: "/assets/images/BobbyBrown.png",
         },
         {
@@ -110,7 +109,6 @@ function LaunchCalendar({ brand }) {
           size: "N/A",
           description:
             "The Entire Grooming Range - Beard, Hair, Skin, Fragrances & Accessories. Shop Now! Unleash your Hairy Masculinity with Beardo.",
-
           brandLogo: "/assets/images/Byredo.png",
         },
 
