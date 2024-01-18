@@ -9,31 +9,56 @@ import * as FileSaver from "file-saver";
 import SalesReportTable from "../../components/sales report table/SalesReportTable";
 import Loading from "../../components/Loading";
 import FilterDate from "../../components/FilterDate";
+import FilterSearch from "../../components/FilterSearch";
+import Styles from "./index.module.css"
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
 const SalesReport = () => {
   const { data: manufacturers } = useManufacturer();
-  let currentDate = new Date().toJSON().slice(0, 10);
-  const subtract6Months = (date) => {
-    date.setMonth(date.getMonth() - 6);
-    return date.toJSON().slice(0, 10);
-  };
-  let past6monthDate = subtract6Months(new Date());
-  const [startDate, setStartDate] = useState(past6monthDate);
-  const [endDate, setEndDate] = useState(currentDate);
+  const [yearFor, setYearFor] = useState(2024);
   const salesReportApi = useSalesReport();
   const [isLoading, setIsLoading] = useState(false);
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [highestOrders, setHighestOrders] = useState(true);
   const [salesReportData, setSalesReportData] = useState([]);
-
+  const [ownerPermission, setOwnerPermission] = useState(false);
+  const [searchBy, setSearchBy] = useState("");
+  const [searchBySalesRep, setSearchBySalesRep] = useState("");
+  const [salesRepList,setSalesRepList] = useState([]);
   const filteredSalesReportData = useMemo(() => {
     let filtered = salesReportData.filter((ele) => {
       return !manufacturerFilter || !ele.ManufacturerName__c.localeCompare(manufacturerFilter);
     });
-
+    if (searchBy) {
+      filtered = filtered?.map((ele) => {
+        const Orders = ele.Orders.filter((item) => {
+          if(item.AccountName?.toLowerCase().includes(
+            searchBy?.toLowerCase())){
+              return item;
+            }
+        });
+          return {
+            ...ele,
+            Orders,
+          };
+      });
+    }
+    if (searchBySalesRep) {
+      filtered = filtered?.map((ele) => {
+        const Orders = ele.Orders.filter((item) => {
+          if(item.AccountRepo?.toLowerCase().includes(
+            searchBySalesRep?.toLowerCase())){
+              return item;
+            }
+        });
+          return {
+            ...ele,
+            Orders,
+          };
+      });
+    }
     if (highestOrders) {
       filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.sort((a, b) => b.totalOrders - a.totalOrders);
@@ -52,7 +77,7 @@ const SalesReport = () => {
       });
     }
     return filtered;
-  }, [manufacturerFilter, salesReportData, highestOrders]);
+  }, [manufacturerFilter, salesReportData, highestOrders, searchBy,searchBySalesRep]);
 
   const csvData = useMemo(() => {
     return filteredSalesReportData?.map((ele) =>
@@ -100,36 +125,61 @@ const SalesReport = () => {
   const resetFilter = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
-    getSalesData(past6monthDate,currentDate);
-    setStartDate(past6monthDate);
-    setEndDate(currentDate);
+    getSalesData(yearFor);
+    setYearFor(2024);
+    setSearchBy("")
+    setSearchBySalesRep("")
   };
 
   const navigate = useNavigate();
 
-  const getSalesData = async (startDate, endDate) => {
+  const getSalesData = async (yearFor) => {
     setIsLoading(true);
-    const result = await salesReportApi.salesReportData({ startDate, endDate });
+    const result = await salesReportApi.salesReportData({ yearFor });
+    let salesListName = [];
+    let salesList = [];
+    result.data.data.map((manu)=>{
+      if(manu.Orders.length){
+        manu.Orders.map((item)=>{
+          if(!salesListName.includes(item.AccountRepo)){
+            salesListName.push(item.AccountRepo)
+            salesList.push({
+              label: item.AccountRepo,
+              value: item.AccountRepo,
+            })
+          }
+        })
+      }
+    })
+    setSalesRepList(salesList)
     setSalesReportData(result.data.data);
+    setOwnerPermission(result.data.ownerPermission)
     setIsLoading(false);
   };
   // console.log("salesReportData", salesReportData);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
     if (userData) {
-      getSalesData();
+      getSalesData(yearFor);
     } else {
       navigate("/");
     }
   }, []);
   const sendApiCall = () => {
-    getSalesData(startDate, endDate);
+    getSalesData(yearFor);
   };
 
   return (
     <AppLayout
       filterNodes={
         <>
+          {ownerPermission && <FilterItem
+            minWidth="220px"
+            label="All Sales Rep"
+            value={searchBySalesRep}
+            options={salesRepList}
+            onChange={(value) => setSearchBySalesRep(value)}
+          />}
           <FilterItem
             minWidth="220px"
             label="All Manufacturers"
@@ -157,28 +207,13 @@ const SalesReport = () => {
             onChange={(value) => setHighestOrders(value)}
           />
           {/* First Calender Filter-- start date */}
-          <FilterDate
-            onChange={(e) => {
-              setStartDate(e.target.value);
-            }}
-            value={startDate}
-            label={"start date : "}
-            minWidth="95px"
+          <FilterSearch
+            onChange={(e) => setSearchBy(e.target.value)}
+            value={searchBy}
+            placeholder={"Search by account"}
+            minWidth={"167px"}
           />
-          {/* Second Calender Filter -- end date */}
-          <FilterDate
-            onChange={(e) => {
-              setEndDate(e.target.value);
-            }}
-            value={endDate}
-            label={"end date :"}
-            minWidth="95px"
-          />
-
           <div className="d-flex gap-3">
-            <button className="border px-2.5 py-1 leading-tight" onClick={sendApiCall}>
-              APPLY
-            </button>
             <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
               CLEAR ALL
             </button>
@@ -189,6 +224,31 @@ const SalesReport = () => {
         </>
       }
     >
+      <div className={Styles.inorderflex}>
+        <div>
+          <h2>{ownerPermission ? `${searchBySalesRep ? searchBySalesRep+'`s' :'All'} Sales Report` : "Your Sales Report"}{(manufacturerFilter) && (' for ' + manufacturerFilter)}</h2>
+        </div>
+        <div
+        >
+          <div
+            className={`d-flex align-items-center ${Styles.InputControll}`}
+          >
+            <select onChange={(e) => setYearFor(e.target.value)}>
+              <option value={2015} selected={yearFor == 2015 ? true : false}>2015</option>
+              <option value={2016} selected={yearFor == 2016 ? true : false}>2016</option>
+              <option value={2017} selected={yearFor == 2017 ? true : false}>2017</option>
+              <option value={2018} selected={yearFor == 2018 ? true : false}>2018</option>
+              <option value={2019} selected={yearFor == 2019 ? true : false}>2019</option>
+              <option value={2020} selected={yearFor == 2020 ? true : false}>2020</option>
+              <option value={2021} selected={yearFor == 2021 ? true : false}>2021</option>
+              <option value={2022} selected={yearFor == 2022 ? true : false}>2022</option>
+              <option value={2023} selected={yearFor == 2023 ? true : false}>2023</option>
+              <option value={2024} selected={yearFor == 2024 ? true : false}>2024</option>
+            </select>
+            <button onClick={() => sendApiCall()}>Search Orders</button>
+          </div>
+        </div>
+      </div>
       {filteredSalesReportData?.length && !isLoading ? (
         <SalesReportTable salesData={filteredSalesReportData} />
       ) : salesReportData.length && !isLoading ? (
