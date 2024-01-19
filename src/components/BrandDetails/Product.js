@@ -375,7 +375,7 @@ function Product() {
               <Loading height={"70vh"} />
             ) : (
               <div>
-                <section className="py-[34px]">
+                <section className="pt-[34px]">
                   <div className="">
                     <div className={styles.BrandTopShow}>
                       <h4 className="flex justify-center items-center gap-4 uppercase font-[Montserrat-500] tracking-[2.20px]">
@@ -409,7 +409,7 @@ function Product() {
                       </div>
 
                       <div className="col-lg-9 col-md-8 col-sm-12 ">
-                        <div className={`${styles.AccorBorder} overflow-auto `}
+                        <div className={`overflow-auto `}
                           style={{
                             height: "64vh",
                             border: "1px dashed black",

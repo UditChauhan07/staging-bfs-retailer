@@ -14,25 +14,29 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
       {newnessData?.status === 200 ? (
         newnessData.AccountList.length ? (
           <div className={`d-flex p-3 ${styles.tableBoundary} mb-5`}>
-            <div className={`{styles.WidthTable} table-responsive overflow-scroll ` } style={{ maxHeight: "73vh", minHeight: "40vh" }}>
+            <div className={`{styles.WidthTable} table-responsive overflow-scroll `} style={{ maxHeight: "73vh", minHeight: "40vh" }}>
               <table id="salesReportTable" className="table table-responsive">
                 <thead>
                   <tr>
-                    <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `}style={{ minWidth: "200px" }}>Account Name</th>
+                    <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
+                      Account Name
+                    </th>
                     <th className={`${styles.th} ${styles.stickySecondColumnHeading}`} style={{ minWidth: "200px" }}>
                       Account Owner Name
                     </th>
                     <th className={`${styles.th} ${styles.stickyThirdColumnHeading1}`}>Sales Rep</th>
                     <th className={`${styles.month} ${styles.stickyMonth}`}>Account Status</th>
                     {newnessData?.header?.map((ele, index) => {
-                      length = ele?.name?.length > 30 ? (ele?.name?.length >= 38 ? ele?.name?.length * 7.5 : ele?.name?.length * 8) : ele?.name?.length * 12;
+                      length = ele?.name?.length > 30 ? (ele?.name?.length >= 38 ? ele?.name?.length * 6.5 : ele?.name?.length * 7) : ele?.name?.length * 7.5;
                       return (
                         // ele?.length >= 45 ? ele?.length * 6 : ele?.length * 6
                         <>
                           <th key={index} className={`${styles.month} ${styles.stickyMonth}`} style={{ minWidth: `${length}px` }}>
-                            {ele.name}<br/>
-                          <p style={{fontSize:'10px',lineHeight:'12px',margin:'0'}}>On Counter Date: {ele.launchDate}</p>
-                          <p style={{fontSize:'10px',lineHeight:'12px',margin:'0'}}>Shipment Date: {ele.shipDate}</p>
+                            <p className="m-0" style={{height:"34px"}}>{ele.name}</p>
+                            <p className={`${styles.dateDisplay}`}>On Counter Date: {ele.launchDate !== "N/A" ? new Date(ele.launchDate).toUTCString()?.slice(4, 16) : "N/A"}</p>
+                            <p className={`${styles.dateDisplay} mt-1`} style={{ backgroundColor: "#eaffee", color: "#3c9a4e" }}>
+                              Shipment Date: {ele.shipDate !== "N/A" ? new Date(ele.shipDate).toUTCString()?.slice(4, 16) : "N/A"}
+                            </p>
                           </th>
                         </>
                       );
@@ -67,13 +71,12 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
         ) : (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "40vh" }}>
             {/* <Link to="/newness-report" className="linkStyle d-flex"> */}
-              No Data Found 
-              
+            No Data Found
             {/* </Link> */}
           </div>
         )
       ) : (
-        <Loading height={"70vh"}/>
+        <Loading height={"70vh"} />
       )}
     </>
   );

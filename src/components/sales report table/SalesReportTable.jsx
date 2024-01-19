@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./table.module.css";
 import Loading from "../Loading";
-const SalesReportTable = ({ salesData, year }) => {
+const SalesReportTable = ({ salesData, year,ownerPermission }) => {
   const d = new Date();
   let month = d.getMonth();
   let currentYear = d.getFullYear();
@@ -152,7 +152,7 @@ const SalesReportTable = ({ salesData, year }) => {
                         <td
                           className={`${styles.td} ${styles.stickySecondColumn}`}
                         >
-                          {item?.AccountName}
+                          {ownerPermission?item?.AccountName:item?.Name}
                         </td>
                         <td
                           className={`${styles.td} ${styles.stickyThirdColumn}`}
