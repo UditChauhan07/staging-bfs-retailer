@@ -409,7 +409,7 @@ function Product() {
                       </div>
 
                       <div className="col-lg-9 col-md-8 col-sm-12 ">
-                        <div className={`${styles.AccorBorder} overflow-auto `}
+                        <div className={`overflow-auto `}
                           style={{
                             height: "64vh",
                             border: "1px dashed black",
