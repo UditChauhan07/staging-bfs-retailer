@@ -4,7 +4,7 @@ import Styles from "./Style.module.css";
 const padWithZero = (value) => {
   return String(value).padStart("2", "0");
 };
-
+// new functionality for min qty is added
 const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
   useEffect(() => {
     if (value !== 0 && value < min) {
