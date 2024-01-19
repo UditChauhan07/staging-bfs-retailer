@@ -258,7 +258,7 @@ const SalesReport = () => {
         </div>
       </div>
       {filteredSalesReportData?.length && !isLoading ? (
-        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort}/>
+        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort} ownerPermission={ownerPermission}/>
       ) : salesReportData.length && !isLoading ? (
         <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (

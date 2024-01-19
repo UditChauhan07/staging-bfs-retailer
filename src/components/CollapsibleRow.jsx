@@ -9,13 +9,13 @@ const CollapsibleRow = ({ children, title, onChange, quantity, index }) => {
     <>
       <tr className={`w-full ${Styles.AcoorWidrth}`}>
         <td colSpan={12} className={classNames(" w-full border-none py-[1px] px-[3px] ")}>
-          <input
+          {/* <input
             id={`expandCollapse${index}`}
             checked={open}
             // defaultChecked={open}
             type="checkbox"
             className="peer sr-only"
-          />
+          /> */}
           <label
             htmlFor={`expandCollapse${index}`}
             className={classNames(
