@@ -104,7 +104,7 @@ const Accordion = ({ data, formattedData }) => {
                               </td>
                               <td className="text-capitalize">{value.Name}</td>
                               <td>{value.ProductCode}</td>
-                              <td>{value.ProductUPC__c === null || "n/a" ? "--" : value.ProductUPC__c}</td>
+                              <td>{(value.ProductUPC__c === null ||value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
                                 {value.Category__c === "TESTER" ? (

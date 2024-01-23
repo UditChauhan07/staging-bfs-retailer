@@ -31,7 +31,7 @@ const Footer = () => {
             {/* </Link> */}
           
             </p>
-          <p className={`m-0 ${footerStyle.subheadings}`}>What our retailers are saying</p>
+          {/* <p className={`m-0 ${footerStyle.subheadings}`}>What our retailers are saying</p> */}
         </div>
         </div>
 
@@ -42,7 +42,6 @@ const Footer = () => {
           <p className={`m-0 ${footerStyle.heading}`}>Join US</p>
           <p className={`m-0 ${footerStyle.subheadings}`}>Instagram</p>
           <p className={`m-0 ${footerStyle.subheadings}`}>Linkedin</p>
-          <p className={`m-0 ${footerStyle.subheadings}`}>Facebook</p>
         </div>
         </div>
         </div>
@@ -70,7 +69,6 @@ const Footer = () => {
           <p className={`m-0 ${footerStyle.heading}`}>Join US</p>
           <p className={`m-0 ${footerStyle.subheadings}`}>Instagram</p>
           <p className={`m-0 ${footerStyle.subheadings}`}>Linkedin</p>
-          <p className={`m-0 ${footerStyle.subheadings}`}>Facebook</p>
         </div>
         </div>
         </div>

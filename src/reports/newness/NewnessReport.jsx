@@ -56,8 +56,8 @@ const NewnessReport = () => {
         temp["Sales_Rep"] = ele.Sales_Rep_Name__c;
         temp["ManufacturerName__c"] = ele.ManufacturerName__c;
         newnessData?.header?.map((item) => {
-          temp[`${item} Price`] = PriceDisplay(ele[item]?.price);
-          temp[`${item} Quantity`] = ele[item]?.qty;
+          temp[`${item.name} Price`] = PriceDisplay(ele[item.name]?.price);
+          temp[`${item.name} Quantity`] = ele[item.name]?.qty;
         });
         finalData.push(temp);
       });
