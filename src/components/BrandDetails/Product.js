@@ -15,6 +15,12 @@ import { fetchBeg } from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow } from "../../lib/svg";
 import AppLayout from "../AppLayout";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import SpreadsheetUploader from "./OrderForm";
+import { CSVLink } from 'react-csv';
+const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
   return xs?.reduce(function (rv, x) {
     (rv[x[key]] = rv[x[key]] || []).push(x);
@@ -34,6 +40,7 @@ function Product() {
   const [redirect, setRedirect] = useState(false);
   const [alert, setAlert] = useState(0);
   const [testerInBag, setTesterInBag] = useState(false);
+  const [orderFormModal, setOrderFromModal] = useState(false);
   const { data, isLoading } = useProductList({
     key: user?.data.access_token,
     Sales_Rep__c: user?.data.Sales_Rep__c,
@@ -99,10 +106,11 @@ function Product() {
       const filteredProductsArray = Object.values(finalFilteredProducts)
         ?.flat()
         ?.filter((value) => {
-          return value.Name.toLowerCase().includes(searchBy?.toLowerCase());
+          return value.Name.toLowerCase().includes(searchBy?.toLowerCase()) || value.ProductCode.toLowerCase().includes(searchBy?.toLowerCase()) || value.ProductUPC__c.toLowerCase().includes(searchBy?.toLowerCase());
         });
       newData = groupProductDataByCategory(filteredProductsArray);
       finalFilteredProducts = { ...newData };
+
     }
 
     if (sortBy === "Price: Low To High") {
@@ -173,13 +181,13 @@ function Product() {
         if (productCategories && productCategories.toUpperCase() === "TESTER") {
           console.log(
             productPrice * productQuantity -
-              (productPrice * productQuantity * product.discount.testerMargin) /
-                100
+            (productPrice * productQuantity * product.discount.testerMargin) /
+            100
           );
           bagTesterPrice +=
             productPrice * productQuantity -
             (productPrice * productQuantity * product.discount.testerMargin) /
-              100;
+            100;
           bagPrice += bagTesterPrice;
           setTesterInBag(true);
         } else if (
@@ -215,6 +223,27 @@ function Product() {
   useEffect(() => {
     setEmptyBag(false);
   }, []);
+  const csvData = () => {
+    let finalData = [];
+    if (data?.data?.records?.length) {
+      data?.data?.records?.map((ele) => {
+        let temp = {};
+        temp["Product Code"] = ele.ProductCode;
+        temp["ProductUPC"] = ele.ProductUPC__c;
+        temp["Quantity"] = null;
+        finalData.push(temp);
+      });
+    }
+    return finalData;
+  };
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(csvData());
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, `Order Form ${new Date()}` + fileExtension);
+  };
+
   return (
     <>
       {redirect ? (
@@ -315,6 +344,36 @@ function Product() {
               }}
             />
           )}
+          {orderFormModal && (
+            <ModalPage
+              open
+              content={
+                <>
+                  <div style={{ maxWidth: "100%" }}>
+                    <h1 className={`fs-5 ${Styles.ModalHeader} d-flex justify-content-between`}>Upload Order Form
+                      {/* <button
+                        className={`${Styles.modalButton}`}
+                        style={{ width: 'max-content',padding:'0 10px' }}
+                        onClick={exportToExcel}
+                      >
+                        Download Sample
+                      </button> */}
+                      <CSVLink data={csvData()} filename={`Order Form ${new Date()}.csv`} className={`${Styles.modalButton}`}
+                        style={{ width: 'max-content', padding: '0 10px' }}>
+                        Download Sample
+                      </CSVLink>
+                    </h1>
+                    <div className={` ${Styles.ModalContent}`}>
+                      <SpreadsheetUploader rawData={data || {}} orderData={{ accountName: localStorage.getItem("Account"), accountId: localStorage.getItem("AccountId__c"), brandId: localStorage.getItem("ManufacturerId__c") }} btnClassName={Styles.modalButton} setOrderFromModal={setOrderFromModal} />
+                    </div>
+                  </div>
+                </>
+              }
+              onClose={() => {
+                setOrderFromModal(false);
+              }}
+            />
+          )}
           <AppLayout
             filterNodes={
               <>
@@ -355,8 +414,8 @@ function Product() {
                 <FilterSearch
                   onChange={(e) => setSearchBy(e.target.value)}
                   value={searchBy}
-                  placeholder={"Enter Product name"}
-                  minWidth="179px"
+                  placeholder={"Enter Product name,UPC & SKU"}
+                  minWidth="260px"
                 />
                 <button
                   className="border px-2.5 py-1 leading-tight"
@@ -368,9 +427,13 @@ function Product() {
                 >
                   CLEAR ALL
                 </button>
+                {/* <button className="border px-2.5 py-1 leading-tight" onClick={() => setOrderFromModal(true)}>
+                  Upload Order Form
+                </button> */}
               </>
             }
           >
+            {/*  onClick={exportToExcel} */}
             {isLoading ? (
               <Loading height={"70vh"} />
             ) : (
