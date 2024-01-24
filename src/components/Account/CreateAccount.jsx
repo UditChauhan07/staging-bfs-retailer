@@ -66,7 +66,7 @@ function CreateAccountForm() {
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${Styles.ModalHeader}`}>Congratulations</h1>
                 <p className={` ${Styles.ModalContent}`}>
-                  Wholesale Account with BFSG is added successfully .{/* No Data available */}
+                  Wholesale Account with BFSG is added successfully.
                   <br />
                 </p>
                 <p>Redirecting to Login page...</p>
@@ -86,7 +86,7 @@ function CreateAccountForm() {
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
                 <p className={` ${Styles.ModalContent}`}>
-                  Something went wrong. Try Again{/* No Data available */}
+                  Something went wrong. Try Again!
                   <br />
                 </p>
                 <div className="d-flex justify-content-center">
@@ -204,7 +204,7 @@ function CreateAccountForm() {
                         <div className={style.labelIN}>
                           <label htmlFor="name">Picture (Multiple)</label>
                           <br />
-                          <input className="w-95" type="text" />
+                          <input className="w-95" type="file" />
                         </div>
                       </div>
                     </div>
