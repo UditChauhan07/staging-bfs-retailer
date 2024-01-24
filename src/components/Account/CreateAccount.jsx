@@ -32,8 +32,10 @@ function CreateAccountForm() {
   const api = useSignUp();
   const ApiManufacturers = usePublicManufacturers();
   const manufacturersCall = async () => {
+    // setLoading(true);
     const manufacturers = await ApiManufacturers.manufacturers();
     setManufacturers(manufacturers);
+    // setLoading(false);
   };
   useEffect(() => {
     manufacturersCall();
@@ -292,18 +294,24 @@ function CreateAccountForm() {
 
                         <div className={style.radioContro}>
                           <div className="row">
-                            {manufacturers?.map((ele, index) => {
-                              return (
-                                <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-                                  <div className={style.labelDetail}>
-                                    <label htmlFor={ele?.Name}>
-                                      <Field type="checkbox" name="brands" value={ele?.Name} id={ele?.Name} />
-                                      {ele?.Name}
-                                    </label>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                            {manufacturers.length ? (
+                              <>
+                                {manufacturers?.map((ele, index) => {
+                                  return (
+                                    <div className="col-lg-4 col-md-4 col-sm-6 col-12" key={index}>
+                                      <div className={style.labelDetail}>
+                                        <label htmlFor={ele?.Name}>
+                                          <Field type="checkbox" name="brands" value={ele?.Name} id={ele?.Name} style={{ height: "16px", width: "16px" }} />
+                                          {ele?.Name}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </>
+                            ) : (
+                              <Loading height={"200px"} />
+                            )}
 
                             <ErrorMessage component={TextError} name="brands" />
 

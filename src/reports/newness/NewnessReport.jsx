@@ -9,11 +9,11 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { FilterItem } from "../../components/FilterItem";
 import FilterDate from "../../components/FilterDate";
+
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const NewnessReport = () => {
   const navigate = useNavigate();
-
   let currentDate = new Date().toJSON().slice(0, 10);
   const subtract6Months = (date) => {
     date.setMonth(date.getMonth() - 6);
@@ -28,7 +28,6 @@ const NewnessReport = () => {
   };
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useNewnessReport();
-  // console.log({ originalApiData });
   const { data: manufacturers, isLoading, error } = useManufacturer();
   const [newnessData, setNewnessData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -71,7 +70,6 @@ const NewnessReport = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Newness Report ${new Date()}` + fileExtension);
   };
-  // console.log(filter);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
     if (!userData) {
@@ -124,10 +122,12 @@ const NewnessReport = () => {
           {/* First Calender Filter-- from date */}
           <FilterDate
             onChange={(e) => {
-              setFilter((prev) => ({
-                ...prev,
-                fromDate: e.target.value,
-              }));
+              console.log(e);
+              console.log(new Date(e));
+              // setFilter((prev) => ({
+              //   ...prev,
+              //   fromDate: e.target.value,
+              // }));
             }}
             value={filter.fromDate}
             label={"start date : "}
@@ -159,7 +159,10 @@ const NewnessReport = () => {
         </>
       }
     >
-      {loading ? <Loading height={"70vh"} /> : <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />}
+      {loading ? <Loading height={"70vh"} /> : 
+     
+      <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />
+      }
     </AppLayout>
   );
 };
