@@ -27,7 +27,6 @@ export function POGenerator() {
   let currentMonth = padNumber(date.getMonth() + 1, true);
   let currentDate = padNumber(date.getDate(), true);
   let beg = fetchBeg();
-  console.log("beg", beg);
   let AcCode = getStrCode(beg?.Account?.name);
   let MaCode = getStrCode(beg?.Manufacturer?.name);
 
