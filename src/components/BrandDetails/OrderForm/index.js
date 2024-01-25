@@ -153,7 +153,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         return (
             <div>
                 {/* <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleFileChange} /> */}
-                <form className='d-flex justify-content-between'>
+                {/* <form className='d-flex justify-content-between'> */}
+                <form className=''>
                     <input type="file" ref={fileInputRef} accept=".csv" onChange={handleFileChange} />
                     <input type='reset' value={'reset'} className={btnClassName} onClick={() => { setData([]); setIsLoading(false);setErrorOnList(0); }} />
                 </form>
