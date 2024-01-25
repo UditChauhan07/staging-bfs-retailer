@@ -34,7 +34,7 @@ const NewnessReport = () => {
   // if (manufacturers?.status !== 200) {
   //   // DestoryAuth();
   // }
-  const resetFilter = async() => {
+  const resetFilter = async () => {
     setLoading(true);
     setFilter(initialValues);
     const result = await originalApiData.fetchNewnessApiData(initialValues);
@@ -122,12 +122,10 @@ const NewnessReport = () => {
           {/* First Calender Filter-- from date */}
           <FilterDate
             onChange={(e) => {
-              console.log(e);
-              console.log(new Date(e));
-              // setFilter((prev) => ({
-              //   ...prev,
-              //   fromDate: e.target.value,
-              // }));
+              setFilter((prev) => ({
+                ...prev,
+                fromDate: new Date(e).toJSON().slice(0, 10),
+              }));
             }}
             value={filter.fromDate}
             label={"start date : "}
@@ -138,7 +136,7 @@ const NewnessReport = () => {
             onChange={(e) => {
               setFilter((prev) => ({
                 ...prev,
-                toDate: e.target.value,
+                toDate: new Date(e).toJSON().slice(0, 10),
               }));
             }}
             value={filter.toDate}
@@ -159,10 +157,7 @@ const NewnessReport = () => {
         </>
       }
     >
-      {loading ? <Loading height={"70vh"} /> : 
-     
-      <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />
-      }
+      {loading ? <Loading height={"70vh"} /> : <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />}
     </AppLayout>
   );
 };

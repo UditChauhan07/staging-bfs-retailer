@@ -3,7 +3,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CalenderIcon } from "../lib/svg";
 const FilterDate = ({ label, onChange, value, minWidth }) => {
-  console.log(value);
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
     <button onClick={onClick} ref={ref}>
       {label} {value}
