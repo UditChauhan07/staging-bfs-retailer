@@ -92,9 +92,8 @@ const OrderStatusFormSection = () => {
     <Formik initialValues={initialValues} validationSchema={OrderStatusSchema} onSubmit={onSubmitHandler}>
       <div className={styles.container}>
         <Form className={styles.formContainer}>
-          {/* <form className={styles.formContainer} onSubmit={onSubmitHandler}> */}
-          <b className={styles.containerTitle}>Order Status</b>
-          <label className={styles.labelHolder}>
+          <b className={styles.containerTitle}>Order Status : {supportTicketData?.orderStatusForm?.reason}</b>
+          {/* <label className={styles.labelHolder}>
             Priority
             <select
               onChange={(e) => {
@@ -110,14 +109,11 @@ const OrderStatusFormSection = () => {
                 );
               })}
             </select>
-          </label>
+          </label> */}
           <label className={styles.labelHolder}>
             Contact Name
             <Field
               component="select"
-              // onChange={(e) => {
-              //   onChangeHandler("contactId", e.target.value);
-              // }}
               name="contact"
             >
               <option val>Select Contact</option>
@@ -137,12 +133,8 @@ const OrderStatusFormSection = () => {
             <Field
               component="textarea"
               placeholder="Description"
-              //   required
               rows={4}
               name="description"
-              // onChange={(e) => {
-              //   onChangeHandler("desc", e.target.value);
-              // }}
               defaultValue={initialValues.description}
             ></Field>
           </label>
@@ -164,7 +156,6 @@ const OrderStatusFormSection = () => {
             </Link>
             <input type="submit" className={styles.btn} value={"Submit"} disabled={activeBtn} />
           </div>
-          {/* </form> */}
         </Form>
       </div>
     </Formik>
