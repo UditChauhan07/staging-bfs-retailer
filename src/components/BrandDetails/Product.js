@@ -337,7 +337,7 @@ function Product() {
           <AppLayout
             filterNodes={
               <>
-                <FilterItem
+              {isLoading?null:<> <FilterItem
                   label="Sort by"
                   value={sortBy}
                   options={[
@@ -384,7 +384,8 @@ function Product() {
                 </button>
                 <button className="border px-2.5 py-1 leading-tight uppercase tracking-[1.2px]" onClick={() => setOrderFromModal(true)}>
                   Upload Order Form
-                </button>
+                </button></>}
+               
               </>
             }
           >
