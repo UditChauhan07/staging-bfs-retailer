@@ -151,6 +151,7 @@ span.ProductQty {
 
 .LaunchProductDetail {
     margin-left: 20px;
+    width: 80%;
 }
 .timeline>li::before,
 .timelineHolder02 {
