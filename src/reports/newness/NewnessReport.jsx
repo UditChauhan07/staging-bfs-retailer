@@ -9,11 +9,11 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { FilterItem } from "../../components/FilterItem";
 import FilterDate from "../../components/FilterDate";
+
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const NewnessReport = () => {
   const navigate = useNavigate();
-
   let currentDate = new Date().toJSON().slice(0, 10);
   const subtract6Months = (date) => {
     date.setMonth(date.getMonth() - 6);
@@ -28,14 +28,13 @@ const NewnessReport = () => {
   };
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useNewnessReport();
-  // console.log({ originalApiData });
   const { data: manufacturers, isLoading, error } = useManufacturer();
   const [newnessData, setNewnessData] = useState({});
   const [loading, setLoading] = useState(false);
   // if (manufacturers?.status !== 200) {
   //   // DestoryAuth();
   // }
-  const resetFilter = async() => {
+  const resetFilter = async () => {
     setLoading(true);
     setFilter(initialValues);
     const result = await originalApiData.fetchNewnessApiData(initialValues);
@@ -71,7 +70,6 @@ const NewnessReport = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Newness Report ${new Date()}` + fileExtension);
   };
-  // console.log(filter);
   useEffect(() => {
     const userData = localStorage.getItem("Name");
     if (!userData) {
@@ -126,7 +124,7 @@ const NewnessReport = () => {
             onChange={(e) => {
               setFilter((prev) => ({
                 ...prev,
-                fromDate: e.target.value,
+                fromDate: new Date(e).toJSON().slice(0, 10),
               }));
             }}
             value={filter.fromDate}
@@ -138,7 +136,7 @@ const NewnessReport = () => {
             onChange={(e) => {
               setFilter((prev) => ({
                 ...prev,
-                toDate: e.target.value,
+                toDate: new Date(e).toJSON().slice(0, 10),
               }));
             }}
             value={filter.toDate}

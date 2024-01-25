@@ -14,7 +14,7 @@ const NewnessReportTable = ({ newnessData, dataDisplay }) => {
       {newnessData?.status === 200 ? (
         newnessData.AccountList.length ? (
           <div className={`d-flex p-3 ${styles.tableBoundary} mb-5`}>
-            <div className={`{styles.WidthTable} table-responsive overflow-scroll `} style={{ maxHeight: "73vh", minHeight: "40vh" }}>
+            <div className={`{styles.WidthTable} table-responsive overflow-scroll `} style={{ maxHeight: "67vh", minHeight: "40vh" }}>
               <table id="salesReportTable" className="table table-responsive">
                 <thead>
                   <tr>

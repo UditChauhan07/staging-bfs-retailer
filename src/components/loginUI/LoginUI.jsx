@@ -14,7 +14,6 @@ const LoginUI = () => {
   const api = useLogin();
   const navigate = useNavigate();
   const { setUserValue } = useAuth();
-
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const initialValues = {
