@@ -7,7 +7,7 @@ const MarketingCalendar = () => {
   const [brand,setBrand] = useState(null);
   let brands = [
     { value: null, label: "All" },
-    {value:"Susanne Kaufmann",label:"Susanne Kaufmann"},
+    // {value:"Susanne Kaufmann",label:"Susanne Kaufmann"},
     {value:"RMS Beauty",label:"RMS Beauty"},
     {value:"Bobbi Brown",label:"Bobbi Brown"},
     {value:"Bumble and Bumble",label:"Bumble and Bumble"},

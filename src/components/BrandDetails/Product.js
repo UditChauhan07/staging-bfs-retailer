@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import styles from "./styles.module.css";
 import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
-
+import { MdOutlineDownload } from "react-icons/md";
 import { useProductList } from "../../api/useProductList";
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ import AppLayout from "../AppLayout";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import SpreadsheetUploader from "./OrderForm";
-import { CSVLink } from 'react-csv';
+import { CSVLink } from "react-csv";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
@@ -67,10 +67,7 @@ function Product() {
     return groupedData;
   };
 
-  const formattedData = useMemo(
-    () => groupProductDataByCategory(data?.data?.records),
-    [data?.data?.records]
-  );
+  const formattedData = useMemo(() => groupProductDataByCategory(data?.data?.records), [data?.data?.records]);
 
   const formattedFilterData = useMemo(() => {
     let finalFilteredProducts = { ...formattedData };
@@ -106,11 +103,14 @@ function Product() {
       const filteredProductsArray = Object.values(finalFilteredProducts)
         ?.flat()
         ?.filter((value) => {
-          return value.Name.toLowerCase().includes(searchBy?.toLowerCase()) || value.ProductCode.toLowerCase().includes(searchBy?.toLowerCase()) || value.ProductUPC__c.toLowerCase().includes(searchBy?.toLowerCase());
+          return (
+            value.Name.toLowerCase().includes(searchBy?.toLowerCase()) ||
+            value.ProductCode.toLowerCase().includes(searchBy?.toLowerCase()) ||
+            value.ProductUPC__c.toLowerCase().includes(searchBy?.toLowerCase())
+          );
         });
       newData = groupProductDataByCategory(filteredProductsArray);
       finalFilteredProducts = { ...newData };
-
     }
 
     if (sortBy === "Price: Low To High") {
@@ -119,10 +119,7 @@ function Product() {
         const value = finalFilteredProducts[key];
 
         value?.sort((a, b) => {
-          return (
-            +a?.usdRetail__c?.replace("$", "") -
-            +b?.usdRetail__c?.replace("$", "")
-          );
+          return +a?.usdRetail__c?.replace("$", "") - +b?.usdRetail__c?.replace("$", "");
         });
       });
     }
@@ -131,11 +128,7 @@ function Product() {
       let newData = {};
       Object.keys(finalFilteredProducts)?.forEach((key) => {
         const value = finalFilteredProducts[key];
-        value?.sort(
-          (a, b) =>
-            +b?.usdRetail__c?.replace("$", "") -
-            +a?.usdRetail__c?.replace("$", "")
-        );
+        value?.sort((a, b) => +b?.usdRetail__c?.replace("$", "") - +a?.usdRetail__c?.replace("$", ""));
       });
     }
 
@@ -143,12 +136,7 @@ function Product() {
   }, [formattedData, categoryFilters, productTypeFilter, sortBy, searchBy]);
 
   useEffect(() => {
-    if (
-      !(
-        localStorage.getItem("ManufacturerId__c") &&
-        localStorage.getItem("AccountId__c")
-      )
-    ) {
+    if (!(localStorage.getItem("ManufacturerId__c") && localStorage.getItem("AccountId__c"))) {
       setRedirect(true);
     }
   }, []);
@@ -160,11 +148,7 @@ function Product() {
   };
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
-    if (
-      begValue?.Account?.id &&
-      begValue?.Manufacturer?.id &&
-      Object.values(begValue.orderList).length > 0
-    ) {
+    if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
       let bagPrice = 0;
       let bagTesterPrice = 0;
       Object.values(begValue.orderList).map((product) => {
@@ -179,28 +163,14 @@ function Product() {
           productPrice = parseFloat(splitPrice[0]);
         }
         if (productCategories && productCategories.toUpperCase() === "TESTER") {
-          console.log(
-            productPrice * productQuantity -
-            (productPrice * productQuantity * product.discount.testerMargin) /
-            100
-          );
-          bagTesterPrice +=
-            productPrice * productQuantity -
-            (productPrice * productQuantity * product.discount.testerMargin) /
-            100;
+          console.log(productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100);
+          bagTesterPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100;
           bagPrice += bagTesterPrice;
           setTesterInBag(true);
-        } else if (
-          productCategories &&
-          productCategories.toUpperCase() === "SAMPLES"
-        ) {
-          bagPrice +=
-            productPrice * productQuantity -
-            (productPrice * productQuantity * product.discount.sample) / 100;
+        } else if (productCategories && productCategories.toUpperCase() === "SAMPLES") {
+          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.sample) / 100;
         } else {
-          bagPrice +=
-            productPrice * productQuantity -
-            (productPrice * productQuantity * product.discount.margin) / 100;
+          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.margin) / 100;
         }
       });
       setAlert(0);
@@ -275,14 +245,9 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>
-                      Please Select Products of Minimum Order Amount
-                    </p>
+                    <p className={` ${Styles.ModalContent}`}>Please Select Products of Minimum Order Amount</p>
                     <div className="d-flex justify-content-center">
-                      <button
-                        className={`${Styles.modalButton}`}
-                        onClick={() => setAlert(0)}
-                      >
+                      <button className={`${Styles.modalButton}`} onClick={() => setAlert(0)}>
                         OK
                       </button>
                     </div>
@@ -299,14 +264,9 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>
-                      Please Select Tester Product of Minimum Order Amount
-                    </p>
+                    <p className={` ${Styles.ModalContent}`}>Please Select Tester Product of Minimum Order Amount</p>
                     <div className="d-flex justify-content-center">
-                      <button
-                        className={`${Styles.modalButton}`}
-                        onClick={() => setAlert(0)}
-                      >
+                      <button className={`${Styles.modalButton}`} onClick={() => setAlert(0)}>
                         OK
                       </button>
                     </div>
@@ -325,14 +285,9 @@ function Product() {
                 <>
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                    <p className={` ${Styles.ModalContent}`}>
-                      No Product in your bag
-                    </p>
+                    <p className={` ${Styles.ModalContent}`}>No Product in your bag</p>
                     <div className="d-flex justify-content-center">
-                      <button
-                        className={`${Styles.modalButton}`}
-                        onClick={() => setEmptyBag(false)}
-                      >
+                      <button className={`${Styles.modalButton}`} onClick={() => setEmptyBag(false)}>
                         OK
                       </button>
                     </div>
@@ -350,21 +305,26 @@ function Product() {
               content={
                 <>
                   <div style={{ maxWidth: "100%" }}>
-                    <h1 className={`fs-5 ${Styles.ModalHeader} d-flex justify-content-between`}>Upload Order Form
-                      {/* <button
-                        className={`${Styles.modalButton}`}
-                        style={{ width: 'max-content',padding:'0 10px' }}
-                        onClick={exportToExcel}
+                    <h1 className={`fs-5 ${Styles.ModalHeader} d-flex justify-content-between mb-3`}>Upload Order Form  
+                    <CSVLink
+                        data={csvData()}
+                        filename={`Order Form ${new Date()}.csv`}
+                        className={`${Styles.modalButton} d-flex justify-content-center align-items-center gap-1`}
+                        style={{ width: "max-content", padding: "0px 6px" }}
                       >
-                        Download Sample
-                      </button> */}
-                      <CSVLink data={csvData()} filename={`Order Form ${new Date()}.csv`} className={`${Styles.modalButton}`}
-                        style={{ width: 'max-content', padding: '0 10px' }}>
-                        Download Sample
-                      </CSVLink>
-                    </h1>
-                    <div className={` ${Styles.ModalContent}`}>
-                      <SpreadsheetUploader rawData={data || {}} orderData={{ accountName: localStorage.getItem("Account"), accountId: localStorage.getItem("AccountId__c"), brandId: localStorage.getItem("ManufacturerId__c") }} btnClassName={Styles.modalButton} setOrderFromModal={setOrderFromModal} />
+                        <MdOutlineDownload size={16}/>
+                        Sample
+                      </CSVLink></h1>
+                    <div className={`${Styles.ModalContent} mt-2`}>
+                      <SpreadsheetUploader
+                        rawData={data || {}}
+                        orderData={{ accountName: localStorage.getItem("Account"), accountId: localStorage.getItem("AccountId__c"), brandId: localStorage.getItem("ManufacturerId__c") }}
+                        btnClassName={Styles.modalButton}
+                        setOrderFromModal={setOrderFromModal}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-center">
+                     
                     </div>
                   </div>
                 </>
@@ -377,7 +337,7 @@ function Product() {
           <AppLayout
             filterNodes={
               <>
-                <FilterItem
+              {isLoading?null:<> <FilterItem
                   label="Sort by"
                   value={sortBy}
                   options={[
@@ -411,14 +371,9 @@ function Product() {
                     setProductTypeFilter(value);
                   }}
                 />
-                <FilterSearch
-                  onChange={(e) => setSearchBy(e.target.value)}
-                  value={searchBy}
-                  placeholder={"Enter Product name,UPC & SKU"}
-                  minWidth="260px"
-                />
+                <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Enter Product name,UPC & SKU"} minWidth="260px" />
                 <button
-                  className="border px-2.5 py-1 leading-tight"
+                  className="border px-2.5 py-1 leading-tight tracking-[1.2px] uppercase"
                   onClick={() => {
                     setSortBy("Price: High To Low");
                     setSearchBy("");
@@ -427,13 +382,13 @@ function Product() {
                 >
                   CLEAR ALL
                 </button>
-                {/* <button className="border px-2.5 py-1 leading-tight" onClick={() => setOrderFromModal(true)}>
+                <button className="border px-2.5 py-1 leading-tight uppercase tracking-[1.2px]" onClick={() => setOrderFromModal(true)}>
                   Upload Order Form
-                </button> */}
+                </button></>}
+               
               </>
             }
           >
-            {/*  onClick={exportToExcel} */}
             {isLoading ? (
               <Loading height={"70vh"} />
             ) : (
@@ -472,16 +427,14 @@ function Product() {
                       </div>
 
                       <div className="col-lg-9 col-md-8 col-sm-12 ">
-                        <div className={`overflow-auto `}
+                        <div
+                          className={`overflow-auto `}
                           style={{
                             height: "64vh",
                             border: "1px dashed black",
                           }}
                         >
-                          <Accordion
-                            data={data}
-                            formattedData={formattedFilterData}
-                          ></Accordion>
+                          <Accordion data={data} formattedData={formattedFilterData}></Accordion>
                         </div>
                         <div className={`${styles.TotalSide} `}>
                           <h4>Total Number of Products : {orderQuantity}</h4>
