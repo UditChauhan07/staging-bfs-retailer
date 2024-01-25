@@ -9,6 +9,7 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { FilterItem } from "../../components/FilterItem";
 import FilterDate from "../../components/FilterDate";
+import { MdOutlineDownload } from "react-icons/md";
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -151,8 +152,9 @@ const NewnessReport = () => {
               CLEAR ALL
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
+          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={exportToExcel}>
             EXPORT
+            <MdOutlineDownload size={16} />
           </button>
         </>
       }

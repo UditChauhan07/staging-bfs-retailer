@@ -45,6 +45,7 @@ function OrderListContent({ data }) {
         sendEmail: false,
       },
     };
+    console.log("beg", beg);
     let statusOfSupport = supportShare(beg)
       .then((response) => {
         if (response) navigate("/orderStatusForm");
@@ -52,6 +53,7 @@ function OrderListContent({ data }) {
       .catch((error) => {
         console.error({ error });
       });
+
   };
 
   return (

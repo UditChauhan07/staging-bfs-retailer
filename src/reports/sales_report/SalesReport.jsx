@@ -10,7 +10,8 @@ import SalesReportTable from "../../components/sales report table/SalesReportTab
 import Loading from "../../components/Loading";
 import FilterDate from "../../components/FilterDate";
 import FilterSearch from "../../components/FilterSearch";
-import Styles from "./index.module.css"
+import Styles from "./index.module.css";
+import { MdOutlineDownload } from "react-icons/md";
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -26,8 +27,8 @@ const SalesReport = () => {
   const [ownerPermission, setOwnerPermission] = useState(false);
   const [searchBy, setSearchBy] = useState("");
   const [searchBySalesRep, setSearchBySalesRep] = useState("");
-  const [salesRepList,setSalesRepList] = useState([]);
-  const [yearForTableSort,setYearForTableSort] = useState(2024)
+  const [salesRepList, setSalesRepList] = useState([]);
+  const [yearForTableSort, setYearForTableSort] = useState(2024);
   const filteredSalesReportData = useMemo(() => {
     let filtered = salesReportData.filter((ele) => {
       return !manufacturerFilter || !ele.ManufacturerName__c.localeCompare(manufacturerFilter);
@@ -35,29 +36,27 @@ const SalesReport = () => {
     if (searchBy) {
       filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.filter((item) => {
-          if(item.AccountName?.toLowerCase().includes(
-            searchBy?.toLowerCase())){
-              return item;
-            }
+          if (item.AccountName?.toLowerCase().includes(searchBy?.toLowerCase())) {
+            return item;
+          }
         });
-          return {
-            ...ele,
-            Orders,
-          };
+        return {
+          ...ele,
+          Orders,
+        };
       });
     }
     if (searchBySalesRep) {
       filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.filter((item) => {
-          if(item.AccountRepo?.toLowerCase().includes(
-            searchBySalesRep?.toLowerCase())){
-              return item;
-            }
+          if (item.AccountRepo?.toLowerCase().includes(searchBySalesRep?.toLowerCase())) {
+            return item;
+          }
         });
-          return {
-            ...ele,
-            Orders,
-          };
+        return {
+          ...ele,
+          Orders,
+        };
       });
     }
     if (highestOrders) {
@@ -78,7 +77,7 @@ const SalesReport = () => {
       });
     }
     return filtered;
-  }, [manufacturerFilter, salesReportData, highestOrders, searchBy,searchBySalesRep]);
+  }, [manufacturerFilter, salesReportData, highestOrders, searchBy, searchBySalesRep]);
 
   const csvData = useMemo(() => {
     return filteredSalesReportData?.map((ele) =>
@@ -128,35 +127,35 @@ const SalesReport = () => {
     setHighestOrders(true);
     getSalesData(yearFor);
     setYearFor(2024);
-    setSearchBy("")
-    setSearchBySalesRep("")
-    setYearForTableSort(2024)
+    setSearchBy("");
+    setSearchBySalesRep("");
+    setYearForTableSort(2024);
   };
 
   const navigate = useNavigate();
 
   const getSalesData = async (yearFor) => {
     setIsLoading(true);
-    setYearForTableSort(yearFor)
+    setYearForTableSort(yearFor);
     const result = await salesReportApi.salesReportData({ yearFor });
     let salesListName = [];
     let salesList = [];
-    result.data.data.map((manu)=>{
-      if(manu.Orders.length){
-        manu.Orders.map((item)=>{
-          if(!salesListName.includes(item.AccountRepo)){
-            salesListName.push(item.AccountRepo)
+    result.data.data.map((manu) => {
+      if (manu.Orders.length) {
+        manu.Orders.map((item) => {
+          if (!salesListName.includes(item.AccountRepo)) {
+            salesListName.push(item.AccountRepo);
             salesList.push({
               label: item.AccountRepo,
               value: item.AccountRepo,
-            })
+            });
           }
-        })
+        });
       }
-    })
-    setSalesRepList(salesList)
+    });
+    setSalesRepList(salesList);
     setSalesReportData(result.data.data);
-    setOwnerPermission(result.data.ownerPermission)
+    setOwnerPermission(result.data.ownerPermission);
     setIsLoading(false);
   };
   // console.log("salesReportData", salesReportData);
@@ -172,8 +171,8 @@ const SalesReport = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
     getSalesData(yearFor);
-    setSearchBy("")
-    setSearchBySalesRep("")
+    setSearchBy("");
+    setSearchBySalesRep("");
     getSalesData(yearFor);
   };
 
@@ -181,13 +180,7 @@ const SalesReport = () => {
     <AppLayout
       filterNodes={
         <>
-          {ownerPermission && <FilterItem
-            minWidth="220px"
-            label="All Sales Rep"
-            value={searchBySalesRep}
-            options={salesRepList}
-            onChange={(value) => setSearchBySalesRep(value)}
-          />}
+          {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
           <FilterItem
             minWidth="220px"
             label="All Manufacturers"
@@ -215,50 +208,66 @@ const SalesReport = () => {
             onChange={(value) => setHighestOrders(value)}
           />
           {/* First Calender Filter-- start date */}
-          <FilterSearch
-            onChange={(e) => setSearchBy(e.target.value)}
-            value={searchBy}
-            placeholder={"Search by account"}
-            minWidth={"167px"}
-          />
+          <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
           <div className="d-flex gap-3">
             <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
               CLEAR ALL
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight" onClick={exportToExcel}>
+          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={exportToExcel}>
             EXPORT
+            <MdOutlineDownload size={16} />
           </button>
         </>
       }
     >
       <div className={Styles.inorderflex}>
         <div>
-          <h2>{ownerPermission ? `${searchBySalesRep ? searchBySalesRep+'`s' :'All'} Sales Report` : "Your Sales Report"}{(manufacturerFilter) && (' for ' + manufacturerFilter)}</h2>
+          <h2>
+            {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Sales Report` : "Your Sales Report"}
+            {manufacturerFilter && " for " + manufacturerFilter}
+          </h2>
         </div>
-        <div
-        >
-          <div
-            className={`d-flex align-items-center ${Styles.InputControll}`}
-          >
+        <div>
+          <div className={`d-flex align-items-center ${Styles.InputControll}`}>
             <select onChange={(e) => setYearFor(e.target.value)}>
-              <option value={2015} selected={yearFor == 2015 ? true : false}>2015</option>
-              <option value={2016} selected={yearFor == 2016 ? true : false}>2016</option>
-              <option value={2017} selected={yearFor == 2017 ? true : false}>2017</option>
-              <option value={2018} selected={yearFor == 2018 ? true : false}>2018</option>
-              <option value={2019} selected={yearFor == 2019 ? true : false}>2019</option>
-              <option value={2020} selected={yearFor == 2020 ? true : false}>2020</option>
-              <option value={2021} selected={yearFor == 2021 ? true : false}>2021</option>
-              <option value={2022} selected={yearFor == 2022 ? true : false}>2022</option>
-              <option value={2023} selected={yearFor == 2023 ? true : false}>2023</option>
-              <option value={2024} selected={yearFor == 2024 ? true : false}>2024</option>
+              <option value={2015} selected={yearFor == 2015 ? true : false}>
+                2015
+              </option>
+              <option value={2016} selected={yearFor == 2016 ? true : false}>
+                2016
+              </option>
+              <option value={2017} selected={yearFor == 2017 ? true : false}>
+                2017
+              </option>
+              <option value={2018} selected={yearFor == 2018 ? true : false}>
+                2018
+              </option>
+              <option value={2019} selected={yearFor == 2019 ? true : false}>
+                2019
+              </option>
+              <option value={2020} selected={yearFor == 2020 ? true : false}>
+                2020
+              </option>
+              <option value={2021} selected={yearFor == 2021 ? true : false}>
+                2021
+              </option>
+              <option value={2022} selected={yearFor == 2022 ? true : false}>
+                2022
+              </option>
+              <option value={2023} selected={yearFor == 2023 ? true : false}>
+                2023
+              </option>
+              <option value={2024} selected={yearFor == 2024 ? true : false}>
+                2024
+              </option>
             </select>
             <button onClick={() => sendApiCall()}>Search Sales</button>
           </div>
         </div>
       </div>
       {filteredSalesReportData?.length && !isLoading ? (
-        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort} ownerPermission={ownerPermission}/>
+        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort} ownerPermission={ownerPermission} />
       ) : salesReportData.length && !isLoading ? (
         <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (

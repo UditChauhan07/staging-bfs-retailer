@@ -22,7 +22,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       let productDetails = getProductData(item["Product Code"] || null);
       if (item?.Quantity) {
         let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name;
-        console.log(accumulator);
+        // console.log(accumulator);
         return accumulator + (error ? 1 : 0);
       } else {
         totalQty += 1;

@@ -312,7 +312,7 @@ function Product() {
                         className={`${Styles.modalButton} d-flex justify-content-center align-items-center gap-1`}
                         style={{ width: "max-content", padding: "0px 6px" }}
                       >
-                        <MdOutlineDownload />
+                        <MdOutlineDownload size={16}/>
                         Sample
                       </CSVLink></h1>
                     <div className={`${Styles.ModalContent} mt-2`}>
