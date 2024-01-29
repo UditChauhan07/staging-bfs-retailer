@@ -56,6 +56,13 @@
   letter-spacing: 1.12px;
   outline: none;
 }
+
+.labelHolder select::placeholder,
+.labelHolder textarea::placeholder,
+.labelHolder input::placeholder {
+  font-family: "Montserrat-400";
+
+}
 .btn{
   padding: 0.5rem 2rem;
 border: 1px solid #000;
