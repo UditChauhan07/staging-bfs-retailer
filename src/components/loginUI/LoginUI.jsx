@@ -17,8 +17,8 @@ const LoginUI = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const initialValues = {
-    email: localStorage.getItem("emailB2B")||"",
-    password: localStorage.getItem("passwordB2B")||"",
+    email: localStorage.getItem("emailB2B") || "",
+    password: localStorage.getItem("passwordB2B") || "",
     remember: true,
   };
 
@@ -27,12 +27,12 @@ const LoginUI = () => {
     const apiData = await api.mutateLogin(values.email, values.password);
     setLoading(false);
     if (apiData?.status === 200) {
-      if(values.remember){
-        localStorage.setItem("emailB2B",values.email)
-        localStorage.setItem("passwordB2B",values.password)
+      if (values.remember) {
+        localStorage.setItem("emailB2B", values.email);
+        localStorage.setItem("passwordB2B", values.password);
       }
       localStorage.setItem("Name", apiData?.data?.Name);
-     
+
       localStorage.setItem("Api Data", JSON.stringify(apiData));
       const fetched = localStorage.getItem("Api Data");
       setUserValue(JSON.parse(fetched));
@@ -64,6 +64,16 @@ const LoginUI = () => {
         <div>
           <div className="container">
             <div className={styles.LoginMain}>
+              <div className="d-flex col-12">
+                <div className="col-6">
+                  <button className={styles.tab}>Sales Rep Login</button>
+                  <hr style={{color:"black", opacity:"1"}}/>
+                </div>
+                <div className="col-6">
+                  <button className={styles.tabNotActive}>Retailer Login</button>
+                  <hr />
+                </div>
+              </div>
               <h4>Access My Account</h4>
               <Form>
                 <div className={styles.EmailDiv}>
@@ -73,7 +83,7 @@ const LoginUI = () => {
 
                   <div className={styles.LabelEmail}>
                     <label>Email</label> <br />
-                    <Field type="email" className="border-0 h-50 border-bottom" style={{ width: "100%", outline: "none" }} name="email"  />
+                    <Field type="email" className="border-0 h-50 border-bottom" style={{ width: "100%", outline: "none" }} name="email" />
                     <ErrorMessage component={TextError} name="email" />
                   </div>
                 </div>
@@ -92,7 +102,7 @@ const LoginUI = () => {
 
                 <div className={`${styles.ReCheck}`}>
                   <div className={`${styles.RememMe} ${styles.rememInput}`}>
-                    <input type="checkbox" name="remember" defaultChecked/>
+                    <input type="checkbox" name="remember" defaultChecked />
                     Remember me
                   </div>
 
@@ -105,21 +115,20 @@ const LoginUI = () => {
                   </button>
                 </div>
               </Form>
-              <Link to={"/sign-up"} >
-              <div className={styles.SignUpW} onClick={()=>navigate("/sign-up")}>
-                <p>
-                  Don’t have an account ? <span>Sign up.</span>
-                </p>
-              </div>
+              <Link to={"/sign-up"}>
+                <div className={styles.SignUpW} onClick={() => navigate("/sign-up")}>
+                  <p>
+                    Don’t have an account ? <span>Sign up.</span>
+                  </p>
+                </div>
               </Link>
             </div>
-            
+
             <div className={styles.PolicyA}>
               <p>
                 By signing in or clicking "Login", you agree to our <span>Terms of Service </span> Please also read our<span> Privacy Policy </span>
               </p>
             </div>
-            
           </div>
         </div>
       </Formik>
