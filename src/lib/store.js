@@ -243,7 +243,7 @@ export async function getSupportList({ user }) {
   let headersList = {
     Accept: "*/*",
   };
-  console.log({user});
+  // console.log({user});
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);
   bodyContent.append("salesRepId", user.Sales_Rep__c);

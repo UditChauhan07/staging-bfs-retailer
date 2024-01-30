@@ -8,10 +8,15 @@ import * as XLSX from "xlsx";
 import { FilterItem } from "../../components/FilterItem";
 import { useManufacturer } from "../../api/useManufacturer";
 import { MdOutlineDownload } from "react-icons/md";
+import ModalPage from "../../components/Modal UI";
+import styles from "../../components/Modal UI/Styles.module.css";
+
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
 const ComparisonReport = () => {
+  const [exportToExcelState, setExportToExcelState] = useState(false);
+
   const initialValues = {
     ManufacturerId__c: "a0O3b00000p7zqKEAQ",
     month: date.getMonth() + 1,
@@ -40,12 +45,16 @@ const ComparisonReport = () => {
     sendApiCall();
   }, []);
 
+  const handleExportToExcel = () => {
+    setExportToExcelState(true);
+  };
   const exportToExcel = () => {
+    setExportToExcelState(false);
     const ws = XLSX.utils.json_to_sheet(csvData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, `Comparison Report ${new Date()}` + fileExtension);
+    FileSaver.saveAs(data, `Comparison Report ${new Date().toDateString()}` + fileExtension);
   };
   const resetFilter = async () => {
     setIsLoading(true);
@@ -102,12 +111,36 @@ const ComparisonReport = () => {
               CLEAR ALL
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={exportToExcel}>
+          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
          EXPORT <MdOutlineDownload size={16}/> 
           </button>
         </>
       }
     >
+       {exportToExcelState && (
+        <ModalPage
+          open
+          content={
+            <>
+              <div style={{ maxWidth: "380px" }}>
+                <h1 className={`fs-5 ${styles.ModalHeader}`}>Warning</h1>
+                <p className={` ${styles.ModalContent}`}>Do you want to download Comparison Report?</p>
+                <div className="d-flex justify-content-center gap-3 ">
+                  <button className={`${styles.modalButton}`} onClick={exportToExcel}>
+                    OK
+                  </button>
+                  <button className={`${styles.modalButton}`} onClick={() => setExportToExcelState(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => {
+            setExportToExcelState(false);
+          }}
+        />
+      )}
       {!isLoading ? <ComparisonReportTable comparisonData={apiData} /> : <Loading height={"70vh"} />}
     </AppLayout>
   );

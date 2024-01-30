@@ -45,7 +45,7 @@ function OrderListContent({ data }) {
         sendEmail: false,
       },
     };
-    console.log("beg", beg);
+    // console.log("beg", beg);
     let statusOfSupport = supportShare(beg)
       .then((response) => {
         if (response) navigate("/orderStatusForm");
