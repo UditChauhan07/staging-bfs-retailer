@@ -16,6 +16,7 @@ const LoginUI = () => {
   const { setUserValue } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [salesRepLogin, setSalesRepLogin] = useState(true);
   const initialValues = {
     email: localStorage.getItem("emailB2B") || "",
     password: localStorage.getItem("passwordB2B") || "",
@@ -45,7 +46,13 @@ const LoginUI = () => {
     }
     action.resetForm();
   };
-
+  const handleSalesRepLogin = () => {
+    // salesRepLogin ? navigate("/register-salesrep") : navigate("/register");
+    setSalesRepLogin(true);
+  };
+  const handleRetailerLogin = () => {
+    setSalesRepLogin(false);
+  };
   return (
     <>
       {loading ? (
@@ -66,12 +73,16 @@ const LoginUI = () => {
             <div className={styles.LoginMain}>
               <div className="d-flex col-12">
                 <div className="col-6">
-                  <button className={styles.tab}>Sales Rep Login</button>
-                  <hr style={{color:"black", opacity:"1"}}/>
+                  <button className={salesRepLogin ? styles.tab : styles.tabNotActive} onClick={handleSalesRepLogin}>
+                    Sales Rep Login
+                  </button>
+                  <hr className={salesRepLogin ? styles.hr : null} />
                 </div>
                 <div className="col-6">
-                  <button className={styles.tabNotActive}>Retailer Login</button>
-                  <hr />
+                  <button className={salesRepLogin ? styles.tabNotActive : styles.tab} onClick={handleRetailerLogin}>
+                    Retailer Login
+                  </button>
+                  <hr className={salesRepLogin ? null : styles.hr} />
                 </div>
               </div>
               <h4>Access My Account</h4>
