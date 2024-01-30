@@ -3,6 +3,7 @@ import Styles from "./style.module.css";
 import { useNavigate } from "react-router-dom";
 import { CloseButton } from "../../../lib/svg";
 import { DestoryAuth, GetAuthData, getAllAccount, getOrderList, getSupportFormRaw, postSupportAny, supportDriveBeg, supportShare } from "../../../lib/store";
+import Select from "react-select";
 
 const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const navigate = useNavigate();
@@ -76,8 +77,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     });
     setStep(1);
   };
-  const onOrderChangeHandler = (e) => {
-    let id = e.target.value;
+  const onOrderChangeHandler = (value) => {
+    let id = value;
+    console.log("id", id);
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
@@ -147,34 +149,31 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         DestoryAuth();
       });
   };
+  const options = orders.map((element) => {
+    return {
+      value: element.Id,
+      label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
+    };
+  });
+  console.log(options);
   return (
     <>
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
-          <div className="d-flex align-items-center justify-content-between">
+        <div className="d-flex align-items-center justify-content-between">
           <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">{recordType.name} Issue</h1>
-           <button type="button" onClick={onClose}>
-              <CloseButton />
-            </button>
-          </div>
-          <hr />
+          <button type="button" onClick={onClose}>
+            <CloseButton />
+          </button>
+        </div>
+        <hr />
         <section className={` ${Styles.fadeInUp} `}>
-          {/* <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] mb-[20px]">{recordType.name} Issue</h1> */}
-
           <div className={Styles.BrandInRadio}>
             <p className={Styles.CaseReason}>Select Case Reason</p>
             <div className={Styles.ModalResponsive}>
               {Object.values(reasons)?.map((reason, index) => {
                 return (
                   <div className={Styles.BrandName} key={index}>
-                    <input
-                      type="radio"
-                      name="reason_name"
-                      value={reason}
-                      // checked={selectedBrandAccountId === brand.AccountId__c}
-
-                      onChange={onChangeHandler}
-                      id={reason}
-                    />
+                    <input type="radio" name="reason_name" value={reason} onChange={onChangeHandler} id={reason} />
                     <label htmlFor={reason}>{reason}</label>
                   </div>
                 );
@@ -183,28 +182,31 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           </div>
           <hr style={{ border: "1px dashed #D5D9D9" }}></hr>
           {step >= 1 && (
-            <div className={`${Styles.delay} ${Styles.fadeInUp} `} >
+            <div className={`${Styles.delay} ${Styles.fadeInUp} `}>
               <div className={Styles.selectDiv}>
-              <p className={Styles.CaseReason}>Select Order for last 6 month</p>
+                <p className={Styles.CaseReason}>Select Order for last 6 month</p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
-                  <select
-                    onChange={(e) => {
-                      onOrderChangeHandler(e);
-                    }}
-                    className={`mb-[10px] ${Styles.select}`}
-                  >
-                    <option>Search Order</option>
+                  // <select
+                  //   onChange={(e) => {
+                  //     onOrderChangeHandler(e);
+                  //   }}
+                  //   className={`mb-[10px] ${Styles.select}`}
+                  // >
+                  //   <option>Search Order</option>
 
-                    {orders.length > 0 &&
-                      orders.map((element) => {
-                        return (
-                          <option className={Styles.option} value={element.Id} selected={orderData.opportunityId == element.Id}>
-                            Order from <span style={{ fontWeight: "700", color: "red" }}>{element.AccountName}</span> for ({element.ProductCount} Products) Actual Amount {element.Amount} |{" "}
-                            {element.ManufacturerName__c} | PO #{element.PO_Number__c}
-                          </option>
-                        );
-                      })}
-                  </select>
+                  //   {orders.length > 0 &&
+                  //     orders.map((element) => {
+                  //       return (
+                  //         <option className={Styles.option} value={element.Id} selected={orderData.opportunityId == element.Id}>
+                  //           Order from <span style={{ fontWeight: "700", color: "red" }}>{element.AccountName}</span> for ({element.ProductCount} Products) Actual Amount {element.Amount} |{" "}
+                  //           {element.ManufacturerName__c} | PO #{element.PO_Number__c}
+                  //         </option>
+                  //       );
+                  //     })}
+                  // </select>
+                  <div style={{textAlign:"left"}}>
+                    <Select options={options} onChange={(option) => onOrderChangeHandler(option.value)} />
+                  </div>
                 )}
                 {reason == "Update Account Info" && (
                   <select
