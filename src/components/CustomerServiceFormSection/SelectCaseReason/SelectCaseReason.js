@@ -150,16 +150,18 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   return (
     <>
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
-          <div className="d-flex align-items-center justify-content-end gap-5">
-            <button type="button" onClick={onClose}>
+          <div className="d-flex align-items-center justify-content-between">
+          <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">{recordType.name} Issue</h1>
+           <button type="button" onClick={onClose}>
               <CloseButton />
             </button>
           </div>
+          <hr />
         <section className={` ${Styles.fadeInUp} `}>
-          <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] mb-[20px]">{recordType.name}</h1>
+          {/* <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] mb-[20px]">{recordType.name} Issue</h1> */}
 
           <div className={Styles.BrandInRadio}>
-            <p className={Styles.CaseReason}>Case Reason</p>
+            <p className={Styles.CaseReason}>Select Case Reason</p>
             <div className={Styles.ModalResponsive}>
               {Object.values(reasons)?.map((reason, index) => {
                 return (
