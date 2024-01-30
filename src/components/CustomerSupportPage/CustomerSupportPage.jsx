@@ -22,17 +22,21 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
     }
     return newValues;
   }, [data, retailerFilter, manufacturerFilter, searchBy]);
-  const reasons={
-    "Charges":"Charges",
-    "Product Missing":"Product Missing",
-    "Product Overage Shipped":"Product Overage",
-    "Product Damage":"Product Damage",
-    "Update Account Info":"Update Account Info",
-  }
+  const reasons = {
+    Charges: "Charges",
+    "Product Missing": "Product Missing",
+    "Product Overage Shipped": "Product Overage",
+    "Product Damage": "Product Damage",
+    "Update Account Info": "Update Account Info",
+  };
   return (
     <div>
       <div className="">
-        <ModalPage open={modalOpen} onClose={() => setModalOpen(false)} content={<SelectCaseReason reasons={reasons} onClose={() => setModalOpen(false)} recordType={{id:"0123b0000007z9pAAA",name:"Customer Service"}} />} />
+        <ModalPage
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          content={<SelectCaseReason reasons={reasons} onClose={() => setModalOpen(false)} recordType={{ id: "0123b0000007z9pAAA", name: "Customer Service" }} />}
+        />
 
         <div className={Styles.supportMain}>
           <div className="row">
@@ -53,7 +57,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
 
                 <div
                   className={Styles.supportLeftBox}
-                  style={{cursor:"pointer"}}
+                  style={{ cursor: "pointer" }}
                   onClick={() => {
                     setModalOpen(true);
                   }}
@@ -67,6 +71,17 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     <p>Resolving Concerns Serving Solutions</p>
                   </div>
                 </div>
+                <div>
+                  <div className={Styles.supportLeftBox}>
+                    <div className={Styles.supportLeftImg}>
+                      <DefaultSupportIcon width={42} height={42} />
+                    </div>
+                    <div className={Styles.supportLeftContent}>
+                      <h2>Brand Management Approval </h2>
+                      <p>Effective Management</p>
+                    </div>
+                  </div>
+                </div>
 
                 <div>
                   <div className={Styles.supportLeftBox}>
@@ -75,34 +90,8 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     </div>
 
                     <div className={Styles.supportLeftContent}>
-                      <h2>Marketing Support Issues </h2>
+                      <h2>Marketing Request</h2>
                       <p>Elevate Your Marketing with Proactive Solutions.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className={Styles.supportLeftBox}>
-                    <div className={Styles.supportLeftImg}>
-                      <DefaultSupportIcon width={42} height={42} />
-                    </div>
-
-                    <div className={Styles.supportLeftContent}>
-                      <h2>Management Cases </h2>
-                      <p>Empowering Solutions for Effective Management</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className={Styles.supportLeftBox}>
-                    <div className={Styles.supportLeftImg}>
-                      <DIFTestIcon width={42} height={42} />
-                    </div>
-
-                    <div className={Styles.supportLeftContent}>
-                      <h2>DIF Tester Issue </h2>
-                      <p>Empowering Solutions for Effective Management</p>
                     </div>
                   </div>
                 </div>
@@ -119,6 +108,20 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     </div>
                   </div>
                 </div>
+                <div>
+                  <div className={Styles.supportLeftBox}>
+                    <div className={Styles.supportLeftImg}>
+                      <DIFTestIcon width={42} height={42} />
+                    </div>
+
+                    <div className={Styles.supportLeftContent}>
+                      <h2>DIF Tester Issue </h2>
+                      <p>Empowering Solutions for Effective Management</p>
+                    </div>
+                  </div>
+                </div>
+
+                
               </div>
             </div>
 

@@ -231,7 +231,8 @@ function Dashboard({ dashboardData }) {
                 formatter: function (w) {
                   const t = w.globals.seriesTotals;
                   const result = t.reduce((a, b) => a + b, 0);
-                  return (result / 10000).toFixed(1);
+                  // return (result / 10000).toFixed(1);
+                  return result;
                 },
               },
             },
@@ -319,7 +320,8 @@ function Dashboard({ dashboardData }) {
                             formatter: function (w) {
                               const t = w.globals.seriesTotals;
                               const result = t.reduce((a, b) => a + b, 0);
-                              return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
+                              return result;
+                              // return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
                             },
                           },
                         },
