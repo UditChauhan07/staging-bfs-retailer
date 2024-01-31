@@ -104,9 +104,9 @@ function Product() {
         ?.flat()
         ?.filter((value) => {
           return (
-            value.Name.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductCode.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductUPC__c.toLowerCase().includes(searchBy?.toLowerCase())
+            value.Name?.toLowerCase().includes(searchBy?.toLowerCase()) ||
+            value.ProductCode?.toLowerCase().includes(searchBy?.toLowerCase()) ||
+            value.ProductUPC__c?.toLowerCase().includes(searchBy?.toLowerCase())
           );
         });
       newData = groupProductDataByCategory(filteredProductsArray);
