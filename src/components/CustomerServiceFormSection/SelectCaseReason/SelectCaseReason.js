@@ -183,7 +183,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                   <span className="text-danger">*</span>Select Order for last 6 month
                 </p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
-                  <div style={{ textAlign: "left",margin:"10px 0px"  }}>
+                  <div style={{ textAlign: "left", margin: "10px 0px" }}>
                     <Select
                       options={orders.map((element) => {
                         return {
@@ -192,16 +192,27 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         };
                       })}
                       onChange={(option) => onOrderChangeHandler(option.value)}
+                      // styles={{ menuList: (base) => ({ ...base, position: 'fixed !important', backgroundColor: 'white', border: '1px solid lightgray', }), }}
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      menuPortalTarget={document.body}
+                      isSearchable
+                      menuPosition={"fixed"}
+                      menuShouldScrollIntoView={false}
                     />
                   </div>
                 )}
                 {reason == "Update Account Info" && (
-                  <div style={{ textAlign: "left",margin:"10px 0px"  }}>
+                  <div style={{ textAlign: "left", margin: "10px 0px" }}>
                     <Select
                       options={accountList.map((element) => {
                         return { value: element.Id, label: element.Name };
                       })}
                       onChange={(option) => onChnageAccountHander(option.value)}
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      menuPortalTarget={document.body}
+                      isSearchable
+                      menuPosition={"fixed"}
+                      menuShouldScrollIntoView={false}
                     />
                   </div>
                 )}
@@ -225,12 +236,17 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 )}
                 {(reason == "Product Missing" || reason == "Product Overage") && (
                   <div>
-                    <div style={{ textAlign: "left",margin:"20px 0px 10px 0px" }}>
+                    <div style={{ textAlign: "left", margin: "20px 0px 10px 0px" }}>
                       <Select
                         options={orderIdChild.map((element) => {
                           return { value: element.Id, label: element.Name };
                         })}
                         onChange={(option) => onChnageOrderItemHander(option.value)}
+                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        menuPortalTarget={document.body}
+                        isSearchable
+                        menuPosition={"fixed"}
+                        menuShouldScrollIntoView={false}
                       />
                     </div>
                     <div>
