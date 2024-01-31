@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { CloseButton } from "../../../lib/svg";
 import { DestoryAuth, GetAuthData, getAllAccount, getOrderList, getSupportFormRaw, postSupportAny, supportDriveBeg, supportShare } from "../../../lib/store";
 import Select from "react-select";
+import ModalPage from "../../Modal UI";
+import styles from "../../Modal UI/Styles.module.css";
 
 const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const [typeId, setTypeId] = useState(recordType.id);
   const [desc, setDesc] = useState();
   const [subject, setSubject] = useState();
+  const [initialStep, setInitialStep] = useState(true);
   const [selectedOrderItem, setSelectOrderItem] = useState({ id: null, value: null });
   const [orderData, setOrderData] = useState({
     accountId: null,
@@ -25,6 +28,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     invoiceNumber: null,
   });
   const [reason, setReason] = useState(null);
+  const [reasonName, setReasonName] = useState(null);
   const [rawData, setRawData] = useState({
     orderStatusForm: {
       salesRepId: null,
@@ -34,6 +38,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       sendEmail: false,
     },
   });
+  const [reasonChangeModalOpen, setReasonChangeModalOpen] = useState(false);
   const [step, setStep] = useState(0);
   useEffect(() => {
     GetAuthData()
@@ -64,22 +69,40 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       });
   }, [step]);
   const onChangeHandler = (e) => {
-    setReason(e.target.value);
-    setSelectOrderItem({ id: null, value: null });
-    setOrderData({
-      accountId: null,
-      orderNumber: null,
-      poNumber: null,
-      manufacturerId: null,
-      opportunityId: null,
-      actualAmount: null,
-      invoiceNumber: null,
-    });
-    setStep(1);
+    if (initialStep) {
+      setReason(e.target.value);
+      setReasonName(e.target.value);
+      setSelectOrderItem({ id: null, value: null });
+      setOrderData({
+        accountId: null,
+        orderNumber: null,
+        poNumber: null,
+        manufacturerId: null,
+        opportunityId: null,
+        actualAmount: null,
+        invoiceNumber: null,
+      });
+      setStep(1);
+      setInitialStep(false);
+    } else {
+      setStep(0);
+      setReasonChangeModalOpen(true);
+      setReasonName(e.target.value);
+    }
+    // setSelectOrderItem({ id: null, value: null });
+    // setOrderData({
+    //   accountId: null,
+    //   orderNumber: null,
+    //   poNumber: null,
+    //   manufacturerId: null,
+    //   opportunityId: null,
+    //   actualAmount: null,
+    //   invoiceNumber: null,
+    // });
+    // setStep(1);
   };
   const onOrderChangeHandler = (value) => {
     let id = value;
-    console.log("id", id);
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
@@ -149,8 +172,49 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         DestoryAuth();
       });
   };
+  console.log("reasonName", reasonName, "reason:", reason, step);
   return (
     <>
+      {reasonChangeModalOpen ? (
+        <ModalPage
+          open
+          content={
+            <>
+              <div style={{ maxWidth: "403px" }}>
+                <h2 className={` ${styles.modalContentMontserrat}`}>
+                  Do you want to <span style={{ fontWeight: "600" }}>change</span> the previous selection?
+                </h2>
+                <div className="d-flex justify-content-center gap-3 mt-4 ">
+                  <button
+                    className={`${styles.modalButtonCancel}`}
+                    onClick={() => {
+                      setReasonChangeModalOpen(false);
+                      setReason((prev) => prev);
+                      setReasonName((prev) => prev);
+                      setStep(1);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={`${styles.modalButton}`}
+                    onClick={() => {
+                      setReasonChangeModalOpen(false);
+                      setReason(reasonName);
+                      setStep(1);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => {
+            setReasonChangeModalOpen(false);
+          }}
+        />
+      ) : null}
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
         <div className="d-flex align-items-center justify-content-between">
           <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">{recordType.name} Issue</h1>
@@ -165,11 +229,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               <span className="text-danger">*</span>Select Case Reason
             </p>
             <div className={Styles.ModalResponsive}>
-              {Object.values(reasons)?.map((reason, index) => {
+              {Object.values(reasons)?.map((reasonName, index) => {
                 return (
                   <div className={Styles.BrandName} key={index}>
-                    <input type="radio" name="reason_name" value={reason} onChange={onChangeHandler} id={reason} />
-                    <label htmlFor={reason}>{reason}</label>
+                    <input type="radio" name="reason_name" value={reasonName} onChange={onChangeHandler} id={reasonName} checked={reasonName === reason} />
+                    <label htmlFor={reasonName}>{reasonName}</label>
                   </div>
                 );
               })}
@@ -179,11 +243,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           {step >= 1 && (
             <div className={`${Styles.delay} ${Styles.fadeInUp} `}>
               <div className={Styles.selectDiv}>
-                <p className={Styles.CaseReason}>
-                  <span className="text-danger">*</span>Select Order for last 6 month
-                </p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
                   <div style={{ textAlign: "left", margin: "10px 0px" }}>
+                    <p className={Styles.CaseReason}>
+                      <span className="text-danger">*</span>Select Order for last 6 month
+                    </p>
                     <Select
                       options={orders.map((element) => {
                         return {
@@ -191,8 +255,8 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                           label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
                         };
                       })}
+                      // defaultValue={orderData.opportunityId}
                       onChange={(option) => onOrderChangeHandler(option.value)}
-                      // styles={{ menuList: (base) => ({ ...base, position: 'fixed !important', backgroundColor: 'white', border: '1px solid lightgray', }), }}
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                       menuPortalTarget={document.body}
                       isSearchable
@@ -203,6 +267,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 )}
                 {reason == "Update Account Info" && (
                   <div style={{ textAlign: "left", margin: "10px 0px" }}>
+                    <p className={Styles.CaseReason}>
+                      <span className="text-danger">*</span>Select Account
+                    </p>
                     <Select
                       options={accountList.map((element) => {
                         return { value: element.Id, label: element.Name };
