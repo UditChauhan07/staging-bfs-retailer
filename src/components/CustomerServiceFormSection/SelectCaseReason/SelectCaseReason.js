@@ -98,13 +98,13 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       }
     });
   };
-  const onChnageAccountHander = (e) => {
-    setOrderData({ accountId: e.target.value });
+  const onChnageAccountHander = (value) => {
+    setOrderData({ accountId: value });
     setStep(2);
   };
-  const onChnageOrderItemHander = (e) => {
+  const onChnageOrderItemHander = (value) => {
     let orderItemDetails = orderIdChild.filter(function (element) {
-      let id = e.target.value;
+      let id = value;
       if (element.Id === id) {
         setSelectOrderItem({ id: element.Id, value: element.Quantity });
         return element;
@@ -149,13 +149,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         DestoryAuth();
       });
   };
-  const options = orders.map((element) => {
-    return {
-      value: element.Id,
-      label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
-    };
-  });
-  console.log(options);
   return (
     <>
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
@@ -168,7 +161,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         <hr />
         <section className={` ${Styles.fadeInUp} `}>
           <div className={Styles.BrandInRadio}>
-            <p className={Styles.CaseReason}>Select Case Reason</p>
+            <p className={Styles.CaseReason}>
+              <span className="text-danger">*</span>Select Case Reason
+            </p>
             <div className={Styles.ModalResponsive}>
               {Object.values(reasons)?.map((reason, index) => {
                 return (
@@ -184,43 +179,31 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           {step >= 1 && (
             <div className={`${Styles.delay} ${Styles.fadeInUp} `}>
               <div className={Styles.selectDiv}>
-                <p className={Styles.CaseReason}>Select Order for last 6 month</p>
+                <p className={Styles.CaseReason}>
+                  <span className="text-danger">*</span>Select Order for last 6 month
+                </p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
-                  // <select
-                  //   onChange={(e) => {
-                  //     onOrderChangeHandler(e);
-                  //   }}
-                  //   className={`mb-[10px] ${Styles.select}`}
-                  // >
-                  //   <option>Search Order</option>
-
-                  //   {orders.length > 0 &&
-                  //     orders.map((element) => {
-                  //       return (
-                  //         <option className={Styles.option} value={element.Id} selected={orderData.opportunityId == element.Id}>
-                  //           Order from <span style={{ fontWeight: "700", color: "red" }}>{element.AccountName}</span> for ({element.ProductCount} Products) Actual Amount {element.Amount} |{" "}
-                  //           {element.ManufacturerName__c} | PO #{element.PO_Number__c}
-                  //         </option>
-                  //       );
-                  //     })}
-                  // </select>
-                  <div style={{textAlign:"left"}}>
-                    <Select options={options} onChange={(option) => onOrderChangeHandler(option.value)} />
+                  <div style={{ textAlign: "left",margin:"10px 0px"  }}>
+                    <Select
+                      options={orders.map((element) => {
+                        return {
+                          value: element.Id,
+                          label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
+                        };
+                      })}
+                      onChange={(option) => onOrderChangeHandler(option.value)}
+                    />
                   </div>
                 )}
                 {reason == "Update Account Info" && (
-                  <select
-                    onChange={(e) => {
-                      onChnageAccountHander(e);
-                    }}
-                    className={`${Styles.select}`}
-                  >
-                    <option>Search Account</option>
-                    {accountList.length > 0 &&
-                      accountList.map((element) => {
-                        return <option value={element.Id}>{element.Name}</option>;
+                  <div style={{ textAlign: "left",margin:"10px 0px"  }}>
+                    <Select
+                      options={accountList.map((element) => {
+                        return { value: element.Id, label: element.Name };
                       })}
-                  </select>
+                      onChange={(option) => onChnageAccountHander(option.value)}
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -242,22 +225,14 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 )}
                 {(reason == "Product Missing" || reason == "Product Overage") && (
                   <div>
-                    <select
-                      onChange={(e) => {
-                        onChnageOrderItemHander(e);
-                      }}
-                      className={`my-[10px] ${Styles.select}`}
-                    >
-                      <option>Search Product</option>
-                      {orderIdChild.length > 0 &&
-                        orderIdChild.map((element) => {
-                          return (
-                            <option value={element.Id} selected={selectedOrderItem.id == element.Id}>
-                              {element.Name}
-                            </option>
-                          );
+                    <div style={{ textAlign: "left",margin:"20px 0px 10px 0px" }}>
+                      <Select
+                        options={orderIdChild.map((element) => {
+                          return { value: element.Id, label: element.Name };
                         })}
-                    </select>
+                        onChange={(option) => onChnageOrderItemHander(option.value)}
+                      />
+                    </div>
                     <div>
                       <input className={Styles.input} type="text" placeholder="Quantity Missing" value={selectedOrderItem.value} />
                     </div>

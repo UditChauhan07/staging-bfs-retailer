@@ -51,7 +51,7 @@ function getRandomColor() {
 export function getRandomColors(length = 0) {
   // var colors = [];
   let unique = new Set();
-  for (var i = 0; i < length; i++) {
+  for (var i = 0; i <= length; i++) {
     // unique.add(getRandomColor());
     // colors.push(getRandomColor());
     unique.add(colors[i]);

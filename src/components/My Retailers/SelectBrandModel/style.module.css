@@ -67,8 +67,8 @@
   border: 1px solid #d5d9d9;
   background: #f8fafb;
   padding: 27px;
-  max-height: 340px;
-  overflow: auto;
+  /* max-height: 340px;
+  overflow: auto; */
 }
 
 .BrandName input[type="radio"],
