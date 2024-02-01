@@ -108,11 +108,18 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       }
     });
   };
+  const filteredContact = () => {
+    const element = orders.filter((ele) => ele.Id == orderData.opportunityId)[0];
+    return element
+      ? `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
+      : "Search...";
+  };
   const onChnageAccountHander = (value) => {
     // console.log(value);
     setOrderData({ accountId: value });
     setStep(2);
   };
+  console.log(filteredContact());
   const onChnageOrderItemHander = (value) => {
     let orderItemDetails = orderIdChild.filter(function (element) {
       let id = value;
@@ -193,7 +200,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         orderNumber: null,
                         poNumber: null,
                         manufacturerId: null,
-                        opportunityId: null,
+                        opportunityId: "",
                         actualAmount: null,
                         invoiceNumber: null,
                       });
@@ -252,10 +259,12 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         };
                       })}
                       defaultValue={{
-                        value: filteredobj ? filteredobj?.["Id"] : "Select...",
-                        label: filteredobj
-                          ? `Order from ${filteredobj?.["AccountName"]} for (${filteredobj?.["ProductCount"]} Products) Actual Amount ${filteredobj?.["Amount"]} | ${filteredobj?.["ManufacturerName__c"]} | PO #${filteredobj?.["PO_Number__c"]}`
-                          : "Select...",
+                        value: "Select...",
+                        label: "Select...",
+                      }}
+                      value={{
+                        value: orders.filter((ele) => ele.Id == orderData.opportunityId)[0]?.["Id"] || "Search...",
+                        label: filteredContact(),
                       }}
                       onChange={(option) => onOrderChangeHandler(option.value)}
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}

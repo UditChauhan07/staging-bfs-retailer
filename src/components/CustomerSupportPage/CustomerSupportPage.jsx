@@ -5,9 +5,11 @@ import { Link } from "react-router-dom";
 import { CustomerServiceIcon, OrderStatusIcon, DefaultSupportIcon, MarketingSupportIcon, DIFTestIcon, DisplayIssuesIcon } from "../../lib/svg";
 import ModalPage from "../Modal UI";
 import SelectCaseReason from "../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
+import BrandManagementModal from "../Brand Management Approval/BrandManagementModal";
 
 function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, searchBy, retailerFilter }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [brandManagementModalOpen, setBrandManagementModalOpen] = useState(false);
 
   const filteredData = useMemo(() => {
     let newValues = data;
@@ -37,7 +39,11 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
           onClose={() => setModalOpen(false)}
           content={<SelectCaseReason reasons={reasons} onClose={() => setModalOpen(false)} recordType={{ id: "0123b0000007z9pAAA", name: "Customer Service" }} />}
         />
-
+        <ModalPage
+          open={brandManagementModalOpen}
+          onClose={() => setBrandManagementModalOpen(false)}
+          content={<BrandManagementModal onClose={() => setBrandManagementModalOpen(false)} recordType={{ id: "0123b0000007z9pAAA", name: "Brand Management Approval" }} />}
+        />
         <div className={Styles.supportMain}>
           <div className="row">
             <div className="col-lg-3 col-md-12 col-sm-12">
@@ -65,13 +71,19 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                   <div className={Styles.supportLeftImg}>
                     <CustomerServiceIcon width={42} height={42} />
                   </div>
-
                   <div className={Styles.supportLeftContent}>
                     <h2>Customer Services </h2>
                     <p>Resolving Concerns Serving Solutions</p>
                   </div>
                 </div>
-                <div>
+
+                {/* Brand Management Approval */}
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setBrandManagementModalOpen(true);
+                  }}
+                >
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <DefaultSupportIcon width={42} height={42} />
@@ -120,8 +132,6 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     </div>
                   </div>
                 </div>
-
-                
               </div>
             </div>
 
