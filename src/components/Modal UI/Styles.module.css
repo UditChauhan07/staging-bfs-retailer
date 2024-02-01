@@ -119,3 +119,17 @@
   background-color: black;
   text-transform: uppercase;
 }
+.modalButtonCancel {
+  color: black;
+  font-family: Montserrat;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 1.4px;
+  width: 100px;
+  height: 30px;
+  background-color: white;
+  text-transform: uppercase;
+  border: 1px solid black;
+}

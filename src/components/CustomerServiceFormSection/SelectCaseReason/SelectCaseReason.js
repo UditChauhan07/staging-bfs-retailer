@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { CloseButton } from "../../../lib/svg";
 import { DestoryAuth, GetAuthData, getAllAccount, getOrderList, getSupportFormRaw, postSupportAny, supportDriveBeg, supportShare } from "../../../lib/store";
 import Select from "react-select";
+import ModalPage from "../../Modal UI";
+import styles from "../../Modal UI/Styles.module.css";
 
 const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const navigate = useNavigate();
-  const [prioritiesList, setPrioritiesList] = useState([]);
+  // const [prioritiesList, setPrioritiesList] = useState([]);
   const [accountList, setAccountList] = useState([]);
   const [orders, setOrders] = useState([]);
   const [orderIdChild, setOrderIdChild] = useState([]);
@@ -25,15 +27,17 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     invoiceNumber: null,
   });
   const [reason, setReason] = useState(null);
-  const [rawData, setRawData] = useState({
-    orderStatusForm: {
-      salesRepId: null,
-      contactId: null,
-      desc: null,
-      priority: "Medium",
-      sendEmail: false,
-    },
-  });
+  const [reasonName, setReasonName] = useState(null);
+  // const [rawData, setRawData] = useState({
+  //   orderStatusForm: {
+  //     salesRepId: null,
+  //     contactId: null,
+  //     desc: null,
+  //     priority: "Medium",
+  //     sendEmail: false,
+  //   },
+  // });
+  const [reasonChangeModalOpen, setReasonChangeModalOpen] = useState(false);
   const [step, setStep] = useState(0);
   useEffect(() => {
     GetAuthData()
@@ -64,22 +68,28 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       });
   }, [step]);
   const onChangeHandler = (e) => {
-    setReason(e.target.value);
-    setSelectOrderItem({ id: null, value: null });
-    setOrderData({
-      accountId: null,
-      orderNumber: null,
-      poNumber: null,
-      manufacturerId: null,
-      opportunityId: null,
-      actualAmount: null,
-      invoiceNumber: null,
-    });
-    setStep(1);
+    if (reason == null) {
+      setReason(e.target.value);
+      setReasonName(e.target.value);
+      setSelectOrderItem({ id: null, value: null });
+      setOrderData({
+        accountId: null,
+        orderNumber: null,
+        poNumber: null,
+        manufacturerId: null,
+        opportunityId: null,
+        actualAmount: null,
+        invoiceNumber: null,
+      });
+      setStep(1);
+    } else {
+      setReasonChangeModalOpen(true);
+      setReasonName(e.target.value);
+    }
   };
   const onOrderChangeHandler = (value) => {
+    console.log("value", value);
     let id = value;
-    console.log("id", id);
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
@@ -99,6 +109,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     });
   };
   const onChnageAccountHander = (value) => {
+    // console.log(value);
     setOrderData({ accountId: value });
     setStep(2);
   };
@@ -149,8 +160,57 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         DestoryAuth();
       });
   };
+  const filteredobj = orders.filter((ele) => ele.Id === orderData.opportunityId)[0];
   return (
     <>
+      {reasonChangeModalOpen ? (
+        <ModalPage
+          open
+          content={
+            <>
+              <div style={{ maxWidth: "403px" }}>
+                <h2 className={` ${styles.modalContentMontserrat}`}>
+                  Do you want to <span style={{ fontWeight: "600" }}>change</span> the previous selection?
+                </h2>
+                <div className="d-flex justify-content-center gap-3 mt-4 ">
+                  <button
+                    className={`${styles.modalButtonCancel}`}
+                    onClick={() => {
+                      setReasonChangeModalOpen(false);
+                      console.log(step, orderData, reason, reasonName, orderIdChild, selectedOrderItem);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={`${styles.modalButton}`}
+                    onClick={() => {
+                      setReasonChangeModalOpen(false);
+                      setReason(reasonName);
+                      setSelectOrderItem({ id: null, value: null });
+                      setOrderData({
+                        accountId: null,
+                        orderNumber: null,
+                        poNumber: null,
+                        manufacturerId: null,
+                        opportunityId: null,
+                        actualAmount: null,
+                        invoiceNumber: null,
+                      });
+                      // setStep(1);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => {
+            setReasonChangeModalOpen(false);
+          }}
+        />
+      ) : null}
       <div className={`  ${Styles.ModalLast} ${Styles.delaycontent} `}>
         <div className="d-flex align-items-center justify-content-between">
           <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">{recordType.name} Issue</h1>
@@ -165,11 +225,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               <span className="text-danger">*</span>Select Case Reason
             </p>
             <div className={Styles.ModalResponsive}>
-              {Object.values(reasons)?.map((reason, index) => {
+              {Object.values(reasons)?.map((reasonName, index) => {
                 return (
                   <div className={Styles.BrandName} key={index}>
-                    <input type="radio" name="reason_name" value={reason} onChange={onChangeHandler} id={reason} />
-                    <label htmlFor={reason}>{reason}</label>
+                    <input type="radio" name="reason_name" value={reasonName} onChange={onChangeHandler} id={reasonName} checked={reasonName === reason} />
+                    <label htmlFor={reasonName}>{reasonName}</label>
                   </div>
                 );
               })}
@@ -179,11 +239,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           {step >= 1 && (
             <div className={`${Styles.delay} ${Styles.fadeInUp} `}>
               <div className={Styles.selectDiv}>
-                <p className={Styles.CaseReason}>
-                  <span className="text-danger">*</span>Select Order for last 6 month
-                </p>
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
                   <div style={{ textAlign: "left", margin: "10px 0px" }}>
+                    <p className={Styles.CaseReason}>
+                      <span className="text-danger">*</span>Select Order for last 6 month
+                    </p>
                     <Select
                       options={orders.map((element) => {
                         return {
@@ -191,8 +251,13 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                           label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
                         };
                       })}
+                      defaultValue={{
+                        value: filteredobj ? filteredobj?.["Id"] : "Select...",
+                        label: filteredobj
+                          ? `Order from ${filteredobj?.["AccountName"]} for (${filteredobj?.["ProductCount"]} Products) Actual Amount ${filteredobj?.["Amount"]} | ${filteredobj?.["ManufacturerName__c"]} | PO #${filteredobj?.["PO_Number__c"]}`
+                          : "Select...",
+                      }}
                       onChange={(option) => onOrderChangeHandler(option.value)}
-                      // styles={{ menuList: (base) => ({ ...base, position: 'fixed !important', backgroundColor: 'white', border: '1px solid lightgray', }), }}
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                       menuPortalTarget={document.body}
                       isSearchable
@@ -203,6 +268,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 )}
                 {reason == "Update Account Info" && (
                   <div style={{ textAlign: "left", margin: "10px 0px" }}>
+                    <p className={Styles.CaseReason}>
+                      <span className="text-danger">*</span>Select Account
+                    </p>
                     <Select
                       options={accountList.map((element) => {
                         return { value: element.Id, label: element.Name };
@@ -213,6 +281,10 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                       isSearchable
                       menuPosition={"fixed"}
                       menuShouldScrollIntoView={false}
+                      defaultValue={{
+                        value: accountList.filter((ele) => ele.Id === orderData.accountId)?.[0]?.["Id"] || "Select...",
+                        label: accountList.filter((ele) => ele.Id === orderData.accountId)?.[0]?.["Name"] || "Select...",
+                      }}
                     />
                   </div>
                 )}
@@ -236,7 +308,10 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 )}
                 {(reason == "Product Missing" || reason == "Product Overage") && (
                   <div>
-                    <div style={{ textAlign: "left", margin: "20px 0px 10px 0px" }}>
+                    <p className={Styles.CaseReason} style={{ marginTop: "20px" }}>
+                      Select Product
+                    </p>
+                    <div style={{ textAlign: "left", margin: "10px 0px 10px 0px" }}>
                       <Select
                         options={orderIdChild.map((element) => {
                           return { value: element.Id, label: element.Name };
