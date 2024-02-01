@@ -56,7 +56,7 @@ export function getRandomColors(length = 0) {
     // colors.push(getRandomColor());
     unique.add(colors[i]);
   }
-  var uniqueColors = Array.from(unique);
-  console.log("uniqueColors",uniqueColors);
-  return uniqueColors;
+  // var uniqueColors = Array.from(unique);
+  // console.log("uniqueColors",uniqueColors);
+  return Array.from(unique);
 }
