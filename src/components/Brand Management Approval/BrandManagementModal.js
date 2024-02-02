@@ -57,18 +57,10 @@ const BrandManagementModal = ({ onClose, recordType }) => {
     description: null,
     sendViaEmail: false,
   });
-  console.log(formData);
-  // const getContacts = () => {
-  //   if (formData.account === null || formData.account === undefined) return [];
-  //   else return accountList.filter((ele) => ele.Id == formData.account)[0]["contact"].map((ele) => ele.Name);
-  // };
-
-  // console.log(getContacts());
   useEffect(() => {
     const filteredContacts = accountList.filter((ele) => ele.Id == formData.account)[0]?.["contact"];
     setContactList(filteredContacts);
   }, [formData.account]);
-  console.log(contactList?.filter((ele) => ele.Id == formData.contact)[0]?.["Id"]);
   const handleCaseReason = (e) => {
     if (reason == null) {
       setReason(e.target.value);
@@ -98,7 +90,6 @@ const BrandManagementModal = ({ onClose, recordType }) => {
     GetAuthData()
       .then((user) => {
         if (user) {
-          console.log(formData);
           let rawData = {
             orderStatusForm: {
               typeId: recordType.id,
@@ -113,32 +104,25 @@ const BrandManagementModal = ({ onClose, recordType }) => {
             },
             key: user.x_access_token,
           };
-          console.log(rawData);
-          // postSupportAny({ rawData })
-          //   .then((response) => {
-          //     console.log("Success! Ticket created.", response);
-          //     if (response) {
-          //       // navigate("/CustomerSupportDetails?id=" + response);
-          //       console.log("Success! Ticket created.", response);
-          //     }
-          //   })
-          //   .catch((err) => {
-          //     console.error({ err });
-          //   });
+          postSupportAny({ rawData })
+            .then((response) => {
+              console.log("Success! Ticket created.", response);
+              if (response) {
+                // navigate("/CustomerSupportDetails?id=" + response);
+                console.log("Success! Ticket created.", response);
+              }
+            })
+            .catch((err) => {
+              console.error({ err });
+            });
         } else {
-          // DestoryAuth();
+          DestoryAuth();
         }
       })
       .catch((error) => {
         console.log(error);
-        // DestoryAuth();
+        DestoryAuth();
       });
-  };
-  const filteredContact = () => {
-    const element = orders.filter((ele) => ele.Id == formData.contact)[0];
-    return element
-      ? `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
-      : "Search Contact Name";
   };
   return (
     <>
