@@ -31,25 +31,17 @@ export function POGenerator() {
   let MaCode = getStrCode(beg?.Manufacturer?.name);
 
   let orderCount = padNumber(count);
-  if(beg?.orderList?.[0]?.productType==="pre-order")
-  return `PRE-${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
-  else
-  return `${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
+  if (beg?.orderList?.[0]?.productType === "pre-order") return `PRE-${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
+  else return `${AcCode + MaCode}${currentDate + currentMonth}-${orderCount}`;
 }
 
 export function getStrCode(str) {
   if (!str) return null;
   let codeLength = str.split(" ");
   if (codeLength.length >= 2) {
-    return `${
-      codeLength[0].charAt(0).toUpperCase() +
-      codeLength[1].charAt(0).toUpperCase()
-    }`;
+    return `${codeLength[0].charAt(0).toUpperCase() + codeLength[1].charAt(0).toUpperCase()}`;
   } else {
-    return `${
-      codeLength[0].charAt(0).toUpperCase() +
-      codeLength[0].charAt(codeLength[0].length - 1).toUpperCase()
-    }`;
+    return `${codeLength[0].charAt(0).toUpperCase() + codeLength[0].charAt(codeLength[0].length - 1).toUpperCase()}`;
   }
 }
 function padNumber(n, isTwoDigit) {
@@ -71,19 +63,19 @@ function padNumber(n, isTwoDigit) {
     }
   }
 }
-export function supportDriveBeg(){
+export function supportDriveBeg() {
   let supportList = localStorage.getItem(support);
   return JSON.parse(supportList);
 }
-export async function supportShare(data){
-  localStorage.setItem(support,JSON.stringify(data))
-  return true
+export async function supportShare(data) {
+  localStorage.setItem(support, JSON.stringify(data));
+  return true;
 }
-export function supportClear(){
-  localStorage.removeItem(support)
-  if(localStorage.getItem(support)){
+export function supportClear() {
+  localStorage.removeItem(support);
+  if (localStorage.getItem(support)) {
     return false;
-  }else{
+  } else {
     return true;
   }
 }
@@ -146,7 +138,7 @@ export async function OrderPlaced({ order }) {
 
 export async function DestoryAuth() {
   localStorage.clear();
-  window.location.href = window.location.origin
+  window.location.href = window.location.origin;
   return true;
 }
 
@@ -185,10 +177,10 @@ export async function getOrderDetailsBasedId({ rawData }) {
   bodyContent.append("key", rawData.key);
   bodyContent.append("opportunity_id", rawData.id);
 
-  let response = await fetch(url+"0DS68FOD7s", { 
+  let response = await fetch(url + "0DS68FOD7s", {
     method: "POST",
     body: bodyContent,
-    headers: headersList
+    headers: headersList,
   });
   let data = JSON.parse(await response.text());
   return data.data;
@@ -203,10 +195,10 @@ export async function getOrderDetailsInvoice({ rawData }) {
   bodyContent.append("key", rawData.key);
   bodyContent.append("opportunity_id", rawData.id);
 
-  let response = await fetch(url+"3JlgPqaeYIveHd6", { 
+  let response = await fetch(url + "3JlgPqaeYIveHd6", {
     method: "POST",
     body: bodyContent,
-    headers: headersList
+    headers: headersList,
   });
   let data = JSON.parse(await response.text());
   return data.data;
@@ -214,12 +206,12 @@ export async function getOrderDetailsInvoice({ rawData }) {
 
 export async function getDashboardata({ user }) {
   let headersList = {};
-  if(user.headers){
-    headersList = user.headers||{}
-  }else{
+  if (user.headers) {
+    headersList = user.headers || {};
+  } else {
     headersList = {
       Accept: "*/*",
-    }
+    };
   }
 
   let bodyContent = new FormData();
@@ -232,9 +224,9 @@ export async function getDashboardata({ user }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
+  if (data.status != 200) {
+    DestoryAuth();
+  } else {
     return data.data;
   }
 }
@@ -254,9 +246,9 @@ export async function getSupportList({ user }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
+  if (data.status != 200) {
+    DestoryAuth();
+  } else {
     return data.data;
   }
 }
@@ -265,22 +257,22 @@ export async function getSupportDetails({ rawData }) {
   let headersList = {
     Accept: "*/*",
   };
-  
+
   let bodyContent = new FormData();
   bodyContent.append("key", rawData.key);
   bodyContent.append("caseId", rawData.caseId);
-  
+
   let response = await fetch(url + "v3/ffBUF1vNs9LTLfz", {
     method: "POST",
     body: bodyContent,
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
   // if(data.status != 200){
   //   DestoryAuth()
   // }else{
-    return data.data;
+  return data.data;
   // }
 }
 
@@ -299,9 +291,9 @@ export async function getSupportFormRaw({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
+  if (data.status != 200) {
+    DestoryAuth();
+  } else {
     return data.data;
   }
 }
@@ -309,15 +301,20 @@ export async function getSupportFormRaw({ rawData }) {
 export async function getAllAccount({ user }) {
   let headersList = {
     Accept: "*/*",
-    key:user.x_access_token,
-    userId:user.Sales_Rep__c
+    "Content-Type": "application/json",
   };
-
-  let response = await fetch(url + "v3/JbUxci", {
+  let body = {
+    key: user.x_access_token,
+    salesRepId: user.Sales_Rep__c,
+  };
+  let response = await fetch(url + "v3/fmJJCh9HaL33Iqp", {
     method: "POST",
-    headers: headersList
+    headers: headersList,
+    body: JSON.stringify(body),
   });
+  console.log(user.x_access_token, user.Sales_Rep__c);
   let data = JSON.parse(await response.text());
+  console.log(data);
   if(data.status != 200){
     DestoryAuth()
   }else{
@@ -328,7 +325,7 @@ export async function getAllAccount({ user }) {
 export async function postSupport({ rawData }) {
   let headersList = {
     Accept: "*/*",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 
   let response = await fetch(url + "v3/hunQaon7f5sTDeb", {
@@ -337,9 +334,9 @@ export async function postSupport({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
+  if (data.status != 200) {
+    DestoryAuth();
+  } else {
     return data.data;
   }
 }
@@ -347,7 +344,7 @@ export async function postSupport({ rawData }) {
 export async function postSupportAny({ rawData }) {
   let headersList = {
     Accept: "*/*",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 
   let response = await fetch(url + "v3/OFT88qVeJPUGsly", {
@@ -356,9 +353,9 @@ export async function postSupportAny({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
-    DestoryAuth()
-  }else{
+  if (data.status != 200) {
+    DestoryAuth();
+  } else {
     return data.data;
   }
 }
@@ -366,7 +363,7 @@ export async function postSupportAny({ rawData }) {
 export async function postSupportComment({ rawData }) {
   let headersList = {
     Accept: "*/*",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 
   let response = await fetch(url + "v3/dgwz2CbCvN2QzAk", {
@@ -375,10 +372,10 @@ export async function postSupportComment({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
   // if(data.status != 200){
-    // DestoryAuth()
+  // DestoryAuth()
   // }else{
-    return data.data;
+  return data.data;
   // }
 }

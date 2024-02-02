@@ -14,6 +14,7 @@ const BrandManagementModal = ({ onClose, recordType }) => {
   };
   const navigate = useNavigate();
   const [accountList, setAccountList] = useState([]);
+  const [contactList, setContactList] = useState([]);
   const [orders, setOrders] = useState([]);
   const [reason, setReason] = useState(null);
   const [reasonName, setReasonName] = useState(null);
@@ -57,6 +58,17 @@ const BrandManagementModal = ({ onClose, recordType }) => {
     sendViaEmail: false,
   });
   console.log(formData);
+  // const getContacts = () => {
+  //   if (formData.account === null || formData.account === undefined) return [];
+  //   else return accountList.filter((ele) => ele.Id == formData.account)[0]["contact"].map((ele) => ele.Name);
+  // };
+
+  // console.log(getContacts());
+  useEffect(() => {
+    const filteredContacts = accountList.filter((ele) => ele.Id == formData.account)[0]?.["contact"];
+    setContactList(filteredContacts);
+  }, [formData.account]);
+  console.log(contactList?.filter((ele) => ele.Id == formData.contact)[0]?.["Id"]);
   const handleCaseReason = (e) => {
     if (reason == null) {
       setReason(e.target.value);
@@ -102,18 +114,17 @@ const BrandManagementModal = ({ onClose, recordType }) => {
             key: user.x_access_token,
           };
           console.log(rawData);
-          postSupportAny({ rawData })
-            .then((response) => {
-              console.log("Success! Ticket created.", response);
-              if (response) {
-                // navigate("/CustomerSupportDetails?id=" + response);
-              console.log("Success! Ticket created.", response);
-
-              }
-            })
-            .catch((err) => {
-              console.error({ err });
-            });
+          // postSupportAny({ rawData })
+          //   .then((response) => {
+          //     console.log("Success! Ticket created.", response);
+          //     if (response) {
+          //       // navigate("/CustomerSupportDetails?id=" + response);
+          //       console.log("Success! Ticket created.", response);
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     console.error({ err });
+          //   });
         } else {
           // DestoryAuth();
         }
@@ -129,7 +140,6 @@ const BrandManagementModal = ({ onClose, recordType }) => {
       ? `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
       : "Search Contact Name";
   };
-  console.log(filteredContact());
   return (
     <>
       {reasonChangeModalOpen ? (
@@ -158,7 +168,7 @@ const BrandManagementModal = ({ onClose, recordType }) => {
                       setFormData((prev) => {
                         return { ...prev, account: null, contact: null, subject: "", attachment: "", description: "", sendViaEmail: false };
                       });
-                      // setStep(1);
+                      setStep(1);
                     }}
                   >
                     Submit
@@ -201,36 +211,9 @@ const BrandManagementModal = ({ onClose, recordType }) => {
           {step >= 1 && (
             <div className={`${Styles.delay} ${Styles.fadeInUp} `}>
               <div className={Styles.selectDiv}>
-                <div style={{ textAlign: "left", margin: "10px 0px" }} className="d-flex gap-3">
-                  <div className="w-50">
-                    <p className={Styles.CaseReason}>
-                      <span className="text-danger">*</span>Select Contact
-                    </p>
-                    <Select
-                      options={orders.map((element) => {
-                        return {
-                          value: element.Id,
-                          label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
-                        };
-                      })}
-                      defaultValue={{
-                        value: "Search Contact Name",
-                        label: "Search Contact Name",
-                      }}
-                      value={{
-                        value: orders.filter((ele) => ele.Id == formData.contact)[0]?.["Id"] || "Search Contact Name",
-                        label: filteredContact(),
-                      }}
-                      onChange={(option) => handleContact(option.value)}
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-                      menuPortalTarget={document.body}
-                      isSearchable
-                      menuPosition={"fixed"}
-                      menuShouldScrollIntoView={false}
-                    />
-                  </div>
+                <div style={{ textAlign: "left", margin: "10px 0px" }} className="">
                   {/* Select Account */}
-                  <div className={`w-50`}>
+                  <div className={`w-100`}>
                     <p className={Styles.CaseReason}>
                       <span className="text-danger">*</span>Select Account
                     </p>
@@ -254,6 +237,36 @@ const BrandManagementModal = ({ onClose, recordType }) => {
                       }}
                     />
                   </div>
+                  {/* select contact on basis of account */}
+                  {formData.account && (
+                    <div className="w-100 mt-[20px]">
+                      <p className={Styles.CaseReason}>
+                        <span className="text-danger">*</span>Select Contact
+                      </p>
+                      <Select
+                        options={contactList?.map((ele) => {
+                          return {
+                            value: ele.Id,
+                            label: ele.Name,
+                          };
+                        })}
+                        defaultValue={{
+                          value: "Search Contact Name",
+                          label: "Search Contact Name",
+                        }}
+                        value={{
+                          value: contactList?.filter((ele) => ele.Id == formData.contact)[0]?.["Id"] || "Search Contact Name",
+                          label: contactList?.filter((ele) => ele.Id == formData.contact)[0]?.["Name"] || "Search Contact Name",
+                        }}
+                        onChange={(option) => handleContact(option.value)}
+                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        menuPortalTarget={document.body}
+                        isSearchable
+                        menuPosition={"fixed"}
+                        menuShouldScrollIntoView={false}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
