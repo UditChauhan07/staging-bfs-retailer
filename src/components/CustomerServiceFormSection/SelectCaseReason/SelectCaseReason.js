@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import Styles from "./style.module.css";
 import { useNavigate } from "react-router-dom";
 import { CloseButton } from "../../../lib/svg";
-import { DestoryAuth, GetAuthData, getAllAccount, getOrderList, getSupportFormRaw, postSupportAny, supportDriveBeg, supportShare } from "../../../lib/store";
+import { DestoryAuth, GetAuthData, getAllAccount, getOrderList, getOrderofSalesRep, getSupportFormRaw, postSupportAny, supportDriveBeg, supportShare } from "../../../lib/store";
 import Select from "react-select";
 import ModalPage from "../../Modal UI";
 import styles from "../../Modal UI/Styles.module.css";
+import Loading from "../../Loading";
 
 const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const [typeId, setTypeId] = useState(recordType.id);
   const [desc, setDesc] = useState();
   const [subject, setSubject] = useState();
+  const [orderGet, setOrderGet] = useState(false);
   const [selectedOrderItem, setSelectOrderItem] = useState({ id: null, value: null });
   const [orderData, setOrderData] = useState({
     accountId: null,
@@ -42,7 +44,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   useEffect(() => {
     GetAuthData()
       .then((response) => {
-        getOrderList({
+        getOrderofSalesRep({
           user: {
             key: response.x_access_token,
             Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
@@ -50,7 +52,8 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           month: "",
         })
           .then((order) => {
-            setOrders(order);
+            setOrders(JSON.parse(order));
+            setOrderGet(true)
           })
           .catch((error) => {
             console.log({ error });
@@ -251,13 +254,16 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                 {(reason == "Charges" || reason == "Product Missing" || reason == "Product Overage" || reason == "Product Damage") && (
                   <div style={{ textAlign: "left", margin: "10px 0px" }}>
                     <p className={Styles.CaseReason}>
-                      <span className="text-danger">*</span>Select Order for last 6 month
+                      <span className="text-danger">*</span>Select Orders
                     </p>
+                    {!orderGet?
+                    <Loading/>
+                    :
                     <Select
                       options={orders.map((element) => {
                         return {
                           value: element.Id,
-                          label: `Order from ${element.AccountName} for (${element.ProductCount} Products) Actual Amount ${element.Amount} | ${element.ManufacturerName__c} | PO #${element.PO_Number__c}`,
+                          label: `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
                         };
                       })}
                       defaultValue={{
@@ -274,7 +280,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                       isSearchable
                       menuPosition={"fixed"}
                       menuShouldScrollIntoView={false}
-                    />
+                    />}
                   </div>
                 )}
                 {reason == "Update Account Info" && (
