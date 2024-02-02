@@ -312,9 +312,7 @@ export async function getAllAccount({ user }) {
     headers: headersList,
     body: JSON.stringify(body),
   });
-  console.log(user.x_access_token, user.Sales_Rep__c);
   let data = JSON.parse(await response.text());
-  console.log(data);
   if(data.status != 200){
     DestoryAuth()
   }else{
