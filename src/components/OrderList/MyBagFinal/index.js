@@ -33,10 +33,10 @@ function MyBagFinal() {
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-  getOrderDetailsInvoice({rawData:{key:Key.data.access_token,id:OrderId}}).then((response)=>{
-    console.log({response});
-  }).catch((error)=>{
-    console.error({error});
+  getOrderDetailsInvoice({ rawData: { key: Key.data.access_token, id: OrderId } }).then((response) => {
+    console.log({ response });
+  }).catch((error) => {
+    console.error({ error });
   })
   const getOrderDetails = async () => {
     const response = await axios.post(
@@ -46,7 +46,6 @@ function MyBagFinal() {
     );
     setOrderData(response.data.data);
     setIsLoading(true);
-    console.log(response.data.data);
   };
   const handleback = () => {
     navigate("/order-list");
@@ -198,6 +197,20 @@ function MyBagFinal() {
                         )}
                       </p>
                     </div>
+                    {OrderData.Order_Number__c && <>
+                      <h2>Order Number</h2>
+                      <div className={Styles.ShipAdress}>
+                        <p>
+                          {OrderData.Order_Number__c}
+                        </p>
+                      </div></>}
+                      {OrderData.Tracking__c && <>
+                      <h2>Tracking Number</h2>
+                      <div className={Styles.ShipAdress}>
+                        <p>
+                          {OrderData.Tracking__c}
+                        </p>
+                      </div></>}
 
                     <div className={Styles.ShipAdress2}>
                       {/* <label>NOTE</label> */}
