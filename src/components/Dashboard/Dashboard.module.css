@@ -57,6 +57,10 @@
   top: 0rem;
   font-size: 20px;
 }
+.stickyBottom{
+  position: sticky;
+  bottom: 0rem;
+}
 
 .top_perform {
   width: 100%;

@@ -211,6 +211,8 @@ export async function getDashboardata({ user }) {
   } else {
     headersList = {
       Accept: "*/*",
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
     };
   }
 
