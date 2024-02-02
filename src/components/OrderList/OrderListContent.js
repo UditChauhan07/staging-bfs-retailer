@@ -201,7 +201,7 @@ function OrderListContent({ data }) {
 
                 <div className={Styles.StatusOrder}>
                   <div className={Styles.Status1}>
-                    <h2
+                    {/* <h2
                       onClick={(e) =>
                         generateSuportHandler({
                           data: item,
@@ -210,7 +210,7 @@ function OrderListContent({ data }) {
                       }
                     >
                       Charges
-                    </h2>
+                    </h2> */}
                     <h3
                       onClick={(e) =>
                         generateSuportHandler({
