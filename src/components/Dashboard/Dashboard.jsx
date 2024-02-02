@@ -294,7 +294,6 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
-              console.log("aaaa", dashboardData);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
@@ -423,8 +422,8 @@ function Dashboard({ dashboardData }) {
   }, [Monthlydataa]);
   useEffect(() => {
     setNeedle_data([
-      { name: "A", value: parseInt(targetValue), color: "#16BC4E" },
-      { name: "B", value: parseInt(targetValue - achievedSales > 0 ? targetValue - achievedSales : 0), color: "#C7C7C7" },
+      { name: "A", value: parseInt(targetValue||0), color: "#16BC4E" },
+      { name: "B", value: parseInt(targetValue - achievedSales > 0 ? targetValue - achievedSales||0 : 0), color: "#C7C7C7" },
     ]);
   }, [targetValue, achievedSales, Monthlydataa]);
   const date = new Date();
@@ -652,7 +651,6 @@ function Dashboard({ dashboardData }) {
                               <tbody>
                                 {Yearlydataa?.map((e, index) => {
                                   totalTargetForYTDSalesRep = Number((Number(e.total?.target||0) / 1000).toFixed(0)) + Number(totalTargetForYTDSalesRep);
-                                  console.log("ewwww", index, totalTargetForYTDSalesRep);
                                   totalAmountForYTDSalesRep = Number((Number(e.total?.revenue||0) / 1000).toFixed(0)) + Number(totalAmountForYTDSalesRep);
                                   totalDiffForYTDSalesRep = Number((Number(e.total?.target - e.total.revenue||0) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
 
@@ -675,7 +673,6 @@ function Dashboard({ dashboardData }) {
                                   <th scope="col">${totalAmountForYTDSalesRep}K</th>
                                   <th scope="col">${totalDiffForYTDSalesRep}K</th>
                                 </tr>
-                                {console.log("totalTargetForYTDSalesRep", totalTargetForYTDSalesRep)}
                               </tbody>
                             ) : (
                               <tbody>
@@ -775,11 +772,9 @@ function Dashboard({ dashboardData }) {
                         <IsTableLoading />
                       ) : (
                         <>
-                          {console.log("leaaa", leadsbybrand)}
-                          {leadsbybrand ? (
+                          {leadsbybrand.length ? (
                             <tbody className="position-relative">
                               {leadsbybrand.map((element) => {
-                                console.log("elee", element);
                                 totalRecieved+=element.received;
                                 totalConverted+=element.coverted
                                 return (
@@ -932,10 +927,10 @@ function Dashboard({ dashboardData }) {
                       <div className={Styles.donuttop1}>
                         <div className="container">
                           <p className={`text-end ${Styles.Tabletxt}`}>
-                            Your Target: <span className={Styles.Tabletext_head}>{targetValue}K</span>
+                            Your Target: <span className={Styles.Tabletext_head}>{Number(targetValue)||0}K</span>
                           </p>
                           <p className={`text-end ${Styles.Tabletxt1}`}>
-                            Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales}K</span>
+                            Achieved Sales: <span className={Styles.Tabletext_head}>{Number(achievedSales)||0}K</span>
                           </p>
                           <div className={Styles.donutbox}>
                             <PieChart width={400} height={400}>
