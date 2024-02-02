@@ -92,10 +92,10 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
-        console.log("element",element);
+        console.log("element", element);
         setOrderData({
           accountId: element.AccountId,
-          orderNumber: element.Order_Number__c??"N/A",
+          orderNumber: element.Order_Number__c ?? "N/A",
           poNumber: element.PO_Number__c,
           manufacturerId: element.ManufacturerId__c,
           opportunityId: element.Id,
@@ -139,8 +139,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               reason,
               accountId: orderData.accountId,
               orderNumber: orderData.orderNumber,
-              poNumber: orderData.poNumber,
+              PONumber: orderData.poNumber,
               manufacturerId: orderData.manufacturerId,
+              amount: orderData.actualAmount,
+              invoiceNumber: orderData.invoiceNumber ? orderData.invoiceNumber : 'NA',
+              amount: orderData.actualAmount,
               desc,
               opportunityId: orderData.opportunityId,
               priority: "Medium",
@@ -150,10 +153,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             key: user.x_access_token,
           };
           postSupportAny({ rawData })
-        
+
             .then((response) => {
               if (response) {
-                console.log("response", response);
                 navigate("/CustomerSupportDetails?id=" + response);
               }
             })
