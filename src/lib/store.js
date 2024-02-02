@@ -323,6 +323,7 @@ export async function getAllAccount({ user }) {
 }
 
 export async function postSupport({ rawData }) {
+  console.log({rawData});
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -353,11 +354,12 @@ export async function postSupportAny({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if (data.status != 200) {
-    DestoryAuth();
-  } else {
+  // if(data.status != 200){
+  //   // return []
+  //   console.log({data});
+  // }else{
     return data.data;
-  }
+  // }
 }
 
 export async function postSupportComment({ rawData }) {
@@ -372,10 +374,10 @@ export async function postSupportComment({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
   // if(data.status != 200){
-  // DestoryAuth()
+  //   // return []
+  //   console.log({data});
   // }else{
-  return data.data;
+    return data.data;
   // }
 }
