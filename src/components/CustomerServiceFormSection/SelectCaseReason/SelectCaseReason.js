@@ -47,7 +47,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         getOrderofSalesRep({
           user: {
             key: response.x_access_token,
-            Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
+            Sales_Rep__c: true ? "00530000005AdvsAAC" : response.Sales_Rep__c,
           },
           month: "",
         })
@@ -263,7 +263,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                       options={orders.map((element) => {
                         return {
                           value: element.Id,
-                          label: `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
+                          label: `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
                         };
                       })}
                       defaultValue={{
