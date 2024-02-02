@@ -51,62 +51,62 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     Sales Rep
                   </th>
-                  {(currentYear == year) ? month == 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
                   </th>}
-                  {(currentYear == year) ? month == 1 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 1 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Feb
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Feb
                   </th>}
-                  {(currentYear == year) ? month == 2 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 2 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Mar
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Mar
                   </th>}
-                  {(currentYear == year) ? month == 3 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 3 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Apr
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Apr
                   </th>}
-                  {(currentYear == year) ? month == 4 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 4 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     May
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     May
                   </th>}
-                  {(currentYear == year) ? month == 5 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 5 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jun
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jun
                   </th>}
-                  {(currentYear == year) ? month == 6 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 6 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jul
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jul
                   </th>}
-                  {(currentYear == year) ? month == 7 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 7 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Aug
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Aug
                   </th>}
-                  {(currentYear == year) ? month == 8 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 8 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Sep
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Sep
                   </th>}
-                  {(currentYear == year) ? month == 9 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 9 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Oct
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Oct
                   </th>}
-                  {(currentYear == year) ? month == 10 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 10 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Nov
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Nov
                   </th>}
-                  {(currentYear == year) ? month == 11 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+                  {(currentYear == year) ? month >= 11 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Dec
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Dec
