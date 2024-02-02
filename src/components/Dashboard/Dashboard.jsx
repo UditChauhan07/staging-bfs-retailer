@@ -776,7 +776,7 @@ function Dashboard({ dashboardData }) {
                       ) : (
                         <>
                           {console.log("leaaa", leadsbybrand)}
-                          {leadsbybrand ? (
+                          {leadsbybrand.length ? (
                             <tbody className="position-relative">
                               {leadsbybrand.map((element) => {
                                 console.log("elee", element);
