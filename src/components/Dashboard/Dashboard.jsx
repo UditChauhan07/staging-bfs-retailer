@@ -17,6 +17,7 @@ import ModalPage from "../Modal UI/index";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
 import { UserIcon } from "../../lib/svg";
+// const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
     name: "January - 2023",
@@ -198,7 +199,9 @@ function Dashboard({ dashboardData }) {
     "RMS Beauty": "RMSBeautyBg",
     "ESTEE LAUDER": "esteeLauderBg",
   };
-  const [selMonth, setSelMonth] = useState("2024|1");
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+  const [selMonth, setSelMonth] = useState(`${currentYear}|${currentMonth}`);
   const [tabledata, settabledata] = useState([]);
   const [leadsbybrand, setleadsbtbrand] = useState([]);
   const [Monthlydataa, setMonthlydata] = useState([]);
@@ -281,7 +284,7 @@ function Dashboard({ dashboardData }) {
     setIsLoaded(true);
     GetAuthData()
       .then((user) => {
-        // user.Sales_Rep__c = "00530000005AdvsAAC";
+        user.Sales_Rep__c = "00530000005AdvsAAC";
 
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
@@ -291,6 +294,7 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
+              console.log("aaaa",dashboardData);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
@@ -317,7 +321,7 @@ function Dashboard({ dashboardData }) {
                           total: {
                             show: true,
                             showAlways: true,
-                            label: 'Total Orders',
+                            label: "Total Orders",
                             formatter: function (w) {
                               const t = w.globals.seriesTotals;
                               const result = t.reduce((a, b) => a + b, 0);
@@ -502,6 +506,16 @@ function Dashboard({ dashboardData }) {
       </>
     );
   }
+  let totalTargetForMTDSalesRep = 0;
+  let totalAmountForMTDSalesRep = 0;
+  let totalDiffForMTDSalesRep = 0;
+  let totalTargetForYTDSalesRep = 0;
+  let totalAmountForYTDSalesRep = 0;
+  let totalDiffForYTDSalesRep = 0;
+  let totalTargetForMTDGoalBrand = 0;
+  let totalAmountForMTDGoalBrand = 0;
+  let totalDiffForMTDGoalBrand = 0;
+
   return (
     <AppLayout
       filterNodes={
@@ -567,6 +581,10 @@ function Dashboard({ dashboardData }) {
                             {Monthlydataa ? (
                               <tbody>
                                 {Monthlydataa?.map((e) => {
+                                  // console.log("e.....", e);
+                                  totalTargetForMTDSalesRep = Number((Number(e.total?.target) / 1000).toFixed(0)) + Number(totalTargetForMTDSalesRep);
+                                  totalAmountForMTDSalesRep = Number((Number(e.total?.revenue) / 1000).toFixed(0)) + Number(totalAmountForMTDSalesRep);
+                                  totalDiffForMTDSalesRep = Number((Number(e.total?.target - e.total.revenue) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
                                   return (
                                     <tr key={e}>
                                       <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
@@ -578,6 +596,14 @@ function Dashboard({ dashboardData }) {
                                     </tr>
                                   );
                                 })}
+                                <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                                  <th scope="col" className="ps-3">
+                                    Total
+                                  </th>
+                                  <th scope="col">${Number(totalTargetForMTDSalesRep)}K</th>
+                                  <th scope="col">${totalAmountForMTDSalesRep}K</th>
+                                  <th scope="col">${totalDiffForMTDSalesRep}K</th>
+                                </tr>
                               </tbody>
                             ) : (
                               <tbody>
@@ -623,6 +649,9 @@ function Dashboard({ dashboardData }) {
                             {Yearlydataa ? (
                               <tbody>
                                 {Yearlydataa?.map((e) => {
+                                  totalTargetForYTDSalesRep = Number((Number(e.total?.target) / 1000).toFixed(0)) + Number(totalTargetForYTDSalesRep);
+                                  totalAmountForYTDSalesRep = Number((Number(e.total?.revenue) / 1000).toFixed(0)) + Number(totalAmountForYTDSalesRep);
+                                  totalDiffForYTDSalesRep = Number((Number(e.total?.target - e.total.revenue) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
                                   return (
                                     <tr key={e}>
                                       <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
@@ -634,6 +663,14 @@ function Dashboard({ dashboardData }) {
                                     </tr>
                                   );
                                 })}
+                                <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                                  <th scope="col" className="ps-3">
+                                    Total
+                                  </th>
+                                  <th scope="col">${Number(totalTargetForYTDSalesRep)}K</th>
+                                  <th scope="col">${totalAmountForYTDSalesRep}K</th>
+                                  <th scope="col">${totalDiffForYTDSalesRep}K</th>
+                                </tr>
                               </tbody>
                             ) : (
                               <tbody>
@@ -678,17 +715,30 @@ function Dashboard({ dashboardData }) {
                         ) : (
                           <>
                             {tabledata.length ? (
-                              tabledata?.map((e) => {
-                                return (
-                                  <tr key={e}>
-                                    <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
-                                    {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
-                                    <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
-                                    <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
-                                    <td className={Styles.tabletd}>${(Number(e.target - e.sale || 0) / 1000).toFixed(0)}K</td>
-                                  </tr>
-                                );
-                              })
+                              <>
+                                {tabledata?.map((e) => {
+                                  totalTargetForMTDGoalBrand = Number((Number(e.target) / 1000).toFixed(0)) + Number(totalTargetForMTDGoalBrand);
+                                  totalAmountForMTDGoalBrand = Number((Number(e.sale) / 1000).toFixed(0)) + Number(totalAmountForMTDGoalBrand);
+                                  totalDiffForMTDGoalBrand = Number((Number(e.target - e.sale) / 1000).toFixed(0)) + Number(totalDiffForMTDGoalBrand);
+                                  return (
+                                    <tr key={e}>
+                                      <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
+                                      {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
+                                      <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
+                                      <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
+                                      <td className={Styles.tabletd}>${(Number(e.target - e.sale || 0) / 1000).toFixed(0)}K</td>
+                                    </tr>
+                                  );
+                                })}
+                                <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                                  <th scope="col" className="ps-3">
+                                    Total
+                                  </th>
+                                  <th scope="col">${Number(totalTargetForMTDGoalBrand)}K</th>
+                                  <th scope="col">${totalAmountForMTDGoalBrand}K</th>
+                                  <th scope="col">${totalDiffForMTDGoalBrand}K</th>
+                                </tr>
+                              </>
                             ) : (
                               <tr>
                                 <td className={` ps-3 ${Styles.tabletd}`}>No data Found.</td>
@@ -720,9 +770,11 @@ function Dashboard({ dashboardData }) {
                         <IsTableLoading />
                       ) : (
                         <>
+                        {console.log("leaaa",leadsbybrand)}
                           {leadsbybrand == true ? (
                             <tbody className="position-relative">
                               {leadsbybrand.map((element) => {
+                                console.log("elee",element);
                                 return (
                                   <tr key={element}>
                                     <td className={` ps-3 ${Styles.tabletd}`}>{element.ManufacturerName}</td>
