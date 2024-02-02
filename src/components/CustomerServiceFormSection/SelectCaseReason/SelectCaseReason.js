@@ -47,7 +47,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         getOrderofSalesRep({
           user: {
             key: response.x_access_token,
-            Sales_Rep__c: true ? "00530000005AdvsAAC" : response.Sales_Rep__c,
+            Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
           },
           month: "",
         })
