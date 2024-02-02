@@ -35,7 +35,6 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       setErrorOnList(errorCount);
     }
   };
-  console.log(errorOnlist, data.length);
   const readFile = (file) => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -104,7 +103,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         data.map((element) => {
           if (element.Quantity && Number.isInteger(element?.Quantity)) {
             let product = getProductData(element["Product Code"]);
-            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0)) {
+            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0)&&element?.Quantity % product.Min_Order_QTY__c  === 0) {
               productCount++;
               if (product.Category__c == "PREORDER") orderType = "Pre Order";
               let item = {};
@@ -137,11 +136,11 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           }
         });
         if (productCount) {
-          navigate("/my-bag");
+          // navigate("/my-bag");
           let currentUrl = window.location.href;
           let urlSplit = currentUrl.split("/product");
           let url = urlSplit[0] + "/my-bag";
-          console.log({ url });
+          window.location.href = url
         } else {
           alert("Product list not found");
         }
@@ -238,7 +237,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 {data.map((item, index) => {
                   let productDetails = getProductData(item["Product Code"] || null);
                   if (item?.Quantity) {
-                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name;
+                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c  !== 0;
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>
