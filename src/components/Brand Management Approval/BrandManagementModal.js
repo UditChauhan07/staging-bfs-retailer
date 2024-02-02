@@ -89,7 +89,7 @@ const BrandManagementModal = ({ onClose, recordType }) => {
           console.log(formData);
           let rawData = {
             orderStatusForm: {
-              typeId: "",
+              typeId: recordType.id,
               salesRepId: user.Sales_Rep__c,
               reason: formData.reason,
               accountId: formData.account,
@@ -102,21 +102,25 @@ const BrandManagementModal = ({ onClose, recordType }) => {
             key: user.x_access_token,
           };
           console.log(rawData);
-          // postSupportAny({ rawData })
-          //   .then((response) => {
-          //     if (response) {
-          //       navigate("/CustomerSupportDetails?id=" + response);
-          //     }
-          //   })
-          //   .catch((err) => {
-          //     console.error({ err });
-          //   });
+          postSupportAny({ rawData })
+            .then((response) => {
+              console.log("Success! Ticket created.", response);
+              if (response) {
+                // navigate("/CustomerSupportDetails?id=" + response);
+              console.log("Success! Ticket created.", response);
+
+              }
+            })
+            .catch((err) => {
+              console.error({ err });
+            });
         } else {
-          DestoryAuth();
+          // DestoryAuth();
         }
       })
       .catch((error) => {
-        DestoryAuth();
+        console.log(error);
+        // DestoryAuth();
       });
   };
   const filteredContact = () => {

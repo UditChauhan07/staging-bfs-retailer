@@ -88,14 +88,14 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     }
   };
   const onOrderChangeHandler = (value) => {
-    console.log("value", value);
     let id = value;
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
+        console.log("element",element);
         setOrderData({
           accountId: element.AccountId,
-          orderNumber: element.Order_Number__c,
+          orderNumber: element.Order_Number__c??"N/A",
           poNumber: element.PO_Number__c,
           manufacturerId: element.ManufacturerId__c,
           opportunityId: element.Id,
@@ -119,7 +119,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     setOrderData({ accountId: value });
     setStep(2);
   };
-  console.log(filteredContact());
   const onChnageOrderItemHander = (value) => {
     let orderItemDetails = orderIdChild.filter(function (element) {
       let id = value;
@@ -139,7 +138,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               salesRepId: user.Sales_Rep__c,
               reason,
               accountId: orderData.accountId,
-              orderNumber: orderData?.orderNumber,
+              orderNumber: orderData.orderNumber,
               poNumber: orderData.poNumber,
               manufacturerId: orderData.manufacturerId,
               desc,
@@ -151,8 +150,10 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             key: user.x_access_token,
           };
           postSupportAny({ rawData })
+        
             .then((response) => {
               if (response) {
+                console.log("response", response);
                 navigate("/CustomerSupportDetails?id=" + response);
               }
             })
@@ -184,7 +185,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                     className={`${styles.modalButtonCancel}`}
                     onClick={() => {
                       setReasonChangeModalOpen(false);
-                      console.log(step, orderData, reason, reasonName, orderIdChild, selectedOrderItem);
                     }}
                   >
                     Cancel

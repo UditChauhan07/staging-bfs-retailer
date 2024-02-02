@@ -42,7 +42,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
         <ModalPage
           open={brandManagementModalOpen}
           onClose={() => setBrandManagementModalOpen(false)}
-          content={<BrandManagementModal onClose={() => setBrandManagementModalOpen(false)} recordType={{ id: "0123b0000007z9pAAA", name: "Brand Management Approval" }} />}
+          content={<BrandManagementModal onClose={() => setBrandManagementModalOpen(false)} recordType={{ id: "0123b000000GfOEAA0", name: "Brand Management Approval" }} />}
         />
         <div className={Styles.supportMain}>
           <div className="row">
