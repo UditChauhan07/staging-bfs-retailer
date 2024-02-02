@@ -12,7 +12,7 @@ const LoginHeader = () => {
           <div className="col-12">
             <div className="d-flex justify-content-between align-items-center gap-2">
               <div className="d-flex justify-content-center align-items-center gap-5">
-                <Link to="/" className="">
+                <Link to="https://beautyfashionsales.com" className="">
                 <img src={"/assets/images/BFSG_logo.svg"} alt="img" />
                 </Link>
               </div>

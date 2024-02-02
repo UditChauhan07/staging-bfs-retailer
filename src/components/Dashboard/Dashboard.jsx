@@ -284,7 +284,7 @@ function Dashboard({ dashboardData }) {
     setIsLoaded(true);
     GetAuthData()
       .then((user) => {
-        user.Sales_Rep__c = "00530000005AdvsAAC";
+        // user.Sales_Rep__c = "00530000005AdvsAAC";
 
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
@@ -294,7 +294,7 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
-              console.log("aaaa",dashboardData);
+              console.log("aaaa", dashboardData);
               setDashboardRelatedData(dashboardData);
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
@@ -515,6 +515,8 @@ function Dashboard({ dashboardData }) {
   let totalTargetForMTDGoalBrand = 0;
   let totalAmountForMTDGoalBrand = 0;
   let totalDiffForMTDGoalBrand = 0;
+  let totalRecieved=0;
+  let totalConverted=0;
 
   return (
     <AppLayout
@@ -582,9 +584,9 @@ function Dashboard({ dashboardData }) {
                               <tbody>
                                 {Monthlydataa?.map((e) => {
                                   // console.log("e.....", e);
-                                  totalTargetForMTDSalesRep = Number((Number(e.total?.target) / 1000).toFixed(0)) + Number(totalTargetForMTDSalesRep);
-                                  totalAmountForMTDSalesRep = Number((Number(e.total?.revenue) / 1000).toFixed(0)) + Number(totalAmountForMTDSalesRep);
-                                  totalDiffForMTDSalesRep = Number((Number(e.total?.target - e.total.revenue) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
+                                  totalTargetForMTDSalesRep = Number((Number(e.total?.target||0) / 1000).toFixed(0)) + Number(totalTargetForMTDSalesRep);
+                                  totalAmountForMTDSalesRep = Number((Number(e.total?.revenue||0) / 1000).toFixed(0)) + Number(totalAmountForMTDSalesRep);
+                                  totalDiffForMTDSalesRep = Number((Number(e.total?.target - e.total.revenue||0) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
                                   return (
                                     <tr key={e}>
                                       <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
@@ -600,9 +602,9 @@ function Dashboard({ dashboardData }) {
                                   <th scope="col" className="ps-3">
                                     Total
                                   </th>
-                                  <th scope="col">${Number(totalTargetForMTDSalesRep)}K</th>
-                                  <th scope="col">${totalAmountForMTDSalesRep}K</th>
-                                  <th scope="col">${totalDiffForMTDSalesRep}K</th>
+                                  <th scope="col">${totalTargetForMTDSalesRep ?? "0"}K</th>
+                                  <th scope="col">${totalAmountForMTDSalesRep ?? "0"}K</th>
+                                  <th scope="col">${totalDiffForMTDSalesRep ?? "0"}K</th>
                                 </tr>
                               </tbody>
                             ) : (
@@ -648,10 +650,12 @@ function Dashboard({ dashboardData }) {
                           <>
                             {Yearlydataa ? (
                               <tbody>
-                                {Yearlydataa?.map((e) => {
-                                  totalTargetForYTDSalesRep = Number((Number(e.total?.target) / 1000).toFixed(0)) + Number(totalTargetForYTDSalesRep);
-                                  totalAmountForYTDSalesRep = Number((Number(e.total?.revenue) / 1000).toFixed(0)) + Number(totalAmountForYTDSalesRep);
-                                  totalDiffForYTDSalesRep = Number((Number(e.total?.target - e.total.revenue) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
+                                {Yearlydataa?.map((e, index) => {
+                                  totalTargetForYTDSalesRep = Number((Number(e.total?.target||0) / 1000).toFixed(0)) + Number(totalTargetForYTDSalesRep);
+                                  console.log("ewwww", index, totalTargetForYTDSalesRep);
+                                  totalAmountForYTDSalesRep = Number((Number(e.total?.revenue||0) / 1000).toFixed(0)) + Number(totalAmountForYTDSalesRep);
+                                  totalDiffForYTDSalesRep = Number((Number(e.total?.target - e.total.revenue||0) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
+
                                   return (
                                     <tr key={e}>
                                       <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
@@ -667,10 +671,11 @@ function Dashboard({ dashboardData }) {
                                   <th scope="col" className="ps-3">
                                     Total
                                   </th>
-                                  <th scope="col">${Number(totalTargetForYTDSalesRep)}K</th>
+                                  <th scope="col">${totalTargetForYTDSalesRep}K</th>
                                   <th scope="col">${totalAmountForYTDSalesRep}K</th>
                                   <th scope="col">${totalDiffForYTDSalesRep}K</th>
                                 </tr>
+                                {console.log("totalTargetForYTDSalesRep", totalTargetForYTDSalesRep)}
                               </tbody>
                             ) : (
                               <tbody>
@@ -717,9 +722,9 @@ function Dashboard({ dashboardData }) {
                             {tabledata.length ? (
                               <>
                                 {tabledata?.map((e) => {
-                                  totalTargetForMTDGoalBrand = Number((Number(e.target) / 1000).toFixed(0)) + Number(totalTargetForMTDGoalBrand);
-                                  totalAmountForMTDGoalBrand = Number((Number(e.sale) / 1000).toFixed(0)) + Number(totalAmountForMTDGoalBrand);
-                                  totalDiffForMTDGoalBrand = Number((Number(e.target - e.sale) / 1000).toFixed(0)) + Number(totalDiffForMTDGoalBrand);
+                                  totalTargetForMTDGoalBrand = Number((Number(e.target) / 1000||0).toFixed(0)) + Number(totalTargetForMTDGoalBrand);
+                                  totalAmountForMTDGoalBrand = Number((Number(e.sale) / 1000||0).toFixed(0)) + Number(totalAmountForMTDGoalBrand);
+                                  totalDiffForMTDGoalBrand = Number((Number(e.target - e.sale||0) / 1000).toFixed(0)) + Number(totalDiffForMTDGoalBrand);
                                   return (
                                     <tr key={e}>
                                       <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
@@ -734,7 +739,7 @@ function Dashboard({ dashboardData }) {
                                   <th scope="col" className="ps-3">
                                     Total
                                   </th>
-                                  <th scope="col">${Number(totalTargetForMTDGoalBrand)}K</th>
+                                  <th scope="col">${totalTargetForMTDGoalBrand}K</th>
                                   <th scope="col">${totalAmountForMTDGoalBrand}K</th>
                                   <th scope="col">${totalDiffForMTDGoalBrand}K</th>
                                 </tr>
@@ -757,7 +762,7 @@ function Dashboard({ dashboardData }) {
               <div className={Styles.DashboardWidth}>
                 <p className={Styles.Tabletext}>Leads by Brand</p>
                 <div className={Styles.goaltable1}>
-                  <div className="">
+                <div className={Styles.table_scroll}>
                     <table className="table table-borderless mt-2">
                       <thead>
                         <tr className={Styles.tablerow}>
@@ -770,19 +775,28 @@ function Dashboard({ dashboardData }) {
                         <IsTableLoading />
                       ) : (
                         <>
-                        {console.log("leaaa",leadsbybrand)}
-                          {leadsbybrand == true ? (
+                          {console.log("leaaa", leadsbybrand)}
+                          {leadsbybrand ? (
                             <tbody className="position-relative">
                               {leadsbybrand.map((element) => {
-                                console.log("elee",element);
+                                console.log("elee", element);
+                                totalRecieved+=element.received;
+                                totalConverted+=element.coverted
                                 return (
                                   <tr key={element}>
-                                    <td className={` ps-3 ${Styles.tabletd}`}>{element.ManufacturerName}</td>
+                                    <td className={` ps-3 ${Styles.tabletd}`}>{element.manufacturer}</td>
                                     <td className={Styles.tabletd}>{element.received}</td>
-                                    <td className={Styles.tabletd}>{element.converted}</td>
+                                    <td className={Styles.tabletd}>{element.coverted}</td>
                                   </tr>
                                 );
                               })}
+                               <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                                  <th scope="col" className="ps-3">
+                                    Total
+                                  </th>
+                                  <th scope="col">{totalRecieved}</th>
+                                  <th scope="col">{totalConverted}</th>
+                                </tr>
                             </tbody>
                           ) : (
                             <tbody>
