@@ -927,10 +927,10 @@ function Dashboard({ dashboardData }) {
                       <div className={Styles.donuttop1}>
                         <div className="container">
                           <p className={`text-end ${Styles.Tabletxt}`}>
-                            Your Target: <span className={Styles.Tabletext_head}>{targetValue||0}K</span>
+                            Your Target: <span className={Styles.Tabletext_head}>{Number(targetValue)||0}K</span>
                           </p>
                           <p className={`text-end ${Styles.Tabletxt1}`}>
-                            Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales||0}K</span>
+                            Achieved Sales: <span className={Styles.Tabletext_head}>{Number(achievedSales)||0}K</span>
                           </p>
                           <div className={Styles.donutbox}>
                             <PieChart width={400} height={400}>
