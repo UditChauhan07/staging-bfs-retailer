@@ -168,6 +168,23 @@ export async function getOrderList({ user, month }) {
   let data = JSON.parse(await response.text());
   return data.data;
 }
+export async function getOrderofSalesRep({ user, month }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", user.key);
+  bodyContent.append("salesRepId", user.Sales_Rep__c);
+
+  let response = await fetch(url + "v3/8QUZQtEILKLsFeE", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  return data.data;
+}
 export async function getOrderDetailsBasedId({ rawData }) {
   let headersList = {
     Accept: "*/*",
