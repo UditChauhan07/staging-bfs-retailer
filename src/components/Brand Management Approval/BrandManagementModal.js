@@ -326,9 +326,9 @@ const BrandManagementModal = ({ onClose, recordType }) => {
               </button>
               <button
                 className={Styles.Button2}
-                onClick={() => {
-                  submitForm();
-                }}
+                // onClick={() => {
+                //   submitForm();
+                // }}
               >
                 SUBMIT
               </button>
