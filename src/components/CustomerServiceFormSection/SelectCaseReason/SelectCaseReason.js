@@ -263,7 +263,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                       options={orders.map((element) => {
                         return {
                           value: element.Id,
-                          label: `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
+                          label: `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
                         };
                       })}
                       defaultValue={{
