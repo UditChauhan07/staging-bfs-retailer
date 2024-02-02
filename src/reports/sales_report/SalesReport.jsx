@@ -38,7 +38,7 @@ const SalesReport = () => {
     if (searchBy) {
       filtered = filtered?.map((ele) => {
         const Orders = ele.Orders.filter((item) => {
-          if (item.AccountName?.toLowerCase().includes(searchBy?.toLowerCase())) {
+          if (item.Name?.toLowerCase().includes(searchBy?.toLowerCase())) {
             return item;
           }
         });
@@ -85,8 +85,10 @@ const SalesReport = () => {
     return filteredSalesReportData?.map((ele) =>
       ele.Orders.map((item) => ({
         ManufacturerName__c: ele.ManufacturerName__c,
-        AccountName: item.AccountName,
-        AccountRepo: item.AccountRepo,
+        AccountName: item.Name,
+        AccountRepo: item?.AccountRepo ??
+        JSON.parse(localStorage.getItem("Api Data")).data
+          .Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,
@@ -114,7 +116,7 @@ const SalesReport = () => {
         TotalOrders: item.totalOrders,
         totalAmount: item.totalorderPrice,
       }))
-    );
+    ).flat();
   }, [filteredSalesReportData, manufacturerFilter]);
 
   const handleExportToExcel = () => {
