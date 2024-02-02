@@ -161,62 +161,62 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                             JSON.parse(localStorage.getItem("Api Data")).data
                               .Name}
                         </td>
-                        {(currentYear == year) ? month == 0 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 0 && <td className={`${styles.td}`}>
                           ${Number(item.Jan.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Jan.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 1 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 1 && <td className={`${styles.td}`}>
                           ${Number(item.Feb.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Feb.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 2 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 2 && <td className={`${styles.td}`}>
                           ${Number(item.Mar.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Mar.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 3 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 3 && <td className={`${styles.td}`}>
                           ${Number(item.Apr.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Apr.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 4 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 4 && <td className={`${styles.td}`}>
                           ${Number(item.May.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.May.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 5 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 5 && <td className={`${styles.td}`}>
                           ${Number(item.Jun.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Jun.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 6 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 6 && <td className={`${styles.td}`}>
                           ${Number(item.Jul.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Jul.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 7 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 7 && <td className={`${styles.td}`}>
                           ${Number(item.Aug.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Aug.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 8 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 8 && <td className={`${styles.td}`}>
                           ${Number(item.Sep.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Sep.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 9 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 9 && <td className={`${styles.td}`}>
                           ${Number(item.Oct.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Oct.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 10 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 10 && <td className={`${styles.td}`}>
                           ${Number(item.Nov.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Nov.amount).toFixed(2)}
                         </td>}
-                        {(currentYear == year) ? month == 11 && <td className={`${styles.td}`}>
+                        {(currentYear == year) ? month >= 11 && <td className={`${styles.td}`}>
                           ${Number(item.Dec.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
                           ${Number(item.Dec.amount).toFixed(2)}
@@ -244,7 +244,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     TOTAL
                   </td>
-                  {(currentYear == year) ? month == 0 && <td
+                  {(currentYear == year) ? month >= 0 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Jan).toFixed(2)}
@@ -253,7 +253,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Jan).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 1 && <td
+                  {(currentYear == year) ? month >= 1 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Feb).toFixed(2)}
@@ -262,7 +262,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Feb).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 2 && <td
+                  {(currentYear == year) ? month >= 2 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Mar).toFixed(2)}
@@ -271,7 +271,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Mar).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 3 && <td
+                  {(currentYear == year) ? month >= 3 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Apr).toFixed(2)}
@@ -280,7 +280,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Apr).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 4 && <td
+                  {(currentYear == year) ? month >= 4 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.May).toFixed(2)}
@@ -289,7 +289,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.May).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 5 && <td
+                  {(currentYear == year) ? month >= 5 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Jun).toFixed(2)}
@@ -298,7 +298,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Jun).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 6 && <td
+                  {(currentYear == year) ? month >= 6 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Jul).toFixed(2)}
@@ -307,7 +307,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Jul).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 7 && <td
+                  {(currentYear == year) ? month >= 7 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Aug).toFixed(2)}
@@ -316,7 +316,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Aug).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 8 && <td
+                  {(currentYear == year) ? month >= 8 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Sep).toFixed(2)}
@@ -325,7 +325,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Sep).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 9 && <td
+                  {(currentYear == year) ? month >= 9 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Oct).toFixed(2)}
@@ -334,7 +334,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Oct).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 10 && <td
+                  {(currentYear == year) ? month >= 10 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Nov).toFixed(2)}
@@ -343,7 +343,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     ${Number(monthTotalAmount.Nov).toFixed(2)}
                   </td>}
-                  {(currentYear == year) ? month == 11 && <td
+                  {(currentYear == year) ? month >= 11 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
                     ${Number(monthTotalAmount.Dec).toFixed(2)}
