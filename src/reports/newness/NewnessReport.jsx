@@ -102,6 +102,7 @@ const NewnessReport = () => {
           <FilterItem
             minWidth="220px"
             label="All Manufacturers"
+            name="AllManufacturers12"
             value={filter.ManufacturerId__c}
             options={manufacturers?.data?.map((manufacturer) => ({
               label: manufacturer.Name,
@@ -111,6 +112,7 @@ const NewnessReport = () => {
           />
           <FilterItem
             label="Qty/price"
+            name="Qty/price"
             value={filter.dataDisplay}
             options={[
               {

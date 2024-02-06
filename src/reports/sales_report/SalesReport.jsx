@@ -188,10 +188,11 @@ const SalesReport = () => {
     <AppLayout
       filterNodes={
         <>
-          {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
+          {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
           <FilterItem
             minWidth="220px"
             label="All Manufacturers"
+            name="AllManufacturers1"
             value={manufacturerFilter}
             options={manufacturers?.data?.map((manufacturer) => ({
               label: manufacturer.Name,
@@ -202,6 +203,7 @@ const SalesReport = () => {
           <FilterItem
             minWidth="220px"
             label="Lowest Orders"
+            name="LowestOrders"
             value={highestOrders}
             options={[
               {

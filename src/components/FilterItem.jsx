@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Page from "../pages/page.module.css";
 
-export const FilterItem = ({ label, options, onChange, minWidth, value }) => {
+export const FilterItem = ({ label, options, onChange, minWidth, value,name='drop-down1' }) => {
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(()=>{
+    const onMouseEnter = () => {
+      setIsOpen(true)
+    };
+    
+    const onMouseLeave = () => {
+      setIsOpen(false)
+    };
+    document.getElementById(name)?.addEventListener("mouseenter", onMouseEnter);
+    document.getElementById(name)?.addEventListener("mouseleave", onMouseLeave);
+  },[])
   return (
-    <div className={`relative filterItem ${Page.FilterNoneClass}`}>
+    <div className={`relative filterItem ${Page.FilterNoneClass}`} id={name}>
       <div
         className="flex justify-center items-center gap-1 leading-tight cursor-pointer select-none "
         onClick={() => {

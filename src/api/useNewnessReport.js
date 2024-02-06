@@ -28,7 +28,7 @@ export const useNewnessReport = (props) => {
   return {
     fetchNewnessApiData: async ({ManufacturerId__c, fromDate, toDate}) => {
       const response = await axios.post(
-        "https://dev.beautyfashionsales.com/newness",
+        "https://b2b.beautyfashionsales.com/newness",
         {},
         {
           headers: {

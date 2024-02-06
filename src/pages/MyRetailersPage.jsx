@@ -49,6 +49,7 @@ const MyRetailersPage = () => {
                 value: "z-a",
               },
             ]}
+            name="sortBy1"
             onChange={(value) => {
               setSortBy(value);
             }}
@@ -56,6 +57,7 @@ const MyRetailersPage = () => {
           <FilterItem
             minWidth="220px"
             label="Manufacturer"
+            name="Manufacturer1"
             value={manufacturerFilter}
             options={manufacturers?.data?.map((manufacturer) => ({
               label: manufacturer.Name,
