@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { DestoryAuth } from "../lib/store";
 
 export const useNewnessReport = (props) => {
   // console.log("props", props);
@@ -39,7 +40,11 @@ export const useNewnessReport = (props) => {
           },
         }
       );
+      if (response.status == 300) {
+        DestoryAuth();
+      } else {
       return response.data;
+      }
     },
   };
 };
