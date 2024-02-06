@@ -76,6 +76,7 @@ const ComparisonReport = () => {
           <FilterItem
             minWidth="220px"
             label="All Manufacturers"
+            name="All-Manufacturers"
             value={filter.ManufacturerId__c}
             options={manufacturers?.data?.map((manufacturer) => ({
               label: manufacturer.Name,
@@ -86,6 +87,7 @@ const ComparisonReport = () => {
           <FilterItem
             minWidth="220px"
             label="Months"
+            name="Months"
             value={filter.month}
             options={apiData?.date?.monthList?.map((month) => ({
               label: month?.name,
@@ -96,6 +98,7 @@ const ComparisonReport = () => {
           <FilterItem
             minWidth="220px"
             label="Year"
+            name="Year"
             value={filter.year}
             options={apiData?.date?.yearList?.map((year) => ({
               label: year?.name,

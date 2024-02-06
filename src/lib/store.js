@@ -1,5 +1,5 @@
-let url = "https://dev.beautyfashionsales.com/beauty/";
-let URL = "https://dev.beautyfashionsales.com/beauty/0DS68FOD7s";
+let url = "https://b2b.beautyfashionsales.com/beauty/";
+let URL = "https://b2b.beautyfashionsales.com/beauty/0DS68FOD7s";
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
 const brandIdKey = "ManufacturerId__c";
@@ -131,6 +131,8 @@ export async function OrderPlaced({ order }) {
     let lastCount = localStorage.getItem(POCount) || 1;
     localStorage.setItem(POCount, parseInt(lastCount + 1));
     return data.order;
+  } else if (data.status == 300) {
+    DestoryAuth();
   } else {
     return false;
   }
@@ -166,7 +168,11 @@ export async function getOrderList({ user, month }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  return data.data;
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
 }
 export async function getOrderofSalesRep({ user, month }) {
   let headersList = {
@@ -183,7 +189,43 @@ export async function getOrderofSalesRep({ user, month }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  return data.data;
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getTargetReportAll({ user }) {
+  if (user) {
+    let headersList = {
+      Accept: "*/*",
+    };
+    let tried = false;
+    let bodyContent = new FormData();
+    bodyContent.append("key", user.x_access_token);
+    if (user.Sales_Rep__c != "00530000005AdvsAAC") {
+      bodyContent.append("SalesRepId", user.Sales_Rep__c);
+    }
+
+    let response = await fetch(url + "/target/4Tu6do95AxLM3Cl", {
+      method: "POST",
+      body: bodyContent,
+      headers: headersList,
+    });
+    let data = JSON.parse(await response.text());
+    if (data.status == 300) {
+      DestoryAuth();
+    } else {
+      let rawRes = { ownerPermission: false, list: data.data }
+      if (user.Sales_Rep__c == "00530000005AdvsAAC") {
+        rawRes.ownerPermission = true;
+      }
+      return rawRes;
+    }
+  } else {
+    return false
+  }
 }
 export async function getOrderDetailsBasedId({ rawData }) {
   let headersList = {
@@ -200,7 +242,11 @@ export async function getOrderDetailsBasedId({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  return data.data;
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
 }
 
 export async function getOrderDetailsInvoice({ rawData }) {
@@ -218,7 +264,11 @@ export async function getOrderDetailsInvoice({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  return data.data;
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
 }
 
 export async function getDashboardata({ user }) {
@@ -228,8 +278,8 @@ export async function getDashboardata({ user }) {
   } else {
     headersList = {
       Accept: "*/*",
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*"
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
     };
   }
 
@@ -243,7 +293,7 @@ export async function getDashboardata({ user }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if (data.status != 200) {
+  if (data.status == 300) {
     DestoryAuth();
   } else {
     return data.data;
@@ -265,7 +315,7 @@ export async function getSupportList({ user }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if (data.status != 200) {
+  if (data.status == 300) {
     DestoryAuth();
   } else {
     return data.data;
@@ -287,12 +337,11 @@ export async function getSupportDetails({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
-  // if(data.status != 200){
-  //   DestoryAuth()
-  // }else{
-  return data.data;
-  // }
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
 }
 
 export async function getSupportFormRaw({ rawData }) {
@@ -310,7 +359,7 @@ export async function getSupportFormRaw({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if (data.status != 200) {
+  if (data.status == 300) {
     DestoryAuth();
   } else {
     return data.data;
@@ -332,15 +381,15 @@ export async function getAllAccount({ user }) {
     body: JSON.stringify(body),
   });
   let data = JSON.parse(await response.text());
-  if(data.status != 200){
+  if (data.status == 300) {
     DestoryAuth()
-  }else{
+  } else {
     return data.data;
   }
 }
 
 export async function postSupport({ rawData }) {
-  console.log({rawData});
+  console.log({ rawData });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -352,7 +401,7 @@ export async function postSupport({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if (data.status != 200) {
+  if (data.status == 300) {
     DestoryAuth();
   } else {
     return data.data;
@@ -371,12 +420,11 @@ export async function postSupportAny({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  // if(data.status != 200){
-  //   // return []
-  //   console.log({data});
-  // }else{
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
     return data.data;
-  // }
+  }
 }
 
 export async function postSupportComment({ rawData }) {
@@ -391,10 +439,9 @@ export async function postSupportComment({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  // if(data.status != 200){
-  //   // return []
-  //   console.log({data});
-  // }else{
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
     return data.data;
-  // }
+  }
 }

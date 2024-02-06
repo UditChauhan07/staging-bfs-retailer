@@ -581,7 +581,7 @@ const Inquiries = ({ show, onHide }) => {
             "Content-Type": "application/json",
           },
         };
-        fetch("https://dev.beautyfashionsales.com/beauty/login", options)
+        fetch("https://b2b.beautyfashionsales.com/beauty/login", options)
           .then((res) => res.json())
           .then((json) => {
             if (json.status) {
@@ -621,7 +621,7 @@ const Inquiries = ({ show, onHide }) => {
                     body: JSON.stringify(bodydata),
                   };
                   fetch(
-                    "https://dev.beautyfashionsales.com/beauty/B0F9FC7237TC",
+                    "https://b2b.beautyfashionsales.com/beauty/B0F9FC7237TC",
                     options
                   )
                     .then((res) => res.json())

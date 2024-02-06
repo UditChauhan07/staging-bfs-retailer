@@ -55,6 +55,7 @@ const CustomerSupport = () => {
           <FilterItem
             minWidth="220px"
             label="Retailer"
+            name="Retailer"
             value={retailerFilter}
             options={retailerData?.data?.map((retailer) => ({
               label: retailer.Name,
@@ -65,6 +66,7 @@ const CustomerSupport = () => {
           <FilterItem
             minWidth="220px"
             label="Manufacturer"
+            name="Manufacturer"
             value={manufacturerFilter}
             options={manufacturers?.data?.map((manufacturer) => ({
               label: manufacturer.Name,

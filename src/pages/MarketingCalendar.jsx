@@ -32,6 +32,7 @@ const MarketingCalendar = () => {
         <FilterItem
           minWidth="220px"
           label="All Brand"
+          name="All-Brand"
           value={brand}
           options={brands}
           onChange={(value) => {

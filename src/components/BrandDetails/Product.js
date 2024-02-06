@@ -339,6 +339,7 @@ function Product() {
               <>
               {isLoading?null:<> <FilterItem
                   label="Sort by"
+                  name="Sort-by"
                   value={sortBy}
                   options={[
                     {
@@ -356,6 +357,7 @@ function Product() {
                 />
                 <FilterItem
                   label="Product type"
+                  name="Product-type"
                   value={productTypeFilter}
                   options={[
                     {

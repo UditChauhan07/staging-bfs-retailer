@@ -95,7 +95,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     setSelectOrderItem({ id: null, value: null });
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
-        console.log("element", element);
         setOrderData({
           accountId: element.AccountId,
           orderNumber: element.Order_Number__c ?? "N/A",
@@ -114,7 +113,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const filteredContact = () => {
     const element = orders.filter((ele) => ele.Id == orderData.opportunityId)[0];
     return element
-      ? `Order from ${element?.AccountName} for (${element?.ProductCount} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
+      ? `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
       : "Search...";
   };
   const onChnageAccountHander = (value) => {
@@ -156,7 +155,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             key: user.x_access_token,
           };
           postSupportAny({ rawData })
-
             .then((response) => {
               if (response) {
                 navigate("/CustomerSupportDetails?id=" + response);
@@ -256,31 +254,31 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                     <p className={Styles.CaseReason}>
                       <span className="text-danger">*</span>Select Orders
                     </p>
-                    {!orderGet?
-                    <Loading/>
-                    :
-                    <Select
-                      options={orders.map((element) => {
-                        return {
-                          value: element.Id,
-                          label: `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
-                        };
-                      })}
-                      defaultValue={{
-                        value: "Select...",
-                        label: "Select...",
-                      }}
-                      value={{
-                        value: orders.filter((ele) => ele.Id == orderData.opportunityId)[0]?.["Id"] || "Search...",
-                        label: filteredContact(),
-                      }}
-                      onChange={(option) => onOrderChangeHandler(option.value)}
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-                      menuPortalTarget={document.body}
-                      isSearchable
-                      menuPosition={"fixed"}
-                      menuShouldScrollIntoView={false}
-                    />}
+                    {!orderGet ?
+                      <Loading />
+                      :
+                      <Select
+                        options={orders.map((element) => {
+                          return {
+                            value: element.Id,
+                            label: `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
+                          };
+                        })}
+                        defaultValue={{
+                          value: "Select...",
+                          label: "Select...",
+                        }}
+                        value={{
+                          value: orders.filter((ele) => ele.Id == orderData.opportunityId)[0]?.["Id"] || "Search...",
+                          label: filteredContact(),
+                        }}
+                        onChange={(option) => onOrderChangeHandler(option.value)}
+                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        menuPortalTarget={document.body}
+                        isSearchable
+                        menuPosition={"fixed"}
+                        menuShouldScrollIntoView={false}
+                      />}
                   </div>
                 )}
                 {reason == "Update Account Info" && (
