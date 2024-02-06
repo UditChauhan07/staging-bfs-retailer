@@ -1,4 +1,5 @@
 import axios from "axios";
+import { DestoryAuth } from "../lib/store";
 
 export const useComparisonReport = (props) => {
   return {
@@ -9,7 +10,11 @@ export const useComparisonReport = (props) => {
         month: month,
         year: year,
       });
-      return response.data;
+      if (response.status == 300) {
+        DestoryAuth();
+      } else {
+        return response.data;
+      }
     },
   };
 };

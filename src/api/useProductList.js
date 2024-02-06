@@ -1,3 +1,4 @@
+import { DestoryAuth } from "../lib/store";
 import { useFetch } from "./useFetch";
 
 export const useProductList = (data) => {
@@ -7,5 +8,9 @@ export const useProductList = (data) => {
     method: "POST",
     body: JSON.stringify({ Manufacturer, AccountId__c, Sales_Rep__c, key }),
   });
-  return productList;
+  if (productList.status == 300) {
+    DestoryAuth();
+  } else {
+    return productList;
+  }
 };
