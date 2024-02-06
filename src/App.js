@@ -29,6 +29,7 @@ import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import CustomerServiceForm from "./pages/CustomerServiceForm";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
+import TargetReport from "./reports/targetReport";
 function App() {
   // const Redirect = ({ href }) => {
   //   window.location.href = href;
@@ -41,6 +42,7 @@ function App() {
             <Route path="/sales-report" element={<SalesReport />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/newness-report" element={<NewnessReport />}></Route>
+            <Route path="/Target-Report" element={<TargetReport />}></Route>
             <Route
               path="/comparison-report"
               element={<ComparisonReport />}
@@ -78,9 +80,10 @@ function App() {
             {/* <Route path="/wholesale-inquiry" elements={<WholesaleInquiry />}></Route> */}
             <Route path="logout" element={<Logout />}></Route>
             <Route path="/sign-up" element={<SignUp />}></Route>
-            <Route path="/orderDetails" element={<MyBagOrder/>}></Route>
-            <Route path="/orderStatusForm" element={<OrderStatusForm/>}></Route>
-            <Route path="/customerService" element={<CustomerServiceForm/>}></Route>
+            <Route path="/orderDetails" element={<MyBagOrder />}></Route>
+            <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
+            <Route path="/customerService" element={<CustomerServiceForm />}></Route>
+            {/*  */}
           </Routes>
         </BrowserRouter>
       </BagProvider>

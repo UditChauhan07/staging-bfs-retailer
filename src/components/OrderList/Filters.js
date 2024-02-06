@@ -13,6 +13,7 @@ const Filters = ({ value, onChange, resetFilter }) => {
     <>
       <FilterItem
         label="Months"
+        name="Months"
         value={value.month}
         options={[
           {
@@ -32,6 +33,7 @@ const Filters = ({ value, onChange, resetFilter }) => {
       />
       <FilterItem
         label="MANUFACTURER"
+        name="MANUFACTURER"
         value={value.manufacturer}
         options={
           Array.isArray(manufacturerData?.data)

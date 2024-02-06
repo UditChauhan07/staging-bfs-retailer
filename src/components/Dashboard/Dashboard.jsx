@@ -533,6 +533,7 @@ function Dashboard({ dashboardData }) {
             onChange={(value) => {
               changeMonthHandler(value);
             }}
+            name={"dashboard-manu"}
           />
         </>
       }

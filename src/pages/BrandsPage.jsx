@@ -80,6 +80,7 @@ const BrandsPage = () => {
           <>
             <FilterItem
               label="Sort by"
+              name="Sort-by"
               value={sortBy}
               options={[
                 {
@@ -98,6 +99,7 @@ const BrandsPage = () => {
             <FilterItem
               minWidth="220px"
               label="Lowest Retailers"
+              name="Lowest-Retailers"
               value={highestRetailers}
               options={[
                 {
