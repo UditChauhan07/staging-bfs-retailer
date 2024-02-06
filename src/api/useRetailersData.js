@@ -1,3 +1,4 @@
+import { DestoryAuth } from "../lib/store";
 import { useFetch } from "./useFetch";
 
 export const useRetailersData = () => {
@@ -7,5 +8,9 @@ export const useRetailersData = () => {
       method: "POST",
     }
   );
+  if (fetchedRetailers.status == 300) {
+    DestoryAuth();
+  } else {
   return fetchedRetailers;
+  }
 };
