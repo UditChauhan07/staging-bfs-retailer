@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function LaunchCalendar({ brand }) {
+function LaunchCalendar({ brand, search }) {
   const [products, setProducts] = useState([
     {
       month: "Jan",
@@ -27,7 +27,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/27.png",
           name: "Re Nutriv Ultimate Diamond Brilliance Crème REFILL ",
           size: "50 ml",
-          description: "The transcendently weightless, delightfully indulgent fluid absorbs quickly to refresh skin and help restore a plumper, smoother feel.",
+          description:
+            "The transcendently weightless, delightfully indulgent fluid absorbs quickly to refresh skin and help restore a plumper, smoother feel.",
           brandLogo: "/assets/images/renutrive-logo.png",
         },
         {
@@ -37,7 +38,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/02.png",
           name: "LipNight",
           size: "09 g",
-          description: "Naturally fragranced and flavored with Vanilla and soothing Chamomile Oil, this overnight treatment sweetly blankets and soothes lips while you slumber.",
+          description:
+            "Naturally fragranced and flavored with Vanilla and soothing Chamomile Oil, this overnight treatment sweetly blankets and soothes lips while you slumber.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
         {
@@ -58,7 +60,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/04.png",
           name: "Kakadu Luxe Cream",
           size: "50 ML",
-          description: "A luscious creamy mousse enriched with a high concentration of antioxidants and Vitamin A, C & E to help nourish and revitalise your skin.",
+          description:
+            "A luscious creamy mousse enriched with a high concentration of antioxidants and Vitamin A, C & E to help nourish and revitalise your skin.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -79,7 +82,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing2.png",
           name: "Soothing Cleansing Oil Relaunch ",
           size: "200 ml",
-          description: "Soothing Cleansing Oil makeup remover removes makeup, dirt and all impurities from your face perfectly and leaves the skin soft and clean.",
+          description:
+            "Soothing Cleansing Oil makeup remover removes makeup, dirt and all impurities from your face perfectly and leaves the skin soft and clean.",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
         {
@@ -111,7 +115,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing21.png",
           name: "Fleur de Peau Hand and Body Gel",
           size: "200 ml",
-          description: "A new addition to the Fleur de Peau fragrance family, this Hand and Body Cleansing Gel pays tribute to the sensual notes of musk.",
+          description:
+            "A new addition to the Fleur de Peau fragrance family, this Hand and Body Cleansing Gel pays tribute to the sensual notes of musk.",
           brandLogo: "/assets/images/Diptuque.png",
         },
 
@@ -133,9 +138,11 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing21.png",
           name: "Fleur de Peau Hand and body lotion",
           size: "200 ml",
-          description: "An intensely perfumed veil, distilling all the carnal sweetness of the musk in Fleur de Peau into an ode to the legendary love of Eros and Psyche. ",
+          description:
+            "An intensely perfumed veil, distilling all the carnal sweetness of the musk in Fleur de Peau into an ode to the legendary love of Eros and Psyche. ",
           brandLogo: "/assets/images/Diptuque.png",
-        }, {
+        },
+        {
           brand: "Diptyque",
           date: "22/Jan/2023",
           OCDDate: "15/Feb/2024",
@@ -199,7 +206,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/05.png",
           name: "Re Dimension Hydra",
           size: "30 ml",
-          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description:
+            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -210,12 +218,12 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing6.png",
           name: "DrySpun LIGHT",
           size: "9.35 oz",
-          description: "This new, updated formula provides lightweight moisture – and contains Emblica technology, which expands each strand for voluminous, full-bodied styles.",
+          description:
+            "This new, updated formula provides lightweight moisture – and contains Emblica technology, which expands each strand for voluminous, full-bodied styles.",
 
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
-       
         // Add more products for February
       ],
     },
@@ -240,7 +248,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing23.png",
           name: "Coffee Candle",
           size: "190g",
-          description: "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
+          description:
+            "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -250,7 +259,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing23.png",
           name: "Cookie Candle",
           size: "190g",
-          description: "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
+          description:
+            "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -260,7 +270,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing23.png",
           name: "Whipped Cream Candle",
           size: "190g",
-          description: "Enriched with aloe vera and macadamia oil, this unique Crème de Parfum format repairs and protects your hands while perfuming them with our iconic fragrances.",
+          description:
+            "Enriched with aloe vera and macadamia oil, this unique Crème de Parfum format repairs and protects your hands while perfuming them with our iconic fragrances.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -270,7 +281,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing23.png",
           name: "Mini Candle Boxed Set",
           size: "3*70g",
-          description: "Whether you go for a ready-made or create-your-own option, these gift sets and boxes are great for showcasing the finest selection of scents",
+          description:
+            "Whether you go for a ready-made or create-your-own option, these gift sets and boxes are great for showcasing the finest selection of scents",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -280,7 +292,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/10.png",
           name: "Face Forward Color Correcting Wheel",
           size: "N/A",
-          description: "Color correcting is a concealer technique that professional makeup artists have used for years and that went mainstream after social media got wind of the trend.",
+          description:
+            "Color correcting is a concealer technique that professional makeup artists have used for years and that went mainstream after social media got wind of the trend.",
 
           brandLogo: "/assets/images/kevy_logo.png",
         },
@@ -291,7 +304,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/28.png",
           name: "Re Nutriv Rich Foam Cleanser ",
           size: "4.2 oz",
-          description: "The exceptionally rich formula of the Re-Nutriv Intensive Hydrating Foam Cleanser thoroughly but gently removes impurities and makeup.",
+          description:
+            "The exceptionally rich formula of the Re-Nutriv Intensive Hydrating Foam Cleanser thoroughly but gently removes impurities and makeup.",
           brandLogo: "/assets/images/renutrive-logo.png",
         },
 
@@ -315,7 +329,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing8.png",
           name: "Bond Trial Kit",
           size: "N/A",
-          description: "Bond Treatment Trial Kit is a four-part system of professional and high quality products created to protect hair from damage and the perfect.",
+          description:
+            "Bond Treatment Trial Kit is a four-part system of professional and high quality products created to protect hair from damage and the perfect.",
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
@@ -338,7 +353,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing7.png",
           name: "Thickening Trial Kit",
           size: "N/A",
-          description: "This lightweight in-shower treatment, powered by Emblica Technology, plumps strands from roots to ends for a thicker, fuller, volumized look.",
+          description:
+            "This lightweight in-shower treatment, powered by Emblica Technology, plumps strands from roots to ends for a thicker, fuller, volumized look.",
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
@@ -377,7 +393,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/11.png",
           name: "Micro Sculpting Brow",
           size: "N/A",
-          description: "The Color Stick is a pigment-rich, ultra-creamy, & lightweight blush that offers buildable color, a skin-softening finish, and long-lasting wear.",
+          description:
+            "The Color Stick is a pigment-rich, ultra-creamy, & lightweight blush that offers buildable color, a skin-softening finish, and long-lasting wear.",
           brandLogo: "/assets/images/kevy_logo.png",
         },
         {
@@ -409,7 +426,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/19.png",
           name: "From the Garden Candle",
           size: "165 g",
-          description: "A collection of high-end scented candles from Maison Margiela, inviting you to relive forgotten memories and emotions at home.",
+          description:
+            "A collection of high-end scented candles from Maison Margiela, inviting you to relive forgotten memories and emotions at home.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
 
@@ -431,7 +449,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing4.png",
           name: "Long Wear Cream Shadow Sticks Shade Extension",
           size: "30 ml",
-          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description:
+            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
 
@@ -442,10 +461,11 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing17.png",
           name: "Mineralescape Eyeshadow",
           size: "N/A",
-          description: "eyeshadows include highly buildable shades providing everything from neutral, natural-looking washes of colour to vividly pigmented eye looks.",
+          description:
+            "eyeshadows include highly buildable shades providing everything from neutral, natural-looking washes of colour to vividly pigmented eye looks.",
           brandLogo: "/assets/images/Byredo.png",
         },
-        
+
         // Add more products for February
       ],
     },
@@ -471,7 +491,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/06.png",
           name: "Re Dimension Hydra",
           size: "30 ml",
-          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description:
+            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -482,7 +503,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing5.png",
           name: "Extra Lip Serum",
           size: "N/A",
-          description: " This plump lip serum is very comfortable. No stinging , burning or cooling. My lips feel moisturized and look more plump due to the high shine",
+          description:
+            " This plump lip serum is very comfortable. No stinging , burning or cooling. My lips feel moisturized and look more plump due to the high shine",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
 
@@ -505,7 +527,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing18.png",
           name: "The Lipstick – Satin",
           size: "N/A",
-          description: "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
+          description:
+            "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
           brandLogo: "/assets/images/Byredo.png",
         },
         // Add more products for February
@@ -554,7 +577,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing24.png",
           name: "Citronnelle ",
           size: "109g",
-          description: "The Diptyque Body Spray Citronnelle & Geranium is an aromatic, floral fragrance with essential oils that also works as a mosquito repellent.",
+          description:
+            "The Diptyque Body Spray Citronnelle & Geranium is an aromatic, floral fragrance with essential oils that also works as a mosquito repellent.",
           brandLogo: "/assets/images/Diptuque.png",
         },
 
@@ -565,7 +589,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing26.png",
           name: "Advanced Lip Perioral Serum Reformulation",
           size: "15g",
-          description: "Lip & Perioral Renewal Serum is a targeted treatment for the lip area, specifically designed to fight against the appearance of vertical lines.",
+          description:
+            "Lip & Perioral Renewal Serum is a targeted treatment for the lip area, specifically designed to fight against the appearance of vertical lines.",
           brandLogo: "/assets/images/Revive.png",
         },
         {
@@ -592,7 +617,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/14.png",
           name: "New Naked Skin Tint ",
           size: "N/A",
-          description: "Get tinted sheer to light coverage for a natural finish that feels like you're wearing next to nothing when you use Stripped Nude Skin Tint by Kevyn Aucoin.",
+          description:
+            "Get tinted sheer to light coverage for a natural finish that feels like you're wearing next to nothing when you use Stripped Nude Skin Tint by Kevyn Aucoin.",
           brandLogo: "/assets/images/kevy_logo.png",
         },
 
@@ -614,7 +640,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing20.png",
           name: "The Lipstick – Satin ",
           size: "N/A",
-          description: "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
+          description:
+            "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
           brandLogo: "/assets/images/Byredo.png",
         },
 
@@ -642,7 +669,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/Smoothing15.png",
           name: "Mojave Ghost Absolu",
           size: "50 ml",
-          description: "Mojave Ghost is a woody composition inspired by the soulful beauty of the Mojave Desert. In this xeric wilderness, rare are the plants that dare to blossom.",
+          description:
+            "Mojave Ghost is a woody composition inspired by the soulful beauty of the Mojave Desert. In this xeric wilderness, rare are the plants that dare to blossom.",
           brandLogo: "/assets/images/Byredo.png",
         },
 
@@ -675,7 +703,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/20.png",
           name: "Beautiful Magnolia Travel Spray",
           size: "10 ml",
-          description: "A hypnotic blend with signature notes of lush Magnolia, solar Gardenia, warm Woods and luminous Musk. Romantic, feminine and radiant",
+          description:
+            "A hypnotic blend with signature notes of lush Magnolia, solar Gardenia, warm Woods and luminous Musk. Romantic, feminine and radiant",
           brandLogo: "/assets/images/estee-Logo.png",
         },
 
@@ -697,7 +726,7 @@ function LaunchCalendar({ brand }) {
           description: "Under the Stars by Maison Martin Margiela is a Amber Woody fragrance for women and men.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
-        
+
         {
           brand: "Re-Nutriv",
           date: "04/DEC/2023",
@@ -725,7 +754,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/21.png",
           name: "Double Wear Smooth & Blur Primer ",
           size: "40 ml",
-          description: "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
+          description:
+            "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
           brandLogo: "/assets/images/estee-Logo.png",
         },
         {
@@ -755,7 +785,8 @@ function LaunchCalendar({ brand }) {
           image: "/assets/images/16.png",
           name: "Body Lotion",
           size: "200 ml",
-          description: "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
+          description:
+            "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
         {
@@ -795,7 +826,17 @@ function LaunchCalendar({ brand }) {
       setIsEmpty(temp);
     });
   }, [brand]);
-
+  // ..............OCDDate........
+  const filteredTargetData = useMemo(() => {
+    const filteredArray = products.filter((month) => {
+      const FilterItem = month.content.filter((item) => {
+        if (search) {
+          return item.OCDDate.toLowerCase().includes(search.toLowerCase());
+        }
+      });
+      console.log(FilterItem);
+    });
+  }, [search]);
   return (
     <div id="Calendar">
       <div className="container">
@@ -804,44 +845,51 @@ function LaunchCalendar({ brand }) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4">
-              {!isEmpty ? (
+              {!isEmpty? (
                 products.map((month, index) => (
                   <li key={index}>
                     <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
                     {month.content.map((product, productIndex) => {
                       if (!brand || brand == product.brand) {
-                        return (
-                          <div className="timeline-content" key={productIndex}>
-                            <div className="ProductInfo">
-                              <div className="BothDateTopFlex">
-                                <div className="ShipDate">
-                                  <span>Ship Date</span>
-                                  <div className={`DateCurrent0${(index % 3) + 1}`}>{product.date}</div>
-                                </div>
-                                <div className="ShipDate EDate">
-                                  <span>OCD</span>
-                                  <div className="DateEod">{product.OCDDate}</div>
-                                </div>
-                              </div>
-                              <div className="d-flex mt-2">
-                                <div className="m-auto ProductImg">
-                                  <img src={product.image} alt={product.name} />
-                                </div>
-                                <div className="LaunchProductDetail">
-                                  <h3>{product.name}</h3>
-                                  <div className="size">
-                                    Size <span className="ProductQty">{product.size}</span>
+                         if (!search) {
+                          if(product.OCDDate.toLowerCase().includes(search.toLowerCase())){
+                          return (
+                            <div className="timeline-content" key={productIndex}>
+                              <div className="ProductInfo">
+                                <div className="BothDateTopFlex">
+                                  <div className="ShipDate">
+                                    <span>Ship Date</span>
+                                    <div className={`DateCurrent0${(index % 3) + 1}`}>{product.date}</div>
                                   </div>
-                                  <p>{product.description}</p>
+                                  {/* { filteredTargetData?.map((product,productIndex)=>{ */}
+                                    <div key={productIndex} className="ShipDate EDate">
+                                    <span>OCD</span>
+                                    <div className="DateEod">{product?.OCDDate}</div>
+                                  </div>
+                                  {/* })} */}
+                                  
+                                </div>
+                                <div className="d-flex mt-2">
+                                  <div className="m-auto ProductImg">
+                                    <img src={product.image} alt={product.name} />
+                                  </div>
+                                  <div className="LaunchProductDetail">
+                                    <h3>{product.name}</h3>
+                                    <div className="size">
+                                      Size <span className="ProductQty">{product.size}</span>
+                                    </div>
+                                    <p>{product.description}</p>
+                                  </div>
                                 </div>
                               </div>
+                              <div className="launchBrand">
+                                <img className="img-fluid" src={product.brandLogo} alt={`${product.name} logo`} />
+                              </div>
                             </div>
-                            <div className="launchBrand">
-                              <img className="img-fluid" src={product.brandLogo} alt={`${product.name} logo`} />
-                            </div>
-                          </div>
-                        );
+                          );
+                        }
                       }
+                    }
                     })}
                   </li>
                 ))

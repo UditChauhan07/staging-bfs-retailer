@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
+import FilterSearch from "../components/FilterSearch";
 
 const MarketingCalendar = () => {
   const [brand,setBrand] = useState(null);
@@ -25,6 +26,8 @@ const MarketingCalendar = () => {
     {value:"Re-Nutriv",label:"Re-Nutriv"},
     {value:"Victoria Beckham Beauty",label:"Victoria Beckham Beauty"}
   ]
+  const [search,setSearch]=useState("")
+ 
   return (
     <AppLayout 
     filterNodes={
@@ -39,6 +42,12 @@ const MarketingCalendar = () => {
             setBrand(value)
           }}
         />
+        <FilterSearch
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
+             placeholder={"Search by month"}
+              minWidth={"155px"}
+            />
         <button
               className="border px-2.5 py-1 leading-tight"
               onClick={() => {
@@ -50,7 +59,8 @@ const MarketingCalendar = () => {
       </>
     }
     >
-      <LaunchCalendar brand={brand}/>
+      <LaunchCalendar brand={brand} search={search}/>
+     
     </AppLayout>
   );
 };
