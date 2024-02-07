@@ -42,7 +42,7 @@ function App() {
             <Route path="/sales-report" element={<SalesReport />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/newness-report" element={<NewnessReport />}></Route>
-            <Route path="/Target-Report" element={<TargetReport />}></Route>
+            {/* <Route path="/Target-Report" element={<TargetReport />}></Route> */}
             <Route
               path="/comparison-report"
               element={<ComparisonReport />}

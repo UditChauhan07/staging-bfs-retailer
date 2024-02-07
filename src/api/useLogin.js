@@ -1,11 +1,11 @@
 import axios from "axios";
-import { DestoryAuth } from "../lib/store";
+import { DestoryAuth, originAPi } from "../lib/store";
 
 const useLogin = () => {
   return {
     mutateLogin: async (email, password) => {
       // const response = await axios.post("https://dev.beautyfashionsales.com/beauty/v3/PYmsWL", { email, password });
-      const response = await axios.post("https://b2b.beautyfashionsales.com/beauty/v3/gqJW69", { email, password });
+      const response = await axios.post(originAPi+"/beauty/v3/gqJW69", { email, password });
       localStorage.setItem("response", JSON.stringify(response));
       if (response.status == 300) {
         DestoryAuth();
