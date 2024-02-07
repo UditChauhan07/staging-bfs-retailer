@@ -175,9 +175,11 @@ function OrderListContent({ data }) {
                       </ul>
                       <span>
                         <Link to="/orderDetails" className="linkStyling">
+                          <button onClick={() => MyBagId(item.Id)}>
                           {item.OpportunityLineItems?.records?.length &&
                             item.OpportunityLineItems?.records?.length > 3 &&
                             `+${item.OpportunityLineItems?.totalSize - 3} More`}
+                            </button>
                         </Link>
                       </span>
                     </div>
