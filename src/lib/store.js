@@ -1,3 +1,4 @@
+export const originAPi = "https://b2b.beautyfashionsales.com"
 let url = `${originAPi}/beauty/`;
 let URL = `${originAPi}/beauty/0DS68FOD7s`;
 const orderKey = "orders";
@@ -7,7 +8,6 @@ const brandKey = "Account";
 const accountKey = "manufacturer";
 const POCount = "woX5MkCSIOlHXkT";
 const support = "AP0HBuNwbNnuhKR";
-export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 
 export async function AuthCheck() {
