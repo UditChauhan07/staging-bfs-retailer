@@ -5,7 +5,8 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
-import { getOrderDetailsBasedId, getOrderDetailsInvoice, supportShare } from "../../../lib/store";
+import { getOrderDetailsBasedId, getOrderDetailsInvoice, originAPi, supportShare } from "../../../lib/store";
+import { MdOutlineDownload } from "react-icons/md";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -40,7 +41,7 @@ function MyBagFinal() {
   })
   const getOrderDetails = async () => {
     const response = await axios.post(
-      `https://b2b.beautyfashionsales.com/beauty/0DS68FOD7s`,
+      `${originAPi}/beauty/0DS68FOD7s`,
       BodyContent,
       headersList
     );
@@ -225,8 +226,8 @@ function MyBagFinal() {
 
                   {true && (
                     <div className={Styles.ShipBut}>
-                      <button className="py-1" onClick={() => invoiceHandler()}>
-                        INVOICE
+                      <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler()}>
+                      <span style={{margin:'auto 0'}}><MdOutlineDownload size={16}/></span>&nbsp;INVOICE
                       </button>
                     </div>
                   )}

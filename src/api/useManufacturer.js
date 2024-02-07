@@ -1,9 +1,9 @@
-import { DestoryAuth } from "../lib/store";
+import { DestoryAuth, originAPi } from "../lib/store";
 import { useFetch } from "./useFetch";
 
 export const useManufacturer = () => {
   const manufacturers = useFetch(
-    "https://b2b.beautyfashionsales.com/beauty/v3/yRNGIO",
+    originAPi+"/beauty/v3/yRNGIO",
     {
       method: "POST",
     }

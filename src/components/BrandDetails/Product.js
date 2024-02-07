@@ -198,8 +198,10 @@ function Product() {
     if (data?.data?.records?.length) {
       data?.data?.records?.map((ele) => {
         let temp = {};
+        temp["Title"] = ele.Name;
         temp["Product Code"] = ele.ProductCode;
         temp["ProductUPC"] = ele.ProductUPC__c;
+        temp["Min Order QTY"] = ele.Min_Order_QTY__c;
         temp["Quantity"] = null;
         finalData.push(temp);
       });
@@ -313,7 +315,7 @@ function Product() {
                         style={{ width: "max-content", padding: "0px 6px" }}
                       >
                         <MdOutlineDownload size={16}/>
-                        Sample
+                        Order Form Template
                       </CSVLink></h1>
                     <div className={`${Styles.ModalContent} mt-2`}>
                       <SpreadsheetUploader

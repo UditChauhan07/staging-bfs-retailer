@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function LaunchCalendar({ brand }) {
@@ -803,7 +802,7 @@ function LaunchCalendar({ brand }) {
 
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
-            <ul className="timeline mt-4">
+            <ul className="timeline mt-4 mr-4" id="CalenerContainer">
               {!isEmpty ? (
                 products.map((month, index) => (
                   <li key={index}>

@@ -1,5 +1,5 @@
-let url = "https://b2b.beautyfashionsales.com/beauty/";
-let URL = "https://b2b.beautyfashionsales.com/beauty/0DS68FOD7s";
+let url = `${originAPi}/beauty/`;
+let URL = `${originAPi}/beauty/0DS68FOD7s`;
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
 const brandIdKey = "ManufacturerId__c";
@@ -7,6 +7,8 @@ const brandKey = "Account";
 const accountKey = "manufacturer";
 const POCount = "woX5MkCSIOlHXkT";
 const support = "AP0HBuNwbNnuhKR";
+export const originAPi = "http://localhost:3001"
+// export const originAPi = "https://dev.beautyfashionsales.com"
 
 export async function AuthCheck() {
   if (JSON.parse(localStorage.getItem("Api Data"))?.data) {
@@ -285,9 +287,9 @@ export async function getDashboardata({ user }) {
 
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);
-  bodyContent.append("salesRepId", user.Sales_Rep__c);
+  bodyContent.append("salesRepId", "0053b00000CwOnLAAV"||user.Sales_Rep__c);
 
-  let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
+  let response = await fetch(url+"v3/3kMMguJj62cyyf0", {
     method: "POST",
     body: bodyContent,
     headers: headersList,

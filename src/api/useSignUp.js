@@ -1,6 +1,7 @@
 import axios from "axios";
+import { originAPi } from "../lib/store";
 const access_token = async () => {
-  const response = await axios.post("https://b2b.beautyfashionsales.com/beauty/login");
+  const response = await axios.post(originAPi+"/beauty/login");
   return response.data.data.access_token;
 };
 export const useSignUp = () => {
@@ -30,7 +31,7 @@ export const useSignUp = () => {
           Display_or_Assortment__c: "No Display",
         },
       };
-      const response = await axios.post("https://b2b.beautyfashionsales.com/beauty/B0F9FC7237TC", bodydata);
+      const response = await axios.post(originAPi+"/beauty/B0F9FC7237TC", bodydata);
       return response.data.status;
     },
   };
