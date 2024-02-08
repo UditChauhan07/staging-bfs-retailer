@@ -206,9 +206,9 @@ export async function getTargetReportAll({ user }) {
     let tried = false;
     let bodyContent = new FormData();
     bodyContent.append("key", user.x_access_token);
-    if (user.Sales_Rep__c != "00530000005AdvsAAC") {
-      bodyContent.append("SalesRepId", user.Sales_Rep__c);
-    }
+    // if (user.Sales_Rep__c != "00530000005AdvsAAC" || user.Sales_Rep__c != "0053b00000DgEVEAA3") {
+    //   bodyContent.append("SalesRepId", user.Sales_Rep__c);
+    // }
 
     let response = await fetch(url + "/target/4Tu6do95AxLM3Cl", {
       method: "POST",
@@ -220,9 +220,9 @@ export async function getTargetReportAll({ user }) {
       DestoryAuth();
     } else {
       let rawRes = { ownerPermission: false, list: data.data }
-      if (user.Sales_Rep__c == "00530000005AdvsAAC") {
+      // if (user.Sales_Rep__c == "00530000005AdvsAAC" || user.Sales_Rep__c == "0053b00000DgEVEAA3") {
         rawRes.ownerPermission = true;
-      }
+      // }
       return rawRes;
     }
   } else {
