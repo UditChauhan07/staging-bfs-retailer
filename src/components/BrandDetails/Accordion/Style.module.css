@@ -17,6 +17,12 @@
 .ButtonControl button{
 border: 1px solid #000 !important;
 }
+.customPriceInput{
+  max-width: 100px;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 5px;
+    padding: 1px 5px;
+}
 
 .ButtonControl input{
   width: 20px !important;

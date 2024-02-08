@@ -17,6 +17,7 @@ const TargetReport = () => {
     useEffect(() => {
         GetAuthData().then((user) => {
             getTargetReportAll({ user }).then((targetRes) => {
+                console.log({targetRes});
                 if (targetRes) {
                     setIsLoaded(true)
                 }

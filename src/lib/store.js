@@ -206,7 +206,7 @@ export async function getTargetReportAll({ user }) {
     let tried = false;
     let bodyContent = new FormData();
     bodyContent.append("key", user.x_access_token);
-    if (user.Sales_Rep__c != "00530000005AdvsAAC" || user.Sales_Rep__c != "0053b00000DgEVEAA3") {
+    if (user.Sales_Rep__c != "00530000005AdvsAAC" && user.Sales_Rep__c != "0053b00000DgEVEAA3") {
       bodyContent.append("SalesRepId", user.Sales_Rep__c);
     }
 
