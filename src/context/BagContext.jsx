@@ -39,7 +39,16 @@ const BagProvider = ({ children }) => {
       return obj;
     });
   };
-
+  const setOrderProductPrice = async (product, price, discount=null) => {
+    setOrders((prev) => {
+      const obj = { ...prev };
+      obj[product.Id].product.salesPrice = price;
+      obj[product.Id].product.discount = discount;
+      console.log({aa:obj[product.Id]});
+      return obj;
+    });
+    return true
+  };
   const parseOrderObjectWithDiscount = (product, quantity, discount) => {
     return {
       quantity: quantity,
@@ -85,6 +94,7 @@ const BagProvider = ({ children }) => {
       value={{
         orders,
         setOrders,
+        setOrderProductPrice,
         orderQuantity,
         setOrderQuantity,
         addOrder,

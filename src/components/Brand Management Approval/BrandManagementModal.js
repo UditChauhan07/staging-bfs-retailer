@@ -106,22 +106,19 @@ const BrandManagementModal = ({ onClose, recordType }) => {
           };
           postSupportAny({ rawData })
             .then((response) => {
-              console.log("Success! Ticket created.", response);
               if (response) {
-                // navigate("/CustomerSupportDetails?id=" + response);
-                console.log("Success! Ticket created.", response);
+                if (response) {
+                  navigate("/CustomerSupportDetails?id=" + response);
+                }
               }
             })
             .catch((err) => {
               console.error({ err });
             });
-        } else {
-          DestoryAuth();
         }
       })
       .catch((error) => {
         console.log(error);
-        DestoryAuth();
       });
   };
   return (
@@ -326,9 +323,9 @@ const BrandManagementModal = ({ onClose, recordType }) => {
               </button>
               <button
                 className={Styles.Button2}
-                // onClick={() => {
-                //   submitForm();
-                // }}
+              // onClick={() => {
+              //   submitForm();
+              // }}
               >
                 SUBMIT
               </button>

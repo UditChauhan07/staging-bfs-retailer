@@ -1,7 +1,6 @@
 import React, { useEffect, useState,useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function LaunchCalendar({brand,month}) {
   const [products, setProducts] = useState([
@@ -851,9 +850,9 @@ return (
         <h1 className="TopHeading">Marketing Calendar</h1>
          <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
-            <ul  className="timeline mt-4">
-            {!isEmpty ? (
-               filterData?.map((month, index) => (
+            <ul className="timeline mt-4 mr-4" id="CalenerContainer">
+              {!isEmpty ? (
+                filterData?.map((month, index) => (
                   <li key={index}>
                     <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
                     {month.content.map((product, productIndex) => {

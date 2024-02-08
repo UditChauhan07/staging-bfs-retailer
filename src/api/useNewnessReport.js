@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { DestoryAuth } from "../lib/store";
+import { DestoryAuth, originAPi } from "../lib/store";
 
 export const useNewnessReport = (props) => {
   // console.log("props", props);
@@ -29,7 +29,7 @@ export const useNewnessReport = (props) => {
   return {
     fetchNewnessApiData: async ({ManufacturerId__c, fromDate, toDate}) => {
       const response = await axios.post(
-        "https://b2b.beautyfashionsales.com/newness",
+        originAPi+"/newness",
         {},
         {
           headers: {

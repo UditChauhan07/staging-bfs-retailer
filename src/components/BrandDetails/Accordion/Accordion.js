@@ -10,10 +10,11 @@ import { useBag } from "../../../context/BagContext";
 const Accordion = ({ data, formattedData }) => {
   // console.log("Accordion data", data);
   // console.log("Accordion formattedData", formattedData);
-  const { orders, setOrders, setOrderQuantity, addOrder } = useBag();
+  const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
-  const onQuantityChange = (product, quantity) => {
+  const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
+    product.salesPrice = salesPrice;
     if (Object.values(orders).length) {
       if (
         Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
@@ -30,10 +31,36 @@ const Accordion = ({ data, formattedData }) => {
       orderSetting(product, quantity);
     }
   };
+  const onPriceChangeHander = (product, price = '0') => {
+    if (price == '') price = 0;
+    setOrderProductPrice(product, price)
+  }
   const orderSetting = (product, quantity) => {
     setReplaceCartModalOpen(false);
     addOrder(product, quantity, data.discount);
   };
+  // const onQuantityChange = (product, quantity) => {
+  //   console.log({product});
+  //   if (Object.values(orders).length) {
+  //     if (
+  //       Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
+  //       Object.values(orders)[0].account.name === localStorage.getItem("Account") &&
+  //       Object.values(orders)[0].productType === (product.Category__c === "PREORDER" ? "pre-order" : "wholesale")
+  //     ) {
+  //       orderSetting(product, quantity);
+  //       setReplaceCartModalOpen(false);
+  //     } else {
+  //       setReplaceCartModalOpen(true);
+  //       setReplaceCartProduct({ product, quantity });
+  //     }
+  //   } else {
+  //     orderSetting(product, quantity);
+  //   }
+  // };
+  // const orderSetting = (product, quantity) => {
+  //   setReplaceCartModalOpen(false);
+  //   addOrder(product, quantity, data.discount);
+  // };
 
   const replaceCart = () => {
     localStorage.removeItem("orders");
@@ -74,12 +101,13 @@ const Accordion = ({ data, formattedData }) => {
             <thead>
               <tr>
                 <th>Image</th>
-                <th>Title</th>
+                <th style={{ width: "200px" }}>Title</th>
                 <th>Product Code</th>
                 <th>UPC</th>
                 <th>List Price</th>
                 <th>Sale Price</th>
                 <th>Min Qty</th>
+                {/* <th>Total</th> */}
                 <th>Qty</th>
               </tr>
             </thead>
@@ -89,25 +117,54 @@ const Accordion = ({ data, formattedData }) => {
                   {Object.keys(formattedData)?.map((key, index) => {
                     let categoryOrderQuantity = 0;
                     Object.values(orders)?.forEach((order) => {
-                      if ((order.account.name===localStorage.getItem("Account"))&&(order.manufacturer.name===localStorage.getItem("manufacturer"))&&(order.product.Category__c === key || `${order.product.Category__c}` === key)) {
+                      if ((order.account.name === localStorage.getItem("Account")) && (order.manufacturer.name === localStorage.getItem("manufacturer")) && (order.product.Category__c === key || `${order.product.Category__c}` === key)) {
                         categoryOrderQuantity += order.quantity;
                       }
                     });
                     return (
-                      <CollapsibleRow title={key != "null" ? key : "No Category"} quantity={categoryOrderQuantity} key={index} index={index} >                       
-{Object.values(formattedData)[index]?.map((value, indexed) => {
+                      <CollapsibleRow title={key != "null" ? key : "No Category"} quantity={categoryOrderQuantity} key={index} index={index} >
+                        {Object.values(formattedData)[index]?.map((value, indexed) => {
                           let listPrice = isNaN(Number(value.usdRetail__c.substring(1))) ? (+value.usdRetail__c.substring(2)).toFixed(2) : (+value.usdRetail__c.substring(1)).toFixed(2);
+                          let salesPrice = 0;
+                          let discount = data?.discount?.margin;
+                          let inputPrice = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice;
+                          let qtyofItem = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.quantity;
+                          if (value.Category__c === "TESTER") {
+                            discount = data?.discount?.testerMargin
+                            if (value.usdRetail__c.includes("$")) {
+                              salesPrice = (+value.usdRetail__c.substring(1) - (data?.discount?.testerMargin / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
+                            } else {
+                              salesPrice = (+value.usdRetail__c - (data?.discount?.testerMargin / 100) * +value.usdRetail__c).toFixed(2)
+                            }
+                          } else if (value.Category__c === "Samples") {
+                            discount = data?.discount?.sample
+                            if (value.usdRetail__c.includes("$")) {
+                              salesPrice = (+value.usdRetail__c.substring(1) - (data?.discount?.sample / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
+                            } else {
+                              salesPrice = (+value.usdRetail__c - (data?.discount?.sample / 100) * +value.usdRetail__c).toFixed(2)
+                            }
+                          } else {
+                            if (value.usdRetail__c.includes("$")) {
+                              salesPrice = (listPrice - (data?.discount?.margin / 100) * listPrice).toFixed(2)
+                            } else {
+                              salesPrice = (+value.usdRetail__c - (data?.discount?.margin / 100) * +value.usdRetail__c).toFixed(2)
+                            }
+                          }
                           return (
                             <tr className={`${styles.ControlTR} w-full `} key={indexed}>
                               <td className={styles.ControlStyle}>
                                 <img src={Img1} alt="img" />
                               </td>
-                              <td className="text-capitalize">{value.Name}</td>
+                              <td className="text-capitalize" style={{ fontSize: '13px' }}>{value.Name}</td>
                               <td>{value.ProductCode}</td>
-                              <td>{(value.ProductUPC__c === null ||value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
+                              <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
-                                {value.Category__c === "TESTER" ? (
+                                {/* {console.log({aa:Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice})} */}
+                                {/* value={salesPrice} */}
+                                {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
+                                $ {(false && inputPrice || inputPrice == 0) ? (<>{inputPrice}<input type="number" style={{ maxWidth: '100px' }} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
+                                {/* {value.Category__c === "TESTER" ? (
                                   <>
                                     $
                                     {value.usdRetail__c.includes("$")
@@ -133,16 +190,17 @@ const Accordion = ({ data, formattedData }) => {
                                       </>
                                     )}
                                   </>
-                                )}
+                                )} */}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
+                              {/* <td>{inputPrice?(inputPrice*qtyofItem).toFixed(2):'----'}</td> */}
                               <td>
                                 <QuantitySelector
                                   min={value.Min_Order_QTY__c || 0}
                                   onChange={(quantity) => {
-                                    onQuantityChange(value, quantity);
+                                    onQuantityChange(value, quantity, salesPrice, discount);
                                   }}
-                                  value={Object.values(orders)?.find((order) => order.product.Id === value.Id  && order.manufacturer.name===value.ManufacturerName__c && order.account.name===localStorage.getItem("Account"))?.quantity}
+                                  value={qtyofItem}
                                 />
                               </td>
                             </tr>

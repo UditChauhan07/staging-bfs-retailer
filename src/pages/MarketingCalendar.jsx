@@ -2,10 +2,28 @@ import React, { useState } from "react";
 import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
-import FilterSearch from "../components/FilterSearch";
-
+import html2pdf from 'html2pdf.js';
+import { MdOutlineDownload } from "react-icons/md";
 const MarketingCalendar = () => {
-  const [brand, setBrand] = useState(null);
+  const [brand,setBrand] = useState(null);
+  const generatePdf = () => {
+    const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
+    // element.style.padding = "10px"
+    let filename = `Marketing Calender `;
+    if(brand){
+      filename = brand+" "
+    }
+    filename += new Date();
+    const opt = {
+      margin: 1,
+      filename: filename+'.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+  
+    html2pdf().set(opt).from(element).save();
+  };
   let brands = [
     { value: null, label: "All" },
     // {value:"Susanne Kaufmann",label:"Susanne Kaufmann"},
@@ -76,7 +94,6 @@ let months = [
             onClick={() => {
               setBrand(null);
               setMonth(null);
-              
             }}
           >
             CLEAR ALL

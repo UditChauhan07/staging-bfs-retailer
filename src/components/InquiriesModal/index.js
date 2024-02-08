@@ -7,6 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { Steps } from "antd";
 import { Row } from "react-bootstrap";
 import Correct from "../constant/images/Correct.png";
+import { originAPi } from "../../lib/store";
 
 const Required = () => {
   return (
@@ -581,7 +582,7 @@ const Inquiries = ({ show, onHide }) => {
             "Content-Type": "application/json",
           },
         };
-        fetch("https://b2b.beautyfashionsales.com/beauty/login", options)
+        fetch(originAPi+"/beauty/login", options)
           .then((res) => res.json())
           .then((json) => {
             if (json.status) {
@@ -621,7 +622,7 @@ const Inquiries = ({ show, onHide }) => {
                     body: JSON.stringify(bodydata),
                   };
                   fetch(
-                    "https://b2b.beautyfashionsales.com/beauty/B0F9FC7237TC",
+                    originAPi+"/beauty/B0F9FC7237TC",
                     options
                   )
                     .then((res) => res.json())
