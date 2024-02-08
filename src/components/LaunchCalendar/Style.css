@@ -147,7 +147,7 @@ span.ProductQty {
     left: 28px;
     background-color: #ebebeb;
     z-index: 0;
-    border: 1px dotted #000;
+    border: 1px dashed #000;
 }
 
 .LaunchProductDetail {

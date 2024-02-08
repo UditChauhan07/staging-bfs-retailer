@@ -46,8 +46,26 @@ const MarketingCalendar = () => {
     { value: "RMS Beauty", label: "RMS Beauty" },
     { value: "Smashbox", label: "Smashbox" },
     { value: "Re-Nutriv", label: "Re-Nutriv" },
-    { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" }
-  ]
+    { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
+  ];
+const [month, setMonth] = useState("");
+let months = [
+  { value: null, label: "All" },
+  { value: "JAN", label: "JAN" },
+  { value: "FEB", label: "FEB" },
+  { value: "MAR", label: "MAR" },
+  { value: "APR", label: "APR" },
+  { value: "MAY", label: "MAY" },
+  { value: "JUN", label: "JUN" },
+  { value: "JULY", label: "JULY" },
+  { value: "AUG", label: "AUG" },
+  { value: "SEP", label: "SEP" },
+  { value: "OCT", label: "OCT" },
+  { value: "NOV", label: "NOV" },
+  { value: "DEC", label: "DEC" },
+  { value: "TBD", label: "TBD" },
+ 
+];
   return (
     <AppLayout
       filterNodes={
@@ -59,13 +77,24 @@ const MarketingCalendar = () => {
             value={brand}
             options={brands}
             onChange={(value) => {
-              setBrand(value)
+              setBrand(value);
+            }}
+          />
+          <FilterItem
+            minWidth="220px"
+            label="JUN-DEC"
+            name="JIN-DEC"
+            value={month}
+            options={months}
+            onChange={(value) => {
+              setMonth(value);
             }}
           />
           <button
             className="border px-2.5 py-1 leading-tight"
             onClick={() => {
-              setBrand(null)
+              setBrand(null);
+              setMonth(null);
             }}
           >
             CLEAR ALL
@@ -76,15 +105,15 @@ const MarketingCalendar = () => {
               <li onClick={() => generatePdf()}>
                 <div className="dropdown-item text-start">&nbsp;Pdf</div>
               </li>
-              <li onClick={() => generatePdf()}>
-                {/* <div className="dropdown-item text-start">&nbsp;XLSX</div> */}
+              <li>
+                 <div className="dropdown-item text-start">&nbsp;XLSX</div>
               </li>
             </ul>
           </div>
         </>
       }
     >
-      <LaunchCalendar brand={brand} />
+      <LaunchCalendar brand={brand} month={month} 
     </AppLayout>
   );
 };
