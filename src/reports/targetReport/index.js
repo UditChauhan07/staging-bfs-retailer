@@ -149,7 +149,7 @@ const TargetReport = () => {
     </>}>
         {!isLoaded ? (<Loading />) :
             <section>
-                {false &&<div className={Styles.inorderflex}>
+                {false && <div className={Styles.inorderflex}>
                     <div>
                         <h2>
                             {target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Sales Report` : "Your Target Report"}
