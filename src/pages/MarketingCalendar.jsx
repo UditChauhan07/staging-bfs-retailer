@@ -944,12 +944,10 @@ const MarketingCalendar = () => {
             <MdOutlineDownload size={16} />&nbsp;Download
             <ul className="dropdown-menu">
               <li>
-              {/* onClick={() => generatePdf()} */}
-                <div className="dropdown-item text-start" >&nbsp;Pdf</div>
+                <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
               </li>
               <li>
-                {/* onClick={()=>generateXLSX()} */}
-                <div className="dropdown-item text-start" >&nbsp;XLSX</div>
+                <div className="dropdown-item text-start" onClick={()=>generateXLSX()}>&nbsp;XLSX</div>
               </li>
             </ul>
           </div>
