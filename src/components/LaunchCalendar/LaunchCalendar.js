@@ -134,7 +134,7 @@ function LaunchCalendar({ productList, brand, month }) {
             </ul>
           </div>
 
-          {/* <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12 ">
+          <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12 ">
             <div className="GrayBg">
               <div className="PlusBtn">
                 <div className="AddNewInner">
@@ -148,7 +148,7 @@ function LaunchCalendar({ productList, brand, month }) {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
