@@ -163,37 +163,9 @@ const Accordion = ({ data, formattedData }) => {
                                 {/* {console.log({aa:Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice})} */}
                                 {/* value={salesPrice} */}
                                 {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
-                                $ {(true && inputPrice || inputPrice == 0) ? (<>{Number(inputPrice).toFixed(2)}<br/><input type="number" placeholder={'$'+Number(inputPrice).toFixed(2)} style={{ maxWidth: '100px',border:'1px solid #ccc' }} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
-                                {/* {value.Category__c === "TESTER" ? (
-                                  <>
-                                    $
-                                    {value.usdRetail__c.includes("$")
-                                      ? (+value.usdRetail__c.substring(1) - (data?.discount?.testerMargin / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
-                                      : (+value.usdRetail__c - (data?.discount?.testerMargin / 100) * +value.usdRetail__c).toFixed(2)}
-                                  </>
-                                ) : (
-                                  <>
-                                    {value.Category__c === "Samples" ? (
-                                      <>
-                                        {" "}
-                                        $
-                                        {value.usdRetail__c.includes("$")
-                                          ? (+value.usdRetail__c.substring(1) - (data?.discount?.sample / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
-                                          : (+value.usdRetail__c - (data?.discount?.sample / 100) * +value.usdRetail__c).toFixed(2)}
-                                      </>
-                                    ) : (
-                                      <>
-                                        $
-                                        {value.usdRetail__c.includes("$")
-                                          ? (listPrice - (data?.discount?.margin / 100) * listPrice).toFixed(2)
-                                          : (+value.usdRetail__c - (data?.discount?.margin / 100) * +value.usdRetail__c).toFixed(2)}
-                                      </>
-                                    )}
-                                  </>
-                                )} */}
+                                $ {(true && inputPrice || inputPrice == 0) ? (<>{Number(inputPrice).toFixed(2)}<br/><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={styles.customPriceInput} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
-                              <td>{inputPrice?(inputPrice*qtyofItem).toFixed(2):'----'}</td>
                               <td>
                                 <QuantitySelector
                                   min={value.Min_Order_QTY__c || 0}
@@ -201,8 +173,9 @@ const Accordion = ({ data, formattedData }) => {
                                     onQuantityChange(value, quantity, salesPrice, discount);
                                   }}
                                   value={qtyofItem}
-                                />
+                                  />
                               </td>
+                                  <td>{inputPrice?'$'+(inputPrice*qtyofItem).toFixed(2):'----'}</td>
                             </tr>
                           );
                         })}
