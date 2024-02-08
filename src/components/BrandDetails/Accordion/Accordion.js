@@ -107,7 +107,7 @@ const Accordion = ({ data, formattedData }) => {
                 <th>List Price</th>
                 <th>Sale Price</th>
                 <th>Min Qty</th>
-                {/* <th>Total</th> */}
+                <th>Total</th>
                 <th>Qty</th>
               </tr>
             </thead>
@@ -163,7 +163,7 @@ const Accordion = ({ data, formattedData }) => {
                                 {/* {console.log({aa:Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice})} */}
                                 {/* value={salesPrice} */}
                                 {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
-                                $ {(false && inputPrice || inputPrice == 0) ? (<>{inputPrice}<input type="number" style={{ maxWidth: '100px' }} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
+                                $ {(true && inputPrice || inputPrice == 0) ? (<>{Number(inputPrice).toFixed(2)}<br/><input type="number" placeholder={'$'+Number(inputPrice).toFixed(2)} style={{ maxWidth: '100px',border:'1px solid #ccc' }} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
                                 {/* {value.Category__c === "TESTER" ? (
                                   <>
                                     $
@@ -193,7 +193,7 @@ const Accordion = ({ data, formattedData }) => {
                                 )} */}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
-                              {/* <td>{inputPrice?(inputPrice*qtyofItem).toFixed(2):'----'}</td> */}
+                              <td>{inputPrice?(inputPrice*qtyofItem).toFixed(2):'----'}</td>
                               <td>
                                 <QuantitySelector
                                   min={value.Min_Order_QTY__c || 0}

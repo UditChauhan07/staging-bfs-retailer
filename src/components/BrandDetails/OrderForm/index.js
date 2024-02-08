@@ -19,7 +19,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
   const CheckError = (data) => {
     let totalQty = 0;
     let errorCount = data.reduce((accumulator, item) => {
-      let productDetails = getProductData(item["Product Code"] || null);
+      let productDetails = getProductData(item["Product Code"] || item["ProductCode"] || null);
+
       if (item?.Quantity) {
         let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name;
         // console.log(accumulator);
@@ -102,8 +103,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         let productCount = 0;
         data.map((element) => {
           if (element.Quantity && Number.isInteger(element?.Quantity)) {
-            let product = getProductData(element["Product Code"]);
-            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0)&&element?.Quantity % product.Min_Order_QTY__c  === 0) {
+            let product = getProductData(element["Product Code"] || element["ProductCode"]);
+            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && element?.Quantity % product.Min_Order_QTY__c === 0) {
               productCount++;
               if (product.Category__c == "PREORDER") orderType = "Pre Order";
               let item = {};
@@ -129,7 +130,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 item.price = salesPrice;
                 item.discount = discount?.margin;
               }
-              item.ProductCode = element["Product Code"];
+              item.ProductCode = element["Product Code"]||element["ProductCode"];
               item.qty = element["Quantity"];
               addOrder(product, element["Quantity"], discount);
             }
@@ -171,8 +172,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
             }}
           />
         </form>
-        <div>{errorOnlist > 0 && errorOnlist !== data.length&& <p className="text-start mt-2 text-danger">Highlighted rows have issues in their given quantity. Upload Again or Move further with correct rows.</p>}</div>
-        <div>{errorOnlist > 0 && errorOnlist === data.length&& <p className="text-start mt-2 text-danger">No Data Found.</p>}</div>
+        <div>{errorOnlist > 0 && errorOnlist !== data.length && <p className="text-start mt-2 text-danger">Highlighted rows have issues in their given quantity. Upload Again or Move further with correct rows.</p>}</div>
+        <div>{errorOnlist > 0 && errorOnlist === data.length && <p className="text-start mt-2 text-danger">No Data Found.</p>}</div>
         <div>
           {openModal && errorOnlist === data.length ? (
             <ModalPage
@@ -196,7 +197,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
             />
           ) : null}
         </div>
-        {openModal && errorOnlist > 0 && errorOnlist !== data.length&& (
+        {openModal && errorOnlist > 0 && errorOnlist !== data.length && (
           <ModalPage
             open
             content={
@@ -235,13 +236,13 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               </thead>
               <tbody>
                 {data.map((item, index) => {
-                  let productDetails = getProductData(item["Product Code"] || null);
+                  let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
-                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c  !== 0;
+                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c !== 0;
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>
-                        <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.ProductCode || item["Product Code"]}</td>
+                        <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.ProductCode || item["Product Code"] || item['ProductCode']}</td>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Category__c || "No Category"}</td>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.ProductUPC__c || item["ProductUPC"]}</td>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.usdRetail__c || "---"}</td>
