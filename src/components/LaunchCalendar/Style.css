@@ -51,7 +51,6 @@ h1.TopHeading {
     border: 1px solid white;
     margin-bottom: 25px;
     background-color: #fff;
-    
     border-radius: 10px;
     border: 1px dashed #000;
 }
@@ -85,7 +84,7 @@ h1.TopHeading {
   .DateCurrent03 {
     background-color: #ffdcdc;
     color: #9e4545;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     padding: 3px 8px;
     width: 155px;
@@ -126,6 +125,7 @@ span.ProductQty {
     padding: 2px 8px;
     border-radius: 7px;
     text-transform: uppercase;
+    font-size: 15px;
 }
 .LaunchProductDetail p {
     color: #000;
@@ -159,8 +159,7 @@ span.ProductQty {
   /* content: counter(counter, decimal-leading-zero); */
   position: absolute;
   padding: 16px;
-
-  width: 60px;
+width: 60px;
   height: 60px;
   left: 0;
   color: #3C9A4E;
@@ -299,8 +298,40 @@ gap: 2px !important;
 
 /* Media Query  */
 
-@media (max-width:767.98px){
-
+@media (min-width:769.98px){
+    .DateCurrent01{
+        font-size: 16px;
+    }
+    span.ProductQty {
+        background-color: #000;
+        color: #fff;
+        text-align: center;
+        margin-left: 10px;
+        padding: 0px 8px 10px 8px;
+        border-radius: 7px;
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+   .LaunchProductDetail h3 {
+    color: #000;
+    font-family: 'Montserrat';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.LaunchProductDetail p {
+    color: #000;
+    font-family: Arial;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 1.12px;
+}
 }
 
 
