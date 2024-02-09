@@ -48,10 +48,9 @@ function MyBagFinal() {
       .then((user) => {
         // let bagValue = fetchBeg()
         if (bagValue) {
-          console.log("bagValue", bagValue);
           // setButtonActive(true)
           let list = [];
-          let orderType = "Wholesale Number";
+          let orderType = "Wholesale Numbers";
           let productLists = Object.values(bagValue.orderList);
           if (productLists.length) {
             productLists.map((product) => {
