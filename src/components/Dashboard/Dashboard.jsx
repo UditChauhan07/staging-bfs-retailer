@@ -8,7 +8,7 @@ import img3 from "./Images/Group.png";
 import img4 from "./Images/Group1.png";
 import img5 from "./Images/Rectangle 304.png";
 import { PieChart, Pie, Cell } from "recharts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthCheck, GetAuthData, getDashboardata } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
@@ -358,7 +358,14 @@ function Dashboard({ dashboardData }) {
               let ans = values.brandSalesByRep.raw.map((ele) => {
                 key.map((item) => {
                   if (ele === item) {
-                    filteredAarray.push(values.brandSalesByRep.data[item]);
+                    let temp = {
+                      ManufacturerId: item,
+                      ManufacturerName:values.brandSalesByRep.data[item].ManufacturerName,
+                      sale:values.brandSalesByRep.data[item].sale,
+                      target:values.brandSalesByRep.data[item].target,
+                      totalOrder:values.brandSalesByRep.data[item].totalOrder,
+                    };
+                    filteredAarray.push(temp);
                   } else {
                   }
                 });
@@ -517,7 +524,9 @@ function Dashboard({ dashboardData }) {
   let totalDiffForMTDGoalBrand = 0;
   let totalRecieved=0;
   let totalConverted=0;
-
+  const sendDataTargetHandler = ({salesRepId=null,manufacturerId=null})=>{
+    navigate('/Target-Report',{state:{salesRepId,manufacturerId}});
+  }
   return (
     <AppLayout
       filterNodes={
@@ -590,8 +599,8 @@ function Dashboard({ dashboardData }) {
                                   totalDiffForMTDSalesRep = Number((Number(e.total?.target - e.total.revenue||0) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
                                   return (
                                     <tr key={e}>
-                                      <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
-                                        <UserIcon /> {e.salesRepName}
+                                      <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} onClick={()=>{sendDataTargetHandler({salesRepId:e.salesRepName})}} style={{cursor:'pointer'}}>
+                                      <UserIcon /> {e.salesRepName}
                                       </td>
                                       <td className={Styles.tabletd}>${(Number(e.total?.target || 0) / 1000).toFixed(0)}K</td>
                                       <td className={Styles.tabletd}>${(Number(e.total.revenue) / 1000).toFixed(0)}K</td>
@@ -658,7 +667,7 @@ function Dashboard({ dashboardData }) {
 
                                   return (
                                     <tr key={e}>
-                                      <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`}>
+                                      <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} onClick={()=>{sendDataTargetHandler({salesRepId:e.salesRepName})}} style={{cursor:'pointer'}}>
                                         <UserIcon /> {e.salesRepName}
                                       </td>
                                       <td className={Styles.tabletd}>${(Number(e.total.target) / 1000).toFixed(0)}K</td>
@@ -720,13 +729,14 @@ function Dashboard({ dashboardData }) {
                           <>
                             {tabledata.length ? (
                               <>
-                                {tabledata?.map((e) => {
+                                {tabledata?.map((e,i) => {
                                   totalTargetForMTDGoalBrand = Number((Number(e.target) / 1000||0).toFixed(0)) + Number(totalTargetForMTDGoalBrand);
                                   totalAmountForMTDGoalBrand = Number((Number(e.sale) / 1000||0).toFixed(0)) + Number(totalAmountForMTDGoalBrand);
                                   totalDiffForMTDGoalBrand = Number((Number(e.target - e.sale||0) / 1000).toFixed(0)) + Number(totalDiffForMTDGoalBrand);
+                                  // console.log({e,i});
                                   return (
                                     <tr key={e}>
-                                      <td className={` ps-3 ${Styles.tabletd}`}>{e.ManufacturerName}</td>
+                                      <td className={` ps-3 ${Styles.tabletd}`} onClick={()=>{sendDataTargetHandler({manufacturerId:e.ManufacturerId})}} style={{cursor:'pointer'}}>{e.ManufacturerName}</td>
                                       {/* <td className={Styles.tabletd}>{e.totalOrder}</td> */}
                                       <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
                                       <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>

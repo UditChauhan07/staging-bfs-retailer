@@ -11,10 +11,13 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
+import { useLocation } from 'react-router-dom';
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
 const TargetReport = () => {
+    const location = useLocation();
+    const {state} = location||{};
     const { data: manufacturers } = useManufacturer();
     const [isLoaded, setIsLoaded] = useState(false);
     const [target, setTarget] = useState({ ownerPermission: false, list: [] });
@@ -26,7 +29,6 @@ const TargetReport = () => {
     useEffect(() => {
         GetAuthData().then((user) => {
             getTargetReportAll({ user }).then((targetRes) => {
-                console.log({ targetRes });
                 if (targetRes) {
                     setIsLoaded(true)
                 }
@@ -38,6 +40,8 @@ const TargetReport = () => {
                 })
                 setSalesRepList(salesRep)
                 setTarget(targetRes)
+                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId:null)
+                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId:null)
             }).catch((targetErr) => {
                 console.error({ targetErr });
             })
@@ -226,9 +230,9 @@ const TargetReport = () => {
             minWidth="220px"
             label="All Sales Rep"
             value={searchSaleBy}
-            options={salesRepList.map((manufacturer) => ({
-                label: manufacturer,
-                value: manufacturer,
+            options={salesRepList.map((salerep) => ({
+                label: salerep,
+                value: salerep,
             }))}
             onChange={(value) => setSearchSaleBy(value)}
             name="salesRepSearch"
