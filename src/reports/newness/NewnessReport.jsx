@@ -31,6 +31,7 @@ const NewnessReport = () => {
     fromDate: past6monthDate.toJSON().slice(0, 10),
     dataDisplay: "quantity",
   };
+  const [dataDisplayHandler, setDataDisplayHandler] = useState('quantity');
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useNewnessReport();
   const { data: manufacturers, isLoading, error } = useManufacturer();
@@ -92,6 +93,10 @@ const NewnessReport = () => {
   const sendApiCall = async () => {
     setLoading(true);
     const result = await originalApiData.fetchNewnessApiData(filter);
+    setFilter((prev) => ({
+      ...prev,
+      dataDisplay: dataDisplayHandler,
+    }));
     setNewnessData(result);
     setLoading(false);
   };
@@ -113,7 +118,8 @@ const NewnessReport = () => {
           <FilterItem
             label="Qty/price"
             name="Qty/price"
-            value={filter.dataDisplay}
+            value={dataDisplayHandler}
+            // value={filter.dataDisplay}
             options={[
               {
                 label: "Quantity",
@@ -125,10 +131,11 @@ const NewnessReport = () => {
               },
             ]}
             onChange={(value) => {
-              setFilter((prev) => ({
-                ...prev,
-                dataDisplay: value,
-              }));
+              // setFilter((prev) => ({
+              //   ...prev,
+              //   dataDisplay: value,
+              // }));
+              setDataDisplayHandler(value)
             }}
           />
           {/* First Calender Filter-- from date */}

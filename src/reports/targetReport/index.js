@@ -6,6 +6,13 @@ import Loading from "../../components/Loading";
 import { useManufacturer } from "../../api/useManufacturer";
 import { FilterItem } from "../../components/FilterItem";
 import FilterSearch from "../../components/FilterSearch";
+import { MdOutlineDownload } from "react-icons/md";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import ModalPage from "../../components/Modal UI";
+import styles from "../../components/Modal UI/Styles.module.css";
+const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const fileExtension = ".xlsx";
 
 const TargetReport = () => {
     const { data: manufacturers } = useManufacturer();
@@ -14,13 +21,22 @@ const TargetReport = () => {
     const [manufacturerFilter, setManufacturerFilter] = useState();
     const [searchBy, setSearchBy] = useState("");
     const [searchSaleBy, setSearchSaleBy] = useState("");
+    const [salesRepList,setSalesRepList] = useState([]);
+    const [exportToExcelState, setExportToExcelState] = useState(false);
     useEffect(() => {
         GetAuthData().then((user) => {
             getTargetReportAll({ user }).then((targetRes) => {
-                console.log({targetRes});
+                console.log({ targetRes });
                 if (targetRes) {
                     setIsLoaded(true)
                 }
+                let salesRep = [];
+                targetRes.list.map((tar)=>{
+                    if(!salesRep.includes(tar.SalesRepName)){
+                        salesRep.push(tar.SalesRepName)
+                    }
+                })
+                setSalesRepList(salesRep)
                 setTarget(targetRes)
             }).catch((targetErr) => {
                 console.error({ targetErr });
@@ -35,8 +51,8 @@ const TargetReport = () => {
                 return ele;
             }
         });
-
         if (searchBy) {
+            console.log({searchBy});
             filtered = filtered.filter((item) => {
                 if (item.AccountName?.toLowerCase().includes(searchBy?.toLowerCase())) {
                     return item;
@@ -56,6 +72,86 @@ const TargetReport = () => {
         setManufacturerFilter(null);
         setSearchBy("");
         setSearchSaleBy("")
+    };
+    const PriceDisplay = (value) => {
+        return `$${Number(value).toFixed(2)}`;
+    };
+    const csvData = () => {
+        let finalData = [];
+        if (filteredTargetData.length) {
+            filteredTargetData.map((target) => {
+                let temp = {
+                    SalesRepName: target.SalesRepName,
+                    AccountName: target.AccountName,
+                    ManufacturerName: target.ManufacturerName,
+                    JanuaryTarget: target.January.target,
+                    JanuarySale: target.January.sale,
+                    JanuaryDiff: target.January.diff,
+
+                    FebruaryTarget: target.February.target,
+                    FebruarySale: target.February.sale,
+                    FebruaryDiff: target.February.diff,
+
+                    MarchTarget: target.March.target,
+                    MarchSale: target.March.sale,
+                    MarchDiff: target.March.diff,
+
+                    AprilTarget: target.April.target,
+                    AprilSale: target.April.sale,
+                    AprilDiff: target.April.diff,
+
+                    MayTarget: target.May.target,
+                    MaySale: target.May.sale,
+                    MayDiff: target.May.diff,
+
+                    JuneTarget: target.June.target,
+                    JuneSale: target.June.sale,
+                    JuneDiff: target.June.diff,
+
+                    JulyTarget: target.July.target,
+                    JulySale: target.July.sale,
+                    JulyDiff: target.July.diff,
+
+                    AugustTarget: target.August.target,
+                    AugustSale: target.August.sale,
+                    AugustDiff: target.August.diff,
+
+                    SeptemberTarget: target.September.target,
+                    SeptemberSale: target.September.sale,
+                    SeptemberDiff: target.September.diff,
+
+                    OctoberTarget: target.October.target,
+                    OctoberSale: target.October.sale,
+                    OctoberDiff: target.October.diff,
+
+                    NovemberTarget: target.November.target,
+                    NovemberSale: target.November.sale,
+                    NovemberDiff: target.November.diff,
+
+                    DecemberTarget: target.December.target,
+                    DecemberSale: target.December.sale,
+                    DecemberDiff: target.December.diff,
+
+                    TotalTarget: target.Total.target,
+                    TotalSale: target.Total.sale,
+                    TotalDiff: target.Total.diff,
+                }
+                finalData.push(temp)
+            })
+        }
+        return finalData;
+    };
+
+    const handleExportToExcel = () => {
+        setExportToExcelState(true);
+    };
+    const exportToExcel = () => {
+        setExportToExcelState(false);
+        const ws = XLSX.utils.json_to_sheet(csvData());
+        const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, `Target Report ${new Date().toDateString()}` + fileExtension);
     };
     let monthTotalAmount = {
         Jan: {
@@ -126,7 +222,18 @@ const TargetReport = () => {
     };
     return (<AppLayout filterNodes={<>
         {target.ownerPermission &&
-            <FilterSearch onChange={(e) => setSearchSaleBy(e.target.value)} value={searchSaleBy} placeholder={"Search by Sales Rep"} minWidth={"167px"} name="salesRepSearch" />}
+            <FilterItem
+            minWidth="220px"
+            label="All Sales Rep"
+            value={searchSaleBy}
+            options={salesRepList.map((manufacturer) => ({
+                label: manufacturer,
+                value: manufacturer,
+            }))}
+            onChange={(value) => setSearchSaleBy(value)}
+            name="salesRepSearch"
+        />}
+                    
         <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
         <FilterItem
             minWidth="220px"
@@ -142,12 +249,41 @@ const TargetReport = () => {
             <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
                 CLEAR ALL
             </button>
+            <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
+                EXPORT
+                <MdOutlineDownload size={16} />
+            </button>
         </div>
+
         {/* <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
             EXPORT
             <MdOutlineDownload size={16} />
           </button> */}
     </>}>
+        {exportToExcelState && (
+            <ModalPage
+                open
+                content={
+                    <>
+                        <div style={{ maxWidth: "370px" }}>
+                            <h1 className={`fs-5 ${styles.ModalHeader}`}>Warning</h1>
+                            <p className={` ${styles.ModalContent}`}>Do you want to download Target Report?</p>
+                            <div className="d-flex justify-content-center gap-3 ">
+                                <button className={`${styles.modalButton}`} onClick={exportToExcel}>
+                                    OK
+                                </button>
+                                <button className={`${styles.modalButton}`} onClick={() => setExportToExcelState(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                }
+                onClose={() => {
+                    setExportToExcelState(false);
+                }}
+            />
+        )}
         {!isLoaded ? (<Loading />) :
             <section>
                 {false && <div className={Styles.inorderflex}>

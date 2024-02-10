@@ -16,7 +16,6 @@ const MyRetailersPage = () => {
   const [manufacturerFilter, setManufacturerFilter] = useState(manufacturerId);
   const [sortBy, setSortBy] = useState();
   const [searchBy, setSearchBy] = useState("");
-
   useEffect(() => {
     if (!manufacturerId) {
       setManufacturerFilter(null);

@@ -130,6 +130,10 @@ function MyBagFinal() {
     }
     return orderDetails;
   }
+  const deleteBag= ()=>{
+    localStorage.removeItem("orders")
+    window.location.reload();
+  }
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -318,6 +322,7 @@ function MyBagFinal() {
                       >
                         ${Number(total).toFixed(2)} PLACE ORDER
                       </button>
+                      <p style={{textAlign:'center',cursor:'pointer'}} onClick={deleteBag}>Clear Bag</p>
                       {/* {Number(total) ? null : window.location.reload()} */}
                     </div>
                   </div>

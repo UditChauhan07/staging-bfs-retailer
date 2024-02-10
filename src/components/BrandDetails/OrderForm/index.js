@@ -73,22 +73,23 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
+    let retailerPirce = found.usdRetail__c.trim()
     if (found?.Category__c === "TESTER") {
-      let salesPrice = found.usdRetail__c.includes("$")
-        ? (+found.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +found.usdRetail__c.substring(1)).toFixed(2)
-        : (+found.usdRetail__c - (discount?.testerMargin / 100) * +found.usdRetail__c).toFixed(2);
+      let salesPrice = retailerPirce.includes("$")
+        ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
+        : (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
-      let salesPrice = found.usdRetail__c.includes("$")
-        ? (+found.usdRetail__c.substring(1) - (discount?.sample / 100) * +found.usdRetail__c.substring(1)).toFixed(2)
-        : (+found.usdRetail__c - (discount?.sample / 100) * +found.usdRetail__c).toFixed(2);
+      let salesPrice = retailerPirce.includes("$")
+        ? (+retailerPirce.substring(1) - (discount?.sample / 100) * +retailerPirce.substring(1)).toFixed(2)
+        : (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       found.discount = discount?.sample;
     } else {
-      let salesPrice = found.usdRetail__c.includes("$")
-        ? (+found.usdRetail__c.substring(1) - (discount?.margin / 100) * +found.usdRetail__c.substring(1)).toFixed(2)
-        : (+found.usdRetail__c - (discount?.margin / 100) * +found.usdRetail__c).toFixed(2);
+      let salesPrice = retailerPirce.includes("$")
+        ? (+retailerPirce.substring(1) - (discount?.margin / 100) * +retailerPirce.substring(1)).toFixed(2)
+        : (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       found.discount = discount?.margin;
     }
@@ -256,12 +257,12 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 })}
               </tbody>
             </table>
-            {errorOnlist && data.length > 0 && errorOnlist == data.length && (
+            {errorOnlist && data.length > 0 && errorOnlist == data.length ? (
               <div className="flex flex-column justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
                 <div>Products with zero quantity are uploaded! </div>
                 <div className="mt-3">No Data Found.</div>
               </div>
-            )}
+            ):null}
             <div className="d-flex justify-content-center">
               <button className={btnClassName} onClick={submitForm}>
                 Submit

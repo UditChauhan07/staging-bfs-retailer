@@ -29,7 +29,7 @@ const CollapsibleRow = ({ children, title, onChange, quantity, index }) => {
           >
             {title}
             {quantity ? (
-              <div className="w-[30px] h-[30px] bg-black rounded-full flex justify-center items-center leading-tight text-white text-[15px] text-center">{quantity}</div>
+              <div className="w-[30px] h-[30px] bg-black rounded-full flex justify-center items-center leading-tight text-white text-[15px] text-center" style={{width:'fit-content'}}>{quantity}</div>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
