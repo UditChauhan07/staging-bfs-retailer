@@ -131,7 +131,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 item.price = salesPrice;
                 item.discount = discount?.margin;
               }
-              item.ProductCode = element["Product Code"]||element["ProductCode"];
+              item.ProductCode = element["Product Code"] || element["ProductCode"];
               item.qty = element["Quantity"];
               addOrder(product, element["Quantity"], discount);
             }
@@ -239,7 +239,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 {data.map((item, index) => {
                   let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
-                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c !== 0;
+                    let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || productDetails.Min_Order_QTY__c ? item?.Quantity % productDetails.Min_Order_QTY__c !== 0 : false;
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>
@@ -262,7 +262,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 <div>Products with zero quantity are uploaded! </div>
                 <div className="mt-3">No Data Found.</div>
               </div>
-            ):null}
+            ) : null}
             <div className="d-flex justify-content-center">
               <button className={btnClassName} onClick={submitForm}>
                 Submit

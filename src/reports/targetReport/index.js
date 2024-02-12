@@ -17,31 +17,34 @@ const fileExtension = ".xlsx";
 
 const TargetReport = () => {
     const location = useLocation();
-    const {state} = location||{};
+    const { state } = location || {};
     const { data: manufacturers } = useManufacturer();
     const [isLoaded, setIsLoaded] = useState(false);
     const [target, setTarget] = useState({ ownerPermission: false, list: [] });
     const [manufacturerFilter, setManufacturerFilter] = useState();
     const [searchBy, setSearchBy] = useState("");
+    let currentDate = new Date();
+    const [year, setYear] = useState(currentDate.getFullYear());
+    const [preOrder, setPreOrder] = useState(true);
     const [searchSaleBy, setSearchSaleBy] = useState("");
-    const [salesRepList,setSalesRepList] = useState([]);
+    const [salesRepList, setSalesRepList] = useState([]);
     const [exportToExcelState, setExportToExcelState] = useState(false);
     useEffect(() => {
         GetAuthData().then((user) => {
-            getTargetReportAll({ user }).then((targetRes) => {
+            getTargetReportAll({ user, year, preOrder }).then((targetRes) => {
                 if (targetRes) {
                     setIsLoaded(true)
                 }
                 let salesRep = [];
-                targetRes.list.map((tar)=>{
-                    if(!salesRep.includes(tar.SalesRepName)){
+                targetRes.list.map((tar) => {
+                    if (!salesRep.includes(tar.SalesRepName)) {
                         salesRep.push(tar.SalesRepName)
                     }
                 })
                 setSalesRepList(salesRep)
                 setTarget(targetRes)
-                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId:null)
-                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId:null)
+                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null)
+                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null)
             }).catch((targetErr) => {
                 console.error({ targetErr });
             })
@@ -56,7 +59,7 @@ const TargetReport = () => {
             }
         });
         if (searchBy) {
-            console.log({searchBy});
+            console.log({ searchBy });
             filtered = filtered.filter((item) => {
                 if (item.AccountName?.toLowerCase().includes(searchBy?.toLowerCase())) {
                     return item;
@@ -76,6 +79,8 @@ const TargetReport = () => {
         setManufacturerFilter(null);
         setSearchBy("");
         setSearchSaleBy("")
+        setYear(currentDate.getFullYear())
+        setPreOrder(true)
     };
     const PriceDisplay = (value) => {
         return `$${Number(value).toFixed(2)}`;
@@ -149,13 +154,27 @@ const TargetReport = () => {
     const handleExportToExcel = () => {
         setExportToExcelState(true);
     };
+    const getManufactureName = (id = null) => {
+        if (id) {
+            let name = null;
+            manufacturers?.data?.map((manufacturer) => {
+                if (manufacturer.Id == id) name = manufacturer.Name
+            })
+            return name;
+        }
+    }
     const exportToExcel = () => {
         setExportToExcelState(false);
         const ws = XLSX.utils.json_to_sheet(csvData());
         const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
         const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const data = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(data, `Target Report ${new Date().toDateString()}` + fileExtension);
+        let title = target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : 'Target Report'
+        if(manufacturerFilter){
+            title += " for " +getManufactureName(manufacturerFilter)
+        }
+        title += ` ${new Date().toDateString()}`;
+        FileSaver.saveAs(data, title + fileExtension);
     };
     let monthTotalAmount = {
         Jan: {
@@ -224,20 +243,44 @@ const TargetReport = () => {
             diff: 0
         }
     };
+    const sendApiCall = () => {
+        setIsLoaded(false)
+        GetAuthData().then((user) => {
+            getTargetReportAll({ user, year, preOrder }).then((targetRes) => {
+                if (targetRes) {
+                    setIsLoaded(true)
+                }
+                let salesRep = [];
+                targetRes.list.map((tar) => {
+                    if (!salesRep.includes(tar.SalesRepName)) {
+                        salesRep.push(tar.SalesRepName)
+                    }
+                })
+                setSalesRepList(salesRep)
+                setTarget(targetRes)
+                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null)
+                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null)
+            }).catch((targetErr) => {
+                console.error({ targetErr });
+            })
+        }).catch((userErr) => {
+            console.error({ userErr });
+        })
+    }
     return (<AppLayout filterNodes={<>
         {target.ownerPermission &&
             <FilterItem
-            minWidth="220px"
-            label="All Sales Rep"
-            value={searchSaleBy}
-            options={salesRepList.map((salerep) => ({
-                label: salerep,
-                value: salerep,
-            }))}
-            onChange={(value) => setSearchSaleBy(value)}
-            name="salesRepSearch"
-        />}
-                    
+                minWidth="220px"
+                label="All Sales Rep"
+                value={searchSaleBy}
+                options={salesRepList.map((salerep) => ({
+                    label: salerep,
+                    value: salerep,
+                }))}
+                onChange={(value) => setSearchSaleBy(value)}
+                name="salesRepSearch"
+            />}
+
         <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
         <FilterItem
             minWidth="220px"
@@ -290,35 +333,37 @@ const TargetReport = () => {
         )}
         {!isLoaded ? (<Loading />) :
             <section>
-                {false && <div className={Styles.inorderflex}>
+                {true && <div className={Styles.inorderflex}>
                     <div>
                         <h2>
                             {target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Sales Report` : "Your Target Report"}
-                            {manufacturerFilter && " for " + manufacturerFilter}
+                            {manufacturerFilter && " for " +getManufactureName(manufacturerFilter)}
                         </h2>
                     </div>
                     <div>
                         <div className={`d-flex align-items-center ${Styles.InputControll}`}>
-                            <select onChange={(e) => null}>
+                            <select onChange={(e) => setPreOrder(e.target.value)}>
                                 {/* selected={yearFor == 2023 ? true : false} */}
-                                <option value={2023} >
-                                    2023
-                                </option>
-                                <option value={2024}>
-                                    2024
-                                </option>
-                            </select>
-                            <select onChange={(e) => null}>
-                                {/* selected={yearFor == 2023 ? true : false} */}
-                                <option value={null} >
+                                <option value={true} selected={preOrder == true ? true : false}>
                                     With Pre-Order
                                 </option>
-                                <option value={'WOPO'}>
+                                <option value={false} selected={preOrder == false ? true : false}>
                                     With out Pre-Order
+                                </option>
+                                {/* <option value={'pre'} selected={preOrder == 'pre' ? true : false}>
+                                    only Pre Orders
+                                </option> */}
+                            </select>
+                            <select onChange={(e) => setYear(e.target.value)}>
+                                {/* selected={yearFor == 2023 ? true : false} */}
+                                <option value={currentDate.getFullYear() - 1} selected={year == currentDate.getFullYear() - 1 ? true : false}>                                    {currentDate.getFullYear() - 1}
+                                </option>
+                                <option value={currentDate.getFullYear()} selected={year === currentDate.getFullYear() ? true : false}>
+                                    {currentDate.getFullYear()}
                                 </option>
                             </select>
                             {/* onClick={() => sendApiCall()} */}
-                            <button >Search Sales</button>
+                            <button onClick={() => sendApiCall()}>Search Target</button>
                         </div>
                     </div>
                 </div>}
@@ -396,9 +441,9 @@ const TargetReport = () => {
                                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>Dec Sales</th>
                                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>Dec Diff</th>
 
-                                    <th className={`${Styles.month} ${Styles.stickyThirdLastColumnHeading}`} style={{ minWidth: "150px" }}>Total Year Target</th>
-                                    <th className={`${Styles.month} ${Styles.stickySecondLastColumnHeading}`} style={{ minWidth: "150px" }}>Total Year Sales</th>
-                                    <th className={`${Styles.month} ${Styles.stickyLastColumnHeading}`} style={{ minWidth: "150px" }}>Total Year Diff</th>
+                                    <th className={`${Styles.month} ${Styles.stickyThirdLastColumnHeading}`} style={{ minWidth: "150px" }}>Yearly Target</th>
+                                    <th className={`${Styles.month} ${Styles.stickySecondLastColumnHeading}`} style={{ minWidth: "150px" }}>Yearly Sales</th>
+                                    <th className={`${Styles.month} ${Styles.stickyLastColumnHeading}`} style={{ minWidth: "150px" }}>Yearly Diff</th>
                                 </tr>
                             </thead>
                             <tbody>

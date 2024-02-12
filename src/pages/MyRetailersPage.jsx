@@ -84,7 +84,7 @@ const MyRetailersPage = () => {
       }
     >
       <MyRetailers
-        pageData={data?.data}
+        pageData={data?.status ==200?data?.data:[]}
         sortBy={sortBy}
         searchBy={searchBy}
         isLoading={isLoading}

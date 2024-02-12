@@ -198,7 +198,7 @@ export async function getOrderofSalesRep({ user, month }) {
   }
 }
 
-export async function getTargetReportAll({ user }) {
+export async function getTargetReportAll({ user,year,preOrder }) {
   if (user) {
     let headersList = {
       Accept: "*/*",
@@ -208,6 +208,12 @@ export async function getTargetReportAll({ user }) {
     bodyContent.append("key", user.x_access_token);
     if (user.Sales_Rep__c != "00530000005AdvsAAC" && user.Sales_Rep__c != "0053b00000DgEVEAA3") {
       bodyContent.append("SalesRepId", user.Sales_Rep__c);
+    }
+    if(year){
+      bodyContent.append('year', year);
+    }
+    if(preOrder){
+      bodyContent.append('preorder', preOrder);
     }
 
     let response = await fetch(url + "/target/4Tu6do95AxLM3Cl", {
