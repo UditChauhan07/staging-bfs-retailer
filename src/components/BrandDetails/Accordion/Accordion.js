@@ -13,6 +13,7 @@ const Accordion = ({ data, formattedData }) => {
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
+  const [showName, setShowName] = useState(false);
   const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
     product.salesPrice = salesPrice;
     if (Object.values(orders).length) {
@@ -155,7 +156,11 @@ const Accordion = ({ data, formattedData }) => {
                               <td className={styles.ControlStyle}>
                                 <img src={Img1} alt="img" />
                               </td>
-                              <td className="text-capitalize" style={{ fontSize: '13px' }}>{value.Name}</td>
+                              <td className="text-capitalize" style={{ fontSize: '13px' }} onMouseEnter={() => setShowName({ index: indexed, type: true })}
+                                onMouseLeave={() => setShowName({ index: indexed })}>
+                                {/* {value.Name} */}
+                                {indexed !== showName?.index && value.Name.length >= 23 ? `${value.Name.substring(0, 23)}...` : value.Name}
+                                </td>
                               <td>{value.ProductCode}</td>
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>

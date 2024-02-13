@@ -47,7 +47,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
               <p className={`${Styles.warningContent} `}>
                 Please Enter Multiple by {min} of product to add into bag
                 <p className="mt-4">
-                <input type="number" className={Styles.customPriceInput} onKeyUp={(e)=>customHandler(e.target.value||0)}/>
+                <input type="number" className={Styles.customPriceInput} onKeyUp={(e)=>customHandler(e.target.value||0)} maxLength={5} max={5}/>
                 {newQtyInput%min!=0 &&<p style={{color:'red',fontSize:'11px',textAlign:''}}>* invalid</p>}
                 </p>
               </p>
