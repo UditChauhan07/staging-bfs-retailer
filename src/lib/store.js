@@ -1,4 +1,5 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
+// export const originAPi = "http://localhost:3001"
 let url = `${originAPi}/beauty/`;
 let URL = `${originAPi}/beauty/0DS68FOD7s`;
 const orderKey = "orders";
@@ -198,7 +199,7 @@ export async function getOrderofSalesRep({ user, month }) {
   }
 }
 
-export async function getTargetReportAll({ user,year,preOrder }) {
+export async function getTargetReportAll({ user, year, preOrder }) {
   if (user) {
     let headersList = {
       Accept: "*/*",
@@ -209,10 +210,10 @@ export async function getTargetReportAll({ user,year,preOrder }) {
     if (user.Sales_Rep__c != "00530000005AdvsAAC" && user.Sales_Rep__c != "0053b00000DgEVEAA3") {
       bodyContent.append("SalesRepId", user.Sales_Rep__c);
     }
-    if(year){
+    if (year) {
       bodyContent.append('year', year);
     }
-    if(preOrder){
+    if (preOrder) {
       bodyContent.append('preorder', preOrder);
     }
 
@@ -293,9 +294,9 @@ export async function getDashboardata({ user }) {
 
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);
-  bodyContent.append("salesRepId", "0053b00000CwOnLAAV"||user.Sales_Rep__c);
+  bodyContent.append("salesRepId", user.Sales_Rep__c);
 
-    let response = await fetch(url+"v3/3kMMguJj62cyyf0", {
+  let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
     body: bodyContent,
     headers: headersList,

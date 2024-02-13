@@ -157,19 +157,19 @@ const dataa = {
     },
 
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     colors: ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#76a5af", "#6fa8dc", "#d5a6bd"],
     fill: {
       type: "gradient",
       gradient: {
-        opacityFrom: 0.5,
-        opacityTo: 0.2,
+        opacityFrom: 0,
+        opacityTo: 0,
       },
     },
 
     xaxis: {
-      categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September"],
+      categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     },
     yaxis: {
       title: {
@@ -208,6 +208,7 @@ function Dashboard({ dashboardData }) {
   const [Yearlydataa, setYearlydata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [lineChart,setlineChart]= useState();
   const [dashboardRelatedData, setDashboardRelatedData] = useState({});
   const [salesByBrandData, setSalesByBrandData] = useState({
     series: [],
@@ -296,9 +297,79 @@ function Dashboard({ dashboardData }) {
             if (dashboard?.details) {
               let dashboardData = JSON.parse(dashboard?.details);
               setDashboardRelatedData(dashboardData);
+              // setlineChart({
+              //   series: [
+              //     {
+              //       name: "Diptyque",
+              //       data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+              //     },
+              //     {
+              //       name: "Byredo",
+              //       data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
+              //     },
+              //     {
+              //       name: "Bobbi Brown",
+              //       data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
+              //     },
+              //     {
+              //       name: "By Terry",
+              //       data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
+              //     },
+              //     {
+              //       name: "Revive",
+              //       data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
+              //     },
+              //     {
+              //       name: "Kevyn Aucoin",
+              //       data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
+              //     },
+              //     {
+              //       name: "Smashbox",
+              //       data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
+              //     },
+              //   ],
+              //   options: {
+              //     chart: {
+              //       type: "area",
+              //     },
+              //     stroke: {
+              //       curve: "smooth",
+              //       width: 2,
+              //     },
+              
+              //     dataLabels: {
+              //       enabled: true,
+              //     },
+              //     colors: ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#76a5af", "#6fa8dc", "#d5a6bd"],
+              //     fill: {
+              //       type: "gradient",
+              //       gradient: {
+              //         opacityFrom: 0,
+              //         opacityTo: 0,
+              //       },
+              //     },
+              
+              //     xaxis: {
+              //       categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+              //     },
+              //     yaxis: {
+              //       title: {
+              //         text: "$ (thousands)",
+              //       },
+              //     },
+              
+              //     tooltip: {
+              //       y: {
+              //         formatter: function (val) {
+              //           return "$ " + val + " thousands";
+              //         },
+              //       },
+              //     },
+              //   },
+              // })
               setSalesByBrandData({
                 series: Object.values(dashboardData.brandSalesByRep.data).map((value) => {
-                  return value.totalOrder;
+                  return value?.salesRepOwn?.order||0;
                 }),
                 options: {
                   chart: {
