@@ -294,7 +294,7 @@ export async function getDashboardata({ user }) {
 
   let bodyContent = new FormData();
   bodyContent.append("key", user.x_access_token);
-  bodyContent.append("salesRepId", user.Sales_Rep__c);
+  bodyContent.append("SalesRepId", user.Sales_Rep__c);
 
   // let response = await fetch(url + "v3/u5eIT2RZSBRcfyK", {
     let response = await fetch(url + "v3/3kMMguJj62cyyf0", {

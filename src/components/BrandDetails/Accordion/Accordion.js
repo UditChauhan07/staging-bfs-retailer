@@ -169,7 +169,7 @@ const Accordion = ({ data, formattedData }) => {
                                 {/* value={salesPrice} */}
                                 {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
                                 {/* {Number(inputPrice).toFixed(2)}<br/> */}
-                                $ {(true && inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={styles.customPriceInput} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} /></>) : salesPrice}
+                                $ {(true && inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={styles.customPriceInput} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value||0) }} /></>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
                               <td>
