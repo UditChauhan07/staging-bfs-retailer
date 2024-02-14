@@ -105,7 +105,7 @@ const NewnessReport = () => {
       filterNodes={
         <>
           <FilterItem
-            minWidth="220px"
+            minWidth="200px"
             label="All Manufacturers"
             name="AllManufacturers12"
             value={filter.ManufacturerId__c}
@@ -162,15 +162,15 @@ const NewnessReport = () => {
             label={"end date :"}
             minWidth="95px"
           />
-          <div className="d-flex gap-3">
-            <button className="border px-2.5 py-1 leading-tight" onClick={sendApiCall}>
+          <div className="d-flex ">
+            <button className="border px-2.5  leading-tight  " onClick={sendApiCall}>
               APPLY
             </button>
-            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
+            <button className="border px-2.5 py-1 leading-tight ms-2" onClick={resetFilter}>
               CLEAR ALL
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
+          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center me-1 " onClick={handleExportToExcel}>
             EXPORT
             <MdOutlineDownload size={16} />
           </button>

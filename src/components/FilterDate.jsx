@@ -10,7 +10,7 @@ const FilterDate = ({ label, onChange, value, minWidth }) => {
     </button>
   ));
   return (
-    <div className="flex">
+    <div className="flex ">
       {/* <label htmlFor={label}>{label}</label>
       <input
         type="date"
