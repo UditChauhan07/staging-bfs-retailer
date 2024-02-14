@@ -162,11 +162,11 @@ const NewnessReport = () => {
             label={"end date :"}
             minWidth="95px"
           />
-          <div className="d-flex ">
-            <button className="border px-2.5  leading-tight  " onClick={sendApiCall}>
+          <div className="d-flex me-2 ">
+            <button className="border px-2.5 py-1 leading-tight  " onClick={sendApiCall}>
               APPLY
             </button>
-            <button className="border px-2.5 py-1 leading-tight ms-2" onClick={resetFilter}>
+            <button className="border px-2.5 py-1 leading-tight " onClick={resetFilter}>
               CLEAR ALL
             </button>
           </div>
