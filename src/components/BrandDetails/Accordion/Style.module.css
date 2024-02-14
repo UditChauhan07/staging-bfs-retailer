@@ -26,7 +26,9 @@ border: 1px solid #000 !important;
 .customPriceInput:focus {
   outline: none;
 }
-
+.PriceInput{
+  padding: 0px 10px ;
+}
 .ButtonControl input{
   width: 20px !important;
 }
@@ -183,5 +185,6 @@ align-items: center;
   background-color: #000;
   width: 100px;
   height: 30px;
-
 }
+/* ............ */
+

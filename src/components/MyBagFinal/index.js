@@ -322,7 +322,7 @@ function MyBagFinal() {
                       >
                         ${Number(total).toFixed(2)} PLACE ORDER
                       </button>
-                      <p style={{textAlign:'center',cursor:'pointer'}} onClick={deleteBag}>Clear Bag</p>
+                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} onClick={deleteBag}>Clear Bag</p>
                       {/* {Number(total) ? null : window.location.reload()} */}
                     </div>
                   </div>
