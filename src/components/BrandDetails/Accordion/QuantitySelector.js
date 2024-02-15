@@ -15,24 +15,24 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
       onChange?.(min);
     }
   }, [value, min]);
-  const qtyChangeHandler=({previous,newQty=0})=>{
-    if(newQty){
-      if(newQty<min){
+  const qtyChangeHandler = ({ previous, newQty = 0 }) => {
+    if (newQty) {
+      if (newQty < min) {
         setQtyErrorModalOpen(true)
-      }else{
-        if(newQty%min==0){
+      } else {
+        if (newQty % min == 0) {
           onChange?.(newQty);
           setQtyErrorModalOpen(false)
-        }else{
+        } else {
           setQtyErrorModalOpen(true)
         }
       }
-    }else{
+    } else {
       onChange?.(newQty);
       setQtyErrorModalOpen(false)
     }
   };
-  const customHandler = (value)=>{
+  const customHandler = (value) => {
     setNewQtyInput(parseInt(value))
   }
   const handleNameChange = (event) => {
@@ -51,23 +51,23 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
               <p className={`${Styles.warningContent} `}>
                 Please Enter Multiple by {min} of product to add into bag
                 <p className="mt-4">
-                <input type="number" className={`${Styles.customPriceInput} ms-1`} onKeyUp={(e)=>customHandler(e.target.value||0)} maxLength={5} max={5}
-                  id="limit_input"
-                  name="limit_input"
-                  value={limitInput}
-                  style={{maxWidth: '100px',border: '1px solid rgb(204, 204, 204)',borderRadius: '5px',padding: '1px 5px'}}
-                  onChange={handleNameChange}/><br/>
-                {limitInput.length >=4 && (
+                  <input type="number" className={`${Styles.customPriceInput} ms-1`} onKeyUp={(e) => customHandler(e.target.value || 0)} maxLength={5} max={5}
+                    id="limit_input"
+                    name="limit_input"
+                    value={limitInput}
+                    style={{ maxWidth: '100px', border: '1px solid rgb(204, 204, 204)', borderRadius: '5px', padding: '1px 5px' }}
+                    onChange={handleNameChange} /><br />
+                  {limitInput.length >= 4 && (
                     <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This filed cannot cantain more than 4 characters.</span>
                   )}
-                {newQtyInput%min!=0 &&<p style={{color:'red',fontSize:'11px',textAlign:''}}>* invalid</p>}
+                  {newQtyInput % min != 0 && <p style={{ color: 'red', fontSize: '11px', textAlign: '' }}>* invalid</p>}
                 </p>
               </p>
               <div className="d-flex justify-content-around ">
-                <button style={{backgroundColor: '#000',color: '#fff',fontFamily: 'Montserrat-600',fontSize: '14px',fontStyle: 'normal',fontWeight: '600',height: '30px',letterSpacing: '1.4px',lineHeight: 'normal',width: '100px'}} onClick={()=>{ newQtyInput%min===0 &&qtyChangeHandler({newQty:parseInt(newQtyInput||0),previous:padWithZero(value)})}}>
+                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { newQtyInput % min === 0 && qtyChangeHandler({ newQty: parseInt(newQtyInput || 0), previous: padWithZero(value) }) }}>
                   Submit
                 </button>
-                <button style={{backgroundColor: '#000',color: '#fff',fontFamily: 'Montserrat-600',fontSize: '14px',fontStyle: 'normal',fontWeight: '600',height: '30px',letterSpacing: '1.4px',lineHeight: 'normal',width: '100px'}} onClick={() => setQtyErrorModalOpen(false)}>
+                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setQtyErrorModalOpen(false)}>
                   Cancel
                 </button>
               </div>
@@ -84,11 +84,11 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
           if (newValue > min) {
             // newValue = newValue - 1;
             // new functionality
-            if (min===0){
+            if (min === 0) {
               newValue -= 1;
             }
-            else{
-              newValue-=min
+            else {
+              newValue -= min
             }
           } else {
             newValue = 0;
@@ -100,7 +100,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
         -
       </button>
 
-      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e)=>{(parseInt(e.target.value) > 0&&parseInt(e.target.value) < 9999) &&qtyChangeHandler({newQty:parseInt(e.target.value||0),previous:padWithZero(value)})}}/>
+      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e) => { (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 9999) && qtyChangeHandler({ newQty: parseInt(e.target.value || 0), previous: padWithZero(value) }) }} />
       <button
         onClick={() => {
           // functionality for 1 addition
