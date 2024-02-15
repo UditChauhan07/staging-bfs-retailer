@@ -148,7 +148,7 @@ const Accordion = ({ data, formattedData }) => {
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
                                 ${(qtyofItem>0 &&inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
-                                  onKeyUp={(e) => { parseInt(e.target.value) > 0 && onPriceChangeHander(value, e.target.value || 0) }} id="limit_input"
+                                  onKeyUp={(e) => {parseInt(e.target.value) > 0 && onPriceChangeHander(value, e.target.value || 0) }} id="limit_input"
                                   name="limit_input"
                                   value={limitInput}
                                   onChange={handleNameChange} /></>) : salesPrice}
