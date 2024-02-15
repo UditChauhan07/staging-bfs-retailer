@@ -300,7 +300,7 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            console.log({dashboard});
+            console.log({aa:dashboard.salesRepTarget});
             setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
@@ -976,7 +976,7 @@ function Dashboard({ dashboardData }) {
                 </div>
                 <div className="">
                   <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS >= 1000 ? Number((Number(box.ORDERS) / 1000 || 0).toFixed(0)) + 'K' : box.ORDERS}</h1>
+                  <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS >= 1000 ? Number((Number(box.ORDERS) / 1000).toFixed(0)) + 'K' : box.ORDERS}</h1>
                 </div>
               </div>
             </div>
@@ -987,7 +987,7 @@ function Dashboard({ dashboardData }) {
                 </div>
                 <div className="">
                   <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>${box.REVENUE >= 1000 ? (Number((Number(box.REVENUE) / 1000 || 0).toFixed(0)) + 'K') : box.REVENUE}</h1>
+                  <h1 className={`text-end ${Styles.activetext1}`}>${box.REVENUE >= 1000 ? (Number((Number(box.REVENUE) / 1000).toFixed(0)) + 'K') : box.REVENUE}</h1>
                 </div>
               </div>
             </div>
