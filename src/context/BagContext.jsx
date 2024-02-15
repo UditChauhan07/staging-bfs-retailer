@@ -42,10 +42,13 @@ const BagProvider = ({ children }) => {
   const setOrderProductPrice = async (product, price, discount=null) => {
     setOrders((prev) => {
       const obj = { ...prev };
-      obj[product.Id].product.salesPrice = price;
-      obj[product.Id].product.discount = discount;
-      console.log({aa:obj[product.Id]});
-      return obj;
+      if(obj[product.Id]){
+        obj[product.Id].product.salesPrice = price;
+        obj[product.Id].product.discount = discount;
+        return obj;
+      }else{
+        return true
+      }
     });
     return true
   };
