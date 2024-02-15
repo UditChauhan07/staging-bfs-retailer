@@ -55,6 +55,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
                   id="limit_input"
                   name="limit_input"
                   value={limitInput}
+                  style={{maxWidth: '100px',border: '1px solid rgb(204, 204, 204)',borderRadius: '5px',padding: '1px 5px'}}
                   onChange={handleNameChange}/><br/>
                 {limitInput.length >=4 && (
                     <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This filed cannot cantain more than 4 characters.</span>
@@ -63,10 +64,10 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
                 </p>
               </p>
               <div className="d-flex justify-content-around ">
-                <button className={`${Styles.modalButton}`} onClick={()=>{ newQtyInput%min===0 &&qtyChangeHandler({newQty:parseInt(newQtyInput||0),previous:padWithZero(value)})}}>
+                <button style={{backgroundColor: '#000',color: '#fff',fontFamily: 'Montserrat-600',fontSize: '14px',fontStyle: 'normal',fontWeight: '600',height: '30px',letterSpacing: '1.4px',lineHeight: 'normal',width: '100px'}} onClick={()=>{ newQtyInput%min===0 &&qtyChangeHandler({newQty:parseInt(newQtyInput||0),previous:padWithZero(value)})}}>
                   Submit
                 </button>
-                <button className={`${Styles.modalButton}`} onClick={() => setQtyErrorModalOpen(false)}>
+                <button style={{backgroundColor: '#000',color: '#fff',fontFamily: 'Montserrat-600',fontSize: '14px',fontStyle: 'normal',fontWeight: '600',height: '30px',letterSpacing: '1.4px',lineHeight: 'normal',width: '100px'}} onClick={() => setQtyErrorModalOpen(false)}>
                   Cancel
                 </button>
               </div>
