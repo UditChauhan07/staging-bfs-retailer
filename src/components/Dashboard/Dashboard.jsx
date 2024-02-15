@@ -300,6 +300,7 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
+            console.log({dashboard});
             setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })

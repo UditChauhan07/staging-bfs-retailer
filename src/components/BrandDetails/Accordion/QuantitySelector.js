@@ -88,7 +88,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
         -
       </button>
 
-      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e)=>{qtyChangeHandler({newQty:parseInt(e.target.value||0),previous:padWithZero(value)})}}/>
+      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e)=>{parseInt(e.target.value) > 0 &&qtyChangeHandler({newQty:parseInt(e.target.value||0),previous:padWithZero(value)})}}/>
       <button
         onClick={() => {
           // functionality for 1 addition
