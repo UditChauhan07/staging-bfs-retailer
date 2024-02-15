@@ -53,7 +53,6 @@ const Accordion = ({ data, formattedData }) => {
     const limit = 4;
     setLimitInput(event.target.value.slice(0, limit));
   };
-  console.log(limitInput);
   return (
     <>
       {replaceCartModalOpen ? (
@@ -148,11 +147,11 @@ const Accordion = ({ data, formattedData }) => {
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
-                              ${(inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
-                                onKeyUp={(e) => {parseInt(e.target.value)>0 && onPriceChangeHander(value, e.target.value||0) }} id="limit_input"
-                    name="limit_input"
-                    value={limitInput}
-                    onChange={handleNameChange} /></>) : salesPrice}
+                                ${(qtyofItem>0 &&inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
+                                  onKeyUp={(e) => { parseInt(e.target.value) > 0 && onPriceChangeHander(value, e.target.value || 0) }} id="limit_input"
+                                  name="limit_input"
+                                  value={limitInput}
+                                  onChange={handleNameChange} /></>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
                               <td>
