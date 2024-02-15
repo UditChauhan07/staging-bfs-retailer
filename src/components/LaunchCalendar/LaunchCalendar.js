@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function LaunchCalendar({ productList, brand, month }) {
   const [products, setProducts] = useState(productList);
+  
   const [isEmpty, setIsEmpty] = useState(false);
   useEffect(() => {
     let temp = true;
@@ -90,6 +91,7 @@ function LaunchCalendar({ productList, brand, month }) {
                       <li key={index}>
                         <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
+                          if (!brand || brand == product.brand){
                           return (
                             <>
                               <div className="timeline-content" key={productIndex}>
@@ -123,6 +125,7 @@ function LaunchCalendar({ productList, brand, month }) {
                               </div>
                             </>
                           );
+                          }
                         })}
                       </li>
                     )

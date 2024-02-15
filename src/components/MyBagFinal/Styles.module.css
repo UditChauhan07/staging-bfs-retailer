@@ -13,7 +13,9 @@
   padding: 38px 30px 30px 10px;
   margin: 10px 0 0 0;
 }
-
+.ClearBag{
+  background-color: #f1f0f0;
+}
 .MainInner {
   background: #fff;
   padding: 17px 27px;
@@ -317,6 +319,21 @@
   margin: 0 0 28px 0;
 }
 
+.ClearBag{
+  background-color: #f1f0f0;
+  width: 100%;
+  color:black;
+  text-align: center;
+  font-family: "Montserrat";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 32px; /* 213.333% */
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+ 
+  margin: 0 0 28px 0;
+}
 @media (max-width: 1199px) {
   .MainInner {
     padding: 17px 5px;
@@ -359,3 +376,4 @@
   margin: 20px 0 0px 0;
 }
 }
+

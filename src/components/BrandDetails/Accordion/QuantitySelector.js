@@ -9,7 +9,7 @@ const padWithZero = (value) => {
 const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
   const [qtyErrorModalOpen, setQtyErrorModalOpen] = useState(false);
   const [newQtyInput, setNewQtyInput] = useState(value);
-  
+  const [limitInput, setLimitInput] = useState("");
   useEffect(() => {
     if (value !== 0 && value < min) {
       onChange?.(min);
@@ -35,7 +35,11 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
   const customHandler = (value)=>{
     setNewQtyInput(parseInt(value))
   }
-
+  const handleNameChange = (event) => {
+    const limit = 4;
+    setLimitInput(event.target.value.slice(0, limit));
+  };
+  console.log(limitInput);
   return (
     <div className={`${Styles.ButtonControl}w-[85px] h-[27px] flex `}>
       {qtyErrorModalOpen ? (
@@ -47,7 +51,14 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
               <p className={`${Styles.warningContent} `}>
                 Please Enter Multiple by {min} of product to add into bag
                 <p className="mt-4">
-                <input type="number" className={Styles.customPriceInput} onKeyUp={(e)=>customHandler(e.target.value||0)} maxLength={5} max={5}/>
+                <input type="number" className={`${Styles.customPriceInput} ms-1`} onKeyUp={(e)=>customHandler(e.target.value||0)} maxLength={5} max={5}
+                  id="limit_input"
+                  name="limit_input"
+                  value={limitInput}
+                  onChange={handleNameChange}/><br/>
+                {limitInput.length >=4 && (
+                    <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This filed cannot cantain more than 4 characters.</span>
+                  )}
                 {newQtyInput%min!=0 &&<p style={{color:'red',fontSize:'11px',textAlign:''}}>* invalid</p>}
                 </p>
               </p>

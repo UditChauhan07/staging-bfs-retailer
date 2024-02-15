@@ -258,8 +258,8 @@ const TargetReport = () => {
                 })
                 setSalesRepList(salesRep)
                 setTarget(targetRes)
-                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null)
-                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null)
+                setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : manufacturerFilter)
+                setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : searchSaleBy)
             }).catch((targetErr) => {
                 console.error({ targetErr });
             })
