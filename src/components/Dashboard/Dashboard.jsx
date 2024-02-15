@@ -300,7 +300,7 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            console.log({aa:dashboard.salesRepTarget});
+            console.log({aa:dashboard});
             setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
@@ -575,7 +575,7 @@ function Dashboard({ dashboardData }) {
                                   // console.log("e.....", e);
                                   totalTargetForMTDSalesRep = Number((Number(e?.target || 0) / 1000).toFixed(0)) + Number(totalTargetForMTDSalesRep);
                                   totalAmountForMTDSalesRep = Number((Number(e?.sale || 0) / 1000).toFixed(0)) + Number(totalAmountForMTDSalesRep);
-                                  totalDiffForMTDSalesRep = Number((Number(e?.target - e.sale || 0) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
+                                  totalDiffForMTDSalesRep = Number((Number(e?.diff || 0) / 1000).toFixed(0)) + Number(totalDiffForMTDSalesRep);
                                   return (
                                     <tr key={e}>
                                       <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} onClick={() => { sendDataTargetHandler({ salesRepId: e.name }) }} style={{ cursor: 'pointer' }}>
@@ -583,7 +583,7 @@ function Dashboard({ dashboardData }) {
                                       </td>
                                       <td className={Styles.tabletd}>${(Number(e?.target || 0) / 1000).toFixed(0)}K</td>
                                       <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
-                                      <td className={Styles.tabletd}>${(Number(e?.target - e.revenue || 0) / 1000).toFixed(0)}K</td>
+                                      <td className={Styles.tabletd}>${(Number(e?.diff || 0) / 1000).toFixed(0)}K</td>
                                     </tr>
                                   );
                                 })}
@@ -642,7 +642,7 @@ function Dashboard({ dashboardData }) {
                                 {Yearlydataa.data?.map((e, index) => {
                                   totalTargetForYTDSalesRep = Number((Number(e?.target || 0) / 1000).toFixed(0)) + Number(totalTargetForYTDSalesRep);
                                   totalAmountForYTDSalesRep = Number((Number(e?.sale || 0) / 1000).toFixed(0)) + Number(totalAmountForYTDSalesRep);
-                                  totalDiffForYTDSalesRep = Number((Number(e?.target - e.sale || 0) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
+                                  totalDiffForYTDSalesRep = Number((Number(e?.diff || 0) / 1000).toFixed(0)) + Number(totalDiffForYTDSalesRep);
 
                                   return (
                                     <tr key={e}>
@@ -651,7 +651,7 @@ function Dashboard({ dashboardData }) {
                                       </td>
                                       <td className={Styles.tabletd}>${(Number(e.target) / 1000).toFixed(0)}K</td>
                                       <td className={Styles.tabletd}>${(Number(e.sale) / 1000).toFixed(0)}K</td>
-                                      <td className={Styles.tabletd}>${(Number(e.target - e.sale) / 1000).toFixed(0)}K</td>
+                                      <td className={Styles.tabletd}>${(Number(e.diff) / 1000).toFixed(0)}K</td>
                                     </tr>
                                   );
                                 })}
