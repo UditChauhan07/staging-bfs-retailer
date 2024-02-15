@@ -36,6 +36,7 @@ const Accordion = ({ data, formattedData }) => {
   };
   const onPriceChangeHander = (product, price = '0') => {
     if (price == '') price = 0;
+    console.log({product});
     setOrderProductPrice(product, price)
   }
   const orderSetting = (product, quantity) => {
@@ -176,8 +177,8 @@ const Accordion = ({ data, formattedData }) => {
                                 {/* value={salesPrice} */}
                                 {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
                                 {/* {Number(inputPrice).toFixed(2)}<br/> */}
-                                 ${(true && inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
-                                onKeyUp={(e) => { onPriceChangeHander(value, e.target.value) }} id="limit_input"
+                                 ${(inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
+                                onKeyUp={(e) => {parseInt(e.target.value)>0 && onPriceChangeHander(value, e.target.value||0) }} id="limit_input"
                     name="limit_input"
                     value={limitInput}
                     onChange={handleNameChange} /></>) : salesPrice}
