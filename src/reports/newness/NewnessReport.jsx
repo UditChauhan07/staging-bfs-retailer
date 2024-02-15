@@ -162,15 +162,15 @@ const NewnessReport = () => {
             label={"end date :"}
             minWidth="95px"
           />
-          <div className="d-flex me-2 ">
-            <button className="border px-2.5 py-1 leading-tight  " onClick={sendApiCall}>
+          <div className="d-flex gap-1 ">
+            <button className="border px-0.5 py-1 leading-tight  " onClick={sendApiCall}>
               APPLY
             </button>
-            <button className="border px-2.5 py-1 leading-tight " onClick={resetFilter}>
+            <button className="border px-0.5 py-1 leading-tight " onClick={resetFilter}>
               CLEAR ALL
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center me-1 " onClick={handleExportToExcel}>
+          <button className="border px-0.5 py-1 leading-tight flex justify-center align-center me-1 " onClick={handleExportToExcel}>
             EXPORT
             <MdOutlineDownload size={16} />
           </button>

@@ -934,7 +934,7 @@ const MarketingCalendar = () => {
           <button
             className="border px-2.5 py-1 leading-tight"
             onClick={() => {
-              setBrand(null);
+              setBrand("");
               setMonth(null);
             }}
           >
