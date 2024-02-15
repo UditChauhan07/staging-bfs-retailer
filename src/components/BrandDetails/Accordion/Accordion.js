@@ -16,6 +16,7 @@ const Accordion = ({ data, formattedData }) => {
 
   const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
     product.salesPrice = salesPrice;
+    console.log({product,salesPrice});
     if (Object.values(orders).length) {
       if (
         Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
@@ -152,7 +153,7 @@ const Accordion = ({ data, formattedData }) => {
                                 <QuantitySelector
                                   min={value.Min_Order_QTY__c || 0}
                                   onChange={(quantity) => {
-                                    onQuantityChange(value, quantity, salesPrice, discount);
+                                    onQuantityChange(value, quantity, inputPrice||salesPrice, discount);
                                   }}
                                   value={qtyofItem}
                                 />
