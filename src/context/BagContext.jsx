@@ -45,6 +45,7 @@ const BagProvider = ({ children }) => {
       if(obj[product.Id]){
         obj[product.Id].product.salesPrice = price;
         obj[product.Id].product.discount = discount;
+        console.log({aa:obj[product.Id]});
         return obj;
       }else{
         return true
