@@ -1,5 +1,5 @@
-export const originAPi = "https://b2b.beautyfashionsales.com"
-// export const originAPi = "http://localhost:3001"
+// export const originAPi = "https://b2b.beautyfashionsales.com"
+export const originAPi = "http://localhost:3001"
 let url = `${originAPi}/beauty/`;
 let URL = `${originAPi}/beauty/0DS68FOD7s`;
 const orderKey = "orders";
