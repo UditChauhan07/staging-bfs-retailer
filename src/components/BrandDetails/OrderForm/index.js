@@ -22,14 +22,16 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       let productDetails = getProductData(item["Product Code"] || item["ProductCode"] || null);
 
       if (item?.Quantity) {
-        let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name;
-        // console.log(accumulator);
+        let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c !== 0;
+
+        console.log({error});
         return accumulator + (error ? 1 : 0);
       } else {
         totalQty += 1;
       }
       return accumulator;
     }, 0);
+    console.log({errorCount});
     if (totalQty == data.length) {
       setErrorOnList(totalQty);
     } else {
@@ -257,6 +259,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 })}
               </tbody>
             </table>
+            {console.log({errorOnlist})}
             {errorOnlist && data.length > 0 && errorOnlist == data.length ? (
               <div className="flex flex-column justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
                 <div>Products with zero quantity are uploaded! </div>
