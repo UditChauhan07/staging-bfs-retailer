@@ -880,14 +880,13 @@ const MarketingCalendar = () => {
         if(ele.content.length){
           ele.content.map((item)=>{
             let temp = {};
+            temp["MC Month"] = ele.month;
             temp["Product Title"] = item.name;
-            temp["Product Image"] = window.location.origin+item.image;
-            temp["Product Brand"] = item.brand;
-            temp["Product Brand Logo"] = window.location.origin+item.brandLogo;
+            temp["Product Description"] = item.description;
+            temp["Product Size"] = item.size;
             temp["Product Ship Date"] = item.date;
             temp["Product OCD Date"] = item.OCDDate;
-            temp["Product Size"] = item.size;
-            temp["Product Description"] = item.description;
+            temp["Product Brand"] = item.brand;
             finalData.push(temp);
           })
         }
