@@ -16,7 +16,7 @@ const Accordion = ({ data, formattedData }) => {
 
   const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
     product.salesPrice = salesPrice;
-    console.log({product,salesPrice});
+    console.log({ product, salesPrice });
     if (Object.values(orders).length) {
       if (
         Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
@@ -143,9 +143,9 @@ const Accordion = ({ data, formattedData }) => {
                               <td>{value.ProductCode}</td>
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
-                              <td style={{display:'flex'}}>
-                                ${(qtyofItem>0 &&inputPrice || inputPrice == 0) ? (<><input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
-                                  onChange={(e) => {onPriceChangeHander(value, e.target.value.slice(0, 4)|| 0) }} id="limit_input" minLength={0} maxLength={4}
+                              <td style={{ display: 'flex' }}>
+                                ${(qtyofItem > 0 && inputPrice || inputPrice == 0) ? (<><input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
+                                  onChange={(e) => { onPriceChangeHander(value, e.target.value < 10 ? e.target.value.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0) }} id="limit_input" minLength={0} maxLength={4}
                                   name="limit_input" /></>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
@@ -153,7 +153,7 @@ const Accordion = ({ data, formattedData }) => {
                                 <QuantitySelector
                                   min={value.Min_Order_QTY__c || 0}
                                   onChange={(quantity) => {
-                                    onQuantityChange(value, quantity, inputPrice||salesPrice, discount);
+                                    onQuantityChange(value, quantity, inputPrice || salesPrice, discount);
                                   }}
                                   value={qtyofItem}
                                 />
