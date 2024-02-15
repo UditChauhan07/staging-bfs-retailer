@@ -22,9 +22,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       let productDetails = getProductData(item["Product Code"] || item["ProductCode"] || null);
 
       if (item?.Quantity) {
-        let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || item?.Quantity % productDetails.Min_Order_QTY__c !== 0;
-
-        console.log({error});
+        let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name ||(productDetails.Min_Order_QTY__c>0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
         return accumulator + (error ? 1 : 0);
       } else {
         totalQty += 1;
@@ -107,7 +105,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         data.map((element) => {
           if (element.Quantity && Number.isInteger(element?.Quantity)) {
             let product = getProductData(element["Product Code"] || element["ProductCode"]);
-            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && element?.Quantity % product.Min_Order_QTY__c === 0) {
+            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c ||element?.Quantity % product.Min_Order_QTY__c === 0)) {
               productCount++;
               if (product.Category__c == "PREORDER") orderType = "Pre Order";
               let item = {};
