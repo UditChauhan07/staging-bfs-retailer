@@ -8,14 +8,10 @@ import ModalPage from "../../Modal UI";
 import { useBag } from "../../../context/BagContext";
 
 const Accordion = ({ data, formattedData }) => {
-  // console.log("Accordion data", data);
-  // console.log("Accordion formattedData", formattedData);
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
   const [showName, setShowName] = useState(false);
-
-  const [limitInput, setLimitInput] = useState("");
   const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
     product.salesPrice = salesPrice;
     if (Object.values(orders).length) {
@@ -36,41 +32,14 @@ const Accordion = ({ data, formattedData }) => {
   };
   const onPriceChangeHander = (product, price = '0') => {
     if (price == '') price = 0;
-    console.log({product});
+    console.log({ product });
     setOrderProductPrice(product, price)
   }
   const orderSetting = (product, quantity) => {
     setReplaceCartModalOpen(false);
     addOrder(product, quantity, data.discount);
   };
-  // const onQuantityChange = (product, quantity) => {
-  //   console.log({product});
-  //   if (Object.values(orders).length) {
-  //     if (
-  //       Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
-  //       Object.values(orders)[0].account.name === localStorage.getItem("Account") &&
-  //       Object.values(orders)[0].productType === (product.Category__c === "PREORDER" ? "pre-order" : "wholesale")
-  //     ) {
-  //       orderSetting(product, quantity);
-  //       setReplaceCartModalOpen(false);
-  //     } else {
-  //       setReplaceCartModalOpen(true);
-  //       setReplaceCartProduct({ product, quantity });
-  //     }
-  //   } else {
-  //     orderSetting(product, quantity);
-  //   }
-  // };
-  // const orderSetting = (product, quantity) => {
-  //   setReplaceCartModalOpen(false);
-  //   addOrder(product, quantity, data.discount);
-  // };
-  const handleNameChange = (event) => {
-    const limit = 4;
-    setLimitInput(event.target.value.slice(0, limit));
-  };
-  console.log(limitInput);
-  
+
   const replaceCart = () => {
     localStorage.removeItem("orders");
     setReplaceCartModalOpen(false);
@@ -166,22 +135,13 @@ const Accordion = ({ data, formattedData }) => {
                               </td>
                               <td className="text-capitalize" style={{ fontSize: '13px' }} onMouseEnter={() => setShowName({ index: indexed, type: true })}
                                 onMouseLeave={() => setShowName({ index: indexed })}>
-                                {/* {value.Name} */}
                                 {indexed !== showName?.index && value.Name.length >= 23 ? `${value.Name.substring(0, 23)}...` : value.Name}
-                                </td>
+                              </td>
                               <td>{value.ProductCode}</td>
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
-                              <td className={`${styles.PriceInput}  d-flex`} style={{padding:"8px 0px 22px 0px"}}>
-                                {/* {console.log({aa:Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice})} */}
-                                {/* value={salesPrice} */}
-                                {/* {Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice +"-"+salesPrice} */}
-                                {/* {Number(inputPrice).toFixed(2)}<br/> */}
-                                 ${(inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
-                                onKeyUp={(e) => {parseInt(e.target.value)>0 && onPriceChangeHander(value, e.target.value||0) }} id="limit_input"
-                    name="limit_input"
-                    value={limitInput}
-                    onChange={handleNameChange} /></>) : salesPrice}
+                              <td>
+                                $ {(qtyofItem > 0 && inputPrice || inputPrice == 0) ? (<><input type="number" placeholder={Number(inputPrice).toFixed(2)} className={styles.customPriceInput} onKeyUp={(e) => { onPriceChangeHander(value, e.target.value || 0) }} /></>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
                               <td>
@@ -191,9 +151,9 @@ const Accordion = ({ data, formattedData }) => {
                                     onQuantityChange(value, quantity, salesPrice, discount);
                                   }}
                                   value={qtyofItem}
-                                  />
+                                />
                               </td>
-                                  <td>{inputPrice?'$'+(inputPrice*qtyofItem).toFixed(2):'----'}</td>
+                              <td>{(qtyofItem > 0) ? '$' + (inputPrice * qtyofItem).toFixed(2) : '----'}</td>
                             </tr>
                           );
                         })}
