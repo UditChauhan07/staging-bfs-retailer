@@ -20,6 +20,7 @@ function MyBagFinal() {
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
   const [isPOEditable, setIsPOEditable] = useState(false);
   const [PONumberFilled, setPONumberFilled] = useState(true);
+  const [clearConfim,setClearConfim] = useState(false)
 
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
@@ -138,6 +139,30 @@ function MyBagFinal() {
   return (
     <div className="mt-4">
       <section>
+      {clearConfim ? (
+        <ModalPage
+          open
+          content={
+            <div className="d-flex flex-column gap-3">
+              <h2 className={`${Styles.warning} `}>Warning</h2>
+              <p className={`${Styles.warningContent} `}>
+                Are you Sure you want to clear bag?
+              </p>
+              <div className="d-flex justify-content-around ">
+                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={deleteBag}>
+                  Yes
+                </button>
+                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setClearConfim(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+          onClose={() => {
+            setClearConfim(false);
+          }}
+        />
+      ) : null}
         <div className="">
           <div>
             <div className={Styles.MyBagFinalTop}>
@@ -322,7 +347,7 @@ function MyBagFinal() {
                       >
                         ${Number(total).toFixed(2)} PLACE ORDER
                       </button>
-                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} onClick={deleteBag}>Clear Bag</p>
+                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} onClick={()=>{setClearConfim(true)}}>Clear Bag</p>
                       {/* {Number(total) ? null : window.location.reload()} */}
                     </div>
                   </div>
