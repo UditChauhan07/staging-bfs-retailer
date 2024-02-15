@@ -306,7 +306,7 @@ function Product() {
               open
               content={
                 <>
-                  <div style={{ maxWidth: "100%" }}>
+                  <div style={{ maxWidth: "100%" ,minWidth:'700px'}}>
                     <h1 className={`fs-5 ${Styles.ModalHeader} d-flex justify-content-between mb-3`}>Upload Order Form  
                     <CSVLink
                         data={csvData()}
