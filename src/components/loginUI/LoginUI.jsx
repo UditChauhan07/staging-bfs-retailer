@@ -73,16 +73,16 @@ const LoginUI = () => {
             <div className={styles.LoginMain}>
               <div className="d-flex col-12">
                 <div className="col-6">
-                  <button className={salesRepLogin ? styles.tab : styles.tabNotActive} onClick={handleSalesRepLogin}>
+                  <a className={styles.tabNotActive} href={'https://portal.beautyfashionsales.com/'}>
                     Sales Rep Login
-                  </button>
-                  <hr className={salesRepLogin ? styles.hr : null} />
+                  </a>
+                  <hr />
                 </div>
                 <div className="col-6">
-                  <button className={salesRepLogin ? styles.tabNotActive : styles.tab} onClick={handleRetailerLogin}>
+                  <button className={styles.tab}>
                     Retailer Login
                   </button>
-                  <hr className={salesRepLogin ? null : styles.hr} />
+                  <hr className={styles.hr} />
                 </div>
               </div>
               <h4>Access My Account</h4>
@@ -93,8 +93,8 @@ const LoginUI = () => {
                   </div>
 
                   <div className={styles.LabelEmail}>
-                    <label>Email</label> <br />
-                    <Field type="email" className="border-0 h-50 border-bottom" style={{ width: "100%", outline: "none" }} name="email" />
+                    <label>Username</label> <br />
+                    <Field type="name" className="border-0 h-50 border-bottom" style={{ width: "100%", outline: "none" }} name="email" />
                     <ErrorMessage component={TextError} name="email" />
                   </div>
                 </div>

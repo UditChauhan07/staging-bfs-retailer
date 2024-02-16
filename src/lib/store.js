@@ -12,7 +12,8 @@ const support = "AP0HBuNwbNnuhKR";
 // export const originAPi = "https://dev.beautyfashionsales.com"
 
 export async function AuthCheck() {
-  if (JSON.parse(localStorage.getItem("Api Data"))?.data) {
+  console.log({aa:JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))});
+  if (JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))) {
     return true;
   } else {
     DestoryAuth();
@@ -85,6 +86,7 @@ export function supportClear() {
 
 export function fetchBeg() {
   let orderStr = localStorage.getItem(orderKey);
+  console.log({orderStr});
   let orderDetails = {
     orderList: [],
     Account: {
@@ -111,39 +113,39 @@ export function fetchBeg() {
   return orderDetails;
 }
 
-export async function OrderPlaced({ order }) {
-  let orderinit = {
-    info: order,
-  };
-  let headersList = {
-    "Content-Type": "application/json",
-  };
+// export async function OrderPlaced({ order }) {
+//   let orderinit = {
+//     info: order,
+//   };
+//   let headersList = {
+//     "Content-Type": "application/json",
+//   };
 
-  let response = await fetch(url + "4eIAaY2H", {
-    method: "POST",
-    body: JSON.stringify(orderinit),
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 200) {
-    localStorage.removeItem(orderKey);
-    localStorage.removeItem(accountIdKey);
-    localStorage.removeItem(brandIdKey);
-    localStorage.removeItem(brandKey);
-    localStorage.removeItem(accountKey);
-    let lastCount = localStorage.getItem(POCount) || 1;
-    localStorage.setItem(POCount, parseInt(lastCount + 1));
-    return data.order;
-  } else if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return false;
-  }
-}
+//   let response = await fetch(url + "4eIAaY2H", {
+//     method: "POST",
+//     body: JSON.stringify(orderinit),
+//     headers: headersList,
+//   });
+//   let data = JSON.parse(await response.text());
+//   if (data.status == 200) {
+//     localStorage.removeItem(orderKey);
+//     localStorage.removeItem(accountIdKey);
+//     localStorage.removeItem(brandIdKey);
+//     localStorage.removeItem(brandKey);
+//     localStorage.removeItem(accountKey);
+//     let lastCount = localStorage.getItem(POCount) || 1;
+//     localStorage.setItem(POCount, parseInt(lastCount + 1));
+//     return data.order;
+//   } else if (data.status == 300) {
+//     DestoryAuth();
+//   } else {
+//     return false;
+//   }
+// }
 
 export async function DestoryAuth() {
-  localStorage.clear();
-  window.location.href = window.location.origin;
+  // localStorage.clear();
+  // window.location.href = window.location.origin;
   return true;
 }
 
@@ -151,32 +153,11 @@ export async function GetAuthData() {
   if (!AuthCheck) {
     DestoryAuth();
   } else {
-    return JSON.parse(localStorage.getItem("Api Data"))?.data;
+    return JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))?.data;
   }
 }
 
-export async function getOrderList({ user, month }) {
-  let headersList = {
-    Accept: "*/*",
-  };
 
-  let bodyContent = new FormData();
-  bodyContent.append("key", user.key);
-  bodyContent.append("Sales_Rep__c", user.Sales_Rep__c);
-  bodyContent.append("month", month === "last-6-months" ? "" : month);
-
-  let response = await fetch(url + "v3/20h2J48c", {
-    method: "POST",
-    body: bodyContent,
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
 export async function getOrderofSalesRep({ user, month }) {
   let headersList = {
     Accept: "*/*",
@@ -449,6 +430,126 @@ export async function postSupportComment({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+
+//retailer
+export async function getRetailerBrands({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(originAPi + "/retailer/GQGpen0kmGHGPtx", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getOrderProduct({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(originAPi + "/retailer/NDgzTcdHqMCCRFd", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
+  }
+}
+export async function OrderPlaced({ order }) {
+  let orderinit = {
+    info: order,
+  };
+  let headersList = {
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(originAPi + "/retailer/XXwo3xQF5CwslB9", {
+    method: "POST",
+    body: JSON.stringify(orderinit),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 200) {
+    localStorage.removeItem(orderKey);
+    localStorage.removeItem(accountIdKey);
+    localStorage.removeItem(brandIdKey);
+    localStorage.removeItem(brandKey);
+    localStorage.removeItem(accountKey);
+    let lastCount = localStorage.getItem(POCount) || 1;
+    localStorage.setItem(POCount, parseInt(lastCount + 1));
+    return data.order;
+  } else if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    if(data?.data){
+      return data.data
+    }else{
+      return false;
+    }
+  }
+}
+
+export async function getOrderList({ user, month }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", user.key);
+  bodyContent.append("AccountId", user.accountId);
+  bodyContent.append("month", month === "last-6-months" ? "" : month);
+
+  let response = await fetch(originAPi+ "/retailer/sWNZ2zjgP0prhlI", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({data});
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getOrderDetailId({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", rawData.key);
+  bodyContent.append("opportunity_id", rawData.opportunity_id);
+
+  let response = await fetch(originAPi+ "/retailer/rrIWkEGMzSBJzBg", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({data});
   if (data.status == 300) {
     DestoryAuth();
   } else {

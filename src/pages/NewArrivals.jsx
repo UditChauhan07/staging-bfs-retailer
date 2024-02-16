@@ -12,7 +12,6 @@ const NewArrivals = () => {
           </p>
         </div>
       </div>
-      {/* <OrderStatusFormSection /> */}
     </AppLayout>
   );
 };

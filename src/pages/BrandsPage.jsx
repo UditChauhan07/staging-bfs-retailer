@@ -9,6 +9,7 @@ import Layout from "../components/Layout/Layout";
 
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
+import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -36,17 +37,28 @@ const brandsImageMap = {
 const defaultImage = "default.jpg";
 
 const BrandsPage = () => {
-  const { data: manufacturers, isLoading, error } = useManufacturer();
+  const [manufacturers,setManufacturers] = useState({isLoading:false,data:[]});
   const [highestRetailers, setHighestRetailers] = useState(true);
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState("");
-
+  const [userData,setUserData] = useState({});
+  console.log({userData});
   const navigate = useNavigate();
   useEffect(() => {
     const userData = localStorage.getItem("Name");
     if (!userData) {
       navigate("/");
     }
+    GetAuthData().then((user)=>{
+      setUserData(user.data)
+      getRetailerBrands({rawData:{accountId:user?.data?.accountId,key:user?.data?.x_access_token,}}).then((prodcut)=>{
+        setManufacturers({...manufacturers, isLoading : true , data : prodcut})
+      }).catch((getProductError)=>{
+        console.log({getProductError});
+      })
+    }).catch((err)=>{
+      console.log({err});
+    })
   }, []);
   const filteredPageData = useMemo(() => {
     if (!Array.isArray(manufacturers?.data)) {
@@ -73,6 +85,7 @@ const BrandsPage = () => {
     }
     return newValues;
   }, [highestRetailers, searchBy, manufacturers, sortBy]);
+  console.log({filteredPageData})
   return (
     <>
       <AppLayout
@@ -132,7 +145,7 @@ const BrandsPage = () => {
           </>
         }
       >
-        {isLoading ? (
+        {!manufacturers.isLoading ? (
           <Loading height={"70vh"} />
         ) : (
           <div>
@@ -151,6 +164,7 @@ const BrandsPage = () => {
                       key={index}
                       image={brandsImageMap[brand?.Name] || defaultImage}
                       brand={brand}
+                      userData={userData}
                     />
                   ))}
                 </>

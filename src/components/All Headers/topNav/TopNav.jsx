@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { NeedHelp } from "../../../lib/svg";
 import ModalPage from "../../Modal UI";
 import SelectCaseReason from "../../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
+import { GetAuthData } from "../../../lib/store";
 // import Redirect from "../../Redirect";
 const TopNav = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem("Name");
+  const [userName,setUserName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  useEffect(()=>{
+    GetAuthData().then((res)=>{
+      setUserName(res.data.firstName+" "+res.data.lastName)
+    }).catch((err)=>{
+      console.log({err});
+    })
+  },[])
 
   // console.log("userDetails", userDetails);
   const reasons = {

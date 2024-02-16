@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Page from "../pages/page.module.css";
 import { ArrowRightInBrands } from "../lib/svg";
-const BrandCard = ({ brand, image }) => {
+const BrandCard = ({ brand, image, userData }) => {
   const navigate = useNavigate();
   return (
     <div className={`w-full last:mb-0 mb-4 ${Page.HoverArrow}`}>
@@ -15,7 +15,13 @@ const BrandCard = ({ brand, image }) => {
         <div
           className="flex justify-between items-start h-full px-[10px]"
           onClick={() => {
-            if (brand?.Accounds) navigate(`/my-retailers?manufacturerId=${brand.Id}`);
+            localStorage.setItem("manufacturer", brand.Name);
+            localStorage.setItem("ManufacturerId__c", brand.Id);
+            localStorage.setItem("Account", userData.accountName);
+            localStorage.setItem("Sales_Rep__c", brand.Sales_Rep__c);
+            localStorage.setItem("AccountId__c", userData.accountId);
+            localStorage.setItem("address", JSON.stringify(userData.shippingAddress));
+            if (brand?.Sales_Rep__c) navigate(`/orders`, { state: { salesRepName: brand.Name, salesRepId: brand.Sales_Rep__c, manufacturerId: brand.Id } });
           }}
         >
           <div className="flex flex-col justify-between h-full">
@@ -23,17 +29,17 @@ const BrandCard = ({ brand, image }) => {
 
             <button
               className="flex items-center gap-2"
-              // onClick={() => {
-              //   if (brand?.Accounds) navigate(`/my-retailers?manufacturerId=${brand.Id}`);
-              // }}
+            // onClick={() => {
+            //   if (brand?.Accounds) navigate(`/my-retailers?manufacturerId=${brand.Id}`);
+            // }}
             >
-              <div className="[font-family:'Montserrat-400'] font-normal text-black text-[12px] tracking-[0] leading-[32px] whitespace-nowrap">SHOW RETAILERS</div>
+              <div className="[font-family:'Montserrat-400'] font-normal text-black text-[12px] tracking-[0] leading-[32px] whitespace-nowrap">Placed Order</div>
               {/* <img src={"/assets/images/ArrowRight.svg"} alt="img" /> */}
-             <ArrowRightInBrands/>
+              <ArrowRightInBrands />
             </button>
           </div>
           <div className="bg-black rounded-full w-[40px] h-[40px] flex justify-center items-center">
-            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.Accounds}</div>
+            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.productCount > 99 ? '99+' : brand.productCount}</div>
           </div>
         </div>
       </div>

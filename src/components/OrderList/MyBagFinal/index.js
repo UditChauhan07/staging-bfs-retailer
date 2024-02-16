@@ -5,7 +5,7 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
-import { getOrderDetailsBasedId, getOrderDetailsInvoice, originAPi, supportShare } from "../../../lib/store";
+import { GetAuthData, getOrderDetailId, getOrderDetailsBasedId, getOrderDetailsInvoice, originAPi, supportShare } from "../../../lib/store";
 import { MdOutlineDownload } from "react-icons/md";
 
 function MyBagFinal() {
@@ -30,23 +30,26 @@ function MyBagFinal() {
     Accept: "*/*",
     "Content-Type": "application/json;charset=UTF-8",
   };
-
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-  getOrderDetailsInvoice({ rawData: { key: Key.data.access_token, id: OrderId } }).then((response) => {
-    console.log({ response });
-  }).catch((error) => {
-    console.error({ error });
-  })
+  // getOrderDetailsInvoice({ rawData: { key: Key.data.access_token, id: OrderId } }).then((response) => {
+  //   console.log({ response });
+  // }).catch((error) => {
+  //   console.error({ error });
+  // })
   const getOrderDetails = async () => {
-    const response = await axios.post(
-      `${originAPi}/beauty/0DS68FOD7s`,
-      BodyContent,
-      headersList
-    );
-    setOrderData(response.data.data);
-    setIsLoading(true);
+    GetAuthData().then((user) => {
+      let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
+      getOrderDetailId({ rawData }).then((res) => {
+        setOrderData(res);
+        setIsLoading(true);
+      }).catch((err1) => {
+        console.log({ err1 });
+      })
+    }).catch((err) => {
+      console.log({ err });
+    })
   };
   const handleback = () => {
     navigate("/order-list");
@@ -205,7 +208,7 @@ function MyBagFinal() {
                           {OrderData.Order_Number__c}
                         </p>
                       </div></>}
-                      {OrderData.Tracking__c && <>
+                    {OrderData.Tracking__c && <>
                       <h2>Tracking Number</h2>
                       <div className={Styles.ShipAdress}>
                         <p>
@@ -226,8 +229,9 @@ function MyBagFinal() {
 
                   {true && (
                     <div className={Styles.ShipBut}>
-                      <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler()}>
-                      <span style={{margin:'auto 0'}}><MdOutlineDownload size={16}/></span>&nbsp;INVOICE
+                      {/* onClick={() => invoiceHandler()} */}
+                      <button className="py-1 d-flex justify-content-center" >
+                        <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
                       </button>
                     </div>
                   )}

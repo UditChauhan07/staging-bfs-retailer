@@ -12,18 +12,13 @@ const LogoHeader = () => {
       <div className={` ${styles.laptopMode}`}>
         <div className={styles.lapSetting}>
           <p className={`m-0  ${styles.language}`}>
-            <Link to="/my-retailers" className={`linkStyle`}>
-              My Retailers
+            <Link to="/order" className={`linkStyle`}>
+              Order
             </Link>
           </p>
           <p className={`m-0   ${styles.language}`}>
             <Link to="/new-arrivals" className={`linkStyle`}>
               New Arrivals
-            </Link>
-          </p>
-          <p className={`m-0   ${styles.language}`}>
-            <Link to="/brand" className={`linkStyle`}>
-              Brands
             </Link>
           </p>
         </div>

@@ -44,7 +44,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   useEffect(() => {
     GetAuthData()
       .then((response) => {
-        getOrderofSalesRep({
+        getOrderList({
           user: {
             key: response.x_access_token,
             Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
@@ -52,7 +52,8 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           month: "",
         })
           .then((order) => {
-            setOrders(JSON.parse(order));
+            console.log({ order });
+            setOrders(order);
             setOrderGet(true)
           })
           .catch((error) => {

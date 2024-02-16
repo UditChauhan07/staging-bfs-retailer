@@ -15,11 +15,7 @@ export const useFetch = (url, options) => {
             {
               ...(options || {}),
               headers: {
-                "Content-type": "application/json",
-                // key: user?.data.api.access_token,
-                // userId: user?.data.user.Sales_Rep__c,
-                key: user?.data.access_token,
-                userId: user?.data.Sales_Rep__c,  
+                "Content-type": "application/json",  
                 ...(options?.headers || {}),
               },
             },

@@ -29,7 +29,11 @@ const Header = () => {
           Customer Support
         </Link>
       </p>
-      <p className={`m-0  ${styles.text}`}>
+      {true? <p className={`m-0  ${styles.text}`}>
+        <Link to="#" className="linkStyle">
+          Reports
+        </Link>
+      </p>:<p className={`m-0  ${styles.text}`}>
         <Link to="" className="linkStyle">
           <div className="dropdown dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             {path === "/sales-report" ? "Sales Report" : null || path === "/newness-report" ? "Newness Report" : null || path === "/comparison-report" ? "Comparison Report" : null || path === "/Target-Report" ? "Target Report" : "Reports"}
@@ -81,7 +85,7 @@ const Header = () => {
             </ul>
           </div>
         </Link>
-      </p>
+      </p>}
     </div>
     </div>
   );

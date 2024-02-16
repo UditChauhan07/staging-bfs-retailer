@@ -71,7 +71,7 @@ function MyBagFinal() {
             ManufacturerId__c: bagValue?.Manufacturer?.id,
             PONumber: PONumber,
             desc: orderDesc,
-            SalesRepId: user.Sales_Rep__c,
+            SalesRepId: localStorage.getItem("Sales_Rep__c"),
             Type: orderType,
             ShippingCity:bagValue?.Account?.address?.city,
             ShippingStreet:bagValue?.Account?.address?.street,
@@ -79,11 +79,10 @@ function MyBagFinal() {
             ShippingCountry:bagValue?.Account?.address?.country,
             ShippingZip:bagValue?.Account?.address?.postalCode,
             list,
-            key: user.x_access_token,
+            key: user.data.x_access_token,
           };
           OrderPlaced({ order: begToOrder })
             .then((response) => {
-              console.log({response});
               if (response) {
                 bagValue.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                 localStorage.removeItem("orders");

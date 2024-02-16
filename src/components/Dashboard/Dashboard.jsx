@@ -188,6 +188,15 @@ const dataa = {
 };
 
 function Dashboard({ dashboardData }) {
+  return(    <AppLayout>
+    <div className="row d-flex flex-column justify-content-around align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+      <div className="col-4">
+        <p className="m-0 fs-2 font-[Montserrat-400] text-[14px] tracking-[2.20px]">
+          Coming Soon...
+        </p>
+      </div>
+    </div>
+  </AppLayout>)
   const bgColors = {
     "Kevyn Aucoin Cosmetics": "KevynAucoinCosmeticsBg",
     "Bumble and Bumble": "BumbleandBumbleBg",
@@ -272,20 +281,12 @@ function Dashboard({ dashboardData }) {
   });
   const [manufacturerSalesYear, setManufacturerSalesYaer] = useState([]);
   // API INTEGRATION
-
-  useEffect(() => {
-    if (localStorage.getItem("Name")) {
-      // getDataHandler();
-      getDataHandler({ month: 2, year: 2024 });
-    } else {
-      navigate("/");
-    }
-  }, []);
-
+  
   useEffect(() => {
     if (!AuthCheck()) {
-      navigate("/");
+      // navigate("/");
     }
+    getDataHandler({ month: 2, year: 2024 });
   }, []);
   const [salesRepId, setSalesRepId] = useState();
   const getDataHandler = (headers = null) => {
@@ -300,7 +301,7 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            console.log({aa:dashboard});
+            console.log({ aa: dashboard });
             setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
@@ -425,8 +426,8 @@ function Dashboard({ dashboardData }) {
   }, [Monthlydataa]);
   useEffect(() => {
     setNeedle_data([
-      { name: "A", value: parseInt(targetValue> 0 ? targetValue : achievedSales), color: "#16BC4E" },
-      { name: "B", value: parseInt(targetValue>0 ? targetValue - achievedSales > 0 ? targetValue - achievedSales || 0 : 0 : targetValue), color: "#C7C7C7" },
+      { name: "A", value: parseInt(targetValue > 0 ? targetValue : achievedSales), color: "#16BC4E" },
+      { name: "B", value: parseInt(targetValue > 0 ? targetValue - achievedSales > 0 ? targetValue - achievedSales || 0 : 0 : targetValue), color: "#C7C7C7" },
     ]);
   }, [targetValue, achievedSales, Monthlydataa]);
   let lowPerformanceArray = accountPerformance?.data?.slice(0).reverse().map((ele) => ele);
@@ -458,7 +459,7 @@ function Dashboard({ dashboardData }) {
       total += v.value;
     });
     let ang = 180.0 * (1 - value / total);
-    if(value == 0 &&value < total){
+    if (value == 0 && value < total) {
       ang = 0;
     }
     const length = (iR + 2.4 * oR) / 3;
@@ -523,6 +524,11 @@ function Dashboard({ dashboardData }) {
   const sendDataTargetHandler = ({ salesRepId = null, manufacturerId = null }) => {
     navigate('/Target-Report', { state: { salesRepId, manufacturerId } });
   }
+  return (
+    <AppLayout>
+      Comming Soon...
+    </AppLayout>
+  )
   return (
     <AppLayout
       filterNodes={

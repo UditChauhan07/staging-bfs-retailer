@@ -42,8 +42,8 @@ function Product() {
   const [testerInBag, setTesterInBag] = useState(false);
   const [orderFormModal, setOrderFromModal] = useState(false);
   const { data, isLoading } = useProductList({
-    key: user?.data.access_token,
-    Sales_Rep__c: user?.data.Sales_Rep__c,
+    key: user?.data.x_access_token,
+    Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
     Manufacturer: localStorage.getItem("ManufacturerId__c"),
     AccountId__c: localStorage.getItem("AccountId__c"),
   });
