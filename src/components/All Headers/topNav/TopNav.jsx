@@ -47,15 +47,17 @@ const TopNav = () => {
                   Need Help?&nbsp; <NeedHelp />
                   {/* </a> */}
                   <ul className="dropdown-menu">
-                    <li onClick={() => navigate("/order-list")}>
-                      <Link to="/order-list" className="dropdown-item text-start">
+                    <li 
+                    // onClick={() => navigate("/order-list")}
+                    >
+                      <Link to="" className="dropdown-item text-start">
                         Order Status
                       </Link>
                     </li>
                     <li
-                      onClick={() => {
-                        setModalOpen(true);
-                      }}
+                      // onClick={() => {
+                      //   setModalOpen(true);
+                      // }}
                     >
                       <Link to="" className="dropdown-item text-start">
                         Customer Services

@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FilterItem } from "../FilterItem";
-import { useManufacturer } from "../../api/useManufacturer";
 import FilterSearch from "../FilterSearch";
+import { GetAuthData, getRetailerBrands } from "../../lib/store";
 
 const Filters = ({ value, onChange, resetFilter }) => {
-  const { data: manufacturerData } = useManufacturer();
+  const [manufacturerData,setManufacturerData ] = useState([]);
+  useEffect(()=>{
+    GetAuthData().then((user)=>{
+      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
+      getRetailerBrands({rawData}).then((resManu)=>{
+        setManufacturerData(resManu);
+      }).catch((err)=>{
+        console.log({err});
+      })
+    }).catch((error)=>{
+      console.log({error});
+    })
+  },[])
   const handleMonthFilter = (v) => onChange("month", v);
   const handleManufacturerFilter = (v) => onChange("manufacturer", v);
   const handleSearchFilter = (v) => onChange("search", v);
@@ -36,8 +48,8 @@ const Filters = ({ value, onChange, resetFilter }) => {
         name="MANUFACTURER"
         value={value.manufacturer}
         options={
-          Array.isArray(manufacturerData?.data)
-            ? manufacturerData?.data?.map((manufacturer) => ({
+          Array.isArray(manufacturerData)
+            ? manufacturerData?.map((manufacturer) => ({
                 label: manufacturer.Name,
                 value: manufacturer.Id,
               }))

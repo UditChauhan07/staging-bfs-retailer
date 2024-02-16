@@ -10,7 +10,7 @@ const LogoHeader = () => {
     <>
     <div className={styles.laptopModeSticky}>
       <div className={` ${styles.laptopMode}`}>
-        <div className={styles.lapSetting}>
+        <div className={styles.lapSetting} style={{minWidth:'300px'}}>
           <p className={`m-0  ${styles.language}`}>
             <Link to="/order" className={`linkStyle`}>
               Order
@@ -29,7 +29,7 @@ const LogoHeader = () => {
           </Link>
         </div>
         {/* my bag */}
-        <div className={styles.lapSetting}>
+        <div className={styles.lapSetting} style={{minWidth:'300px',justifyContent:'end'}}>
           <p className={`m-0 w-[100px]  ${styles.language} flex`}>
           <a href="#search" data-rr-ui-event-key="#search" className=" pr-0 nav-link active"><div className="search-container"><input className="search expandright" id="searchright" type="search" name="" placeholder="Search..."/><label className="button searchbutton" for="searchright"><span className="searchCode">Search...</span> <span className="mglass">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">

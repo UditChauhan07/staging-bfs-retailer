@@ -86,7 +86,7 @@ function LaunchCalendar({ productList, brand, month }) {
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
               {!isEmpty ? (
                 filterData?.map((month, index) => {
-                  if (month.content.length) {
+                  if (month.content.length>0) {
                     return (
                       <li key={index}>
                         <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
