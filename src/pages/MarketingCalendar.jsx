@@ -357,7 +357,7 @@ const MarketingCalendar = () => {
           size: "30 ml",
           description:
             "Powered by a potent combination of pure Vitamin C and moisture-rich serum, this daily treatment leaves skin radiant, while helping to reduce discoloration, fine lines and wrinkles.",
-          brandLogo: "/assets/images/Revive.png",
+          brandLogo: "/assets/images/revive.png",
         },
       ],
     },
@@ -570,7 +570,7 @@ const MarketingCalendar = () => {
           name: "Advanced Lip Perioral Serum Reformulation",
           size: "15g",
           description: "Lip & Perioral Renewal Serum is a targeted treatment for the lip area, specifically designed to fight against the appearance of vertical lines.",
-          brandLogo: "/assets/images/Revive.png",
+          brandLogo: "/assets/images/revive.png",
         },
         {
           brand: "ESTEE LAUDER",
