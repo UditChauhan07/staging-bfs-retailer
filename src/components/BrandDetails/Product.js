@@ -152,29 +152,12 @@ function Product() {
       let bagPrice = 0;
       let bagTesterPrice = 0;
       Object.values(begValue.orderList).map((product) => {
-        let productPriceStr = product.product.usdRetail__c;
+        let productPriceStr = product.product.salesPrice;
         let productQuantity = product.quantity;
-        let productCategories = product.product.Category__c;
-        let productPrice = 0;
-        let splitPrice = productPriceStr.split("$");
-        if (splitPrice.length == 2) {
-          productPrice = parseFloat(splitPrice[1]);
-        } else {
-          productPrice = parseFloat(splitPrice[0]);
-        }
-        if (productCategories && productCategories.toUpperCase() === "TESTER") {
-          console.log(productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100);
-          bagTesterPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.testerMargin) / 100;
-          bagPrice += bagTesterPrice;
-          setTesterInBag(true);
-        } else if (productCategories && productCategories.toUpperCase() === "SAMPLES") {
-          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.sample) / 100;
-        } else {
-          bagPrice += productPrice * productQuantity - (productPrice * productQuantity * product.discount.margin) / 100;
-        }
+        let productPrice = parseInt(productPriceStr||0);
+        bagPrice += productPrice * productQuantity;
       });
       setAlert(0);
-      console.log("begValue", begValue);
       if (data.discount.MinOrderAmount > bagPrice) {
         setAlert(1);
       } else {
