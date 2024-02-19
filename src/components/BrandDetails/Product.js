@@ -142,7 +142,7 @@ function Product() {
   }, []);
   const redirecting = () => {
     setTimeout(() => {
-      navigate("/my-retailers");
+      navigate("/order");
     }, 2000);
     // setRedirect(false);
   };
