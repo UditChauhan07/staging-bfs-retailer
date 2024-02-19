@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Detail from './Detail.module.css'
 import { SupportStatusGreen, SupportStatusRed, SupportStatusYellow, UserChecked } from '../../lib/svg'
 import { GetAuthData, getStrCode, postSupportComment } from '../../lib/store'
@@ -7,7 +7,14 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 function FullQuearyDetail({ data }) {
-    console.log({ data });
+    const [userData,setUserData] = useState({});
+    useEffect(()=>{
+        GetAuthData().then((user) => {
+            setUserData(user.data)
+        }).catch((error) => {
+            console.error({ error });
+        })
+    },[])
     const date = new Date(data.Date_Opened__c);
     const [comment, setComment] = useState('');
     function formatAMPM(date) {
@@ -22,12 +29,12 @@ function FullQuearyDetail({ data }) {
     }
     const CommentPostHandler = () => {
         if (comment != '') {
-            GetAuthData().then((user) => {
+
                 let rawData = {
-                    key: user.x_access_token,
+                    key: userData.x_access_token,
                     comment: {
                         ParentId: data.Id,
-                        CommentBody: `${data.salesRepName} Wrote:\n${comment}`
+                        CommentBody: `${userData.firstName+' '+userData.lastName} Wrote:\n${comment}`
                     }
                 }
                 postSupportComment({ rawData }).then((response) => {
@@ -39,9 +46,6 @@ function FullQuearyDetail({ data }) {
                 }).catch((err) => {
                     console.error({ err });
                 })
-            }).catch((error) => {
-                console.error({ error });
-            })
         }
     }
     return (
@@ -75,11 +79,11 @@ function FullQuearyDetail({ data }) {
                                     {data.CaseComments.records.map((activity, index) => {
                                         const itemDate = new Date(activity.CreatedDate);
                                         let desc = activity?.CommentBody.split("Wrote:\n");
-                                        console.log({ desc });
                                         return (<div className={Detail.ActivityBox}>
 
                                             <div className={`${Detail.ActivityProfile} ${activity?.CreatedById != "0053b00000DgEVEAA3" && Detail.ActiDark}`}>
-                                                <h6>{getStrCode(activity?.CreatedByname)}</h6>
+                                                <h6>{getStrCode(desc.length>1 &&desc[0]||activity?.CreatedByname)}</h6>
+                                                {/* <h6>{getStrCode(desc.length>1 &&desc[0]||activity?.CreatedByname)}</h6> */}
                                             </div>
                                             <div className={Detail.ActivityContentImform}>
                                                 <h2>{activity?.CreatedByname}</h2>
@@ -118,9 +122,8 @@ function FullQuearyDetail({ data }) {
                             {/* Active Comment Box STARTING */}
                             <div className={Detail.CommentBox}>
                                 {data.Status != "closed" && <div className={Detail.ActivityBox}>
-
                                     <div className={Detail.ActivityProfile}>
-                                        <h6>{getStrCode(data.salesRepName)}</h6>
+                                        <h6>{getStrCode(userData.firstName+' '+userData.lastName)}</h6>
                                     </div>
                                     <div className={`${Detail.ActivityContentImform} ${Detail.SendFlex}`}>
                                         <textarea placeholder='Add a comment...' rows="4" cols="50" value={comment} onChange={(e) => { setComment(e.target.value) }}></textarea>

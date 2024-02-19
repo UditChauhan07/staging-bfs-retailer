@@ -30,31 +30,36 @@ function OrderListContent({ data }) {
   };
 
   const generateSuportHandler = ({ data, value }) => {
-    let beg = {
-      orderStatusForm: {
-        salesRepId: null,
-        reason: value,
-        contactId: null,
-        accountId: data.AccountId,
-        orderNumber: data?.Order_Number__c,
-        poNumber: data.PO_Number__c,
-        manufacturerId: data.ManufacturerId__c,
-        desc: null,
-        opportunityId: data.Id,
-        priority: "Medium",
-        sendEmail: false,
-      },
-    };
-    // console.log("beg", beg);
-    let statusOfSupport = supportShare(beg)
-      .then((response) => {
-        if (response) navigate("/orderStatusForm");
-      })
-      .catch((error) => {
+    GetAuthData().then((user)=>{
+      if(user.status == 200){
+        let beg = {
+          orderStatusForm: {
+            salesRepId: data.OwnerId,
+            reason: value,
+            contactId: user.data.retailerId,
+            accountId: data.AccountId,
+            orderNumber: data?.Order_Number__c,
+            poNumber: data.PO_Number__c,
+            manufacturerId: data.ManufacturerId__c,
+            desc: null,
+            opportunityId: data.Id,
+            priority: "Medium",
+            sendEmail: false,
+          },
+        };
+        // console.log("beg", beg);
+        let statusOfSupport = supportShare(beg)
+        .then((response) => {
+          if (response) navigate("/orderStatusForm");
+        })
+        .catch((error) => {
         console.error({ error });
-      });
-
-  };
+      });      
+    }
+    }).catch((userErr)=>{
+      console.error({userErr});
+    })
+    };
 
   return (
     <>

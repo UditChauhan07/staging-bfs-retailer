@@ -9,33 +9,13 @@ import Select from "react-select";
 
 const OrderStatusFormSection = () => {
   const navigate = useNavigate();
-  const [prioritiesList, setPrioritiesList] = useState([]);
-  const [contactList, setContactList] = useState([]);
   const [supportTicketData, setTicket] = useState();
   const [activeBtn, setActive] = useState(false);
 
   useEffect(() => {
     let data = supportDriveBeg();
-    console.log({ data });
+    console.log({data});
     setTicket(data);
-    GetAuthData()
-      .then((user) => {
-        let rawData = {
-          key: user.x_access_token,
-          AccountId: data.orderStatusForm.accountId,
-        };
-        getSupportFormRaw({ rawData })
-          .then((raw) => {
-            setPrioritiesList(raw.Priority);
-            setContactList(raw.ContactList);
-          })
-          .catch((error) => {
-            console.error({ error });
-          });
-      })
-      .catch((err) => {
-        console.error({ err });
-      });
   }, []);
 
   const onChangeHandler = (key, value) => {
@@ -52,26 +32,18 @@ const OrderStatusFormSection = () => {
       });
   };
   const onSubmitHandler = (values) => {
-    console.log(values);
     setActive(true);
     let temp = supportTicketData;
     temp.orderStatusForm["desc"] = values.description;
-    temp.orderStatusForm["contactId"] = values.contact.value.value;
-
     supportShare(temp)
       .then((response) => {
         let data = supportDriveBeg();
         setTicket(data);
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
     console.log("submitted", supportTicketData);
 
     GetAuthData()
       .then((user) => {
-        supportTicketData.orderStatusForm.salesRepId = user.Sales_Rep__c;
-        supportTicketData.key = user.x_access_token;
+        supportTicketData.key = user?.data?.x_access_token;
         postSupport({ rawData: supportTicketData })
           .then((response) => {
             let flush = supportClear();
@@ -86,12 +58,14 @@ const OrderStatusFormSection = () => {
       .catch((error) => {
         console.error({ error });
       });
+    })
+    .catch((error) => {
+      console.error({ error });
+    });
     return;
   };
   const initialValues = {
-    description: supportTicketData?.orderStatusForm?.desc || "",
-    contact:
-      supportTicketData?.orderStatusForm?.contactId ||""
+    description: supportTicketData?.orderStatusForm?.desc || ""
   };
   const SearchableSelect = (FieldProps) => {
     return (
@@ -107,51 +81,12 @@ const OrderStatusFormSection = () => {
       />
     );
   };
-  console.log(initialValues);
   return (
     <Formik initialValues={initialValues} validationSchema={OrderStatusSchema} onSubmit={onSubmitHandler}>
       {(formProps) => (
         <div className={styles.container}>
           <Form className={styles.formContainer}>
             <b className={styles.containerTitle}>Order Status : {supportTicketData?.orderStatusForm?.reason}</b>
-            {/* <label className={styles.labelHolder}>
-            Priority
-            <select
-              onChange={(e) => {
-                onChangeHandler("priority", e.target.value);
-              }}
-              required
-            >
-              {prioritiesList.map((priority) => {
-                return (
-                  <option value={priority.value} selected={priority.value == supportTicketData?.orderStatusForm?.priority}>
-                    {priority.name}
-                  </option>
-                );
-              })}
-            </select>
-          </label>  */}
-
-            <label className={styles.labelHolder}>
-              Contact Name
-              {/* <Field
-              component="select"
-              name="contact"
-            >
-              <option val>Select Contact</option>
-              {contactList.map((contact) => {
-                console.log(contact);
-                return (
-                  <option value={contact.Id} selected={contact.Id == supportTicketData?.orderStatusForm?.contactId}>
-                    {contact.Name}
-                  </option>
-                );
-              })}
-            </Field> */}
-              <Field name="contact.value" options={contactList.map((contact) => ({ label: contact.Name, value: contact.Id }))} component={SearchableSelect} />
-            </label>
-            <ErrorMessage component={TextError} name="contact" />
-
             <label className={styles.labelHolder}>
               Describe your issues
               <Field component="textarea" placeholder="Description" rows={4} name="description" defaultValue={initialValues.description}></Field>

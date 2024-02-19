@@ -14,11 +14,11 @@ import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
+import { GetAuthData, getRetailerBrands } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
 const SalesReport = () => {
-  const { data: manufacturers } = useManufacturer();
   const [yearFor, setYearFor] = useState(2024);
   const salesReportApi = useSalesReport();
   const [isLoading, setIsLoading] = useState(false);
@@ -87,8 +87,8 @@ const SalesReport = () => {
         ManufacturerName__c: ele.ManufacturerName__c,
         AccountName: item.Name,
         AccountRepo: item?.AccountRepo ??
-        JSON.parse(localStorage.getItem("Api Data")).data
-          .Name,
+          JSON.parse(localStorage.getItem("Api Data")).data
+            .Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,
@@ -167,13 +167,23 @@ const SalesReport = () => {
     setIsLoading(false);
   };
   // console.log("salesReportData", salesReportData);
+  const [manufacturerData,setManufacturerData ] = useState([]);
   useEffect(() => {
-    const userData = localStorage.getItem("Name");
-    if (userData) {
-      getSalesData(yearFor);
-    } else {
-      navigate("/");
-    }
+    GetAuthData().then((user) => {
+      if (user) {
+        let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
+        getRetailerBrands({ rawData }).then((resManu) => {
+          setManufacturerData(resManu);
+          getSalesData(yearFor);
+        }).catch((err) => {
+          console.log({ err });
+        })
+      } else {
+        navigate("/");
+      }
+    }).catch((error) => {
+      console.log({ error });
+    })
   }, []);
   const sendApiCall = () => {
     setManufacturerFilter(null);
@@ -194,7 +204,7 @@ const SalesReport = () => {
             label="All Manufacturers"
             name="AllManufacturers1"
             value={manufacturerFilter}
-            options={manufacturers?.data?.map((manufacturer) => ({
+            options={manufacturerData?.map((manufacturer) => ({
               label: manufacturer.Name,
               value: manufacturer.Name,
             }))}
@@ -218,7 +228,6 @@ const SalesReport = () => {
             onChange={(value) => setHighestOrders(value)}
           />
           {/* First Calender Filter-- start date */}
-          <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
           <div className="d-flex gap-3">
             <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
               CLEAR ALL

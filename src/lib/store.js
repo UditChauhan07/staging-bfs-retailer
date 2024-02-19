@@ -1,7 +1,6 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "http://localhost:3001"
-let url = `${originAPi}/beauty/`;
-let URL = `${originAPi}/beauty/0DS68FOD7s`;
+let url = `${originAPi}/retailer/`;
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
 const brandIdKey = "ManufacturerId__c";
@@ -113,35 +112,6 @@ export function fetchBeg() {
   return orderDetails;
 }
 
-// export async function OrderPlaced({ order }) {
-//   let orderinit = {
-//     info: order,
-//   };
-//   let headersList = {
-//     "Content-Type": "application/json",
-//   };
-
-//   let response = await fetch(url + "4eIAaY2H", {
-//     method: "POST",
-//     body: JSON.stringify(orderinit),
-//     headers: headersList,
-//   });
-//   let data = JSON.parse(await response.text());
-//   if (data.status == 200) {
-//     localStorage.removeItem(orderKey);
-//     localStorage.removeItem(accountIdKey);
-//     localStorage.removeItem(brandIdKey);
-//     localStorage.removeItem(brandKey);
-//     localStorage.removeItem(accountKey);
-//     let lastCount = localStorage.getItem(POCount) || 1;
-//     localStorage.setItem(POCount, parseInt(lastCount + 1));
-//     return data.order;
-//   } else if (data.status == 300) {
-//     DestoryAuth();
-//   } else {
-//     return false;
-//   }
-// }
 
 export async function DestoryAuth() {
   // localStorage.clear();
@@ -180,43 +150,6 @@ export async function getOrderofSalesRep({ user, month }) {
   }
 }
 
-export async function getTargetReportAll({ user, year, preOrder }) {
-  if (user) {
-    let headersList = {
-      Accept: "*/*",
-    };
-    let tried = false;
-    let bodyContent = new FormData();
-    bodyContent.append("key", user.x_access_token);
-    if (user.Sales_Rep__c != "00530000005AdvsAAC" && user.Sales_Rep__c != "0053b00000DgEVEAA3") {
-      bodyContent.append("SalesRepId", user.Sales_Rep__c);
-    }
-    if (year) {
-      bodyContent.append('year', year);
-    }
-    if (preOrder) {
-      bodyContent.append('preorder', preOrder);
-    }
-
-    let response = await fetch(url + "/target/4Tu6do95AxLM3Cl", {
-      method: "POST",
-      body: bodyContent,
-      headers: headersList,
-    });
-    let data = JSON.parse(await response.text());
-    if (data.status == 300) {
-      DestoryAuth();
-    } else {
-      let rawRes = { ownerPermission: false, list: data.data }
-      if (user.Sales_Rep__c == "00530000005AdvsAAC" || user.Sales_Rep__c == "0053b00000DgEVEAA3") {
-        rawRes.ownerPermission = true;
-      }
-      return rawRes;
-    }
-  } else {
-    return false
-  }
-}
 export async function getOrderDetailsBasedId({ rawData }) {
   let headersList = {
     Accept: "*/*",
@@ -249,80 +182,6 @@ export async function getOrderDetailsInvoice({ rawData }) {
   bodyContent.append("opportunity_id", rawData.id);
 
   let response = await fetch(url + "3JlgPqaeYIveHd6", {
-    method: "POST",
-    body: bodyContent,
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
-
-export async function getDashboardata({ user }) {
-  let headersList = {};
-  if (user.headers) {
-    headersList = user.headers || {};
-  } else {
-    headersList = {
-      Accept: "*/*",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    };
-  }
-
-  let bodyContent = new FormData();
-  bodyContent.append("key", user.x_access_token);
-  bodyContent.append("SalesRepId", user.Sales_Rep__c);
-
-  let response = await fetch(url + "v3/u5eIT2RZSBRcfyK", {
-    // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
-    method: "POST",
-    body: bodyContent,
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
-
-export async function getSupportList({ user }) {
-  let headersList = {
-    Accept: "*/*",
-  };
-  // console.log({user});
-  let bodyContent = new FormData();
-  bodyContent.append("key", user.x_access_token);
-  bodyContent.append("salesRepId", user.Sales_Rep__c);
-
-  let response = await fetch(url + "v3/TDIztRiHo6Juf3I", {
-    method: "POST",
-    body: bodyContent,
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
-
-export async function getSupportDetails({ rawData }) {
-  let headersList = {
-    Accept: "*/*",
-  };
-
-  let bodyContent = new FormData();
-  bodyContent.append("key", rawData.key);
-  bodyContent.append("caseId", rawData.caseId);
-
-  let response = await fetch(url + "v3/ffBUF1vNs9LTLfz", {
     method: "POST",
     body: bodyContent,
     headers: headersList,
@@ -386,7 +245,7 @@ export async function postSupport({ rawData }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url + "v3/hunQaon7f5sTDeb", {
+  let response = await fetch(url + "jO39qP1LpsBFM5B", {
     method: "POST",
     body: JSON.stringify(rawData),
     headers: headersList,
@@ -418,24 +277,6 @@ export async function postSupportAny({ rawData }) {
   }
 }
 
-export async function postSupportComment({ rawData }) {
-  let headersList = {
-    Accept: "*/*",
-    "Content-Type": "application/json",
-  };
-
-  let response = await fetch(url + "v3/dgwz2CbCvN2QzAk", {
-    method: "POST",
-    body: JSON.stringify(rawData),
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
 
 
 //retailer
@@ -444,7 +285,6 @@ export async function getRetailerBrands({ rawData }) {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-
   let response = await fetch(originAPi + "/retailer/GQGpen0kmGHGPtx", {
     method: "POST",
     body: JSON.stringify(rawData),
@@ -550,6 +390,132 @@ export async function getOrderDetailId({ rawData }) {
   });
   let data = JSON.parse(await response.text());
   console.log({data});
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+export async function getDashboardata({ user }) {
+  let headersList = {};
+  if (user.headers) {
+    headersList = user.headers || {};
+  } else {
+    headersList = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    };
+  }
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", user.data.x_access_token);
+  bodyContent.append("accountId", user.data.accountId);
+
+  let response = await fetch(originAPi + "retailer/38Akka0hdLL8Kyo", {
+    // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({data});
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getSupportList({ user }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+  let bodyContent = new FormData();
+  bodyContent.append("key", user?.data?.x_access_token);
+  bodyContent.append("accountId", user?.data?.accountId);
+
+  let response = await fetch(url + "XIj26x1E4d2kMKg", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getSupportDetails({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", rawData.key);
+  bodyContent.append("caseId", rawData.caseId);
+
+  let response = await fetch(url + "DJ2ITqAxnaCY1BA", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getTargetReportAll({ user, year, preOrder }) {
+  console.log({user});
+  if (user) {
+    let headersList = {
+      Accept: "*/*",
+    };
+    let bodyContent = new FormData();
+    bodyContent.append("key", user?.data?.x_access_token);
+      bodyContent.append("accountId", user?.data?.accountId);
+    if (year) {
+      bodyContent.append('year', year);
+    }
+    if (preOrder) {
+      bodyContent.append('preorder', preOrder);
+    }
+    // console.log({bodyRaw});
+    let response = await fetch(originAPi + "/uBUAQkaqEISRPAv/K2uJd7bnERtviUv", {
+      method: "POST",
+      body: bodyContent,
+      headers: headersList,
+    });
+    let data = JSON.parse(await response.text());
+    console.log({data});
+    if (data.status == 300) {
+      DestoryAuth();
+    } else {
+      let rawRes = { ownerPermission: false, list: data.data }
+      return rawRes;
+    }
+  } else {
+    return false
+  }
+}
+
+export async function postSupportComment({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "fZY7ItyXCLWH4iO", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
   if (data.status == 300) {
     DestoryAuth();
   } else {

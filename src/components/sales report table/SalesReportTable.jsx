@@ -45,12 +45,6 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   >
                     Account
                   </th>
-                  <th
-                    className={`${styles.th} ${styles.stickyThirdColumnHeading}`}
-                    style={{ minWidth: "200px" }}
-                  >
-                    Sales Rep
-                  </th>
                   {(currentYear == year) ? month >= 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
@@ -154,13 +148,6 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                         >
                           {ownerPermission?item?.AccountName:item?.Name}
                         </td>
-                        <td
-                          className={`${styles.td} ${styles.stickyThirdColumn}`}
-                        >
-                          {item?.AccountRepo ??
-                            JSON.parse(localStorage.getItem("Api Data")).data
-                              .Name}
-                        </td>
                         {(currentYear == year) ? month >= 0 && <td className={`${styles.td}`}>
                           ${Number(item.Jan.amount).toFixed(2)}
                         </td> : <td className={`${styles.td}`}>
@@ -240,7 +227,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                 <tr>
                   <td
                     className={`${styles.lastRow} ${styles.stickyFirstColumn} ${styles.stickyLastRow}`}
-                    colSpan={3}
+                    colSpan={2}
                   >
                     TOTAL
                   </td>
