@@ -219,10 +219,7 @@ function Dashboard({ dashboardData }) {
 
   //dashboard varibale used
   const [box, setBox] = useState({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
-  const [Monthlydataa, setMonthlydata] = useState({ isLoaded: false, data: [] });
-  const [Yearlydataa, setYearlydata] = useState({ isLoaded: false, data: [] });
   const [accountPerformance, setAccountPerformance] = useState({ isLoaded: false, data: [] });
-  const [leadsbybrand, setleadsbtbrand] = useState({ isLoaded: false, data: [] });
   const [salesByBrandData, setSalesByBrandData] = useState({
     series: [],
     options: {
@@ -294,22 +291,6 @@ function Dashboard({ dashboardData }) {
             setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
-            }
-            if (dashboard?.monthlySalesRepData) {
-              let monthlyDataKey = Object.keys(dashboard?.monthlySalesRepData)
-              let temp = [];
-              monthlyDataKey.map((id) => {
-                temp.push(dashboard.monthlySalesRepData[id])
-              })
-              setMonthlydata({ isLoaded: true, data: temp })
-            }
-            if (dashboard.yearlySalesRepData) {
-              let monthlyDataKey = Object.keys(dashboard?.yearlySalesRepData)
-              let temp = [];
-              monthlyDataKey.map((id) => {
-                temp.push(dashboard.yearlySalesRepData[id])
-              })
-              setYearlydata({ isLoaded: true, data: temp })
             }
             if (dashboard?.monthlyManufactureData) {
               let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
@@ -392,14 +373,6 @@ function Dashboard({ dashboardData }) {
               })
               setManufacturerSalesYaer(temp)
             }
-            if (dashboard?.leadManufacturerRaw) {
-              let monthlyDataKey = Object.keys(dashboard?.leadManufacturerRaw)
-              let temp = [];
-              monthlyDataKey.map((id) => {
-                temp.push(dashboard.leadManufacturerRaw[id])
-              })
-              setleadsbtbrand({ isLoaded: true, data: temp })
-            }
           })
           .catch((err) => {
             console.error({ err });
@@ -412,21 +385,18 @@ function Dashboard({ dashboardData }) {
   useEffect(() => {
     setTargetValue(Number(box.TARGET / 1000).toFixed(0));
     setAchievedSales(Number(box.REVENUE / 1000).toFixed(0));
-  }, [Monthlydataa]);
+  }, []);
   useEffect(() => {
     setNeedle_data([
       { name: "A", value: parseInt(targetValue > 0 ? targetValue : achievedSales), color: "#16BC4E" },
       { name: "B", value: parseInt(targetValue > 0 ? targetValue - achievedSales > 0 ? targetValue - achievedSales || 0 : 0 : targetValue), color: "#C7C7C7" },
     ]);
-  }, [targetValue, achievedSales, Monthlydataa]);
+  }, [targetValue, achievedSales]);
   let lowPerformanceArray = accountPerformance?.data?.slice(0).reverse().map((ele) => ele);
 
   const changeMonthHandler = (value) => {
     setIsLoading(false);
-    setleadsbtbrand({ isLoaded: false, data: [] })
     setAccountPerformance({ isLoaded: false, data: [] })
-    setMonthlydata({ isLoaded: false, data: [] })
-    setYearlydata({ isLoaded: false, data: [] })
     setBrandData({ isLoaded: false, data: [] })
     setManufacturerSalesYaer([]);
     setBox({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
@@ -465,54 +435,6 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
-  function IsTableLoading() {
-    return (
-      <>
-        <tr>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-          <td>
-            <ContentLoader />
-          </td>
-        </tr>
-      </>
-    );
-  }
-  let totalTargetForMTDSalesRep = 0;
-  let totalAmountForMTDSalesRep = 0;
-  let totalDiffForMTDSalesRep = 0;
-  let totalTargetForYTDSalesRep = 0;
-  let totalAmountForYTDSalesRep = 0;
-  let totalDiffForYTDSalesRep = 0;
-  let totalTargetForMTDGoalBrand = 0;
-  let totalAmountForMTDGoalBrand = 0;
-  let totalDiffForMTDGoalBrand = 0;
-  let totalRecieved = 0;
-  let totalConverted = 0;
-  const sendDataTargetHandler = ({ salesRepId = null, manufacturerId = null }) => {
-    navigate('/Target-Report', { state: { salesRepId, manufacturerId } });
-  }
   return (
     <AppLayout
       filterNodes={
@@ -607,7 +529,7 @@ function Dashboard({ dashboardData }) {
                 <Loading />
               ) : (
                 <>
-                  {targetValue && achievedSales && Monthlydataa ? (
+                  {targetValue && achievedSales ? (
                     <>
                       <div className={Styles.donuttop1}>
                         <div className="container">

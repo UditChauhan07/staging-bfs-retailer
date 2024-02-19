@@ -412,7 +412,7 @@ export async function getDashboardata({ user }) {
   bodyContent.append("key", user.data.x_access_token);
   bodyContent.append("accountId", user.data.accountId);
 
-  let response = await fetch(originAPi + "retailer/38Akka0hdLL8Kyo", {
+  let response = await fetch(url + "38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
     body: bodyContent,
