@@ -386,7 +386,7 @@ function Product() {
                       <h4 className="flex justify-center items-center gap-4 uppercase font-[Montserrat-500] tracking-[2.20px]">
                         <button
                           onClick={() => {
-                            navigate("/my-retailers");
+                            navigate("/order");
                           }}
                         >
                           <BackArrow />
