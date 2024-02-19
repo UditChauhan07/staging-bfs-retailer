@@ -9,7 +9,7 @@ import img4 from "./Images/Group1.png";
 import img5 from "./Images/Rectangle 304.png";
 import { PieChart, Pie, Cell } from "recharts";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthCheck, GetAuthData, getDashboardata } from "../../lib/store";
+import { AuthCheck, GetAuthData, formatNumber, getDashboardata } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import SelectBrandModel from "../My Retailers/SelectBrandModel/SelectBrandModel";
@@ -269,7 +269,7 @@ function Dashboard({ dashboardData }) {
   });
   const [manufacturerSalesYear, setManufacturerSalesYaer] = useState([]);
   // API INTEGRATION
-  
+
   useEffect(() => {
     if (!AuthCheck()) {
       // navigate("/");
@@ -277,6 +277,7 @@ function Dashboard({ dashboardData }) {
     getDataHandler({ month: 2, year: 2024 });
   }, []);
   const [salesRepId, setSalesRepId] = useState();
+
   const getDataHandler = (headers = null) => {
     // setIsLoaded(true);
     GetAuthData()
@@ -287,19 +288,25 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            console.log({ dashboard });
-            setBox({ RETAILERS: dashboard?.activeAccount || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
+            setBox({ RETAILERS: dashboard?.activeBrands || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
             }
+            let totalOrder = 0;
+            let totalPrice = 0;
+            let activeBrand = 0;
             if (dashboard?.monthlyManufactureData) {
               let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
+              activeBrand = monthlyDataKey.length;
               let temp = [];
               monthlyDataKey.map((id) => {
                 temp.push(dashboard.monthlyManufactureData[id])
+                totalPrice += dashboard.monthlyManufactureData[id]?.sale
+                totalOrder += dashboard.monthlyManufactureData[id]?.own
               })
               setBrandData({ isLoaded: true, data: temp })
             }
+            setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             //ownManuFactureData
             if (dashboard?.monthlyManufactureData) {
               setSalesByBrandData({
@@ -383,8 +390,8 @@ function Dashboard({ dashboardData }) {
       });
   };
   useEffect(() => {
-    setTargetValue(Number(box.TARGET / 1000).toFixed(0));
-    setAchievedSales(Number(box.REVENUE / 1000).toFixed(0));
+    setTargetValue(formatNumber(box.TARGET));
+    setAchievedSales(formatNumber(box.REVENUE));
   }, []);
   useEffect(() => {
     setNeedle_data([
@@ -459,14 +466,14 @@ function Dashboard({ dashboardData }) {
         <Loading height="80vh" />
       ) : (
         <div className="">
-                    <div className="row mt-2 g-4">
+          <div className="row mt-2 g-4">
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className={Styles.dashbottom}>
                 <div className={`text-center  ${Styles.active}`}>
                   <img src={img1} alt="" className={`text-center ${Styles.iconactive}`} />
                 </div>
                 <div className="">
-                  <p className={`text-end ${Styles.activetext}`}>ACTIVE RETAILERS</p>
+                  <p className={`text-end ${Styles.activetext}`}>ACTIVE Brands</p>
                   <h1 className={`text-end ${Styles.activetext1}`}>{box.RETAILERS}</h1>
                 </div>
               </div>
@@ -491,7 +498,7 @@ function Dashboard({ dashboardData }) {
                 </div>
                 <div className="">
                   <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS >= 1000 ? Number((Number(box.ORDERS) / 1000).toFixed(0)) + 'K' : box.ORDERS}</h1>
+                  <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS}</h1>
                 </div>
               </div>
             </div>
@@ -502,7 +509,7 @@ function Dashboard({ dashboardData }) {
                 </div>
                 <div className="">
                   <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>${box.REVENUE >= 1000 ? (Number((Number(box.REVENUE) / 1000).toFixed(0)) + 'K') : box.REVENUE}</h1>
+                  <h1 className={`text-end ${Styles.activetext1}`}>${formatNumber(box.REVENUE)}</h1>
                 </div>
               </div>
             </div>
@@ -534,10 +541,10 @@ function Dashboard({ dashboardData }) {
                       <div className={Styles.donuttop1}>
                         <div className="container">
                           <p className={`text-end ${Styles.Tabletxt}`}>
-                            Your Target: <span className={Styles.Tabletext_head}>{Number(targetValue) || 0}K</span>
+                            Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
                           </p>
                           <p className={`text-end ${Styles.Tabletxt1}`}>
-                            Achieved Sales: <span className={Styles.Tabletext_head}>{Number(achievedSales) || 0}K</span>
+                            Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                           </p>
                           <div className={Styles.donutbox}>
                             <PieChart width={400} height={400}>
