@@ -19,6 +19,15 @@ export async function AuthCheck() {
     return false;
   }
 }
+export function formatNumber(num) {
+  if (num >= 0 && num < 10000) {
+    return (num / 1000).toFixed(1) + 'K';
+  } else if (num >= 10000) {
+    return (num / 10000).toFixed(0) + 'K';
+  } else {
+    return num;
+  }
+}
 
 export function POGenerator() {
   let count = parseInt(localStorage.getItem(POCount)) || 1;
