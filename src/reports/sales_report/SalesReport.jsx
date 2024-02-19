@@ -146,6 +146,7 @@ const SalesReport = () => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
     const result = await salesReportApi.salesReportData({ yearFor });
+    console.log({result});
     let salesListName = [];
     let salesList = [];
     result.data.data.map((manu) => {

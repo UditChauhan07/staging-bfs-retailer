@@ -146,7 +146,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                         <td
                           className={`${styles.td} ${styles.stickySecondColumn}`}
                         >
-                          {ownerPermission?item?.AccountName:item?.Name}
+                          {item?.AccountName==item?.Name?item?.Name:item?.AccountName||item.Name}
                         </td>
                         {(currentYear == year) ? month >= 0 && <td className={`${styles.td}`}>
                           ${Number(item.Jan.amount).toFixed(2)}
