@@ -16,7 +16,7 @@ const CustomerSupportDetails = () => {
   useEffect(() => {
     GetAuthData()
       .then((user) => {
-        let rawData = { key: user.x_access_token, caseId: deatilsId };
+        let rawData = { key: user?.data?.x_access_token, caseId: deatilsId };
         getSupportDetails({ rawData })
           .then((deatils) => {
             deatils.salesRepName = user.Name;

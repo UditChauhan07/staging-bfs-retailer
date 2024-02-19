@@ -64,9 +64,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                 <div
                   className={Styles.supportLeftBox}
                   style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setModalOpen(true);
-                  }}
+                  // onClick={() => {
+                  //   setModalOpen(true);
+                  // }}
                 >
                   <div className={Styles.supportLeftImg}>
                     <CustomerServiceIcon width={42} height={42} />
@@ -80,9 +80,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                 {/* Brand Management Approval */}
                 <div
                   style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setBrandManagementModalOpen(true);
-                  }}
+                  // onClick={() => {
+                  //   setBrandManagementModalOpen(true);
+                  // }}
                 >
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>

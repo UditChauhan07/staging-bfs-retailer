@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, getTargetReportAll } from "../../lib/store";
+import { GetAuthData, getRetailerBrands, getTargetReportAll } from "../../lib/store";
 import Loading from "../../components/Loading";
 import { useManufacturer } from "../../api/useManufacturer";
 import { FilterItem } from "../../components/FilterItem";
@@ -18,7 +18,7 @@ const fileExtension = ".xlsx";
 const TargetReport = () => {
     const location = useLocation();
     const { state } = location || {};
-    const { data: manufacturers } = useManufacturer();
+    const [manufacturerData, setManufacturerData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [target, setTarget] = useState({ ownerPermission: false, list: [] });
     const [manufacturerFilter, setManufacturerFilter] = useState();
@@ -32,6 +32,7 @@ const TargetReport = () => {
     useEffect(() => {
         GetAuthData().then((user) => {
             getTargetReportAll({ user, year, preOrder }).then((targetRes) => {
+                console.log({ targetRes });
                 if (targetRes) {
                     setIsLoaded(true)
                 }
@@ -47,6 +48,12 @@ const TargetReport = () => {
                 setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null)
             }).catch((targetErr) => {
                 console.error({ targetErr });
+            })
+            let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
+            getRetailerBrands({ rawData }).then((resManu) => {
+                setManufacturerData(resManu);
+            }).catch((err) => {
+                console.log({ err });
             })
         }).catch((userErr) => {
             console.error({ userErr });
@@ -157,7 +164,7 @@ const TargetReport = () => {
     const getManufactureName = (id = null) => {
         if (id) {
             let name = null;
-            manufacturers?.data?.map((manufacturer) => {
+            manufacturerData?.map((manufacturer) => {
                 if (manufacturer.Id == id) name = manufacturer.Name
             })
             return name;
@@ -170,8 +177,8 @@ const TargetReport = () => {
         const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const data = new Blob([excelBuffer], { type: fileType });
         let title = target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : 'Target Report'
-        if(manufacturerFilter){
-            title += " for " +getManufactureName(manufacturerFilter)
+        if (manufacturerFilter) {
+            title += " for " + getManufactureName(manufacturerFilter)
         }
         title += ` ${new Date().toDateString()}`;
         FileSaver.saveAs(data, title + fileExtension);
@@ -280,13 +287,11 @@ const TargetReport = () => {
                 onChange={(value) => setSearchSaleBy(value)}
                 name="salesRepSearch"
             />}
-
-        <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by account"} minWidth={"167px"} />
         <FilterItem
             minWidth="220px"
             label="All Manufacturers"
             value={manufacturerFilter}
-            options={manufacturers?.data?.map((manufacturer) => ({
+            options={manufacturerData?.map((manufacturer) => ({
                 label: manufacturer.Name,
                 value: manufacturer.Id,
             }))}
@@ -337,7 +342,7 @@ const TargetReport = () => {
                     <div>
                         <h2>
                             {target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Sales Report` : "Your Target Report"}
-                            {manufacturerFilter && " for " +getManufactureName(manufacturerFilter)}
+                            {manufacturerFilter && " for " + getManufactureName(manufacturerFilter)}
                         </h2>
                     </div>
                     <div>
