@@ -394,12 +394,12 @@ function Dashboard({ dashboardData }) {
   };
   useEffect(() => {
     setNeedle_data([
-      { name: "A", value: parseInt(targetValue > 0 ? targetValue : achievedSales), color: "#16BC4E" },
-      { name: "B", value: parseInt(targetValue > 0 ? targetValue - achievedSales > 0 ? targetValue - achievedSales || 0 : 0 : targetValue), color: "#C7C7C7" },
+      { name: "A", value: parseInt((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100), color: "#16BC4E" },
+      { name: "B", value: parseInt(((box.REVENUE/box.TARGET*100)-100)>=100?0:(box.REVENUE/box.TARGET*100)-100), color: "#C7C7C7" },
     ]);
   }, [targetValue, achievedSales]);
   let lowPerformanceArray = accountPerformance?.data?.slice(0).reverse().map((ele) => ele);
-
+  
   const changeMonthHandler = (value) => {
     setIsLoading(false);
     setAccountPerformance({ isLoaded: false, data: [] })
@@ -417,7 +417,7 @@ function Dashboard({ dashboardData }) {
   const cy = 200;
   const iR = 50;
   const oR = 100;
-  const value = parseInt(targetValue);
+  const value = parseInt((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100);
   const needle = (value, data, cx, cy, iR, oR, color) => {
     let total = 0;
     needle_data.forEach((v) => {
@@ -441,7 +441,6 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
-  console.log({targetValue, achievedSales});
   return (
     <AppLayout
       filterNodes={
