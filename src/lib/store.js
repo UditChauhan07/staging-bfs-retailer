@@ -20,10 +20,10 @@ export async function AuthCheck() {
   }
 }
 export function formatNumber(num) {
-  if (num >= 0 && num < 10000) {
+  if (num >= 0 && num < 1000000) {
     return (num / 1000).toFixed(1) + 'K';
-  } else if (num >= 10000) {
-    return (num / 10000).toFixed(0) + 'M';
+  } else if (num >= 1000000) {
+    return (num / 1000000).toFixed(0) + 'M';
   }else if(num <0){
     return (num / 1000).toFixed(1) + 'K';
   } else {
