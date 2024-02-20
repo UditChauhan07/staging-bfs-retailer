@@ -293,6 +293,7 @@ function Dashboard({ dashboardData }) {
             }
             let totalOrder = 0;
             let totalPrice = 0;
+            let totalTarget = 0;
             let activeBrand = 0;
             if (dashboard?.monthlyManufactureData) {
               let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
@@ -302,11 +303,12 @@ function Dashboard({ dashboardData }) {
                 temp.push(dashboard.monthlyManufactureData[id])
                 totalPrice += dashboard.monthlyManufactureData[id]?.sale
                 totalOrder += dashboard.monthlyManufactureData[id]?.own
+                totalTarget += dashboard.monthlyManufactureData[id]?.target
               })
               setBrandData({ isLoaded: true, data: temp })
             }
-            setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
-            setTargetValue(formatNumber(dashboard?.salesRepTarget||0));
+            setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
+            setTargetValue(formatNumber(totalTarget||0));
             setAchievedSales(formatNumber(totalPrice||0));
             //ownManuFactureData
             if (dashboard?.monthlyManufactureData) {

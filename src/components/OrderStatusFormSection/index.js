@@ -20,7 +20,6 @@ const OrderStatusFormSection = () => {
   const onChangeHandler = (key, value) => {
     let temp = supportTicketData;
     temp.orderStatusForm[key] = value;
-
     supportShare(temp)
       .then((response) => {
         let data = supportDriveBeg();
