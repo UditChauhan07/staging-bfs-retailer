@@ -39,7 +39,7 @@ const BrandCard = ({ brand, image, userData }) => {
             </button>
           </div>
           <div className="bg-black rounded-full w-[40px] h-[40px] flex justify-center items-center">
-            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.productCount > 99 ? <span className={`${Page.productCount}  `}>99<sup>+</sup></span>: brand.productCount}</div>
+            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.productCount > 99 ? <span className={`${Page.productCount}  `}>99<sup style={{top:"-17px"}}>+</sup></span>: brand.productCount}</div>
           </div>
         </div>
       </div>
