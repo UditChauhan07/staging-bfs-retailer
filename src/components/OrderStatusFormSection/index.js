@@ -14,7 +14,6 @@ const OrderStatusFormSection = () => {
 
   useEffect(() => {
     let data = supportDriveBeg();
-    console.log({data});
     setTicket(data);
   }, []);
 

@@ -130,7 +130,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           let rawData = {
             orderStatusForm: {
               typeId,
-              salesRepId: orderData.salesRepId,
+              salesRepId: orderData.opportunityId?orderData.salesRepId:"0053b00000DgEVEAA3",
               reason,
               accountId: user?.data?.accountId,
               orderNumber: orderData.opportunityId ? orderData.orderNumber ?? "Not Available":null,
@@ -147,8 +147,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
             },
             key: user?.data?.x_access_token,
           };
-          console.log({rawData});
-          return;
           postSupportAny({ rawData })
             .then((response) => {
               console.log({response});

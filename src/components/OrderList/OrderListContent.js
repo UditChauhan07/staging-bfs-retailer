@@ -41,6 +41,7 @@ function OrderListContent({ data }) {
             orderNumber: data?.Order_Number__c?? "Not Available",
             poNumber: data.PO_Number__c,
             manufacturerId: data.ManufacturerId__c,
+            invoiceNumber:data.Wholesale_Invoice__c? data.Wholesale_Invoice__c??"Not Available": "Not Available" ,
             desc: null,
             opportunityId: data.Id,
             priority: "Medium",
