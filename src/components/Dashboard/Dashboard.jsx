@@ -288,7 +288,6 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            setBox({ RETAILERS: dashboard?.activeBrands || 0, GROWTH: 0, ORDERS: dashboard?.totalOrder || 0, REVENUE: dashboard?.totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
             if (dashboard.rawPerformance) {
               setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
             }
@@ -307,6 +306,8 @@ function Dashboard({ dashboardData }) {
               setBrandData({ isLoaded: true, data: temp })
             }
             setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: dashboard.salesRepTarget || 0 })
+            setTargetValue(formatNumber(dashboard?.salesRepTarget||0));
+            setAchievedSales(formatNumber(totalPrice||0));
             //ownManuFactureData
             if (dashboard?.monthlyManufactureData) {
               setSalesByBrandData({
@@ -390,10 +391,6 @@ function Dashboard({ dashboardData }) {
       });
   };
   useEffect(() => {
-    setTargetValue(formatNumber(box.TARGET));
-    setAchievedSales(formatNumber(box.REVENUE));
-  }, []);
-  useEffect(() => {
     setNeedle_data([
       { name: "A", value: parseInt(targetValue > 0 ? targetValue : achievedSales), color: "#16BC4E" },
       { name: "B", value: parseInt(targetValue > 0 ? targetValue - achievedSales > 0 ? targetValue - achievedSales || 0 : 0 : targetValue), color: "#C7C7C7" },
@@ -442,6 +439,7 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
+  console.log({targetValue, achievedSales});
   return (
     <AppLayout
       filterNodes={
@@ -532,7 +530,7 @@ function Dashboard({ dashboardData }) {
             </div>
             <div className="col-lg-5">
               <p className={Styles.Tabletext}>Your Sales Performance Score in 2024</p>
-              {false ? (
+              {isLoading ? (
                 <Loading />
               ) : (
                 <>
