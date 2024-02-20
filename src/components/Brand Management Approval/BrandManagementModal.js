@@ -25,12 +25,13 @@ const BrandManagementModal = ({ onClose, recordType }) => {
       .then((response) => {
         getOrderList({
           user: {
-            key: response.x_access_token,
-            Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
+            key: response.data.x_access_token,
+            accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
           },
           month: "",
         })
           .then((order) => {
+            console.log({order});
             setOrders(order);
           })
           .catch((error) => {
@@ -323,9 +324,9 @@ const BrandManagementModal = ({ onClose, recordType }) => {
               </button>
               <button
                 className={Styles.Button2}
-              onClick={() => {
-                submitForm();
-              }}
+                onClick={() => {
+                  submitForm();
+                }}
               >
                 SUBMIT
               </button>

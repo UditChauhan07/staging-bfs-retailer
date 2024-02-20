@@ -42,7 +42,7 @@ const BrandsPage = () => {
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [userData,setUserData] = useState({});
-  console.log({userData});
+
   const navigate = useNavigate();
   useEffect(() => {
     const userData = localStorage.getItem("Name");

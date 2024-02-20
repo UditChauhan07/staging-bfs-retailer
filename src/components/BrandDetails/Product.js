@@ -48,25 +48,24 @@ function Product() {
     AccountId__c: localStorage.getItem("AccountId__c"),
   });
   const brandName = data?.data?.records?.[0]?.ManufacturerName__c;
-
+  
   const groupProductDataByCategory = (productData) => {
     const groupedData = groupBy(productData || [], "Category__c");
-
+    
     const tester = [...(groupedData["TESTER"] || [])];
     delete groupedData["TESTER"];
     const samples = [...(groupedData["Samples"] || [])];
     delete groupedData["Samples"];
-
+    
     if (tester?.length) {
       groupedData["TESTER"] = tester;
     }
     if (samples?.length) {
       groupedData["Samples"] = samples;
     }
-
+    
     return groupedData;
   };
-
   const formattedData = useMemo(() => groupProductDataByCategory(data?.data?.records), [data?.data?.records]);
 
   const formattedFilterData = useMemo(() => {

@@ -38,7 +38,7 @@ function OrderListContent({ data }) {
             reason: value,
             contactId: user.data.retailerId,
             accountId: data.AccountId,
-            orderNumber: data?.Order_Number__c,
+            orderNumber: data?.Order_Number__c?? "Not Available",
             poNumber: data.PO_Number__c,
             manufacturerId: data.ManufacturerId__c,
             desc: null,

@@ -1,5 +1,5 @@
-export const originAPi = "https://b2b.beautyfashionsales.com"
-// export const originAPi = "http://localhost:3001"
+// export const originAPi = "https://b2b.beautyfashionsales.com"
+export const originAPi = "http://localhost:3001"
 let url = `${originAPi}/retailer/`;
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
@@ -23,7 +23,9 @@ export function formatNumber(num) {
   if (num >= 0 && num < 10000) {
     return (num / 1000).toFixed(1) + 'K';
   } else if (num >= 10000) {
-    return (num / 10000).toFixed(0) + 'K';
+    return (num / 10000).toFixed(0) + 'M';
+  }else if(num <0){
+    return (num / 1000).toFixed(1) + 'K';
   } else {
     return num;
   }
@@ -94,13 +96,13 @@ export function supportClear() {
 
 export function fetchBeg() {
   let orderStr = localStorage.getItem(orderKey);
-  console.log({orderStr});
   let orderDetails = {
     orderList: [],
     Account: {
       name: null,
       id: null,
       address: null,
+      shippingMethod:null
     },
     Manufacturer: {
       name: null,
@@ -113,6 +115,7 @@ export function fetchBeg() {
       orderDetails.Account.id = orderList[0].account.id;
       orderDetails.Account.name = orderList[0].account.name;
       orderDetails.Account.address = JSON.parse(orderList[0].account.address);
+      orderDetails.Account.shippingMethod = orderList[0].account.shippingMethod;
       orderDetails.Manufacturer.id = orderList[0].manufacturer.id;
       orderDetails.Manufacturer.name = orderList[0].manufacturer.name;
       orderDetails.orderList = orderList;
@@ -267,24 +270,7 @@ export async function postSupport({ rawData }) {
   }
 }
 
-export async function postSupportAny({ rawData }) {
-  let headersList = {
-    Accept: "*/*",
-    "Content-Type": "application/json",
-  };
 
-  let response = await fetch(url + "v3/OFT88qVeJPUGsly", {
-    method: "POST",
-    body: JSON.stringify(rawData),
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.status == 300) {
-    DestoryAuth();
-  } else {
-    return data.data;
-  }
-}
 
 
 
@@ -520,6 +506,25 @@ export async function postSupportComment({ rawData }) {
   };
 
   let response = await fetch(url + "fZY7ItyXCLWH4iO", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function postSupportAny({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "pu5OWqfUCR7Onj2", {
     method: "POST",
     body: JSON.stringify(rawData),
     headers: headersList,

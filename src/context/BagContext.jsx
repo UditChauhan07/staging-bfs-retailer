@@ -68,6 +68,7 @@ const BagProvider = ({ children }) => {
         name: localStorage.getItem("Account"),
         id: localStorage.getItem("AccountId__c"),
         address: localStorage.getItem("address"),
+        shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
       },
       manufacturer: {
         name: localStorage.getItem("manufacturer"),

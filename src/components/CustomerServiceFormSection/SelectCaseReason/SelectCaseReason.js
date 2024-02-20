@@ -11,7 +11,6 @@ import Loading from "../../Loading";
 const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const navigate = useNavigate();
   // const [prioritiesList, setPrioritiesList] = useState([]);
-  const [accountList, setAccountList] = useState([]);
   const [orders, setOrders] = useState([]);
   const [orderIdChild, setOrderIdChild] = useState([]);
   const [typeId, setTypeId] = useState(recordType.id);
@@ -46,25 +45,17 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       .then((response) => {
         getOrderList({
           user: {
-            key: response.x_access_token,
-            Sales_Rep__c: false ? "00530000005AdvsAAC" : response.Sales_Rep__c,
+            key: response.data.x_access_token,
+            accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
           },
           month: "",
         })
           .then((order) => {
-            console.log({ order });
             setOrders(order);
             setOrderGet(true)
           })
           .catch((error) => {
             console.log({ error });
-          });
-        getAllAccount({ user: response })
-          .then((accounts) => {
-            setAccountList(accounts);
-          })
-          .catch((actError) => {
-            console.error({ actError });
           });
       })
       .catch((err) => {
@@ -72,7 +63,13 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       });
   }, [step]);
   const onChangeHandler = (e) => {
+    console.log({ valu: e.target.value });
     if (reason == null) {
+      if (e.target.value == "Update Account Info") {
+        setStep(2);
+      } else {
+        setStep(1);
+      }
       setReason(e.target.value);
       setReasonName(e.target.value);
       setSelectOrderItem({ id: null, value: null });
@@ -85,7 +82,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
         actualAmount: null,
         invoiceNumber: null,
       });
-      setStep(1);
     } else {
       setReasonChangeModalOpen(true);
       setReasonName(e.target.value);
@@ -97,13 +93,14 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
     let orderDetails = orders.filter(function (element) {
       if (element.Id === id) {
         setOrderData({
+          salesRepId: element.OwnerId,
           accountId: element.AccountId,
-          orderNumber: element.Order_Number__c ?? "N/A",
+          orderNumber: element.Order_Number__c ?? "Not Available",
           poNumber: element.PO_Number__c,
           manufacturerId: element.ManufacturerId__c,
           opportunityId: element.Id,
           actualAmount: element.Amount,
-          invoiceNumber: element.Wholesale_Invoice__c,
+          invoiceNumber: element.Wholesale_Invoice__c?? "Not Available",
         });
         setOrderIdChild(element.OpportunityLineItems.records);
         setStep(2);
@@ -114,13 +111,8 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
   const filteredContact = () => {
     const element = orders.filter((ele) => ele.Id == orderData.opportunityId)[0];
     return element
-      ? `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
+      ? `Order from ${element?.AccountName || element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`
       : "Search...";
-  };
-  const onChnageAccountHander = (value) => {
-    // console.log(value);
-    setOrderData({ accountId: value });
-    setStep(2);
   };
   const onChnageOrderItemHander = (value) => {
     let orderItemDetails = orderIdChild.filter(function (element) {
@@ -138,14 +130,14 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           let rawData = {
             orderStatusForm: {
               typeId,
-              salesRepId: user.Sales_Rep__c,
+              salesRepId: orderData.salesRepId,
               reason,
-              accountId: orderData.accountId,
-              orderNumber: orderData.orderNumber,
+              accountId: user?.data?.accountId,
+              orderNumber: orderData.opportunityId ? orderData.orderNumber ?? "Not Available":null,
               PONumber: orderData.poNumber,
               manufacturerId: orderData.manufacturerId,
               amount: orderData.actualAmount,
-              invoiceNumber: orderData.invoiceNumber ? orderData.invoiceNumber : 'NA',
+              invoiceNumber: orderData.opportunityId ? orderData.invoiceNumber ?? "Not Available":null,
               amount: orderData.actualAmount,
               desc,
               opportunityId: orderData.opportunityId,
@@ -153,13 +145,16 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               sendEmail: false,
               subject,
             },
-            key: user.x_access_token,
+            key: user?.data?.x_access_token,
           };
+          console.log({rawData});
+          return;
           postSupportAny({ rawData })
             .then((response) => {
-              if (response) {
-                navigate("/CustomerSupportDetails?id=" + response);
-              }
+              console.log({response});
+              // if (response) {
+              //   navigate("/CustomerSupportDetails?id=" + response);
+              // }
             })
             .catch((err) => {
               console.error({ err });
@@ -208,7 +203,11 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         actualAmount: null,
                         invoiceNumber: null,
                       });
-                      // setStep(1);
+                      if (reasonName == "Update Account Info") {
+                        setStep(2);
+                      } else {
+                        setStep(1);
+                      }
                     }}
                   >
                     Submit
@@ -262,7 +261,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         options={orders.map((element) => {
                           return {
                             value: element.Id,
-                            label: `Order from ${element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
+                            label: `Order from ${element?.AccountName || element?.Account?.Name} for (${element?.OpportunityLineItems?.totalSize} Products) Actual Amount ${element?.Amount} | ${element?.ManufacturerName__c} | PO #${element?.PO_Number__c}`,
                           };
                         })}
                         defaultValue={{
@@ -280,28 +279,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
                         menuPosition={"fixed"}
                         menuShouldScrollIntoView={false}
                       />}
-                  </div>
-                )}
-                {reason == "Update Account Info" && (
-                  <div style={{ textAlign: "left", margin: "10px 0px" }}>
-                    <p className={Styles.CaseReason}>
-                      <span className="text-danger">*</span>Select Account
-                    </p>
-                    <Select
-                      options={accountList.map((element) => {
-                        return { value: element.Id, label: element.Name };
-                      })}
-                      onChange={(option) => onChnageAccountHander(option.value)}
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-                      menuPortalTarget={document.body}
-                      isSearchable
-                      menuPosition={"fixed"}
-                      menuShouldScrollIntoView={false}
-                      defaultValue={{
-                        value: accountList.filter((ele) => ele.Id === orderData.accountId)?.[0]?.["Id"] || "Select...",
-                        label: accountList.filter((ele) => ele.Id === orderData.accountId)?.[0]?.["Name"] || "Select...",
-                      }}
-                    />
                   </div>
                 )}
               </div>
