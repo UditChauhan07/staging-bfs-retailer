@@ -72,9 +72,9 @@ const BrandsPage = () => {
       );
     }
     if (highestRetailers) {
-      newValues = newValues?.sort((a, b) => b.Accounds - a.Accounds);
+      newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
     } else {
-      newValues = newValues?.sort((a, b) => a.Accounds - b.Accounds);
+      newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
     }
     if (sortBy) {
       if (sortBy === "a-z") {
@@ -111,16 +111,16 @@ const BrandsPage = () => {
             />
             <FilterItem
               minWidth="220px"
-              label="Lowest Retailers"
+              label="Lowest Product"
               name="Lowest-Retailers"
               value={highestRetailers}
               options={[
                 {
-                  label: "Highest Retailers",
+                  label: "Highest Product ",
                   value: true,
                 },
                 {
-                  label: "Lowest Retailers",
+                  label: "Lowest Product",
                   value: false,
                 },
               ]}

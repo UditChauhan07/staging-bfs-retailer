@@ -12,11 +12,10 @@ background: #FFF;
   }
 .productCount {
   margin-top: 4px;
-  margin-left: 11px;
+  margin-left: 6px;
 }
- sup{
-  top: -17px;
-  left: -16px;
+sup{
+left: -3px;
 }
   .HoverArrow svg{
     transition: 0.5s;
