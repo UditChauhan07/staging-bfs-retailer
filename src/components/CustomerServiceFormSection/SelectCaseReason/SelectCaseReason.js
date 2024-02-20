@@ -137,7 +137,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               PONumber: orderData.poNumber,
               manufacturerId: orderData.manufacturerId,
               amount: orderData.actualAmount,
-              invoiceNumber: orderData.opportunityId ? orderData.invoiceNumber ?? "Not Available":null,
+              invoiceNumber: orderData.opportunityId ? orderData.invoiceNumber ?orderData.invoiceNumber: "Not Available":null,
               amount: orderData.actualAmount,
               desc,
               opportunityId: orderData.opportunityId,
@@ -149,10 +149,9 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
           };
           postSupportAny({ rawData })
             .then((response) => {
-              console.log({response});
-              // if (response) {
-              //   navigate("/CustomerSupportDetails?id=" + response);
-              // }
+              if (response) {
+                navigate("/CustomerSupportDetails?id=" + response);
+              }
             })
             .catch((err) => {
               console.error({ err });
