@@ -21,6 +21,7 @@ const BrandCard = ({ brand, image, userData }) => {
             localStorage.setItem("Sales_Rep__c", brand.Sales_Rep__c);
             localStorage.setItem("AccountId__c", userData.accountId);
             localStorage.setItem("address", JSON.stringify(userData.shippingAddress));
+            localStorage.setItem("shippingMethod", JSON.stringify({number:brand.Shipping_Account_Number__c,method:brand.Shipping_Method__c}));
             if (brand?.Sales_Rep__c) navigate(`/orders`, { state: { salesRepName: brand.Name, salesRepId: brand.Sales_Rep__c, manufacturerId: brand.Id } });
           }}
         >

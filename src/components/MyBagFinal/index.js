@@ -21,7 +21,6 @@ function MyBagFinal() {
   const [isPOEditable, setIsPOEditable] = useState(false);
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim,setClearConfim] = useState(false)
-
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
@@ -80,6 +79,7 @@ function MyBagFinal() {
             ShippingZip:bagValue?.Account?.address?.postalCode,
             list,
             key: user.data.x_access_token,
+            shippingMethod:bagValue.Account.shippingMethod
           };
           OrderPlaced({ order: begToOrder })
             .then((response) => {

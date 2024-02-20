@@ -29,7 +29,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
     "Product Missing": "Product Missing",
     "Product Overage Shipped": "Product Overage",
     "Product Damage": "Product Damage",
-    "Update Account Info": "Update Account Info",
+    // "Update Account Info": "Update Account Info",
   };
   return (
     <div>
@@ -64,9 +64,9 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                 <div
                   className={Styles.supportLeftBox}
                   style={{ cursor: "pointer" }}
-                  // onClick={() => {
-                  //   setModalOpen(true);
-                  // }}
+                  onClick={() => {
+                    setModalOpen(true);
+                  }}
                 >
                   <div className={Styles.supportLeftImg}>
                     <CustomerServiceIcon width={42} height={42} />
@@ -76,38 +76,6 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     <p>Resolving Concerns Serving Solutions</p>
                   </div>
                 </div>
-
-                {/* Brand Management Approval */}
-                <div
-                  style={{ cursor: "pointer" }}
-                  // onClick={() => {
-                  //   setBrandManagementModalOpen(true);
-                  // }}
-                >
-                  <div className={Styles.supportLeftBox}>
-                    <div className={Styles.supportLeftImg}>
-                      <DefaultSupportIcon width={42} height={42} />
-                    </div>
-                    <div className={Styles.supportLeftContent}>
-                      <h2>Brand Management Approval </h2>
-                      <p>Effective Management</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className={Styles.supportLeftBox}>
-                    <div className={Styles.supportLeftImg}>
-                      <MarketingSupportIcon width={42} height={42} />
-                    </div>
-
-                    <div className={Styles.supportLeftContent}>
-                      <h2>Marketing Request</h2>
-                      <p>Elevate Your Marketing with Proactive Solutions.</p>
-                    </div>
-                  </div>
-                </div>
-
                 <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
@@ -116,18 +84,6 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
 
                     <div className={Styles.supportLeftContent}>
                       <h2>Displays Issues </h2>
-                      <p>Empowering Solutions for Effective Management</p>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className={Styles.supportLeftBox}>
-                    <div className={Styles.supportLeftImg}>
-                      <DIFTestIcon width={42} height={42} />
-                    </div>
-
-                    <div className={Styles.supportLeftContent}>
-                      <h2>DIF Tester Issue </h2>
                       <p>Empowering Solutions for Effective Management</p>
                     </div>
                   </div>
