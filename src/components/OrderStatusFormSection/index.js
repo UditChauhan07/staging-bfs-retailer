@@ -38,29 +38,27 @@ const OrderStatusFormSection = () => {
       .then((response) => {
         let data = supportDriveBeg();
         setTicket(data);
-    console.log("submitted", supportTicketData);
-
-    GetAuthData()
-      .then((user) => {
-        supportTicketData.key = user?.data?.x_access_token;
-        postSupport({ rawData: supportTicketData })
-          .then((response) => {
-            let flush = supportClear();
-            if (response) {
-              navigate("/CustomerSupportDetails?id=" + response);
-            }
+        GetAuthData()
+          .then((user) => {
+            supportTicketData.key = user?.data?.x_access_token;
+            postSupport({ rawData: supportTicketData })
+              .then((response) => {
+                let flush = supportClear();
+                if (response) {
+                  navigate("/CustomerSupportDetails?id=" + response);
+                }
+              })
+              .catch((err) => {
+                console.error({ err });
+              });
           })
-          .catch((err) => {
-            console.error({ err });
+          .catch((error) => {
+            console.error({ error });
           });
       })
       .catch((error) => {
         console.error({ error });
       });
-    })
-    .catch((error) => {
-      console.error({ error });
-    });
     return;
   };
   const initialValues = {
