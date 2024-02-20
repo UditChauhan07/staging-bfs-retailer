@@ -5,11 +5,11 @@ import { ArrowRightInBrands } from "../lib/svg";
 const BrandCard = ({ brand, image, userData }) => {
   const navigate = useNavigate();
   return (
-    <div className={`w-full last:mb-0 mb-4 ${Page.HoverArrow}`}>
-      <div className={`border-b-[0.5px] border-[#D0CFCF] flex flex-col gap-4 h-full  ${Page.ImgHover1}`}>
+    <div className={`w-full last:mb-0 mb-4 ${Page.HoverArrow} `}>
+      <div className={`border-b-[0.5px] border-[#D0CFCF] flex flex-col  gap-4 h-full  ${Page.ImgHover1}`}>
         {image ? (
           <div className={`border-[0.5px]  relative  border-[#D0CFCF] ${Page.ImgHover}`}>
-            <img src={`/assets/images/${image}`} className="object-scale-down max-h-[200px] h-full w-full" alt="img" />
+            <img src={`/assets/images/${image}`} className={`${Page.objectscaledown } max-h-[200px] h-full w-full" `} alt="img" />
           </div>
         ) : null}
         <div
@@ -40,7 +40,7 @@ const BrandCard = ({ brand, image, userData }) => {
             </button>
           </div>
           <div className="bg-black rounded-full w-[40px] h-[40px] flex justify-center items-center">
-            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.productCount > 99 ? '99+' : brand.productCount}</div>
+            <div className="font-medium text-white text-[20px] whitespace-nowrap h-[40px] w-[40px] flex justify-center items-center  ">{brand?.productCount > 99 ? <span className={`${Page.productCount}  `}>99<sup>+</sup></span>: brand.productCount}</div>
           </div>
         </div>
       </div>
