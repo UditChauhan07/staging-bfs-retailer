@@ -346,7 +346,16 @@ function MyBagFinal() {
                       >
                         ${Number(total).toFixed(2)} PLACE ORDER
                       </button>
-                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} onClick={()=>{setClearConfim(true)}}>Clear Bag</p>
+                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} 
+                      onClick={()=>{if(Object.keys(orders).length){
+                        if(clearConfim.length){
+                          orderPlaceHandler();
+                        }else{
+                          setClearConfim(true)}}
+                        }
+                      }
+                      disabled={!buttonActive}
+                       >Clear Bag</p>
                       {/* {Number(total) ? null : window.location.reload()} */}
                     </div>
                   </div>
