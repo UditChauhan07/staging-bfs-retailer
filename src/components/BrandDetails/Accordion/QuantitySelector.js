@@ -14,16 +14,20 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
     if (value !== 0 && value < min) {
       onChange?.(min);
     }
-  }, [value, min]);
+  }, [value, min,newQtyInput]);
   const qtyChangeHandler = ({ previous, newQty = 0 }) => {
     if (newQty) {
       if (newQty < min) {
+        setNewQtyInput(null)
+        setLimitInput('')
         setQtyErrorModalOpen(true)
       } else {
         if ((min>0 &&newQty % min == 0)||min==0) {
           onChange?.(newQty);
           setQtyErrorModalOpen(false)
         } else {
+          setNewQtyInput(null)
+          setLimitInput('')
           setQtyErrorModalOpen(true)
         }
       }
@@ -39,7 +43,6 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
     const limit = 4;
     setLimitInput(event.target.value.slice(0, limit));
   };
-  console.log(limitInput);
   return (
     <div className={`${Styles.ButtonControl}w-[85px] h-[27px] flex `}>
       {qtyErrorModalOpen ? (
