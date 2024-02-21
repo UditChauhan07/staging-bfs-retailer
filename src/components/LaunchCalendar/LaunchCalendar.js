@@ -52,7 +52,7 @@ function LaunchCalendar({ productList, brand, month }) {
       return { ...months, content: filterData };
     });
     setFilterData(newValues);
-  }, [month]);
+  }, [month,brand]);
 
 
   //   if(!ShipDate){
