@@ -73,7 +73,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
-    let retailerPirce = found.usdRetail__c.trim()
+    let retailerPirce = found.usdRetail__c.trim().replace('$','').replace(',','')
     if (found?.Category__c === "TESTER") {
       let salesPrice = retailerPirce.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
