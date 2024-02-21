@@ -57,28 +57,32 @@ function MyBagFinal() {
   const invoiceHandler = () => {
     if (false) {
     } else {
-      let ticket = {
-        orderStatusForm: {
-          accountId: OrderData?.AccountId,
-          contactId: null,
-          desc: null,
-          manufacturerId: OrderData.ManufacturerId__c,
-          opportunityId: OrderData.Id,
-          orderNumber: null,
-          poNumber: OrderData.PO_Number__c,
-          priority: "Medium",
-          reason: "Invoice",
-          salesRepId: null,
-          sendEmail: false,
-        },
-      };
-      let statusOfSupport = supportShare(ticket)
+      GetAuthData().then((user)=>{
+        let ticket = {
+          orderStatusForm: {
+            accountId: OrderData?.AccountId,
+            contactId: user.data.retailerId,
+            desc: null,
+            manufacturerId: OrderData.ManufacturerId__c,
+            opportunityId: OrderData.Id,
+            orderNumber: OrderData.Order_Number__c,
+            poNumber: OrderData.PO_Number__c,
+            priority: "Medium",
+            reason: "Invoice",
+            salesRepId: OrderData.OwnerId,
+            sendEmail: false,
+          },
+        };
+        let statusOfSupport = supportShare(ticket)
         .then((response) => {
           if (response) navigate("/orderStatusForm");
         })
         .catch((error) => {
           console.error({ error });
         });
+      }).catch((err)=>{
+        console.error({err});
+      })
     }
   };
   if (!isLoading) return <Loading />;
@@ -229,8 +233,7 @@ function MyBagFinal() {
 
                   {true && (
                     <div className={Styles.ShipBut}>
-                      {/* onClick={() => invoiceHandler()} */}
-                      <button className="py-1 d-flex justify-content-center" >
+                      <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler()}>
                         <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
                       </button>
                     </div>
