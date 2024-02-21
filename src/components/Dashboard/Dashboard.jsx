@@ -308,6 +308,12 @@ function Dashboard({ dashboardData }) {
               setBrandData({ isLoaded: true, data: temp })
             }
             setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
+            let tempValue = (totalPrice/totalTarget*100)<=100? totalPrice/totalTarget*100:100;
+            setValue(tempValue)
+            setNeedle_data([
+              { name: "A", value: parseInt(tempValue), color: "#16BC4E"},
+              { name: "B", value: parseInt(tempValue>0?100-tempValue:100), color: "#C7C7C7"},
+            ])
             setTargetValue(formatNumber(totalTarget||0));
             setAchievedSales(formatNumber(totalPrice||0));
             //ownManuFactureData
@@ -392,12 +398,6 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
-  useEffect(() => {
-    setNeedle_data([
-      { name: "A", value: parseInt((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100), color: "#16BC4E" },
-      { name: "B", value: parseInt(((box.REVENUE/box.TARGET*100)-100)>=100?0:(box.REVENUE/box.TARGET*100)-100), color: "#C7C7C7" },
-    ]);
-  }, [targetValue, achievedSales]);
   let lowPerformanceArray = accountPerformance?.data?.slice(0).reverse().map((ele) => ele);
   
   const changeMonthHandler = (value) => {
@@ -417,16 +417,17 @@ function Dashboard({ dashboardData }) {
   const cy = 200;
   const iR = 50;
   const oR = 100;
-  const value = parseInt((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100);
+  const [value,setValue] = useState((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100)
   const needle = (value, data, cx, cy, iR, oR, color) => {
-    let total = 0;
-    needle_data.forEach((v) => {
-      total += v.value;
-    });
-    let ang = 180.0 * (1 - value / total);
-    if (value == 0 && value < total) {
-      ang = 0;
+    let total = value;
+    // needle_data.forEach((v) => {
+    //   total += v.value;
+    // });
+    let ang = 180-((value/100)*180);
+    if (value == 0) {
+      ang = 180;
     }
+    console.log({ang,value});
     const length = (iR + 2.4 * oR) / 3;
     const sin = Math.sin(-RADIAN * ang);
     const cos = Math.cos(-RADIAN * ang);
@@ -441,6 +442,7 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
+  console.log({value});
   return (
     <AppLayout
       filterNodes={
@@ -534,8 +536,6 @@ function Dashboard({ dashboardData }) {
               {isLoading ? (
                 <Loading />
               ) : (
-                <>
-                  {targetValue && achievedSales ? (
                     <>
                       <div className={Styles.donuttop1}>
                         <div className="container">
@@ -557,10 +557,6 @@ function Dashboard({ dashboardData }) {
                           </div>
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    ""
-                  )}
                 </>
               )}
             </div>
