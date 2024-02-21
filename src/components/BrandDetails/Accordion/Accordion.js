@@ -105,31 +105,19 @@ const Accordion = ({ data, formattedData }) => {
                     return (
                       <CollapsibleRow title={key != "null" ? key : "No Category"} quantity={categoryOrderQuantity} key={index} index={index} >
                         {Object.values(formattedData)[index]?.map((value, indexed) => {
-                          let listPrice = isNaN(Number(value.usdRetail__c.substring(1))) ? (+value.usdRetail__c.substring(2)).toFixed(2) : (+value.usdRetail__c.substring(1)).toFixed(2);
+                          let listPrice = Number(value.usdRetail__c.replace('$','').replace(',',''));
                           let salesPrice = 0;
                           let discount = data?.discount?.margin;
                           let inputPrice = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice;
                           let qtyofItem = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.quantity;
                           if (value.Category__c === "TESTER") {
                             discount = data?.discount?.testerMargin
-                            if (value.usdRetail__c.includes("$")) {
-                              salesPrice = (+value.usdRetail__c.substring(1) - (data?.discount?.testerMargin / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
-                            } else {
-                              salesPrice = (+value.usdRetail__c - (data?.discount?.testerMargin / 100) * +value.usdRetail__c).toFixed(2)
-                            }
+                              salesPrice = (+listPrice - (data?.discount?.testerMargin / 100) * +listPrice).toFixed(2)
                           } else if (value.Category__c === "Samples") {
                             discount = data?.discount?.sample
-                            if (value.usdRetail__c.includes("$")) {
-                              salesPrice = (+value.usdRetail__c.substring(1) - (data?.discount?.sample / 100) * +value.usdRetail__c.substring(1)).toFixed(2)
-                            } else {
-                              salesPrice = (+value.usdRetail__c - (data?.discount?.sample / 100) * +value.usdRetail__c).toFixed(2)
-                            }
+                              salesPrice = (+listPrice - (data?.discount?.sample / 100) * +listPrice).toFixed(2)
                           } else {
-                            if (value.usdRetail__c.includes("$")) {
-                              salesPrice = (listPrice - (data?.discount?.margin / 100) * listPrice).toFixed(2)
-                            } else {
-                              salesPrice = (+value.usdRetail__c - (data?.discount?.margin / 100) * +value.usdRetail__c).toFixed(2)
-                            }
+                              salesPrice = (+listPrice - (data?.discount?.margin / 100) * +listPrice).toFixed(2)
                           }
                           return (
                             <tr className={`${styles.ControlTR} w-full `} key={indexed}>

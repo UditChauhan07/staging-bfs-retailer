@@ -20,7 +20,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
       if (newQty < min) {
         setQtyErrorModalOpen(true)
       } else {
-        if (newQty % min == 0) {
+        if ((min>0 &&newQty % min == 0)||min==0) {
           onChange?.(newQty);
           setQtyErrorModalOpen(false)
         } else {
