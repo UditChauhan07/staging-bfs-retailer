@@ -105,10 +105,10 @@ function OrderListContent({ data }) {
 
       {data?.length ? (
         data?.map((item, index) => {
-          // let date = new Date(item.CreatedDate);
-          let cdate = `${currentDate.getDate()} ${
-            months[currentDate.getMonth()]
-          } ${currentDate.getFullYear()}`;
+          let date = new Date(item.CreatedDate);
+          let cdate = `${date.getDate()} ${
+            months[date.getMonth()]
+          } ${date.getFullYear()}`;
 
           return (
             <div className={` ${Styles.orderStatement}`} key={index}>
