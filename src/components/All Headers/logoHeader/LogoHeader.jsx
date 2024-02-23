@@ -13,7 +13,7 @@ const LogoHeader = () => {
         <div className={styles.lapSetting} style={{minWidth:'300px'}}>
           <p className={`m-0  ${styles.language}`}>
             <Link to="/order" className={`linkStyle`}>
-              Order
+              Order Now
             </Link>
           </p>
           <p className={`m-0   ${styles.language}`}>

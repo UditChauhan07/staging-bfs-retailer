@@ -6,17 +6,12 @@ import img1 from "./Images/Active-1.png";
 import img2 from "./Images/Vector.png";
 import img3 from "./Images/Group.png";
 import img4 from "./Images/Group1.png";
-import img5 from "./Images/Rectangle 304.png";
 import { PieChart, Pie, Cell } from "recharts";
-import { Link, useNavigate } from "react-router-dom";
 import { AuthCheck, GetAuthData, formatNumber, getDashboardata } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
-import SelectBrandModel from "../My Retailers/SelectBrandModel/SelectBrandModel";
-import ModalPage from "../Modal UI/index";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
-import { UserIcon } from "../../lib/svg";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -188,30 +183,11 @@ const dataa = {
 };
 
 function Dashboard({ dashboardData }) {
-  const bgColors = {
-    "Kevyn Aucoin Cosmetics": "KevynAucoinCosmeticsBg",
-    "Bumble and Bumble": "BumbleandBumbleBg",
-    "BY TERRY": "BYTERRYBg",
-    "Bobbi Brown": "BobbiBrownBg",
-    ReVive: "ReViveBg",
-    "Maison Margiela": "MaisonMargielaBg",
-    Smashbox: "SmashboxBg",
-    "RMS Beauty": "RMSBeautyBg",
-    "ESTEE LAUDER": "esteeLauderBg",
-  };
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
   const [selMonth, setSelMonth] = useState(`${currentYear}|${currentMonth}`);
-  const [tabledata, settabledata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [lineChart, setlineChart] = useState();
-  const [dashboardRelatedData, setDashboardRelatedData] = useState({});
-
-  const [brandData, setBrandData] = useState([]);
-
-  const navigate = useNavigate();
-  const [modalOpen, setModalOpen] = useState(false);
   const [targetValue, setTargetValue] = useState();
   const [achievedSales, setAchievedSales] = useState();
   const [needle_data, setNeedle_data] = useState([]);
@@ -219,7 +195,6 @@ function Dashboard({ dashboardData }) {
 
   //dashboard varibale used
   const [box, setBox] = useState({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
-  const [accountPerformance, setAccountPerformance] = useState({ isLoaded: false, data: [] });
   const [salesByBrandData, setSalesByBrandData] = useState({
     series: [],
     options: {
@@ -288,9 +263,6 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            if (dashboard.rawPerformance) {
-              setAccountPerformance({ isLoaded: true, data: dashboard.rawPerformance })
-            }
             let totalOrder = 0;
             let totalPrice = 0;
             let totalTarget = 0;
@@ -298,24 +270,25 @@ function Dashboard({ dashboardData }) {
             if (dashboard?.monthlyManufactureData) {
               let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
               activeBrand = monthlyDataKey.length;
-              let temp = [];
+              // let temp = [];
               monthlyDataKey.map((id) => {
-                temp.push(dashboard.monthlyManufactureData[id])
+                // temp.push(dashboard.monthlyManufactureData[id])
                 totalPrice += dashboard.monthlyManufactureData[id]?.sale
                 totalOrder += dashboard.monthlyManufactureData[id]?.own
                 totalTarget += dashboard.monthlyManufactureData[id]?.target
               })
-              setBrandData({ isLoaded: true, data: temp })
+              // setBrandData({ isLoaded: true, data: temp })
             }
             setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
-            let tempValue = (totalPrice/totalTarget*100)<=100? totalPrice/totalTarget*100:100;
+            let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
-              { name: "A", value: parseInt(tempValue), color: "#16BC4E"},
-              { name: "B", value: parseInt(tempValue>0?100-tempValue:100), color: "#C7C7C7"},
+              { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
+              { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
             ])
-            setTargetValue(formatNumber(totalTarget||0));
-            setAchievedSales(formatNumber(totalPrice||0));
+            setTargetValue(formatNumber(totalTarget || 0));
+            setAchievedSales(formatNumber(totalPrice || 0));
+            setIsLoading(true)
             //ownManuFactureData
             if (dashboard?.monthlyManufactureData) {
               setSalesByBrandData({
@@ -398,12 +371,9 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
-  let lowPerformanceArray = accountPerformance?.data?.slice(0).reverse().map((ele) => ele);
-  
+
   const changeMonthHandler = (value) => {
     setIsLoading(false);
-    setAccountPerformance({ isLoaded: false, data: [] })
-    setBrandData({ isLoaded: false, data: [] })
     setManufacturerSalesYaer([]);
     setBox({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
     setSelMonth(value);
@@ -417,17 +387,16 @@ function Dashboard({ dashboardData }) {
   const cy = 200;
   const iR = 50;
   const oR = 100;
-  const [value,setValue] = useState((box.REVENUE/box.TARGET*100)<=100? box.REVENUE/box.TARGET*100:100)
+  const [value, setValue] = useState((box.REVENUE / box.TARGET * 100) <= 100 ? box.REVENUE / box.TARGET * 100 : 100)
   const needle = (value, data, cx, cy, iR, oR, color) => {
     let total = value;
     // needle_data.forEach((v) => {
     //   total += v.value;
     // });
-    let ang = 180-((value/100)*180);
+    let ang = 180 - ((value / 100) * 180);
     if (value == 0) {
       ang = 180;
     }
-    console.log({ang,value});
     const length = (iR + 2.4 * oR) / 3;
     const sin = Math.sin(-RADIAN * ang);
     const cos = Math.cos(-RADIAN * ang);
@@ -442,7 +411,7 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
-  console.log({value});
+  console.log({ isLoading });
   return (
     <AppLayout
       filterNodes={
@@ -463,115 +432,127 @@ function Dashboard({ dashboardData }) {
         </>
       }
     >
-      {isLoading ? (
-        <Loading height="80vh" />
-      ) : (
-        <div className="">
-          <div className="row mt-2 g-4">
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className={Styles.dashbottom}>
-                <div className={`text-center  ${Styles.active}`}>
-                  <img src={img1} alt="" className={`text-center ${Styles.iconactive}`} />
-                </div>
-                <div className="">
-                  <p className={`text-end ${Styles.activetext}`}>ACTIVE Brands</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>{box.RETAILERS}</h1>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className={Styles.dashbottom}>
-                <div className={`text-center  ${Styles.active}`}>
-                  <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
-                </div>
-                <div className="">
-                  <p className={`text-end ${Styles.activetext}`}>GROWTH 2023 VS 2024</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>
-                    {box.GROWTH}<span>%</span>
-                  </h1>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className={Styles.dashbottom}>
-                <div className={`text-center  ${Styles.active}`}>
-                  <img src={img3} alt="" className={`text-center ${Styles.iconactive3}`} />
-                </div>
-                <div className="">
-                  <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS}</h1>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className={Styles.dashbottom}>
-                <div className={`text-center  ${Styles.active}`}>
-                  <img src={img4} alt="" className={`text-center ${Styles.iconactive4}`} />
-                </div>
-                <div className="">
-                  <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
-                  <h1 className={`text-end ${Styles.activetext1}`}>${formatNumber(box.REVENUE)}</h1>
-                </div>
-              </div>
+      <div className="">
+        <div className="row mt-2 g-4">
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className={Styles.dashbottom}>
+              {!isLoading ?
+                <ContentLoader /> :
+                <>
+                  <div className={`text-center  ${Styles.active}`}>
+                    <img src={img1} alt="" className={`text-center ${Styles.iconactive}`} />
+                  </div>
+                  <div className="">
+                    <p className={`text-end ${Styles.activetext}`}>ACTIVE Brands</p>
+                    <h1 className={`text-end ${Styles.activetext1}`}>{box.RETAILERS}</h1>
+                  </div>
+                </>}
             </div>
           </div>
-          <div className="row my-3">
-            <div className="col-lg-7">
-              <p className={Styles.Tabletext}>Your Sales By Brand</p>
-
-              <div className={Styles.donuttop}>
-                {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
-                <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
-                {isLoaded ? (
-                  <Loading />
-                ) : (
-                  <>
-                    <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
-                  </>
-                )}
-              </div>
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className={Styles.dashbottom}>
+              {!isLoading ?
+                <ContentLoader /> :
+                <>
+                  <div className={`text-center  ${Styles.active}`}>
+                    <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
+                  </div>
+                  <div className="">
+                    <p className={`text-end ${Styles.activetext}`}>GROWTH 2023 VS 2024</p>
+                    <h1 className={`text-end ${Styles.activetext1}`}>
+                      {box.GROWTH}<span>%</span>
+                    </h1>
+                  </div>
+                </>}
             </div>
-            <div className="col-lg-5">
-              <p className={Styles.Tabletext}>Your Sales Performance Score in 2024</p>
-              {isLoading ? (
-                <Loading />
+          </div>
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className={Styles.dashbottom}>
+              {!isLoading ?
+                <ContentLoader />
+                :
+                <>
+                  <div className={`text-center  ${Styles.active}`}>
+                    <img src={img3} alt="" className={`text-center ${Styles.iconactive3}`} />
+                  </div>
+                  <div className="">
+                    <p className={`text-end ${Styles.activetext}`}>TOTAL NO. OF ORDERS</p>
+                    <h1 className={`text-end ${Styles.activetext1}`}>{box.ORDERS}</h1>
+                  </div>
+                </>}
+            </div>
+          </div>
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className={Styles.dashbottom}>
+              {!isLoading ?
+                <ContentLoader />
+                :
+                <>
+                  <div className={`text-center  ${Styles.active}`}>
+                    <img src={img4} alt="" className={`text-center ${Styles.iconactive4}`} />
+                  </div>
+                  <div className="">
+                    <p className={`text-end ${Styles.activetext}`}>REVENUE</p>
+                    <h1 className={`text-end ${Styles.activetext1}`}>${formatNumber(box.REVENUE)}</h1>
+                  </div>
+                </>}
+            </div>
+          </div>
+        </div>
+        <div className="row my-3">
+          <div className="col-lg-7">
+            <p className={Styles.Tabletext}>Your Sales By Brand</p>
+
+            <div className={Styles.donuttop}>
+              {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
+              <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
+              {!isLoading ? (
+                <ContentLoader />
               ) : (
-                    <>
-                      <div className={Styles.donuttop1}>
-                        <div className="container">
-                          <p className={`text-end ${Styles.Tabletxt}`}>
-                            Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
-                          </p>
-                          <p className={`text-end ${Styles.Tabletxt1}`}>
-                            Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
-                          </p>
-                          <div className={Styles.donutbox}>
-                            <PieChart width={400} height={400}>
-                              <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
-                                {needle_data.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Pie>
-                              {needle(value, needle_data, cx, cy, iR, oR, "#000000")}
-                            </PieChart>
-                          </div>
-                        </div>
-                      </div>
+                <>
+                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
                 </>
               )}
             </div>
           </div>
-
-          <div className="row mt-5">
-            <div className="">
-              <p className={Styles.Tabletext}>Total Sale By Brand</p>
-              <div className={Styles.graphmain}>
-                <Chart options={dataa.options} series={manufacturerSalesYear} type="area" width="100%" height="100%" />
-              </div>
+          <div className="col-lg-5">
+            <p className={Styles.Tabletext}>Your Sales Performance Score in 2024</p>
+            <div className={Styles.donuttop1}>
+              {!isLoading ? (
+                <ContentLoader />
+              ) : (
+                <div className="container">
+                  <p className={`text-end ${Styles.Tabletxt}`}>
+                    Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
+                  </p>
+                  <p className={`text-end ${Styles.Tabletxt1}`}>
+                    Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
+                  </p>
+                  <div className={Styles.donutbox}>
+                    <PieChart width={400} height={400}>
+                      <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
+                        {needle_data.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      {needle(value, needle_data, cx, cy, iR, oR, "#000000")}
+                    </PieChart>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      )}
+
+        <div className="row mt-5">
+          <div className="">
+            <p className={Styles.Tabletext}>Total Sale By Brand</p>
+            <div className={Styles.graphmain}>
+              <Chart options={dataa.options} series={manufacturerSalesYear} type="area" width="100%" height="100%" />
+            </div>
+          </div>
+        </div>
+      </div>
     </AppLayout>
   );
 }
