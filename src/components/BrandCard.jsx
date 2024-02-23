@@ -34,7 +34,7 @@ const BrandCard = ({ brand, image, userData }) => {
             //   if (brand?.Accounds) navigate(`/my-retailers?manufacturerId=${brand.Id}`);
             // }}
             >
-              <div className="[font-family:'Montserrat-400'] font-normal text-black text-[12px] tracking-[0] leading-[32px] whitespace-nowrap">Placed Order</div>
+              <div className="[font-family:'Montserrat-400'] font-normal text-black text-[12px] tracking-[0] leading-[32px] whitespace-nowrap">Place Order</div>
               {/* <img src={"/assets/images/ArrowRight.svg"} alt="img" /> */}
               <ArrowRightInBrands />
             </button>
