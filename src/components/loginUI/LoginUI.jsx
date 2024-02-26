@@ -14,7 +14,7 @@ const LoginUI = () => {
   const api = useLogin();
   const navigate = useNavigate();
   const { setUserValue } = useAuth();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [ModalOPen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [salesRepLogin, setSalesRepLogin] = useState(true);
   const initialValues = {
@@ -144,9 +144,9 @@ const LoginUI = () => {
         </div>
       </Formik>
 
-      {modalOpen ? (
+      {ModalOpen ? (
         <ModalPage
-          open={modalOpen}
+          open={ModalOpen}
           content={
             <>
               <h2>Warning</h2>
