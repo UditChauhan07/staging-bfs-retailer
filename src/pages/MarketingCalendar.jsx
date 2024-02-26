@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
+import { GetAuthData, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 
 const MarketingCalendar = () => {
-  const [brand, setBrand] = useState(null);
+ 
   const [productList,setProductList] = useState([
     {
       month: "Jan",
@@ -785,26 +786,26 @@ const MarketingCalendar = () => {
       ],
     },
   ])
-  let brands = [
-    { value: null, label: "All" },
-    { value: "Susanne Kaufmann", label: "Susanne Kaufmann" },
-    { value: "AERIN", label: "AERIN" },
-    { value: "ARAMIS", label: "ARAMIS" },
-    { value: "Bobbi Brown", label: "Bobbi Brown" },
-    { value: "Bumble and Bumble", label: "Bumble and Bumble" },
-    { value: "Byredo", label: "Byredo" },
-    { value: "BY TERRY", label: "BY TERRY" },
-    { value: "Diptyque", label: "Diptyque" },
-    { value: "Kevyn Aucoin Cosmetics", label: "Kevyn Aucoin Cosmetics" },
-    { value: "ESTEE LAUDER", label: "ESTEE LAUDER" },
-    { value: "L'Occitane", label: "L'Occitane" },
-    { value: "Maison Margiela", label: "Maison Margiela" },
-    { value: "ReVive", label: "ReVive" },
-    { value: "RMS Beauty", label: "RMS Beauty" },
-    { value: "Smashbox", label: "Smashbox" },
-    { value: "Re-Nutriv", label: "Re-Nutriv" },
-    { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
-  ];
+  // let brands = [
+  //   { value: null, label: "All" },
+  //   { value: "Susanne Kaufmann", label: "Susanne Kaufmann" },
+  //   { value: "AERIN", label: "AERIN" },
+  //   { value: "ARAMIS", label: "ARAMIS" },
+  //   { value: "Bobbi Brown", label: "Bobbi Brown" },
+  //   { value: "Bumble and Bumble", label: "Bumble and Bumble" },
+  //   { value: "Byredo", label: "Byredo" },
+  //   { value: "BY TERRY", label: "BY TERRY" },
+  //   { value: "Diptyque", label: "Diptyque" },
+  //   { value: "Kevyn Aucoin Cosmetics", label: "Kevyn Aucoin Cosmetics" },
+  //   { value: "ESTEE LAUDER", label: "ESTEE LAUDER" },
+  //   { value: "L'Occitane", label: "L'Occitane" },
+  //   { value: "Maison Margiela", label: "Maison Margiela" },
+  //   { value: "ReVive", label: "ReVive" },
+  //   { value: "RMS Beauty", label: "RMS Beauty" },
+  //   { value: "Smashbox", label: "Smashbox" },
+  //   { value: "Re-Nutriv", label: "Re-Nutriv" },
+  //   { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
+  // ];
   const [month, setMonth] = useState("");
   let months = [
     { value: null, label: "All" },
@@ -823,6 +824,30 @@ const MarketingCalendar = () => {
     { value: "TBD", label: "TBD" },
 
   ];
+
+  // ...............
+  const [isEmpty, setIsEmpty] = useState(false);
+    const [brand, setBrand] = useState([]);
+    const [selectBrand,setSelectBrand]=useState(null)
+  useEffect(()=>{
+    GetAuthData().then((user)=>{
+      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
+      getRetailerBrands({rawData}).then((resManu)=>{
+        setBrand(resManu);
+      }).catch((err)=>{
+        console.log({err});
+      })
+    }).catch((error)=>{
+      console.log({error});
+    })
+  },[selectBrand,month])
+  // const[forceUpdate,setForceUpdate]=useState(false)
+  // const handleBrandFilter = (v) => onChange("brands", v);
+//  const handleclick=()=>{
+//   setSelectBrand(null)
+//   setMonth(null)
+//  }
+// ...............................
   const generatePdf = () => {
     const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
     // element.style.padding = "10px"
@@ -914,10 +939,17 @@ const MarketingCalendar = () => {
             minWidth="220px"
             label="All Brand"
             name="All-Brand"
-            value={brand}
-            options={brands}
+            value={selectBrand}
+            options={
+              Array.isArray(brand)
+                ? brand?.map((brands) => ({
+                    label: brands.Name,
+                    value: brands.Name,
+                  }))
+                : []
+            }
             onChange={(value) => {
-              setBrand(value);
+              setSelectBrand(value);
             }}
           />
           <FilterItem
@@ -932,9 +964,12 @@ const MarketingCalendar = () => {
           />
           <button
             className="border px-2.5 py-1 leading-tight"
+            // onClick={handleclick}
             onClick={() => {
-              setBrand("");
+              setSelectBrand(null);
               setMonth(null);
+              setIsEmpty(false)
+          // setForceUpdate(prev=>prev)
             }}
           >
             CLEAR ALL
@@ -953,7 +988,7 @@ const MarketingCalendar = () => {
         </>
       }
     >
-      <LaunchCalendar brand={brand} month={month} productList={productList}/>
+      <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty}  month={month} productList={productList}/>
     </AppLayout>
   );
 };
