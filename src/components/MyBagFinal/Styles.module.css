@@ -115,6 +115,7 @@
 
 .Mainbox1M img {
   width: 100%;
+  max-width: 100px;
 }
 .Mainbox3{
   width: fit-content;
