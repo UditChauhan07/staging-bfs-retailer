@@ -22,7 +22,6 @@ import MyBag from "./pages/MyBag";
 import OrderListPage from "./pages/OrderListPage";
 import Product from "./components/BrandDetails/Product";
 import BagProvider from "./context/BagContext";
-// import OrderList from "./pages/OrderListPage";
 import MyBagOrder from "./pages/MyBagOrder";
 import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
@@ -49,6 +48,7 @@ function App() {
             ></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
+            {/* <Route path="/product/:name" element={<ProductDetails/>}></Route> */}
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/logout" element={<Logout />}></Route>

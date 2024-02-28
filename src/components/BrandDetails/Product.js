@@ -3,7 +3,6 @@ import styles from "./styles.module.css";
 import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
 import { MdOutlineDownload } from "react-icons/md";
-import { useProductList } from "../../api/useProductList";
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Loading from "../Loading";
@@ -11,7 +10,7 @@ import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
 import { useBag } from "../../context/BagContext";
-import { fetchBeg } from "../../lib/store";
+import { GetAuthData, ShareDrive, fetchBeg ,getProductImageAll, getProductList} from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow } from "../../lib/svg";
 import AppLayout from "../AppLayout";
@@ -41,13 +40,8 @@ function Product() {
   const [alert, setAlert] = useState(0);
   const [testerInBag, setTesterInBag] = useState(false);
   const [orderFormModal, setOrderFromModal] = useState(false);
-  const { data, isLoading } = useProductList({
-    key: user?.data.x_access_token,
-    Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
-    Manufacturer: localStorage.getItem("ManufacturerId__c"),
-    AccountId__c: localStorage.getItem("AccountId__c"),
-  });
-  const brandName = data?.data?.records?.[0]?.ManufacturerName__c;
+  const [productList, setProductlist] = useState({ isLoading: false, data: [], discount: {} });
+  const brandName = productList?.data?.[0]?.ManufacturerName__c;
   
   const groupProductDataByCategory = (productData) => {
     const groupedData = groupBy(productData || [], "Category__c");
@@ -66,7 +60,7 @@ function Product() {
     
     return groupedData;
   };
-  const formattedData = useMemo(() => groupProductDataByCategory(data?.data?.records), [data?.data?.records]);
+  const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
 
   const formattedFilterData = useMemo(() => {
     let finalFilteredProducts = { ...formattedData };
@@ -133,11 +127,77 @@ function Product() {
 
     return finalFilteredProducts;
   }, [formattedData, categoryFilters, productTypeFilter, sortBy, searchBy]);
-
+  const [productImage, setProductImage] = useState({});
   useEffect(() => {
+    let data = ShareDrive();
+    if (!data) {
+      data = {};
+    }
+    if (!data[localStorage.getItem("ManufacturerId__c")]) {
+      data[localStorage.getItem("ManufacturerId__c")] = {};
+    }
+    if (data[localStorage.getItem("ManufacturerId__c")]) {
+      if (Object.values(data[localStorage.getItem("ManufacturerId__c")]).length > 0) {
+        setProductImage({ isLoaded: true, images: data[localStorage.getItem("ManufacturerId__c")] })
+      } else {
+        setProductImage({ isLoaded: false, images: {} })
+      }
+    }
     if (!(localStorage.getItem("ManufacturerId__c") && localStorage.getItem("AccountId__c"))) {
       setRedirect(true);
     }
+    GetAuthData().then((user)=>{
+      let rawData = {
+        key: user?.data.x_access_token,
+        Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
+        Manufacturer: localStorage.getItem("ManufacturerId__c"),
+        AccountId__c: localStorage.getItem("AccountId__c"),
+      }
+    getProductList({ rawData }).then((productRes) => {
+      let productData = productRes.data.records || []
+      let discount = productRes.discount;
+      setProductlist({ data: productData, isLoading: true, discount })
+
+      //version 1
+      // productData.map(product => {
+      //   let productCode = product?.ProductCode
+      //   getProductImage({ rawData: { code: productCode } }).then((res) => {
+      //     setProductImage((prev) => ({
+      //       ...prev,
+      //       [productCode]: res
+      //     }));
+      //   }).catch((err) => {
+      //     console.log({ err });
+      //   })
+      // })
+
+      // version 2
+      let productCode = "";
+      productData.map((product,index) => {
+        productCode += `'${product?.ProductCode}'`
+        if(productData.length-1 != index) productCode += ', ';
+      })
+      getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+        if (res) {
+          if (data[localStorage.getItem("ManufacturerId__c")]) {
+            data[localStorage.getItem("ManufacturerId__c")] = { ...data[localStorage.getItem("ManufacturerId__c")], ...res }
+          } else {
+            data[localStorage.getItem("ManufacturerId__c")] = res
+          }
+          ShareDrive(data)
+          setProductImage({ isLoaded: true, images: res });
+        } else {
+          setProductImage({ isLoaded: true, images: {} });
+        }
+      }).catch((err) => {
+        console.log({ err });
+      })
+    }).catch((errPro) => {
+      console.log({ errPro });
+    })
+  }).catch((err)=>{
+    console.log({err});
+  })
   }, []);
   const redirecting = () => {
     setTimeout(() => {
@@ -157,10 +217,10 @@ function Product() {
         bagPrice += productPrice * productQuantity;
       });
       setAlert(0);
-      if (data.discount.MinOrderAmount > bagPrice) {
+      if (productList.discount.MinOrderAmount > bagPrice) {
         setAlert(1);
       } else {
-        if (testerInBag && data.discount.testerproductLimit > bagPrice) {
+        if (testerInBag && productList.discount.testerproductLimit > bagPrice) {
           setAlert(2);
         } else {
           navigate("/my-bag");
@@ -177,8 +237,8 @@ function Product() {
   }, []);
   const csvData = () => {
     let finalData = [];
-    if (data?.data?.records?.length) {
-      data?.data?.records?.map((ele) => {
+    if (productList.data.length) {
+      productList.data.map((ele) => {
         let temp = {};
         temp["Title"] = ele.Name;
         temp["Product Code"] = ele.ProductCode;
@@ -301,7 +361,7 @@ function Product() {
                       </CSVLink></h1>
                     <div className={`${Styles.ModalContent} mt-2`}>
                       <SpreadsheetUploader
-                        rawData={data || {}}
+                        rawData={productList || {}}
                         orderData={{ accountName: localStorage.getItem("Account"), accountId: localStorage.getItem("AccountId__c"), brandId: localStorage.getItem("ManufacturerId__c") }}
                         btnClassName={Styles.modalButton}
                         setOrderFromModal={setOrderFromModal}
@@ -321,7 +381,7 @@ function Product() {
           <AppLayout
             filterNodes={
               <>
-              {isLoading?null:<> <FilterItem
+              {!productList.isLoading ? null : <> <FilterItem
                   label="Sort by"
                   name="Sort-by"
                   value={sortBy}
@@ -375,7 +435,7 @@ function Product() {
               </>
             }
           >
-            {isLoading ? (
+            {!productList.isLoading  ? (
               <Loading height={"70vh"} />
             ) : (
               <div>
@@ -401,7 +461,7 @@ function Product() {
                     <div className="row">
                       <div className="col-lg-3 col-md-4 col-sm-12">
                         <FilterPage
-                          data={data}
+                           data={productList}
                           formattedData={formattedData}
                           setCategoryFilters={setCategoryFilters}
                           categoryFilters={categoryFilters}
@@ -420,7 +480,7 @@ function Product() {
                             border: "1px dashed black",
                           }}
                         >
-                          <Accordion data={data} formattedData={formattedFilterData}></Accordion>
+                          <Accordion  data={productList} formattedData={formattedFilterData} productImage={productImage}></Accordion>
                         </div>
                         <div className={`${styles.TotalSide} `}>
                           <h4>Total Number of Products : {orderQuantity}</h4>

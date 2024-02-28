@@ -1,5 +1,6 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2000"
+
 let url = `${originAPi}/retailer/`;
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
@@ -8,7 +9,22 @@ const brandKey = "Account";
 const accountKey = "manufacturer";
 const POCount = "woX5MkCSIOlHXkT";
 const support = "AP0HBuNwbNnuhKR";
+const shareKey = "3a16FWFtoPA5FMC";
 // export const originAPi = "https://dev.beautyfashionsales.com"
+
+export function ShareDrive (data, remove = false){
+  if(remove){
+    localStorage.removeItem(shareKey);
+    return true;
+  }
+  if(data){
+    localStorage.setItem(shareKey, JSON.stringify(data))
+    return true;
+  }else{
+    let strData = localStorage.getItem(shareKey);
+    return JSON.parse(strData);
+  }
+}
 
 export async function AuthCheck() {
   console.log({aa:JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))});
@@ -534,5 +550,84 @@ export async function postSupportAny({ rawData }) {
     DestoryAuth();
   } else {
     return data.data;
+  }
+}
+
+export async function getProductImage({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "fdhaszAFw5XNltP", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.url;
+  }
+}
+
+export async function getProductImageAll({ rawData }) {
+  console.log({rawData});
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  // let response = await fetch(url + "v3/Ftr7xyLKqgFo5MO", {
+  let response = await fetch(url + "hm8CnzTBfdfjXLZ", {
+    
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getProductDetails({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "dLobBeDavajtlNa", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
+  }
+}
+
+export async function getProductList({ rawData }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "NDgzTcdHqMCCRFd", {
+    method: "POST",
+    body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
   }
 }
