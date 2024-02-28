@@ -5,6 +5,8 @@ import CollapsibleRow from "../../CollapsibleRow";
 import QuantitySelector from "./QuantitySelector";
 import ModalPage from "../../Modal UI";
 import { useBag } from "../../../context/BagContext";
+import ProductDetails from "../../../pages/productDetails";
+import LoaderV2 from "../../loader/v2";
 
 const Accordion = ({ data, formattedData,productImage={} }) => {
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
@@ -126,7 +128,14 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                           return (
                             <tr className={`${styles.ControlTR} w-full `} key={indexed}>
                               <td className={styles.ControlStyle}>
-                              {productImage[value.ProductCode]?<img src={productImage[value.ProductCode]?.ContentDownloadUrl??productImage[value.ProductCode]} alt="..." width={35} />:<img src={Img1}  width={35} alt="img" />}
+                              {
+                                  !productImage.isLoaded?<LoaderV2/>:
+                                  productImage.images?.[value?.ProductCode] ?
+                                  productImage.images[value?.ProductCode]?.ContentDownloadUrl?
+                                  <img src={productImage.images[value?.ProductCode]?.ContentDownloadUrl} alt="img" width={35} />
+                                  :<img src={productImage.images[value?.ProductCode]} alt="img"  width={35}/>
+                                  :<img src={Img1} alt="img" />
+                                }
                               </td>
                               <td className="text-capitalize" style={{ fontSize: '13px',cursor:'pointer' }} onMouseEnter={() => setShowName({ index: indexed, type: true })}
                                 onMouseLeave={() => setShowName({ index: indexed })} onClick={()=>sendProductIdHandler({productId:value.Id,productName:value.Name})}>
@@ -136,9 +145,12 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
                               <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
-                                ${(qtyofItem > 0 && inputPrice || inputPrice == 0) ? (<><input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
+                                ${(qtyofItem > 0 && inputPrice || inputPrice == 0) ? (<>
+                                {/* <input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
                                   onChange={(e) => { onPriceChangeHander(value, e.target.value < 10 ? e.target.value.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0) }} id="limit_input" minLength={0} maxLength={4}
-                                  name="limit_input" /></>) : salesPrice}
+                                  name="limit_input" /> */}
+                                  {salesPrice}
+                                  </>) : salesPrice}
                               </td>
                               <td>{value.Min_Order_QTY__c || 0}</td>
                               <td>
@@ -176,7 +188,7 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
           </table>
         </div>
       </div>
-      {/* <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId}/> */}
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId}/>
     </>
   );
 };

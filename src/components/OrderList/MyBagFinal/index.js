@@ -5,8 +5,9 @@ import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { useNavigate } from "react-router-dom";
-import { GetAuthData, getOrderDetailId, getOrderDetailsBasedId, getOrderDetailsInvoice, originAPi, supportShare } from "../../../lib/store";
+import { GetAuthData, ShareDrive, getOrderDetailId, getOrderDetailsBasedId, getOrderDetailsInvoice, getProductImageAll, originAPi, supportShare } from "../../../lib/store";
 import { MdOutlineDownload } from "react-icons/md";
+import LoaderV2 from "../../loader/v2";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -16,6 +17,8 @@ function MyBagFinal() {
 
   const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
   const Key = JSON.parse(localStorage.getItem("Api Data"));
+  const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
+  const [ productDetailId, setProductDetailId] = useState(null)
   useEffect(() => {
     // let rawData = {key:Key.data.access_token,id:OrderId}
     // getOrderDetailsBasedId({rawData}).then((res)=>{
@@ -39,11 +42,47 @@ function MyBagFinal() {
   //   console.error({ error });
   // })
   const getOrderDetails = async () => {
+    let data = ShareDrive();
+    if (!data) {
+      data = {};
+    }
     GetAuthData().then((user) => {
       let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
       getOrderDetailId({ rawData }).then((res) => {
+        if (res?.ManufacturerId__c) {
+          if (!data[res?.ManufacturerId__c]) {
+            data[res?.ManufacturerId__c] = {};
+          }
+          if (Object.values(data[res?.ManufacturerId__c]).length > 0) {
+            setProductImage({ isLoaded: true, images: data[res?.ManufacturerId__c] })
+          } else {
+            setProductImage({ isLoaded: false, images: {} })
+          }
+        }
         setOrderData(res);
         setIsLoading(true);
+        if (res.OpportunityLineItems.length > 0) {
+          let productCode = "";
+          res.OpportunityLineItems?.map((element, index) => {
+            productCode += `'${element?.ProductCode}'`
+            if (res.OpportunityLineItems.length - 1 != index) productCode += ', ';
+          })
+          getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+            if (res) {
+              if (data[res?.ManufacturerId__c]) {
+                data[res?.ManufacturerId__c] = { ...data[res?.ManufacturerId__c], ...res }
+              } else {
+                data[res?.ManufacturerId__c] = res
+              }
+              ShareDrive(data)
+              setProductImage({ isLoaded: true, images: res });
+            } else {
+              setProductImage({ isLoaded: true, images: {} });
+            }
+          }).catch((err) => {
+            console.log({ err });
+          })
+        }
       }).catch((err1) => {
         console.log({ err1 });
       })
@@ -136,11 +175,18 @@ function MyBagFinal() {
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
-                                    <div className={Styles.Mainbox2}>
-                                      <img src={Img1} alt="" />
+                                  <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
+                                      {
+                                        !productImage.isLoaded ? <LoaderV2 /> :
+                                          productImage.images?.[item.ProductCode] ?
+                                            productImage.images[item.ProductCode]?.ContentDownloadUrl ?
+                                              <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
+                                              : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
+                                            : <img src={Img1} alt="img" onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
+                                      }
                                     </div>
                                     <div className={Styles.Mainbox3}>
-                                      <h2>{item.Name.split(OrderData.Name)}</h2>
+                                    <h2 onClick={()=>{setProductDetailId(item?.Product2Id)}} style={{cursor:'pointer'}}>{item.Name.split(OrderData.Name)}</h2>
                                       <p>
                                         <span className={Styles.Span1}>
                                           ${Number(item.ListPrice).toFixed(2)}

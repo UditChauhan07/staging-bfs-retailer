@@ -40,9 +40,6 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                     {product.data?.Collection__c && <p>Collection: {product.data?.Collection__c}</p>}
                     {orders[product?.data?.Id] ?
                         <>
-                            <p>$<input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)}
-                                onChange={(e) => { onPriceChangeHander(product?.data, e.target.value < 10 ? e.target.value.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0) }} id="limit_input" minLength={0} maxLength={4}
-                                name="limit_input" /></p>
                             <div className="d-flex">
                                 <QuantitySelector min={product?.data?.Min_Order_QTY__c || 0} value={orders[product?.data?.Id]?.quantity} onChange={(quantity) => {
                                     onQuantityChange(product?.data, quantity, inputPrice || parseFloat(salesPrice), discount);
