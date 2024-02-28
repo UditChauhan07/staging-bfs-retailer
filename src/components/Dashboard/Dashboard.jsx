@@ -145,12 +145,17 @@ const dataa = {
   options: {
     chart: {
       type: "area",
+      toolbar: {
+        show: false
+      },
+      zoom: {
+        enabled: false,
+      }
     },
     stroke: {
       curve: "smooth",
       width: 2,
     },
-
     dataLabels: {
       enabled: true,
     },
@@ -162,7 +167,6 @@ const dataa = {
         opacityTo: 0,
       },
     },
-
     xaxis: {
       categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     },
