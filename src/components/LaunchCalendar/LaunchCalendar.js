@@ -2,8 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-function LaunchCalendar({ productList,isEmpty, selectBrand,brand, month }) {
-  const [isEmpty2, setIsEmpty2] = useState(isEmpty);
+function LaunchCalendar({ productList, selectBrand,brand, month }) {
+  const [isEmpty, setIsEmpty] = useState(false);
   // useEffect(() => {
   //   let temp = true;
   //   products.map((month) => {
@@ -19,7 +19,6 @@ function LaunchCalendar({ productList,isEmpty, selectBrand,brand, month }) {
 
   const [filterData, setFilterData] = useState()
   useEffect(() => {
-    let isEmptyFlag = false;
     if (!month && !selectBrand) {
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
@@ -28,9 +27,10 @@ function LaunchCalendar({ productList,isEmpty, selectBrand,brand, month }) {
         return { ...months, content: filterData };
       });
       setFilterData(newValues)
-    // console.log(newValues)
+      setIsEmpty(false);
 
     }else{
+      let isEmptyFlag = true;
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
           // let match = item.OCDDate.split("/")
@@ -55,18 +55,17 @@ function LaunchCalendar({ productList,isEmpty, selectBrand,brand, month }) {
             // If month is not provided, return all items
           }
         });
-        // if (filterData.length > 0) {
-        //   isEmptyFlag = false;
-        // }
+        if (filterData.length > 0) {
+          isEmptyFlag = false;
+        }
         // Create a new object with filtered content
         return { ...months, content: filterData };
       });
-      setIsEmpty2(isEmptyFlag);
+      setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
     
-  },[month,selectBrand,productList,brand]);
-
+  }, [month,selectBrand,productList,brand]);
 
   //   if(!ShipDate){
   // setFilterData(products)
@@ -97,7 +96,7 @@ function LaunchCalendar({ productList,isEmpty, selectBrand,brand, month }) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
-              {!isEmpty2?.length > 0 ? (
+              {!isEmpty? (
                 filterData?.map((month, index) => {
                   if (month.content.length>0) {
                     return (
