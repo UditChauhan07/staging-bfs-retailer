@@ -22,6 +22,7 @@ import MyBag from "./pages/MyBag";
 import OrderListPage from "./pages/OrderListPage";
 import Product from "./components/BrandDetails/Product";
 import BagProvider from "./context/BagContext";
+// import OrderList from "./pages/OrderListPage";
 import MyBagOrder from "./pages/MyBagOrder";
 import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
@@ -29,6 +30,7 @@ import CustomerServiceForm from "./pages/CustomerServiceForm";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
+import ProductDetails from "./pages/productDetails";
 function App() {
   // const Redirect = ({ href }) => {
   //   window.location.href = href;

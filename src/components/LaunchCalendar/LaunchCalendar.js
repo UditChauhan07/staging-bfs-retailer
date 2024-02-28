@@ -2,58 +2,70 @@ import React, { useEffect, useState, useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-function LaunchCalendar({ productList, brand, month }) {
-  const [products, setProducts] = useState(productList);
-  
+function LaunchCalendar({ productList, selectBrand,brand, month }) {
   const [isEmpty, setIsEmpty] = useState(false);
-  useEffect(() => {
-    let temp = true;
-    products.map((month) => {
-      month.content.map((item) => {
-        if (!brand || brand == item.brand) {
-          temp = false;
-        }
-      });
-      setIsEmpty(temp);
-    });
-  }, [brand]);
+  // useEffect(() => {
+  //   let temp = true;
+  //   products.map((month) => {
+  //     month.content.map((item) => {
+  //       if (!selectBrand || selectBrand == item.brand) {
+  //         temp = false;
+  //       }
+  //     });
+  //     setIsEmpty(temp);
+  //   });
+  // }, [selectBrand]);
 
 
   const [filterData, setFilterData] = useState()
   useEffect(() => {
-    if (!month) {
-      setFilterData(products)
-    }
-    const newValues = products?.map((months) => {
-      const filterData = months.content?.filter((item) => {
-        // let match = item.OCDDate.split("/")
-        // console.log(match)
-        if (month) {
-          if (brand) {
-            if (brand == item.brand) {
+    if (!month && !selectBrand) {
+      const newValues = productList?.map((months) => {
+        const filterData = months.content?.filter((item) => {
+          return brand.some((brand) => brand.Name === item.brand);
+        });
+        return { ...months, content: filterData };
+      });
+      setFilterData(newValues)
+      setIsEmpty(false);
+
+    }else{
+      let isEmptyFlag = true;
+      const newValues = productList?.map((months) => {
+        const filterData = months.content?.filter((item) => {
+          // let match = item.OCDDate.split("/")
+          // console.log(match)
+          if (month) {
+            if (selectBrand) {
+              if (selectBrand == item.brand) {
+                return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.brand;
+              }
+            } else {
               return item.date.toLowerCase().includes(month.toLowerCase())
             }
+            // return match.includes(month.toUpperCase() )
           } else {
-            return item.date.toLowerCase().includes(month.toLowerCase())
-          }
-          // return match.includes(month.toUpperCase() )
-        } else {
-          if (brand) {
-            if (brand == item.brand) {
+            if (selectBrand) {
+              if (selectBrand == item.brand) {
+                return true;
+              }
+            } else {
               return true;
             }
-          } else {
-            return true;
+            // If month is not provided, return all items
           }
-          // If month is not provided, return all items
+        });
+        if (filterData.length > 0) {
+          isEmptyFlag = false;
         }
+        // Create a new object with filtered content
+        return { ...months, content: filterData };
       });
-      // Create a new object with filtered content
-      return { ...months, content: filterData };
-    });
-    setFilterData(newValues);
-  }, [month,brand]);
-
+      setIsEmpty(isEmptyFlag);
+      setFilterData(newValues);
+    }
+    
+  }, [month,selectBrand,productList,brand]);
 
   //   if(!ShipDate){
   // setFilterData(products)
@@ -84,14 +96,14 @@ function LaunchCalendar({ productList, brand, month }) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
-              {!isEmpty ? (
+              {!isEmpty? (
                 filterData?.map((month, index) => {
                   if (month.content.length>0) {
                     return (
                       <li key={index}>
                         <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
-                          if (!brand || brand == product.brand){
+                          if (!selectBrand || selectBrand == product.brand){
                           return (
                             <>
                               <div className="timeline-content" key={productIndex}>

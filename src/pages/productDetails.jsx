@@ -1,4 +1,3 @@
-import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import { useEffect, useState } from "react";
 import { GetAuthData, getProductDetails } from "../lib/store";
@@ -6,23 +5,22 @@ import Loading from "../components/Loading";
 import { useBag } from "../context/BagContext";
 import ModalPage from "../components/Modal UI";
 import ProductDetailCard from "../components/ProductDetailCard";
+import { CloseButton } from "../lib/svg";
 
-const ProductDetails = ({ productId,setProductDetailId,isAddtoCart=true }) => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { state } = location || {};
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true }) => {
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
     const [replaceCartProduct, setReplaceCartProduct] = useState({});
-
+    const [isModalOpen, setIsModalOpen] = useState(true)
 
     useEffect(() => {
-        if (state?.productId) {
+        if (productId) {
+            setIsModalOpen(true)
+            setProduct({ isLoaded: false, data: [], discount: {} })
             GetAuthData().then((user) => {
-                let rawData = { productId: state.productId, key: user?.data?.x_access_token, salesRepId: localStorage.getItem("Sales_Rep__c"), accountId: localStorage.getItem("AccountId__c") }
+                let rawData = { productId: productId, key: user?.data?.x_access_token, salesRepId: localStorage.getItem("Sales_Rep__c"), accountId: localStorage.getItem("AccountId__c") }
                 getProductDetails({ rawData }).then((productRes) => {
-                    console.log({productRes});
                     setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount })
                 }).catch((proErr) => {
                     console.log({ proErr });
@@ -30,10 +28,9 @@ const ProductDetails = ({ productId,setProductDetailId,isAddtoCart=true }) => {
             }).catch((err) => {
                 console.log({ err });
             })
-        } else {
-            navigate('/product');
         }
-    }, [])
+    }, [productId])
+    if (!productId) return null;
 
     const orderSetting = (element, quantity) => {
         setReplaceCartModalOpen(false);
@@ -69,39 +66,58 @@ const ProductDetails = ({ productId,setProductDetailId,isAddtoCart=true }) => {
         setOrders({});
         addOrder(replaceCartProduct.product, replaceCartProduct.quantity, product.discount);
     };
-    let styles = {}
+    let styles = {
+        btn: { color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, lineHeight: 'normal', letterSpacing: '1.4px', backgroundColor: '#000', width: '100px', height: '30px', cursor: 'pointer' }
+    }
     let orderofThisProduct = orders[product?.data?.Id];
     if (orderofThisProduct?.manufacturer?.name == product?.data?.ManufacturerName__c && orderofThisProduct?.account?.name == localStorage.getItem("Account")) {
     }
     return (
-        <AppLayout>
-            {replaceCartModalOpen ? (
-                <ModalPage
-                    open
-                    content={
-                        <div className="d-flex flex-column gap-3">
-                            <h2 className={`${styles.warning} `}>Warning</h2>
-                            <p className={`${styles.warningContent} `}>
-                                Adding this item will replace <br></br> your current cart
-                            </p>
-                            <div className="d-flex justify-content-around ">
-                                <button className={`${styles.modalButton}`} onClick={replaceCart}>
-                                    OK
-                                </button>
-                                <button className={`${styles.modalButton}`} onClick={() => setReplaceCartModalOpen(false)}>
-                                    Cancel
-                                </button>
-                            </div>
+        <>
+            {isModalOpen && <ModalPage
+                open
+                content={
+                    <div className="d-flex flex-column gap-3" style={{ width: '75vw' }}>
+                        <div className="d-flex align-items-center justify-content-between" style={{ minWidth: '75vw' }}>
+                            <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">Product Details</h1>
+                            <button type="button" onClick={() => { setIsModalOpen(false); setProductDetailId(null) }}>
+                                <CloseButton />
+                            </button>
                         </div>
-                    }
-                    onClose={() => {
-                        setReplaceCartModalOpen(false);
-                    }}
-                />
-            ) : null}
-            {!product?.isLoaded ? <Loading /> :
-                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} />}
-        </AppLayout>
+                        <hr />
+                        {replaceCartModalOpen ? (
+                            <ModalPage
+                                open
+                                content={
+                                    <div className="d-flex flex-column gap-3">
+                                        <h2>Warning</h2>
+                                        <p>
+                                            Adding this item will replace <br></br> your current cart
+                                        </p>
+                                        <div className="d-flex justify-content-around ">
+                                            <button style={styles.btn} onClick={replaceCart}>
+                                                OK
+                                            </button>
+                                            <button style={styles.btn} onClick={() => setReplaceCartModalOpen(false)}>
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                                onClose={() => {
+                                    setReplaceCartModalOpen(false);
+                                }}
+                            />
+                        ) : null}
+                        {!product?.isLoaded ? <Loading /> :
+                            <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} />}
+                    </div>
+                }
+                onClose={() => {
+                    setIsModalOpen(false); setProductDetailId(null);
+                }}
+            />}
+        </>
     );
 };
 export default ProductDetails;

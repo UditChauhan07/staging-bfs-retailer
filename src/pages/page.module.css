@@ -4,11 +4,13 @@ background: #FFF;
 } */
 
 .widthGivenBrandDetailPage{
-  /* max-width: 100%; */
+  width: 100%;
     display: grid;
     grid-template-columns: repeat(4, auto);
+    grid-template-columns:24% 24% 24% 24%;
     gap: 15px;
     margin: auto;
+    /* display: flex; */
   }
 .productCount {
   margin-top: 4px;
