@@ -38,10 +38,12 @@ const defaultImage = "default.jpg";
 
 const BrandsPage = () => {
   const [manufacturers,setManufacturers] = useState({isLoading:false,data:[]});
-  const [highestRetailers, setHighestRetailers] = useState(true);
+  // const [highestRetailers, setHighestRetailers] = useState(true);
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [userData,setUserData] = useState({});
+  const [userData,setUserData] = useState({}); 
+  const [filteredPageData,setFilteredPageData] = useState([]); 
+  
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -60,32 +62,35 @@ const BrandsPage = () => {
       console.log({err});
     })
   }, []);
-  const filteredPageData = useMemo(() => {
+  
+  useEffect(()=>{
     if (!Array.isArray(manufacturers?.data)) {
-      return [];
-    }
-    let newValues = manufacturers?.data?.map((brand) => brand);
-
-    if (searchBy) {
-      newValues = newValues?.filter((value) =>
-        value.Name?.toLowerCase().includes(searchBy?.toLowerCase())
-      );
-    }
-    if (highestRetailers) {
-      newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
-    } else {
-      newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
-    }
-    if (sortBy) {
-      if (sortBy === "a-z") {
-        newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
-      } else if (sortBy === "z-a") {
-        newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
-      }
-    }
-    return newValues;
-  }, [highestRetailers, searchBy, manufacturers, sortBy]);
-  console.log({filteredPageData})
+          return [];
+        }
+        let newValues = manufacturers?.data?.map((brand) => brand);
+    
+        if (searchBy) {
+          newValues = newValues?.filter((value) =>
+            value.Name?.toLowerCase().includes(searchBy?.toLowerCase())
+          );
+        }
+        if (sortBy) {
+          newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
+        } else {
+          newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
+        }
+        if (sortBy) {
+          if (sortBy === "a-z") {
+            newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
+          } else if (sortBy === "z-a") {
+            newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
+          }
+        }
+    
+      setFilteredPageData(newValues)
+    }, [searchBy, manufacturers, sortBy]);
+  console.log({ filteredPageData });
+  
   return (
     <>
       <AppLayout
@@ -104,17 +109,6 @@ const BrandsPage = () => {
                   label: "Z-A",
                   value: "z-a",
                 },
-              ]}
-              onChange={(value) => {
-                setSortBy(value);
-              }}
-            />
-            <FilterItem
-              minWidth="220px"
-              label="Lowest Product"
-              name="Lowest-Retailers"
-              value={highestRetailers}
-              options={[
                 {
                   label: "Highest Product ",
                   value: true,
@@ -124,8 +118,11 @@ const BrandsPage = () => {
                   value: false,
                 },
               ]}
-              onChange={(value) => setHighestRetailers(value)}
+              onChange={(value) => {
+                setSortBy(value);
+              }}
             />
+            
             <FilterSearch
               onChange={(e) => setSearchBy(e.target.value)}
               value={searchBy}
@@ -135,7 +132,7 @@ const BrandsPage = () => {
             <button
               className="border px-2.5 py-1 leading-tight"
               onClick={() => {
-                setHighestRetailers(true);
+                // setHighestRetailers(true);
                 setSearchBy("");
                 setSortBy("");
               }}
@@ -185,3 +182,4 @@ const BrandsPage = () => {
 };
 
 export default BrandsPage;
+
