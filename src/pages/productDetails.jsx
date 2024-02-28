@@ -66,7 +66,9 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true }) =
         setOrders({});
         addOrder(replaceCartProduct.product, replaceCartProduct.quantity, product.discount);
     };
-    let styles = {}
+    let styles = {
+        btn: { color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, lineHeight: 'normal', letterSpacing: '1.4px', backgroundColor: '#000', width: '100px', height: '30px', cursor: 'pointer' }
+    }
     let orderofThisProduct = orders[product?.data?.Id];
     if (orderofThisProduct?.manufacturer?.name == product?.data?.ManufacturerName__c && orderofThisProduct?.account?.name == localStorage.getItem("Account")) {
     }
@@ -88,15 +90,15 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true }) =
                                 open
                                 content={
                                     <div className="d-flex flex-column gap-3">
-                                        <h2 className={`${styles.warning} `}>Warning</h2>
-                                        <p className={`${styles.warningContent} `}>
+                                        <h2>Warning</h2>
+                                        <p>
                                             Adding this item will replace <br></br> your current cart
                                         </p>
                                         <div className="d-flex justify-content-around ">
-                                            <button className={`${styles.modalButton}`} onClick={replaceCart}>
+                                            <button style={styles.btn} onClick={replaceCart}>
                                                 OK
                                             </button>
-                                            <button className={`${styles.modalButton}`} onClick={() => setReplaceCartModalOpen(false)}>
+                                            <button style={styles.btn} onClick={() => setReplaceCartModalOpen(false)}>
                                                 Cancel
                                             </button>
                                         </div>
@@ -108,7 +110,7 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true }) =
                             />
                         ) : null}
                         {!product?.isLoaded ? <Loading /> :
-                            <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} />}
+                            <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} />}
                     </div>
                 }
                 onClose={() => {
