@@ -5,4 +5,5 @@
   .carouselWrapperElement img{
     height: 500px;
     width: auto;
+    object-fit: contain;
   }
