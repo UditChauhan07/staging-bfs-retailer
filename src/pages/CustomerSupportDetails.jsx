@@ -13,6 +13,7 @@ const CustomerSupportDetails = () => {
   const [deatilsId, setDetailsId] = useState(searchParams.get("id"));
   const [detailsData, setDetailsData] = useState({});
   const [isLoaded, setLoaded] = useState(false);
+  const [reset,setRest] = useState(false);
   useEffect(() => {
     GetAuthData()
       .then((user) => {
@@ -22,6 +23,7 @@ const CustomerSupportDetails = () => {
             deatils.salesRepName = user.Name;
             setDetailsData(deatils);
             setLoaded(true);
+            setRest(false)
           })
           .catch((err) => {
             console.error({ err });
@@ -30,12 +32,12 @@ const CustomerSupportDetails = () => {
       .catch((error) => {
         console.error({ error });
       });
-  }, [deatilsId]);
+  }, [deatilsId,reset]);
   if (!deatilsId || deatilsId == "") return navigate("/customer-support");
   if (!isLoaded) return <Loading />;
   return (
     <AppLayout>
-      <FullQuearyDetail data={detailsData} />
+      <FullQuearyDetail data={detailsData} setRest={setRest}/>
     </AppLayout>
   );
 };
