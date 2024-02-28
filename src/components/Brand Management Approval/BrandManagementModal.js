@@ -278,7 +278,7 @@ const BrandManagementModal = ({ onClose, recordType }) => {
                       className={`position-absolute top-[40px] left-[20px] w-[100%]`}
                       onChange={(e) => {
                         setFormData((prev) => {
-                          return { ...prev, attachment: e.target.files[0] };
+                          return { ...prev, attachment: e.target.files[1] };
                         });
                       }}
                       value={formData.attachment}
