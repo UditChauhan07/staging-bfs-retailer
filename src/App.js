@@ -30,6 +30,7 @@ import CustomerServiceForm from "./pages/CustomerServiceForm";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
+import ProductDetails from "./pages/productDetails";
 function App() {
   // const Redirect = ({ href }) => {
   //   window.location.href = href;
@@ -49,6 +50,7 @@ function App() {
             ></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
+            {/* <Route path="/product/:name" element={<ProductDetails/>}></Route> */}
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
