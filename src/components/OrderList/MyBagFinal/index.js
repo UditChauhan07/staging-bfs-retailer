@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { GetAuthData, ShareDrive, getOrderDetailId, getOrderDetailsBasedId, getOrderDetailsInvoice, getProductImageAll, originAPi, supportShare } from "../../../lib/store";
 import { MdOutlineDownload } from "react-icons/md";
 import LoaderV2 from "../../loader/v2";
+import ProductDetails from "../../../pages/productDetails";
 
 function MyBagFinal() {
   const [OrderData, setOrderData] = useState([]);
@@ -290,6 +291,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false}/>
     </div>
   );
 }
