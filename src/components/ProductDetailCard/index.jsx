@@ -2,7 +2,7 @@ import Styles from "./Styles.module.css";
 import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import Slider from "../../utilities/Slider";
-const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuantityChange = null }) => {
+const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuantityChange = null, isAddtoCart }) => {
     if (!product) {
         return null;
     }
@@ -33,22 +33,24 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                     <p><b>By</b>, {product?.data?.ManufacturerName__c}</p>
                     <p>Code Number: {product?.data?.ProductCode},</p>
                     <p>UPC Number: {product?.data?.ProductUPC__c},</p>
-                    {product?.data?.Description&&<p>{product?.data?.Description}</p>}
+                    {product?.data?.Description && <p>{product?.data?.Description}</p>}
                     <p>Min Qty to buy: {product?.data?.Min_Order_QTY__c}</p>
                     <p><span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>&nbsp;${salesPrice}</p>
-                    {product?.data?.Category__c&&<p>Category: {product?.data?.Category__c}</p>}
+                    {product?.data?.Category__c && <p>Category: {product?.data?.Category__c}</p>}
                     {product.data?.Collection__c && <p>Collection: {product.data?.Collection__c}</p>}
-                    {orders[product?.data?.Id] ?
-                        <>
-                            <div className="d-flex">
-                                <QuantitySelector min={product?.data?.Min_Order_QTY__c || 0} value={orders[product?.data?.Id]?.quantity} onChange={(quantity) => {
-                                    onQuantityChange(product?.data, quantity, inputPrice || parseFloat(salesPrice), discount);
-                                }} />
-                                <button className="ml-4" onClick={() => onQuantityChange(product?.data, 0, inputPrice || parseFloat(salesPrice), discount)}><DeleteIcon fill="red" /></button>
-                            </div>
-                            <p className="mt-2">Total: <b>{inputPrice * orders[product?.data?.Id]?.quantity}</b></p>
-                        </> :
-                        <button className={Styles.button} onClick={() => onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), discount)}>Add to cart</button>}
+                    {isAddtoCart && <>
+                        {orders[product?.data?.Id] ?
+                            <>
+                                <div className="d-flex">
+                                    <QuantitySelector min={product?.data?.Min_Order_QTY__c || 0} value={orders[product?.data?.Id]?.quantity} onChange={(quantity) => {
+                                        onQuantityChange(product?.data, quantity, inputPrice || parseFloat(salesPrice), discount);
+                                    }} />
+                                    <button className="ml-4" onClick={() => onQuantityChange(product?.data, 0, inputPrice || parseFloat(salesPrice), discount)}><DeleteIcon fill="red" /></button>
+                                </div>
+                                <p className="mt-2">Total: <b>{inputPrice * orders[product?.data?.Id]?.quantity}</b></p>
+                            </> :
+                            <button className={Styles.button} onClick={() => onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), discount)}>Add to cart</button>}
+                    </>}
                 </div>
             </div>
             {product.data?.Full_Product_Description__c && <p>Product Full Description: {product.data?.Full_Product_Description__c}</p>}
@@ -59,7 +61,7 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
             {product.data?.Skin_Tone__c && <p>Product Tone: {product.data?.Skin_Tone__c}</p>}
             {product.data?.Skin_Type__c && <p>Product Type: {product.data?.Skin_Type__c}</p>}
             {product.data?.Travel_or_Full_Size__c && <p>Product Size: {product.data?.Travel_or_Full_Size__c}</p>}
-            {product?.data?.Newness_Alias__c &&<p>Product Newness Name: {product?.data?.Newness_Alias__c},</p>}
+            {product?.data?.Newness_Alias__c && <p>Product Newness Name: {product?.data?.Newness_Alias__c},</p>}
             <p>Product Season: {product?.data?.Season__c},</p>
             <p>Product Create Date: {new Date(product?.data?.CreatedDate).toDateString()}</p>
             <p>Product Launch Date: {product?.data?.Launch_Date__c}</p>
