@@ -1,0 +1,145 @@
+.dGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 325px);
+  justify-content: space-between;
+  gap: 2.5rem 0.5rem;
+  transition: all 0.25s;
+  margin: 3rem auto;
+  overflow-x: hidden;
+}
+.cardElement {
+  border: 1px solid #e1e1e1;
+  width: 300px;
+  height: auto;
+  border: 5%;
+  display: grid;
+  place-items: center;
+  padding: 25px 10px;
+  border-radius: 10px;
+  margin: auto;
+  position: relative;
+}
+.salesHolder {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 25px;
+  width: max-content;
+  padding: 2px;
+  height: 25px;
+  background: #6a6a6a;
+  color: #fff;
+  display: grid;
+  place-content: center;
+  font-family: Montserrat-500;
+  font-size: 18px;
+  line-height: 32px;
+  border: 1px solid #6a6a6a;
+  border-radius: 5px;
+}
+.imgHolder {
+  width: 175px;
+  height: 175px;
+  object-fit: contain;
+  cursor: pointer;
+}
+.brandHolder {
+  margin-top: 1rem;
+  font-family: Montserrat-500;
+  font-size: 22px;
+  line-height: 32px;
+  text-transform: uppercase;
+}
+.titleHolder {
+  font-family: Arial;
+  font-size: 16px;
+  line-height: 21px;
+  text-transform: capitalize;
+  color: #6a6a6a;
+  cursor: pointer;
+}
+.priceHolder {
+  font-family: Montserrat-500;
+  font-size: 21px;
+  line-height: 32px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+}
+.priceCrossed {
+  color: #ccc;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+.priceHolder a {
+  color: #000;
+  text-decoration: none;
+}
+.btn {
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  font-family: Montserrat-600;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  height: 30px;
+  letter-spacing: 1.4px;
+  line-height: normal;
+  width: 100px;
+}
+.preOrderBadge {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  color: #ccc;
+  font-size: 9px;
+  padding: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.preOrderBadge:hover {
+  background: #ccc;
+  color: #fff;
+}
+.btnHolder {
+  background-color: #000;
+  color: #fff;
+  font-family: Montserrat-600;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: normal;
+  height: 40px;
+  width: 150px;
+  margin: auto;
+  display: grid;
+  place-content: center;
+}
+
+.modalButton {
+  color: #fff;
+  font-family: Montserrat-600;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 1.4px;
+  background-color: #000;
+  width: 100px;
+  height: 30px;
+}
+
+@media (max-width: 1441px) {
+  .dGrid {
+    grid-template-columns: repeat(auto-fill, 300px);
+    gap: 2.5rem 0.5rem;
+  }
+}
+@media (max-width: 1023px) {
+  .dGrid {
+    grid-template-columns: repeat(auto-fill, 200px);
+  }
+  .cardElement {
+    width: 175px;
+  }
+}
