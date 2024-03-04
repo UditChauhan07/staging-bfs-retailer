@@ -626,3 +626,22 @@ export async function getProductList({ rawData }) {
     return data;
   }
 }
+
+export async function topProduct({month,manufacturerId,accountId}) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "IParlpz6lDE6kfU", {
+    method: "POST",
+    body: JSON.stringify({month,manufacturerId,accountId}),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
+  }
+}
