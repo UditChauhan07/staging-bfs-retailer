@@ -841,12 +841,7 @@ const MarketingCalendar = () => {
       console.log({error});
     })
   },[selectBrand,month])
-  // const[forceUpdate,setForceUpdate]=useState(false)
-  // const handleBrandFilter = (v) => onChange("brands", v);
-//  const handleclick=()=>{
-//   setSelectBrand(null)
-//   setMonth(null)
-//  }
+  
 // ...............................
   const generatePdf = () => {
     const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert

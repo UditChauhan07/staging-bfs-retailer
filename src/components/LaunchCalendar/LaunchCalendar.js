@@ -67,29 +67,7 @@ function LaunchCalendar({ productList, selectBrand,brand, month }) {
     
   }, [month,selectBrand,productList,brand]);
 
-  //   if(!ShipDate){
-  // setFilterData(products)
-  //   }
-  //   const newValues = products?.map((Date) => {
-  //     const filterData = Date.content?.filter((item) => {
-  //       // let match = item.OCDDate.split("/")
-  //       // console.log(match)
-  //       if (ShipDate) {
-  //         // return match.includes(month.toUpperCase() )
-  //         return item.date.toLowerCase().includes(ShipDate.toLowerCase() )
-  //       } else {
-  //         // If month is not provided, return all items
-  //         return true;
-  //       }
-  //     });
-  //     // Create a new object with filtered content
-  //     return { ...Date, content: filterData };
-  //   });
-  //  console.log(newValues);
-  //   setFilterData(newValues);
-  // }, [ShipDate]);
-
-  return (
+return (
     <div id="Calendar">
       <div className="container">
         <h1 className="TopHeading">Marketing Calendar</h1>

@@ -32,7 +32,7 @@
   text-decoration: line-through;
 }
  p,h2{
-  text-align: start!important;
+  /* text-align: start!important; */
   text-transform: capitalize;
   line-height: 21px;
 }
