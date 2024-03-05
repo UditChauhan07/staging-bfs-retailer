@@ -249,7 +249,7 @@ function Dashboard({ dashboardData }) {
     if (!AuthCheck()) {
       // navigate("/");
     }
-    getDataHandler({ month: 2, year: 2024 });
+    getDataHandler({ month: currentMonth, year: currentYear });
   }, []);
   const [salesRepId, setSalesRepId] = useState();
 
