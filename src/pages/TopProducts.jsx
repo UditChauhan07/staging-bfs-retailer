@@ -12,7 +12,7 @@ const TopProducts = () => {
   const [monthList, setMonthList] = useState([])
   const d = new Date();
   let monthIndex = d.getMonth();
-  const [manufacturerFilter, setManufacturerFilter] = useState();
+  const [manufacturerFilter, setManufacturerFilter] = useState("a0O1O00000XYBvQUAX");
   const [selectedMonth, setSelectedMonth] = useState(monthIndex + 1);
   const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
@@ -123,9 +123,9 @@ const TopProducts = () => {
     setTopProductList({ isLoaded: false, data: [], message: null })
     if (reset) {
       setSelectedMonth(monthIndex + 1);
-      setManufacturerFilter(manufacturerData?.[0]?.Id);
+      setManufacturerFilter("a0O1O00000XYBvQUAX");
       setSearchText('');
-      SearchData({ selectedMonth: monthIndex + 1, manufacturerFilter: manufacturerData?.[0]?.Id })
+      SearchData({ selectedMonth: monthIndex + 1, manufacturerFilter: "a0O1O00000XYBvQUAX" })
     } else {
       SearchData({ selectedMonth, manufacturerFilter })
     }

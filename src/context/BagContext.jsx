@@ -35,7 +35,11 @@ const BagProvider = ({ children }) => {
   const addOrder = (product, quantity, discount) => {
     setOrders((prev) => {
       const obj = { ...prev };
-      obj[product.Id] = parseOrderObjectWithDiscount(product, quantity, discount);
+      if(obj){
+        obj[product.Id] = parseOrderObjectWithDiscount(product, quantity, discount,Object.values(obj)?.[0]?.account,Object.values(obj)?.[0]?.manufacturer);
+      }else{
+        obj[product.Id] = parseOrderObjectWithDiscount(product, quantity, discount);
+      }
       return obj;
     });
   };
@@ -53,7 +57,8 @@ const BagProvider = ({ children }) => {
     });
     return true
   };
-  const parseOrderObjectWithDiscount = (product, quantity, discount) => {
+  const parseOrderObjectWithDiscount = (product, quantity, discount,account,manufacturer) => {
+    console.log({account,manufacturer});
     return {
       quantity: quantity,
       product,
@@ -65,14 +70,14 @@ const BagProvider = ({ children }) => {
         testerproductLimit: discount.testerproductLimit,
       },
       account: {
-        name: localStorage.getItem("Account"),
-        id: localStorage.getItem("AccountId__c"),
-        address: localStorage.getItem("address"),
-        shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
+        name: account?.name??localStorage.getItem("Account"),
+        id: account?.id??localStorage.getItem("AccountId__c"),
+        address: account?.address??localStorage.getItem("address"),
+        shippingMethod: account?.shippingMethod??JSON.parse(localStorage.getItem("shippingMethod")),
       },
       manufacturer: {
-        name: localStorage.getItem("manufacturer"),
-        id: localStorage.getItem("ManufacturerId__c"),
+        name: manufacturer?.name??localStorage.getItem("manufacturer"),
+        id: manufacturer?.id??localStorage.getItem("ManufacturerId__c"),
       },
       productType: product.Category__c === "PREORDER" ? "pre-order" : "wholesale",
     };

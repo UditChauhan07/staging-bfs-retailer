@@ -26,7 +26,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
         element.salesPrice = salesPrice;
         if (Object.values(orders).length) {
-            console.log({ manuId: Object.values(orders)[0]?.productType, loManu: element.Category__c });
             if (
                 Object.values(orders)[0]?.manufacturer?.id === localStorage.getItem("ManufacturerId__c") &&
                 Object.values(orders)[0].account.id === localStorage.getItem("AccountId__c") &&
@@ -103,7 +102,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                         <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id) }}>{product?.Name.substring(0, 20)}...</p>
                         {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                         <p className={Styles.priceHolder}>
-                            <p className={Styles.priceCrossed}>{product?.usdRetail__c}</p>&nbsp;{orders[product?.Id]?<Link to={'/my-bag'}>${salesPrice}</Link>:<p>${salesPrice}</p>}</p>
+                            <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;{orders[product?.Id]?<Link to={'/my-bag'}>${salesPrice}</Link>:<p>${salesPrice}</p>}</p>
                         {orders[product?.Id] ? <>
                             {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
                             <div className="d-flex">
