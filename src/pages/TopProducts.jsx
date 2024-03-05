@@ -23,13 +23,13 @@ const TopProducts = () => {
     let helperArray = [];
     months.map((month, i) => {
       if (i <= monthIndex) {
-        helperArray.push({ label: month, value: i + 1 })
+        helperArray.push({ label: `${month}, 2024`, value: i + 1 })
       } else {
-        indexMonth.push({ label: month, value: i + 1 })
+        indexMonth.push({ label: `${month}, 2023`, value: i + 1 })
       }
     })
     let finalArray = indexMonth.concat(helperArray)
-    setMonthList(finalArray)
+    setMonthList(finalArray.reverse())
   }, [])
 
   // const topProductData = useMemo(() => {
@@ -145,6 +145,7 @@ const TopProducts = () => {
       />
       <FilterItem
         label="Month"
+        minWidth="220px"
         name="Month"
         value={selectedMonth}
         options={monthList}
