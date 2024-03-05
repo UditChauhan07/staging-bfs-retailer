@@ -5,10 +5,14 @@ import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
 import { GetAuthData, supportShare } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
+import ProductDetails from "../../pages/productDetails";
 function OrderListContent({ data }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [productDetailId, setProductDetailId] = useState(null)
+  const [accountId, setAccountId] = useState();
+  const [manufacturerId, setManufacturerId] = useState();
   const currentDate = new Date();
   const months = [
     "January",
@@ -30,18 +34,18 @@ function OrderListContent({ data }) {
   };
 
   const generateSuportHandler = ({ data, value }) => {
-    GetAuthData().then((user)=>{
-      if(user.status == 200){
+    GetAuthData().then((user) => {
+      if (user.status == 200) {
         let beg = {
           orderStatusForm: {
             salesRepId: data.OwnerId,
             reason: value,
             contactId: user.data.retailerId,
             accountId: data.AccountId,
-            orderNumber: data?.Order_Number__c?? "Not Available",
+            orderNumber: data?.Order_Number__c ?? "Not Available",
             poNumber: data.PO_Number__c,
             manufacturerId: data.ManufacturerId__c,
-            invoiceNumber:data.Wholesale_Invoice__c? data.Wholesale_Invoice__c??"Not Available": "Not Available" ,
+            invoiceNumber: data.Wholesale_Invoice__c ? data.Wholesale_Invoice__c ?? "Not Available" : "Not Available",
             desc: null,
             opportunityId: data.Id,
             priority: "Medium",
@@ -50,17 +54,17 @@ function OrderListContent({ data }) {
         };
         // console.log("beg", beg);
         let statusOfSupport = supportShare(beg)
-        .then((response) => {
-          if (response) navigate("/orderStatusForm");
-        })
-        .catch((error) => {
-        console.error({ error });
-      });      
-    }
-    }).catch((userErr)=>{
-      console.error({userErr});
+          .then((response) => {
+            if (response) navigate("/orderStatusForm");
+          })
+          .catch((error) => {
+            console.error({ error });
+          });
+      }
+    }).catch((userErr) => {
+      console.error({ userErr });
     })
-    };
+  };
 
   return (
     <>
@@ -106,9 +110,8 @@ function OrderListContent({ data }) {
       {data?.length ? (
         data?.map((item, index) => {
           let date = new Date(item.CreatedDate);
-          let cdate = `${date.getDate()} ${
-            months[date.getMonth()]
-          } ${date.getFullYear()}`;
+          let cdate = `${date.getDate()} ${months[date.getMonth()]
+            } ${date.getFullYear()}`;
 
           return (
             <div className={` ${Styles.orderStatement}`} key={index}>
@@ -150,27 +153,27 @@ function OrderListContent({ data }) {
                             .map((ele, index) => {
                               return (
                                 <>
-                                  <li key={index}>
+                                  <li key={index} onClick={() => { setProductDetailId(ele.Product2Id); setAccountId(item.AccountId); setManufacturerId(item.ManufacturerId__c) }} style={{cursor:'pointer'}}>
                                     {Viewmore
                                       ? ele.Name.split(item.AccountName)[1]
                                       : ele.Name.split(item.AccountName)
-                                          .length > 1
-                                      ? ele.Name.split(item.AccountName)[1]
+                                        .length > 1
+                                        ? ele.Name.split(item.AccountName)[1]
                                           .length >= 31
-                                        ? `${ele.Name.split(
+                                          ? `${ele.Name.split(
                                             item.AccountName
                                           )[1].substring(0, 28)}...`
-                                        : `${ele.Name.split(
+                                          : `${ele.Name.split(
                                             item.AccountName
                                           )[1].substring(0, 31)}`
-                                      : ele.Name.split(item.AccountName)[0]
+                                        : ele.Name.split(item.AccountName)[0]
                                           .length >= 31
-                                      ? `${ele.Name.split(
-                                          item.AccountName
-                                        )[0].substring(0, 28)}...`
-                                      : `${ele.Name.split(
-                                          item.AccountName
-                                        )[0].substring(0, 31)}`}
+                                          ? `${ele.Name.split(
+                                            item.AccountName
+                                          )[0].substring(0, 28)}...`
+                                          : `${ele.Name.split(
+                                            item.AccountName
+                                          )[0].substring(0, 31)}`}
                                   </li>
                                 </>
                               );
@@ -182,10 +185,10 @@ function OrderListContent({ data }) {
                       <span>
                         <Link to="/orderDetails" className="linkStyling">
                           <button onClick={() => MyBagId(item.Id)}>
-                          {item.OpportunityLineItems?.records?.length &&
-                            item.OpportunityLineItems?.records?.length > 3 &&
-                            `+${item.OpportunityLineItems?.totalSize - 3} More`}
-                            </button>
+                            {item.OpportunityLineItems?.records?.length &&
+                              item.OpportunityLineItems?.records?.length > 3 &&
+                              `+${item.OpportunityLineItems?.totalSize - 3} More`}
+                          </button>
                         </Link>
                       </span>
                     </div>
@@ -267,6 +270,7 @@ function OrderListContent({ data }) {
           No data found
         </div>
       )}
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={accountId} ManufacturerId={manufacturerId} />
     </>
   );
 }
