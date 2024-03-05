@@ -113,7 +113,7 @@ export function supportClear() {
 export function fetchBeg() {
   let orderStr = localStorage.getItem(orderKey);
   let orderDetails = {
-    orderList: [],
+    orderList: {},
     Account: {
       name: null,
       id: null,
@@ -128,12 +128,12 @@ export function fetchBeg() {
   if (orderStr) {
     let orderList = Object.values(JSON.parse(orderStr));
     if (orderList.length > 0) {
-      orderDetails.Account.id = orderList[0].account.id;
-      orderDetails.Account.name = orderList[0].account.name;
-      orderDetails.Account.address = JSON.parse(orderList[0].account.address);
-      orderDetails.Account.shippingMethod = orderList[0].account.shippingMethod;
-      orderDetails.Manufacturer.id = orderList[0].manufacturer.id;
-      orderDetails.Manufacturer.name = orderList[0].manufacturer.name;
+      orderDetails.Account.id = orderList?.[0].account.id;
+      orderDetails.Account.name = orderList?.[0].account.name;
+      orderDetails.Account.address = JSON.parse(orderList?.[0].account.address);
+      orderDetails.Account.shippingMethod = orderList?.[0].account.shippingMethod;
+      orderDetails.Manufacturer.id = orderList?.[0].manufacturer.id;
+      orderDetails.Manufacturer.name = orderList?.[0].manufacturer.name;
       orderDetails.orderList = orderList;
     }
   }
@@ -617,6 +617,25 @@ export async function getProductList({ rawData }) {
   let response = await fetch(url + "NDgzTcdHqMCCRFd", {
     method: "POST",
     body: JSON.stringify(rawData),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
+  }
+}
+
+export async function topProduct({month,manufacturerId,accountId}) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url + "IParlpz6lDE6kfU", {
+    method: "POST",
+    body: JSON.stringify({month,manufacturerId,accountId}),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());

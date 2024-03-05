@@ -24,6 +24,7 @@ function MyBagFinal() {
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
+  // console.log({aa:Object.values(bagValue?.orderList)?.length});
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
@@ -31,16 +32,17 @@ function MyBagFinal() {
   }, []);
   let total = 0;
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
+
   useEffect(() => {
     let data = ShareDrive();
     if (!data) {
       data = {};
     }
     if (bagValue) {
-      if (bagValue.Manufacturer) {
-        if (bagValue.Manufacturer.id) {
-          if (!data[bagValue.Manufacturer.id]) {
-            data[bagValue.Manufacturer.id] = {};
+      if (bagValue?.Manufacturer) {
+        if (bagValue?.Manufacturer?.id) {
+          if (!data[bagValue?.Manufacturer?.id]) {
+            data[bagValue?.Manufacturer?.id] = {};
           }
           if (Object.values(data[bagValue.Manufacturer.id]).length > 0) {
             console.log({aaas:Object.values(data[bagValue.Manufacturer.id]).length});
@@ -80,6 +82,7 @@ function MyBagFinal() {
       setButtonActive(true);
     }
   }, [total, bagValue]);
+
   const onPriceChangeHander = (product,price='0')=>{
     if(price == '') price = 0;
     setOrderProductPrice(product,price).then((res)=>{
@@ -89,7 +92,6 @@ function MyBagFinal() {
     })
   }
 
-  let price = "";
   const orderPlaceHandler = () => {
     setIsOrderPlaced(1);
     GetAuthData()
@@ -260,8 +262,8 @@ function MyBagFinal() {
                     <h3>SHOPPING BAG ({orderQuantity})</h3>
                     <div className={Styles.scrollP}>
                       <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: "400px" }}>
-                        {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders"))).length > 0 ? (
-                          Object.values(JSON.parse(localStorage.getItem("orders"))).map((ele) => {
+                        {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders")))?.length > 0 ? (
+                          Object.values(JSON.parse(localStorage.getItem("orders")))?.map((ele) => {
                             // console.log(ele);
                             total +=parseFloat(ele.product?.salesPrice*ele.quantity)
                             return (
@@ -420,7 +422,8 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id}/>
+      {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>
   );
 }
