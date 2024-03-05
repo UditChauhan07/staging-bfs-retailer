@@ -113,7 +113,7 @@ export function supportClear() {
 export function fetchBeg() {
   let orderStr = localStorage.getItem(orderKey);
   let orderDetails = {
-    orderList: [],
+    orderList: {},
     Account: {
       name: null,
       id: null,
@@ -128,12 +128,12 @@ export function fetchBeg() {
   if (orderStr) {
     let orderList = Object.values(JSON.parse(orderStr));
     if (orderList.length > 0) {
-      orderDetails.Account.id = orderList[0].account.id;
-      orderDetails.Account.name = orderList[0].account.name;
-      orderDetails.Account.address = JSON.parse(orderList[0].account.address);
-      orderDetails.Account.shippingMethod = orderList[0].account.shippingMethod;
-      orderDetails.Manufacturer.id = orderList[0].manufacturer.id;
-      orderDetails.Manufacturer.name = orderList[0].manufacturer.name;
+      orderDetails.Account.id = orderList?.[0].account.id;
+      orderDetails.Account.name = orderList?.[0].account.name;
+      orderDetails.Account.address = JSON.parse(orderList?.[0].account.address);
+      orderDetails.Account.shippingMethod = orderList?.[0].account.shippingMethod;
+      orderDetails.Manufacturer.id = orderList?.[0].manufacturer.id;
+      orderDetails.Manufacturer.name = orderList?.[0].manufacturer.name;
       orderDetails.orderList = orderList;
     }
   }

@@ -8,7 +8,6 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
 const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true,AccountId=null,ManufacturerId=null }) => {
-    console.log({AccountId,ManufacturerId});
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -45,6 +44,7 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true,Acco
                 Object.values(orders)[0].account.id === AccountId &&
                 Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
             ) {
+                console.log({aa:Object.values(orders)});
                 orderSetting(element, quantity);
                 setReplaceCartModalOpen(false);
             } else {
