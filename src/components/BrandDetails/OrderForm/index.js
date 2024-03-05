@@ -8,7 +8,7 @@ import Styles from "../../Modal UI/Styles.module.css";
 
 const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, orderData = {}, btnClassName = null }) => {
   const { orders, setOrders, setOrderQuantity, addOrder } = useBag();
-  const productList = rawData?.data.records || [];
+  const productList = rawData?.data || [];
   const discount = rawData?.discount || {};
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
