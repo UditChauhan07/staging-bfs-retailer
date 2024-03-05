@@ -24,6 +24,11 @@
     object-fit: contain;
     cursor: pointer;
 }
+.soonHolder{
+    font-size: 6.5px;
+    letter-spacing: 0.5px;
+    text-align: end;
+}
 .brandHolder{
     margin-top: 1rem;
     font-family: Montserrat-500;
@@ -48,6 +53,7 @@ text-align: center;
     font-weight: bold;
 }
 .linkHolder{
+    cursor: pointer;
 }
 .btnHolder{
     background-color: #000;
