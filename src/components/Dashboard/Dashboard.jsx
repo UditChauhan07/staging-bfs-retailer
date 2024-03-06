@@ -501,7 +501,7 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-7">
-            <p className={Styles.Tabletext}>Your Sales By Brand</p>
+            <p className={Styles.Tabletext}>Your Purchase By Brand</p>
 
             <div className={Styles.donuttop}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
@@ -516,7 +516,7 @@ function Dashboard({ dashboardData }) {
             </div>
           </div>
           <div className="col-lg-5">
-            <p className={Styles.Tabletext}>Your Sales Performance Score in 2024</p>
+            <p className={Styles.Tabletext}>Your Purchase Performance Score in 2024</p>
             <div className={Styles.donuttop1}>
               {!isLoading ? (
                 <ContentLoader />
@@ -526,7 +526,7 @@ function Dashboard({ dashboardData }) {
                     Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
                   </p>
                   <p className={`text-end ${Styles.Tabletxt1}`}>
-                    Achieved Sales: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
+                    Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                   </p>
                   <div className={Styles.donutbox}>
                     <PieChart width={400} height={400}>
@@ -546,7 +546,7 @@ function Dashboard({ dashboardData }) {
 
         <div className="row mt-5">
           <div className="">
-            <p className={Styles.Tabletext}>Total Sale By Brand</p>
+            <p className={Styles.Tabletext}>Total Purchase By Brand</p>
             <div className={Styles.graphmain}>
               <Chart options={dataa.options} series={manufacturerSalesYear} type="area" width="100%" height="100%" />
             </div>
