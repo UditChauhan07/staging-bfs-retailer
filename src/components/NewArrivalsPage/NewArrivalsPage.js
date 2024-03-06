@@ -4,6 +4,7 @@ import LoaderV2 from "./../loader/v2";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+// import Pagination from "../components/Pagination/Pagination";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -24,8 +25,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=n
   //     setIsEmpty(temp);
   //   });
   // }, [selectBrand]);
+  // ...............
+  let PageSize = 10;
 
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState()
   useEffect(() => {
     if (!month && !selectBrand) {
