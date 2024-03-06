@@ -1,11 +1,21 @@
-import React,{useState,useEffect} from "react";
-import Layout from "../components/Layout/Layout";
+import React, { useState,useEffect } from "react";
 import AppLayout from "../components/AppLayout";
-import { FilterItem } from "../components/FilterItem";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
+import Pagination from "../components/Pagination/Pagination";
+import { FilterItem } from "../components/FilterItem";
+import html2pdf from 'html2pdf.js';
+import { MdOutlineDownload } from "react-icons/md";
 import { GetAuthData, getRetailerBrands } from "../lib/store";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+const fileExtension = ".xlsx";
+const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+
 const NewArrivals = () => {
-  const [productList, setProductList] = useState([
+let PageSize = 10;
+const [currentPage, setCurrentPage] = useState(1);
+
+  const [productList,setProductList] = useState([
     {
       month: "Jan",
       content: [
@@ -22,13 +32,13 @@ const NewArrivals = () => {
         },
         {
           brand: "Re-Nutriv",
-          date: "26/FEB/2024",
-          OCDDate: "26/FEB/2024",
+          date:  "26/FEB/2024",
+          OCDDate: 
+           "26/FEB/2024",
           image: "/assets/images/27.png",
           name: "Re Nutriv Ultimate Diamond Brilliance Crème REFILL ",
           size: "50 ml",
-          description:
-            "The transcendently weightless, delightfully indulgent fluid absorbs quickly to refresh skin and help restore a plumper, smoother feel.",
+          description: "The transcendently weightless, delightfully indulgent fluid absorbs quickly to refresh skin and help restore a plumper, smoother feel.",
           brandLogo: "/assets/images/renutrive-logo.png",
         },
         {
@@ -38,8 +48,7 @@ const NewArrivals = () => {
           image: "/assets/images/02.png",
           name: "LipNight",
           size: "09 g",
-          description:
-            "Naturally fragranced and flavored with Vanilla and soothing Chamomile Oil, this overnight treatment sweetly blankets and soothes lips while you slumber.",
+          description: "Naturally fragranced and flavored with Vanilla and soothing Chamomile Oil, this overnight treatment sweetly blankets and soothes lips while you slumber.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
         {
@@ -60,8 +69,7 @@ const NewArrivals = () => {
           image: "/assets/images/04.png",
           name: "Kakadu Luxe Cream",
           size: "50 ML",
-          description:
-            "A luscious creamy mousse enriched with a high concentration of antioxidants and Vitamin A, C & E to help nourish and revitalise your skin.",
+          description: "A luscious creamy mousse enriched with a high concentration of antioxidants and Vitamin A, C & E to help nourish and revitalise your skin.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -82,8 +90,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing2.png",
           name: "Soothing Cleansing Oil Relaunch ",
           size: "200 ml",
-          description:
-            "Soothing Cleansing Oil makeup remover removes makeup, dirt and all impurities from your face perfectly and leaves the skin soft and clean.",
+          description: "Soothing Cleansing Oil makeup remover removes makeup, dirt and all impurities from your face perfectly and leaves the skin soft and clean.",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
         {
@@ -115,8 +122,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing21.png",
           name: "Fleur de Peau Hand and Body Gel",
           size: "200 ml",
-          description:
-            "A new addition to the Fleur de Peau fragrance family, this Hand and Body Cleansing Gel pays tribute to the sensual notes of musk.",
+          description: "A new addition to the Fleur de Peau fragrance family, this Hand and Body Cleansing Gel pays tribute to the sensual notes of musk.",
           brandLogo: "/assets/images/Diptuque.png",
         },
 
@@ -124,7 +130,7 @@ const NewArrivals = () => {
           brand: "Diptyque",
           date: "TBD",
           OCDDate: "16/JAN/2024",
-          image: "/assets/images/Smoothing21.png",
+          image: "/assets/images/Smoothing2s1.png",
           name: "Valentine’s Duo",
           size: "190 g",
           description: "A delicate, scented declaration of love incorporating elements of tenderness and passion, flowers and leaves.",
@@ -138,11 +144,9 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing21.png",
           name: "Fleur de Peau Hand and body lotion",
           size: "200 ml",
-          description:
-            "An intensely perfumed veil, distilling all the carnal sweetness of the musk in Fleur de Peau into an ode to the legendary love of Eros and Psyche. ",
+          description: "An intensely perfumed veil, distilling all the carnal sweetness of the musk in Fleur de Peau into an ode to the legendary love of Eros and Psyche. ",
           brandLogo: "/assets/images/Diptuque.png",
-        },
-        {
+        }, {
           brand: "Diptyque",
           date: "22/Jan/2023",
           OCDDate: "15/Feb/2024",
@@ -206,8 +210,7 @@ const NewArrivals = () => {
           image: "/assets/images/05.png",
           name: "Re Dimension Hydra",
           size: "30 ml",
-          description:
-            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -218,12 +221,12 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing6.png",
           name: "DrySpun LIGHT",
           size: "9.35 oz",
-          description:
-            "This new, updated formula provides lightweight moisture – and contains Emblica technology, which expands each strand for voluminous, full-bodied styles.",
+          description: "This new, updated formula provides lightweight moisture – and contains Emblica technology, which expands each strand for voluminous, full-bodied styles.",
 
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
+       
         // Add more products for February
       ],
     },
@@ -247,8 +250,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing23.png",
           name: "Coffee Candle",
           size: "190g",
-          description:
-            "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
+          description: "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -258,8 +260,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing23.png",
           name: "Cookie Candle",
           size: "190g",
-          description:
-            "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
+          description: "A cup realised and assembled manually by ceramicist Toma Blok in his workshop in the Paris region, and available in a strictly limited edition.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -269,8 +270,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing23.png",
           name: "Whipped Cream Candle",
           size: "190g",
-          description:
-            "Enriched with aloe vera and macadamia oil, this unique Crème de Parfum format repairs and protects your hands while perfuming them with our iconic fragrances.",
+          description: "Enriched with aloe vera and macadamia oil, this unique Crème de Parfum format repairs and protects your hands while perfuming them with our iconic fragrances.",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -280,8 +280,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing23.png",
           name: "Mini Candle Boxed Set",
           size: "3*70g",
-          description:
-            "Whether you go for a ready-made or create-your-own option, these gift sets and boxes are great for showcasing the finest selection of scents",
+          description: "Whether you go for a ready-made or create-your-own option, these gift sets and boxes are great for showcasing the finest selection of scents",
           brandLogo: "/assets/images/Diptuque.png",
         },
         {
@@ -291,8 +290,7 @@ const NewArrivals = () => {
           image: "/assets/images/10.png",
           name: "Face Forward Color Correcting Wheel",
           size: "N/A",
-          description:
-            "Color correcting is a concealer technique that professional makeup artists have used for years and that went mainstream after social media got wind of the trend.",
+          description: "Color correcting is a concealer technique that professional makeup artists have used for years and that went mainstream after social media got wind of the trend.",
 
           brandLogo: "/assets/images/kevy_logo.png",
         },
@@ -303,8 +301,7 @@ const NewArrivals = () => {
           image: "/assets/images/28.png",
           name: "Re Nutriv Rich Foam Cleanser ",
           size: "4.2 oz",
-          description:
-            "The exceptionally rich formula of the Re-Nutriv Intensive Hydrating Foam Cleanser thoroughly but gently removes impurities and makeup.",
+          description: "The exceptionally rich formula of the Re-Nutriv Intensive Hydrating Foam Cleanser thoroughly but gently removes impurities and makeup.",
           brandLogo: "/assets/images/renutrive-logo.png",
         },
 
@@ -328,8 +325,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing8.png",
           name: "Bond Trial Kit",
           size: "N/A",
-          description:
-            "Bond Treatment Trial Kit is a four-part system of professional and high quality products created to protect hair from damage and the perfect.",
+          description: "Bond Treatment Trial Kit is a four-part system of professional and high quality products created to protect hair from damage and the perfect.",
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
@@ -352,8 +348,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing7.png",
           name: "Thickening Trial Kit",
           size: "N/A",
-          description:
-            "This lightweight in-shower treatment, powered by Emblica Technology, plumps strands from roots to ends for a thicker, fuller, volumized look.",
+          description: "This lightweight in-shower treatment, powered by Emblica Technology, plumps strands from roots to ends for a thicker, fuller, volumized look.",
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
@@ -391,8 +386,7 @@ const NewArrivals = () => {
           image: "/assets/images/11.png",
           name: "Micro Sculpting Brow",
           size: "N/A",
-          description:
-            "The Color Stick is a pigment-rich, ultra-creamy, & lightweight blush that offers buildable color, a skin-softening finish, and long-lasting wear.",
+          description: "The Color Stick is a pigment-rich, ultra-creamy, & lightweight blush that offers buildable color, a skin-softening finish, and long-lasting wear.",
           brandLogo: "/assets/images/kevy_logo.png",
         },
         {
@@ -424,8 +418,7 @@ const NewArrivals = () => {
           image: "/assets/images/19.png",
           name: "From the Garden Candle",
           size: "165 g",
-          description:
-            "A collection of high-end scented candles from Maison Margiela, inviting you to relive forgotten memories and emotions at home.",
+          description: "A collection of high-end scented candles from Maison Margiela, inviting you to relive forgotten memories and emotions at home.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
 
@@ -447,8 +440,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing4.png",
           name: "Long Wear Cream Shadow Sticks Shade Extension",
           size: "30 ml",
-          description:
-            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
 
@@ -459,11 +451,10 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing17.png",
           name: "Mineralescape Eyeshadow",
           size: "N/A",
-          description:
-            "eyeshadows include highly buildable shades providing everything from neutral, natural-looking washes of colour to vividly pigmented eye looks.",
+          description: "eyeshadows include highly buildable shades providing everything from neutral, natural-looking washes of colour to vividly pigmented eye looks.",
           brandLogo: "/assets/images/Byredo.png",
         },
-
+        
         // Add more products for February
       ],
     },
@@ -488,8 +479,7 @@ const NewArrivals = () => {
           image: "/assets/images/06.png",
           name: "Re Dimension Hydra",
           size: "30 ml",
-          description:
-            "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
+          description: "It glides on effortlessly, infusing skin with multi-dimensional life as the bouncy, light-as-air gel blends and builds color.",
           brandLogo: "/assets/images/rms-beauty.png",
         },
 
@@ -500,8 +490,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing5.png",
           name: "Extra Lip Serum",
           size: "N/A",
-          description:
-            " This plump lip serum is very comfortable. No stinging , burning or cooling. My lips feel moisturized and look more plump due to the high shine",
+          description: " This plump lip serum is very comfortable. No stinging , burning or cooling. My lips feel moisturized and look more plump due to the high shine",
           brandLogo: "/assets/images/BobbyBrown.png",
         },
 
@@ -524,8 +513,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing18.png",
           name: "The Lipstick – Satin",
           size: "N/A",
-          description:
-            "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
+          description: "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
           brandLogo: "/assets/images/Byredo.png",
         },
         // Add more products for February
@@ -574,8 +562,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing24.png",
           name: "Citronnelle ",
           size: "109g",
-          description:
-            "The Diptyque Body Spray Citronnelle & Geranium is an aromatic, floral fragrance with essential oils that also works as a mosquito repellent.",
+          description: "The Diptyque Body Spray Citronnelle & Geranium is an aromatic, floral fragrance with essential oils that also works as a mosquito repellent.",
           brandLogo: "/assets/images/Diptuque.png",
         },
 
@@ -586,8 +573,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing26.png",
           name: "Advanced Lip Perioral Serum Reformulation",
           size: "15g",
-          description:
-            "Lip & Perioral Renewal Serum is a targeted treatment for the lip area, specifically designed to fight against the appearance of vertical lines.",
+          description: "Lip & Perioral Renewal Serum is a targeted treatment for the lip area, specifically designed to fight against the appearance of vertical lines.",
           brandLogo: "/assets/images/revive.png",
         },
         {
@@ -614,8 +600,7 @@ const NewArrivals = () => {
           image: "/assets/images/14.png",
           name: "New Naked Skin Tint ",
           size: "N/A",
-          description:
-            "Get tinted sheer to light coverage for a natural finish that feels like you're wearing next to nothing when you use Stripped Nude Skin Tint by Kevyn Aucoin.",
+          description: "Get tinted sheer to light coverage for a natural finish that feels like you're wearing next to nothing when you use Stripped Nude Skin Tint by Kevyn Aucoin.",
           brandLogo: "/assets/images/kevy_logo.png",
         },
 
@@ -637,8 +622,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing20.png",
           name: "The Lipstick – Satin ",
           size: "N/A",
-          description:
-            "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
+          description: "A satin finish to reflect light and expand the colour. Vegan formula. Colour rich with an exceptional formulation that is both comfortable.",
           brandLogo: "/assets/images/Byredo.png",
         },
 
@@ -666,8 +650,7 @@ const NewArrivals = () => {
           image: "/assets/images/Smoothing15.png",
           name: "Mojave Ghost Absolu",
           size: "50 ml",
-          description:
-            "Mojave Ghost is a woody composition inspired by the soulful beauty of the Mojave Desert. In this xeric wilderness, rare are the plants that dare to blossom.",
+          description: "Mojave Ghost is a woody composition inspired by the soulful beauty of the Mojave Desert. In this xeric wilderness, rare are the plants that dare to blossom.",
           brandLogo: "/assets/images/Byredo.png",
         },
 
@@ -699,8 +682,7 @@ const NewArrivals = () => {
           image: "/assets/images/20.png",
           name: "Beautiful Magnolia Travel Spray",
           size: "10 ml",
-          description:
-            "A hypnotic blend with signature notes of lush Magnolia, solar Gardenia, warm Woods and luminous Musk. Romantic, feminine and radiant",
+          description: "A hypnotic blend with signature notes of lush Magnolia, solar Gardenia, warm Woods and luminous Musk. Romantic, feminine and radiant",
           brandLogo: "/assets/images/estee-Logo.png",
         },
 
@@ -721,7 +703,7 @@ const NewArrivals = () => {
           description: "Under the Stars by Maison Martin Margiela is a Amber Woody fragrance for women and men.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
-
+        
         {
           brand: "Re-Nutriv",
           date: "04/DEC/2023",
@@ -749,8 +731,7 @@ const NewArrivals = () => {
           image: "/assets/images/21.png",
           name: "Double Wear Smooth & Blur Primer ",
           size: "40 ml",
-          description:
-            "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
+          description: "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
           brandLogo: "/assets/images/estee-Logo.png",
         },
         {
@@ -780,8 +761,7 @@ const NewArrivals = () => {
           image: "/assets/images/16.png",
           name: "Body Lotion",
           size: "200 ml",
-          description:
-            "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
+          description: "This body lotion is nourishing and moisturizing thanks to a complex of hydrating agents, shea butter, colza oil & vegetal glycerin.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
         {
@@ -808,12 +788,30 @@ const NewArrivals = () => {
         // Add more products for February
       ],
     },
-  ]);
-  
+  ])
+  // let brands = [
+  //   { value: null, label: "All" },
+  //   { value: "Susanne Kaufmann", label: "Susanne Kaufmann" },
+  //   { value: "AERIN", label: "AERIN" },
+  //   { value: "ARAMIS", label: "ARAMIS" },
+  //   { value: "Bobbi Brown", label: "Bobbi Brown" },
+  //   { value: "Bumble and Bumble", label: "Bumble and Bumble" },
+  //   { value: "Byredo", label: "Byredo" },
+  //   { value: "BY TERRY", label: "BY TERRY" },
+  //   { value: "Diptyque", label: "Diptyque" },
+  //   { value: "Kevyn Aucoin Cosmetics", label: "Kevyn Aucoin Cosmetics" },
+  //   { value: "ESTEE LAUDER", label: "ESTEE LAUDER" },
+  //   { value: "L'Occitane", label: "L'Occitane" },
+  //   { value: "Maison Margiela", label: "Maison Margiela" },
+  //   { value: "ReVive", label: "ReVive" },
+  //   { value: "RMS Beauty", label: "RMS Beauty" },
+  //   { value: "Smashbox", label: "Smashbox" },
+  //   { value: "Re-Nutriv", label: "Re-Nutriv" },
+  //   { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
+  // ];
   const [month, setMonth] = useState("");
   let months = [
-    { value: null, label: "All" },
-    { value: "JAN", label: "JAN" },
+   { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
     { value: "MAR", label: "MAR" },
     { value: "APR", label: "APR" },
@@ -825,16 +823,19 @@ const NewArrivals = () => {
     { value: "OCT", label: "OCT" },
     { value: "NOV", label: "NOV" },
     { value: "DEC", label: "DEC" },
-    { value: "TBD", label: "TBD" },
+    // { value: "TBD", label: "TBD" },
 
   ];
+
+  // ...............
   const [isEmpty, setIsEmpty] = useState(false);
- const [brand, setBrand] = useState([]);
+    const [brand, setBrand] = useState([]);
     const [selectBrand,setSelectBrand]=useState(null)
+
+    useEffect(()=>{
+      HandleClear()
+    },[])
   useEffect(()=>{
-    const currentMonthIndex = new Date().getMonth()+1;
-    setMonth(months[currentMonthIndex].value);
-    
     GetAuthData().then((user)=>{
       let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
       getRetailerBrands({rawData}).then((resManu)=>{
@@ -846,55 +847,156 @@ const NewArrivals = () => {
       console.log({error});
     })
   },[selectBrand,month])
+  // const[forceUpdate,setForceUpdate]=useState(false)
+  // const handleBrandFilter = (v) => onChange("brands", v);
+//  const handleclick=()=>{
+//   setSelectBrand(null)
+//   setMonth(null)
+//  }
+// ...............................
+  const HandleClear =()=>{
+    const currentMonthIndex = new Date().getMonth();
+        setMonth(months[currentMonthIndex].value);
+        setSelectBrand(null);
+        setIsEmpty(false)
+  }
+
+  const generatePdf = () => {
+    const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
+    // element.style.padding = "10px"
+    let filename = `Marketing Calender `;
+    if (brand) {
+      filename = brand + " "
+    }
+    filename += new Date();
+    const opt = {
+      margin: 1,
+      filename: filename + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
+  const generateXLSX = () => {
+    const newValues = productList?.map((months) => {
+      const filterData = months.content?.filter((item) => {
+        // let match = item.OCDDate.split("/")
+        // console.log(match)
+        if (month) {
+          if (brand) {
+            if (brand == item.brand) {
+              return item.date.toLowerCase().includes(month.toLowerCase())
+            }
+          } else {
+            return item.date.toLowerCase().includes(month.toLowerCase())
+          }
+          // return match.includes(month.toUpperCase() )
+        } else {
+          if (brand) {
+            if (brand == item.brand) {
+              return true;
+            }
+          } else {
+            return true;
+          }
+          // If month is not provided, return all items
+        }
+      });
+        // Create a new object with filtered content
+        return { ...months, content: filterData };
+    });
+    let fileData = exportToExcel({list:newValues});
+  }
+  
+  const csvData = ({data}) => {
+    let finalData = [];
+    if (data.length) {
+      data?.map((ele) => {
+        if(ele.content.length){
+          ele.content.map((item)=>{
+            let temp = {};
+            temp["MC Month"] = ele.month;
+            temp["Product Title"] = item.name;
+            temp["Product Description"] = item.description;
+            temp["Product Size"] = item.size;
+            temp["Product Ship Date"] = item.date;
+            temp["Product OCD Date"] = item.OCDDate;
+            temp["Product Brand"] = item.brand;
+            finalData.push(temp);
+          })
+        }
+      });
+    }
+    return finalData;
+  };
+  const exportToExcel = ({list}) => {
+    const ws = XLSX.utils.json_to_sheet(csvData({data:list}));
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    let filename = `Marketing Calender`;
+    if (brand) {
+      filename = brand
+    }
+    FileSaver.saveAs(data, `${filename} ${new Date()}` + fileExtension);
+  };
+  
   return (
     <AppLayout
-    filterNodes={
-      <>
-        <FilterItem
-          minWidth="220px"
-          label="All Brand"
-          name="All-Brand"
-          value={selectBrand}
-          options={
-            Array.isArray(brand)
-              ? brand?.map((brands) => ({
-                  label: brands.Name,
-                  value: brands.Name,
-                }))
-              : []
-          }
-          onChange={(value) => {
-            setSelectBrand(value);
-          }}
-        />
-        <FilterItem
-          minWidth="220px"
-          label="JAN-DEC"
-          name="JAN-DEC"
-          value={month}
-          options={months}
-          onChange={(value) => {
-            setMonth(months.value);
-          }}
-        />
-        <button
-          className="border px-2.5 py-1 leading-tight"
-          // onClick={handleclick}
-          onClick={() => {
-            setSelectBrand(null);
-            setMonth(null);
-            setIsEmpty(false)
-        // setForceUpdate(prev=>prev)
-          }}
-        >
-          CLEAR ALL
-        </button>
-       
-      </>
-    }
-  >
-    <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty}  month={month} productList={productList}/> 
-      
+      filterNodes={
+        <>
+          <FilterItem
+            minWidth="220px"
+            label="All Brand"
+            name="All-Brand"
+            value={selectBrand}
+            options={
+              Array.isArray(brand)
+                ? brand?.map((brands) => ({
+                    label: brands.Name,
+                    value: brands.Name,
+                  }))
+                : []
+            }
+            onChange={(value) => {
+              setSelectBrand(value);
+            }}
+          />
+          <FilterItem
+            minWidth="220px"
+            label="JAN-DEC"
+            name="JAN-DEC"
+            value={month}
+            options={months}
+            onChange={(value) => {
+              setMonth(value);
+            }}
+          />
+          <button
+            className="border px-2.5 py-1 leading-tight"
+            // onClick={handleclick}
+            onClick={HandleClear}
+          >
+            CLEAR ALL
+          </button>
+          <div className="dropdown dropdown-toggle border px-2.5 py-1 leading-tight d-flex" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <MdOutlineDownload size={16} />&nbsp;Download
+            <ul className="dropdown-menu">
+              <li>
+                <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
+              </li>
+              <li>
+                <div className="dropdown-item text-start" onClick={()=>generateXLSX()}>&nbsp;XLSX</div>
+              </li>
+            </ul>
+          </div>
+        </>
+      }
+    >
+      <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty}  month={month} productList={productList}/>
     </AppLayout>
   );
 };
