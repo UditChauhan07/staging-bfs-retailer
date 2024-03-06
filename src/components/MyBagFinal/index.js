@@ -93,15 +93,16 @@ function MyBagFinal() {
   }
 
   const orderPlaceHandler = () => {
+    let fetchBag = fetchBeg();
     setIsOrderPlaced(1);
     GetAuthData()
       .then((user) => {
         // let bagValue = fetchBeg()
-        if (bagValue) {
+        if (fetchBag) {
           // setButtonActive(true)
           let list = [];
           let orderType = "Wholesale Numbers";
-          let productLists = Object.values(bagValue.orderList);
+          let productLists = Object.values(fetchBag.orderList);
           if (productLists.length) {
             productLists.map((product) => {
               if (product.product.Category__c == "PREORDER") orderType = "Pre Order";
@@ -115,26 +116,26 @@ function MyBagFinal() {
             });
           }
           let begToOrder = {
-            AccountId: bagValue?.Account?.id,
-            Name: bagValue?.Account?.name,
-            ManufacturerId__c: bagValue?.Manufacturer?.id,
+            AccountId: fetchBag?.Account?.id,
+            Name: fetchBag?.Account?.name,
+            ManufacturerId__c: fetchBag?.Manufacturer?.id,
             PONumber: PONumber,
             desc: orderDesc,
             SalesRepId: localStorage.getItem("Sales_Rep__c"),
             Type: orderType,
-            ShippingCity:bagValue?.Account?.address?.city,
-            ShippingStreet:bagValue?.Account?.address?.street,
-            ShippingState:bagValue?.Account?.address?.state,
-            ShippingCountry:bagValue?.Account?.address?.country,
-            ShippingZip:bagValue?.Account?.address?.postalCode,
+            ShippingCity:fetchBag?.Account?.address?.city,
+            ShippingStreet:fetchBag?.Account?.address?.street,
+            ShippingState:fetchBag?.Account?.address?.state,
+            ShippingCountry:fetchBag?.Account?.address?.country,
+            ShippingZip:fetchBag?.Account?.address?.postalCode,
             list,
             key: user.data.x_access_token,
-            shippingMethod:bagValue.Account.shippingMethod
+            shippingMethod:fetchBag.Account.shippingMethod
           };
           OrderPlaced({ order: begToOrder })
             .then((response) => {
               if (response) {
-                bagValue.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
+                fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                 localStorage.removeItem("orders");
                 navigate("/order-list");
                 setIsOrderPlaced(2);
