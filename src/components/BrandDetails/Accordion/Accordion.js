@@ -92,7 +92,7 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                 <th>Product Code</th>
                 <th>UPC</th>
                 <th>List Price</th>
-                <th style={{ width: "175px" }}>Sale Price</th>
+                <th style={{ width: "175px" }}>Purchase Price</th>
                 <th>Min Qty</th>
                 <th>Qty</th>
                 <th>Total</th>
@@ -127,14 +127,14 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                           }
                           return (
                             <tr className={`${styles.ControlTR} w-full `} key={indexed}>
-                              <td className={styles.ControlStyle}>
+                              <td className={styles.ControlStyle} style={{cursor:'pointer' }}>
                               {
                                   !productImage.isLoaded?<LoaderV2/>:
                                   productImage.images?.[value?.ProductCode] ?
                                   productImage.images[value?.ProductCode]?.ContentDownloadUrl?
-                                  <img src={productImage.images[value?.ProductCode]?.ContentDownloadUrl} alt="img" width={35} />
-                                  :<img src={productImage.images[value?.ProductCode]} alt="img"  width={35}/>
-                                  :<img src={Img1} alt="img" />
+                                  <img src={productImage.images[value?.ProductCode]?.ContentDownloadUrl} alt="img" width={35} onClick={()=>sendProductIdHandler({productId:value.Id,productName:value.Name})}/>
+                                  :<img src={productImage.images[value?.ProductCode]} alt="img"  width={35} onClick={()=>sendProductIdHandler({productId:value.Id,productName:value.Name})}/>
+                                  :<img src={Img1} alt="img" onClick={()=>sendProductIdHandler({productId:value.Id,productName:value.Name})}/>
                                 }
                               </td>
                               <td className="text-capitalize" style={{ fontSize: '13px',cursor:'pointer' }} onMouseEnter={() => setShowName({ index: indexed, type: true })}
