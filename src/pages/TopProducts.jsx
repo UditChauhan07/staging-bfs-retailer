@@ -12,13 +12,13 @@ const TopProducts = () => {
   const [monthList, setMonthList] = useState([])
   const d = new Date();
   let monthIndex = d.getMonth();
-  const [manufacturerFilter, setManufacturerFilter] = useState("a0O1O00000XYBvQUAX");
-  const [selectedMonth, setSelectedMonth] = useState(monthIndex + 1);
+  const [manufacturerFilter, setManufacturerFilter] = useState();
+  const [selectedMonth, setSelectedMonth] = useState();
   const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    btnHandler(true);
+    btnHandler({manufacturerId:"a0O1O00000XYBvQUAX",month:monthIndex + 1});
     let indexMonth = [];
     let helperArray = [];
     months.map((month, i) => {
@@ -118,17 +118,12 @@ const TopProducts = () => {
       console.log({ error });
     })
   }
-  const btnHandler = (reset = false) => {
+  const btnHandler = ({month,manufacturerId}) => {
     setIsLoaded(false)
     setTopProductList({ isLoaded: false, data: [], message: null })
-    if (reset) {
-      setSelectedMonth(monthIndex + 1);
-      setManufacturerFilter("a0O1O00000XYBvQUAX");
-      setSearchText('');
-      SearchData({ selectedMonth: monthIndex + 1, manufacturerFilter: "a0O1O00000XYBvQUAX" })
-    } else {
-      SearchData({ selectedMonth, manufacturerFilter })
-    }
+      setManufacturerFilter(manufacturerId);
+      setSelectedMonth(month);
+      SearchData({ selectedMonth:month, manufacturerFilter:manufacturerId })
   }
   return (
     <AppLayout filterNodes={<>
@@ -141,7 +136,7 @@ const TopProducts = () => {
           label: manufacturer.Name,
           value: manufacturer.Id,
         }))}
-        onChange={(value) => setManufacturerFilter(value)}
+        onChange={(value) => btnHandler({manufacturerId:value,month:selectedMonth})}
       />
       <FilterItem
         label="Month"
@@ -149,7 +144,7 @@ const TopProducts = () => {
         name="Month"
         value={selectedMonth}
         options={monthList}
-        onChange={(value) => setSelectedMonth(value)}
+        onChange={(value) => btnHandler({manufacturerId:manufacturerFilter,month:value})}
       />
       {/* <FilterSearch
         onChange={(e) => setSearchText(e.target.value)}
@@ -159,13 +154,7 @@ const TopProducts = () => {
       /> */}
       <button
         className="border px-2.5 py-1 leading-tight"
-        onClick={() => { btnHandler() }}
-      >
-        Search
-      </button>
-      <button
-        className="border px-2.5 py-1 leading-tight"
-        onClick={() => { btnHandler(true) }}
+        onClick={() => { btnHandler({manufacturerId:"a0O1O00000XYBvQUAX",month:monthIndex + 1}); }}
       >
         CLEAR ALL
       </button>
