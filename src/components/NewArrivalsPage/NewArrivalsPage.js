@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 // import Pagination from "../components/Pagination/Pagination";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
+import Pagination from "../Pagination/Pagination";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=null }) {
-  const [products, setProducts] = useState(productList);
+function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
 
@@ -26,21 +26,37 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=n
   //   });
   // }, [selectBrand]);
   // ...............
-  let PageSize = 10;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterData, setFilterData] = useState()
+  const [filterData, setFilterData] = useState([]);
+  let PageSize = 10;
+  const [pagination, setpagination] = useState([]);
+
+  useEffect(() => {
+    if (!filterData || filterData.length === 1) {
+      console.error("Product list is empty or undefined.");
+      return;
+    }
+
+    const startIndex = (currentPage - 1) * PageSize;
+    const endIndex = currentPage * PageSize;
+
+    const newValues = filterData?.flatMap((month) => month?.content).slice(startIndex, endIndex);
+
+    setpagination([{ content: newValues }]);
+    console.log(newValues);
+  }, [filterData, PageSize, currentPage]);
+  // .................
   useEffect(() => {
     if (!month && !selectBrand) {
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
           return brand.some((brand) => brand.Name === item.brand);
         });
-        return { ...months, content: filterData };
+        return { ...months, content: filterData, pagination };
       });
-      setFilterData(newValues)
+      setFilterData(newValues);
       setIsEmpty(false);
-
     } else {
       let isEmptyFlag = true;
       const newValues = productList?.map((months) => {
@@ -53,7 +69,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=n
                 return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.brand;
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase())
+              return item.date.toLowerCase().includes(month.toLowerCase());
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -67,18 +83,17 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=n
             // If month is not provided, return all items
           }
         });
-        if (filterData.length > 0) {
+        if (filterData?.length > 0) {
           isEmptyFlag = false;
         }
-        // Create a new object with filtered content
         return { ...months, content: filterData };
       });
       setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
-
   }, [month, selectBrand, productList, brand]);
-
+  // console.log(filterData,"isEmpty")
+  // ................
 
   return (
     <>
@@ -112,37 +127,57 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded,to=n
         <div>
           <div className={Styles.dGrid}>
             {!isEmpty ? (
-              filterData?.map((month, index) => {
-                if (month.content.length) {
-                  return (
-                    month.content.map((product) => {
-                      if (!selectBrand || selectBrand == product.brand) {
-                        return (
-                          <div className={Styles.cardElement}>
-                            {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
-                            <img src={product.image} alt={product.name} />
-                            <p className={Styles.brandHolder}>{product?.brand}</p>
-                            <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id) }}>{product?.name?.substring(0, 15)}...</p>
-                            <p className={Styles.priceHolder}>$ -- . --</p>
-                            {to ?
-                              <Link className={Styles.linkHolder}><p className={Styles.btnHolder}>add to Cart <small className={Styles.soonHolder}>coming soon</small></p></Link> : <div onClick={() => setModalShow(true)} className={Styles.linkHolder}><p className={Styles.btnHolder}>add to Cart <small className={Styles.soonHolder}>coming soon</small></p></div>}
-                          </div>
-                        );
-
-                      }
-                    })
-
-                  )
+              pagination?.map((month, index) => {
+                if (month.content?.length) {
+                  return month.content.map((product) => {
+                    if (!selectBrand || selectBrand == product.brand) {
+                      return (
+                        <div className={Styles.cardElement}>
+                          {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
+                          <img src={product.image} alt={product.name} />
+                          <p className={Styles.brandHolder}>{product?.brand}</p>
+                          <p
+                            className={Styles.titleHolder}
+                            onClick={() => {
+                              setProductDetailId(product.Id);
+                            }}
+                          >
+                            {product?.name?.substring(0, 15)}...
+                          </p>
+                          <p className={Styles.priceHolder}>$ -- . --</p>
+                          {to ? (
+                            <Link className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder}>
+                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
+                              </p>
+                            </Link>
+                          ) : (
+                            <div onClick={() => setModalShow(true)} className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder}>
+                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                  });
                 }
               })
             ) : (
-
-              <div>No data found</div>
+              <div style={{fontSize:"20px"}}>No data found</div>
             )}
           </div>
         </div>
         <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
       </section>
+      <Pagination
+        className="pagination-bar"
+        currentPage={currentPage || 0}
+        totalCount={filterData?.flatMap((month) => month?.content)?.length || 0}
+        pageSize={PageSize || 0}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </>
   );
 }

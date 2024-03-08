@@ -28,7 +28,7 @@ function FullQuearyDetail({ data, setRest }) {
         return strTime;
     }
     const CommentPostHandler = () => {
-        if (comment != '') {
+        if (comment.trim() != '') {
 
             let rawData = {
                 key: userData.x_access_token,
