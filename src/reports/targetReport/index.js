@@ -12,6 +12,7 @@ import * as XLSX from "xlsx";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { useLocation } from 'react-router-dom';
+import { CloseButton, SearchIcon } from "../../lib/svg";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -88,6 +89,7 @@ const TargetReport = () => {
         setSearchSaleBy("")
         setYear(currentDate.getFullYear())
         setPreOrder(true)
+        sendApiCall();
     };
     const PriceDisplay = (value) => {
         return `$${Number(value).toFixed(2)}`;
@@ -274,44 +276,78 @@ const TargetReport = () => {
             console.error({ userErr });
         })
     }
-    return (<AppLayout filterNodes={<>
-        {target.ownerPermission &&
+    let reportStatus = [
+        { label: "With Pre-Order", value: true },
+        { label: "With out Pre-Order", value: false },
+    ]
+    let yearlist = [
+        { label: currentDate.getFullYear(), value: currentDate.getFullYear() },
+        { label: currentDate.getFullYear() - 1, value: currentDate.getFullYear() - 1 }
+    ]
+    return (<AppLayout filterNodes={
+        <div className="d-flex justify-content-between m-auto" style={{ width: '99%' }}>
+            <div className="d-flex justify-content-start col-3 gap-4">
             <FilterItem
-                minWidth="220px"
-                label="All Sales Rep"
-                value={searchSaleBy}
-                options={salesRepList.map((salerep) => ({
-                    label: salerep,
-                    value: salerep,
-                }))}
-                onChange={(value) => setSearchSaleBy(value)}
-                name="salesRepSearch"
-            />}
-        <FilterItem
-            minWidth="220px"
-            label="All Manufacturers"
-            value={manufacturerFilter}
-            options={manufacturerData?.map((manufacturer) => ({
-                label: manufacturer.Name,
-                value: manufacturer.Id,
-            }))}
-            onChange={(value) => setManufacturerFilter(value)}
-        />
-        <div className="d-flex gap-3">
-            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
-                CLEAR ALL
-            </button>
-            <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
-                EXPORT
-                <MdOutlineDownload size={16} />
-            </button>
-        </div>
+                    minWidth="200px"
+                    label="Status"
+                    value={preOrder}
+                    options={reportStatus}
+                    onChange={(value) => setPreOrder(value)}
+                    name="reportStatus"
+                    containNullValue
+                />
+                <FilterItem
+                    minWidth="100px"
+                    label="Year"
+                    value={year}
+                    options={yearlist}
+                    onChange={(value) => setYear(value)}
+                    name="yearStatus"
+                    containNullValue
+                />
+                <button onClick={() => sendApiCall()} className="border px-2 d-grid py-1 leading-tight flex justify-center align-center gap-1">
+                    <SearchIcon fill="#fff" width={20} height={20} />
+                    <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>search</small>
+                </button>
+            </div>
+            <div className="d-flex justify-content-around col-1"></div>
+            <div className="d-flex justify-content-around col-2"><hr className={Styles.breakHolder} /></div>
+            <div className="d-flex justify-content-end col-6 gap-4">
+                {target.ownerPermission &&
+                    <FilterItem
+                        minWidth="220px"
+                        label="All Sales Rep"
+                        value={searchSaleBy}
+                        options={salesRepList.map((salerep) => ({
+                            label: salerep,
+                            value: salerep,
+                        }))}
+                        onChange={(value) => setSearchSaleBy(value)}
+                        name="salesRepSearch"
+                    />}
+                <FilterItem
+                    minWidth="220px"
+                    label="All Manufacturers"
+                    value={manufacturerFilter}
+                    options={manufacturerData?.map((manufacturer) => ({
+                        label: manufacturer.Name,
+                        value: manufacturer.Id,
+                    }))}
+                    onChange={(value) => setManufacturerFilter(value)}
+                />
+                <div className="d-flex gap-3">
+                    <button className="border px-2.5 py-1 leading-tight d-grid" onClick={resetFilter}>
+                        <CloseButton crossFill={'#fff'} height={20} width={20} />
+                        <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
+                    </button>
+                    <button className="border px-2.5 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
 
-        {/* <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
-            EXPORT
-            <MdOutlineDownload size={16} />
-          </button> */}
-    </>}>
+                        <MdOutlineDownload size={16} className="m-auto" />
+                        <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>EXPORT</small>
+                    </button>
+                </div>
+            </div>
+        </div>}>
         {exportToExcelState && (
             <ModalPage
                 open
@@ -346,30 +382,6 @@ const TargetReport = () => {
                         </h2>
                     </div>
                     <div>
-                        <div className={`d-flex align-items-center ${Styles.InputControll}`}>
-                            <select onChange={(e) => setPreOrder(e.target.value)}>
-                                {/* selected={yearFor == 2023 ? true : false} */}
-                                <option value={true} selected={preOrder == true ? true : false}>
-                                    With Pre-Order
-                                </option>
-                                <option value={false} selected={preOrder == false ? true : false}>
-                                    With out Pre-Order
-                                </option>
-                                {/* <option value={'pre'} selected={preOrder == 'pre' ? true : false}>
-                                    only Pre Orders
-                                </option> */}
-                            </select>
-                            <select onChange={(e) => setYear(e.target.value)}>
-                                {/* selected={yearFor == 2023 ? true : false} */}
-                                <option value={currentDate.getFullYear() - 1} selected={year == currentDate.getFullYear() - 1 ? true : false}>                                    {currentDate.getFullYear() - 1}
-                                </option>
-                                <option value={currentDate.getFullYear()} selected={year === currentDate.getFullYear() ? true : false}>
-                                    {currentDate.getFullYear()}
-                                </option>
-                            </select>
-                            {/* onClick={() => sendApiCall()} */}
-                            <button onClick={() => sendApiCall()}>Search Target</button>
-                        </div>
                     </div>
                 </div>}
                 <div className={`d-flex p-3 ${Styles.tableBoundary} mb-5`}>
