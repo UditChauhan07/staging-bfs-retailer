@@ -1,18 +1,19 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getRetailerBrands,} from "../lib/store";
+import { GetAuthData, getRetailerBrands, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import { CloseButton } from "../lib/svg";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 
 const MarketingCalendar = () => {
- 
-  const [productList,setProductList] = useState([
+
+  const [productList, setProductList] = useState([
     {
       month: "Jan",
       content: [
@@ -29,9 +30,9 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Re-Nutriv",
-          date:  "26/FEB/2024",
-          OCDDate: 
-           "26/FEB/2024",
+          date: "26/FEB/2024",
+          OCDDate:
+            "26/FEB/2024",
           image: "/assets/images/27.png",
           name: "Re Nutriv Ultimate Diamond Brilliance Crème REFILL ",
           size: "50 ml",
@@ -223,7 +224,7 @@ const MarketingCalendar = () => {
           brandLogo: "/assets/images/bumbleAndBumble.png",
         },
 
-       
+
         // Add more products for February
       ],
     },
@@ -451,7 +452,7 @@ const MarketingCalendar = () => {
           description: "eyeshadows include highly buildable shades providing everything from neutral, natural-looking washes of colour to vividly pigmented eye looks.",
           brandLogo: "/assets/images/Byredo.png",
         },
-        
+
         // Add more products for February
       ],
     },
@@ -700,7 +701,7 @@ const MarketingCalendar = () => {
           description: "Under the Stars by Maison Martin Margiela is a Amber Woody fragrance for women and men.",
           brandLogo: "/assets/images/maisonMargilia_logo.png",
         },
-        
+
         {
           brand: "Re-Nutriv",
           date: "04/DEC/2023",
@@ -827,22 +828,22 @@ const MarketingCalendar = () => {
 
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
-    const [brand, setBrand] = useState([]);
-    const [selectBrand,setSelectBrand]=useState(null)
-  useEffect(()=>{
-    GetAuthData().then((user)=>{
-      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
-      getRetailerBrands({rawData}).then((resManu)=>{
+  const [brand, setBrand] = useState([]);
+  const [selectBrand, setSelectBrand] = useState(null)
+  useEffect(() => {
+    GetAuthData().then((user) => {
+      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
+      getRetailerBrands({ rawData }).then((resManu) => {
         setBrand(resManu);
-      }).catch((err)=>{
-        console.log({err});
+      }).catch((err) => {
+        console.log({ err });
       })
-    }).catch((error)=>{
-      console.log({error});
+    }).catch((error) => {
+      console.log({ error });
     })
-  },[selectBrand,month])
-  
-// ...............................
+  }, [selectBrand, month])
+
+  // ...............................
   const generatePdf = () => {
     const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
     // element.style.padding = "10px"
@@ -887,18 +888,18 @@ const MarketingCalendar = () => {
           // If month is not provided, return all items
         }
       });
-        // Create a new object with filtered content
-        return { ...months, content: filterData };
+      // Create a new object with filtered content
+      return { ...months, content: filterData };
     });
-    let fileData = exportToExcel({list:newValues});
+    let fileData = exportToExcel({ list: newValues });
   }
-  
-  const csvData = ({data}) => {
+
+  const csvData = ({ data }) => {
     let finalData = [];
     if (data.length) {
       data?.map((ele) => {
-        if(ele.content.length){
-          ele.content.map((item)=>{
+        if (ele.content.length) {
+          ele.content.map((item) => {
             let temp = {};
             temp["MC Month"] = ele.month;
             temp["Product Title"] = item.name;
@@ -914,8 +915,8 @@ const MarketingCalendar = () => {
     }
     return finalData;
   };
-  const exportToExcel = ({list}) => {
-    const ws = XLSX.utils.json_to_sheet(csvData({data:list}));
+  const exportToExcel = ({ list }) => {
+    const ws = XLSX.utils.json_to_sheet(csvData({ data: list }));
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
@@ -925,7 +926,7 @@ const MarketingCalendar = () => {
     }
     FileSaver.saveAs(data, `${filename} ${new Date()}` + fileExtension);
   };
-  
+
   return (
     <AppLayout
       filterNodes={
@@ -938,9 +939,9 @@ const MarketingCalendar = () => {
             options={
               Array.isArray(brand)
                 ? brand?.map((brands) => ({
-                    label: brands.Name,
-                    value: brands.Name,
-                  }))
+                  label: brands.Name,
+                  value: brands.Name,
+                }))
                 : []
             }
             onChange={(value) => {
@@ -958,32 +959,38 @@ const MarketingCalendar = () => {
             }}
           />
           <button
-            className="border px-2.5 py-1 leading-tight"
+            className="border px-2.5 py-1 leading-tight d-grid"
             // onClick={handleclick}
             onClick={() => {
               setSelectBrand(null);
               setMonth(null);
               setIsEmpty(false)
-          // setForceUpdate(prev=>prev)
+              // setForceUpdate(prev=>prev)
             }}
           >
-            CLEAR ALL
+            <CloseButton crossFill={'#fff'} height={20} width={20} />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
           </button>
           <div className="dropdown dropdown-toggle border px-2.5 py-1 leading-tight d-flex" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <MdOutlineDownload size={16} />&nbsp;Download
+            <div className=" d-grid" role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <MdOutlineDownload size={16} className="m-auto" />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Download</small>
+            </div>
             <ul className="dropdown-menu">
               <li>
                 <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={()=>generateXLSX()}>&nbsp;XLSX</div>
+                <div className="dropdown-item text-start" onClick={() => generateXLSX()}>&nbsp;XLSX</div>
               </li>
             </ul>
           </div>
         </>
       }
     >
-      <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty}  month={month} productList={productList}/>
+      <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
     </AppLayout>
   );
 };

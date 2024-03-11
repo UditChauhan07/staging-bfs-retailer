@@ -10,6 +10,7 @@ import Layout from "../components/Layout/Layout";
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
+import { CloseButton, EmailIcon } from "../lib/svg";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -147,8 +148,7 @@ const BrandsPage = () => {
 
             <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by brands"} minWidth={"155px"} />
             <button
-              className="border px-2.5 py-1 leading-tight"
-         
+              className="border px-2.5 py-1 leading-tight d-grid"
               onClick={() => {
                 // setHighestRetailers(true);
                 setSearchBy("");
@@ -156,7 +156,8 @@ const BrandsPage = () => {
                 setLabel("sortBy")
               }}
             >
-              CLEAR ALL
+                            <CloseButton crossFill={'#fff'} height={20} width={20} />
+              <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
             </button>
           </>
         }
