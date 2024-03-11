@@ -808,23 +808,23 @@ const MarketingCalendar = () => {
   //   { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
   // ];
   const [month, setMonth] = useState("");
-  // let months = [
-  //   // { value: null},
-  //   // { value: "JAN", label: "JAN" },
-  //   // { value: "FEB", label: "FEB" },
-  //   // { value: "MAR", label: "MAR" },
-  //   // { value: "APR", label: "APR" },
-  //   // { value: "MAY", label: "MAY" },
-  //   // { value: "JUN", label: "JUN" },
-  //   // { value: "JULY", label: "JULY"},
-  //   // { value: "AUG", label: "AUG" },
-  //   // { value: "SEP", label: "SEP" },
-  //   // { value: "OCT", label: "OCT" },
-  //   // { value: "NOV", label: "NOV" },
-  //   // { value: "DEC", label: "DEC" },
-  //   // { value: "TBD", label: "TBD" },
+  let months = [
+    { value: null,  label:"All"},
+    { value: "JAN", label: "JAN" },
+    { value: "FEB", label: "FEB" },
+    { value: "MAR", label: "MAR" },
+    { value: "APR", label: "APR" },
+    { value: "MAY", label: "MAY" },
+    { value: "JUN", label: "JUN" },
+    { value: "JULY", label: "JULY"},
+    { value: "AUG", label: "AUG" },
+    { value: "SEP", label: "SEP" },
+    { value: "OCT", label: "OCT" },
+    { value: "NOV", label: "NOV" },
+    { value: "DEC", label: "DEC" },
+    { value: "TBD", label: "TBD" },
 
-  // ];
+  ];
 
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
@@ -953,7 +953,7 @@ const MarketingCalendar = () => {
             label="JAN-DEC"
             name="JAN-DEC"
             value={month}
-            // options={months}
+            options={months}
             onChange={(value) => {
               setMonth(value);
             }}
