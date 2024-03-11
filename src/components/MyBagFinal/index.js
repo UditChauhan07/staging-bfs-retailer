@@ -25,6 +25,12 @@ function MyBagFinal() {
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
+  const [limitInput, setLimitInput] = useState("");
+
+  const handleNameChange = (event) => {
+      const limit = 20;
+      setLimitInput(event.target.value.slice(0, limit));
+    };
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
@@ -242,7 +248,12 @@ function MyBagFinal() {
                   {!isPOEditable ? (
                     <b> {buttonActive ? PONumber : "---"}</b>
                   ) : (
-                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }} />
+                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }} 
+                    id="limit_input"
+                    name="limit_input"
+                    value={limitInput}
+                    onChange={handleNameChange}
+                    />
                   )}
                 </h5>
                 {!isPOEditable && (
