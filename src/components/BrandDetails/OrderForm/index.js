@@ -79,19 +79,19 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
-      found.discount = discount?.testerMargin;
+      // found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
       let salesPrice = retailerPirce.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.sample / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
-      found.discount = discount?.sample;
+      // found.discount = discount?.sample;
     } else {
       let salesPrice = retailerPirce.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.margin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
-      found.discount = discount?.margin;
+      // found.discount = discount?.margin;
     }
     return found;
   };
@@ -139,9 +139,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         });
         if (productCount) {
           // navigate("/my-bag");
-          let currentUrl = window.location.href;
-          let urlSplit = currentUrl.split("/product");
-          let url = urlSplit[0] + "/my-bag";
+          let currentUrl = window.location.origin;
+          let url = currentUrl + "/my-bag";
           window.location.href = url
         } else {
           alert("Product list not found");

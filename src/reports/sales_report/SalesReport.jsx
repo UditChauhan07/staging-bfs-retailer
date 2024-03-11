@@ -15,6 +15,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { GetAuthData, getRetailerBrands } from "../../lib/store";
+import { CloseButton, SearchIcon } from "../../lib/svg";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -150,9 +151,9 @@ const SalesReport = () => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
     const result = await salesReportApi.salesReportData({ yearFor });
-    console.log({ result });
     let salesListName = [];
     let salesList = [];
+    console.log({result});
     result.data.data.map((manu) => {
       if (manu.Orders.length) {
         manu.Orders.map((item) => {
@@ -178,8 +179,8 @@ const SalesReport = () => {
       if (user) {
         let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
         getRetailerBrands({ rawData }).then((resManu) => {
-          setManufacturerData(resManu);
           getSalesData(yearFor);
+          setManufacturerData(resManu);
         }).catch((err) => {
           console.log({ err });
         })
@@ -198,11 +199,37 @@ const SalesReport = () => {
     // setSearchBySalesRep("");
     getSalesData(yearFor);
   };
-
+  let yearList = [
+    { value: 2024, label: 2024 },
+    { value: 2023, label: 2023 },
+    { value: 2022, label: 2022 },
+    { value: 2021, label: 2021 },
+    { value: 2020, label: 2020 },
+    { value: 2019, label: 2019 },
+    { value: 2018, label: 2018 },
+    { value: 2017, label: 2017 },
+    { value: 2016, label: 2016 },
+    { value: 2015, label: 2015 },
+  ]
   return (
     <AppLayout
       filterNodes={
-        <>
+        <div className="d-flex justify-content-between m-auto" style={{ width: '99%' }}>
+        <div className="d-flex justify-content-start gap-4 col-3">
+          <FilterItem
+            label="year"
+            name="Year"
+            value={yearFor}
+            options={yearList}
+            onChange={(value) => setYearFor(value)}
+          />
+          <button onClick={() => sendApiCall()} className="border px-2 py-1 leading-tight d-grid"> <SearchIcon fill="#fff" width={20} height={20} />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>search</small>
+          </button>
+        </div>
+        <div className="d-flex justify-content-around col-1"></div>
+        <div className="d-flex justify-content-around col-1"><hr className={Styles.breakHolder} /></div>
+        <div className="d-flex justify-content-end gap-4 col-7">
           {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
           <FilterItem
             minWidth="220px"
@@ -234,15 +261,17 @@ const SalesReport = () => {
           />
           {/* First Calender Filter-- start date */}
           <div className="d-flex gap-3">
-            <button className="border px-2.5 py-1 leading-tight" onClick={resetFilter}>
-              CLEAR ALL
+            <button className="border px-2 py-1 leading-tight d-grid" onClick={resetFilter}>
+            <CloseButton crossFill={'#fff'} height={20} width={20} />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
             </button>
           </div>
-          <button className="border px-2.5 py-1 leading-tight flex justify-center align-center gap-1" onClick={handleExportToExcel}>
-            EXPORT
-            <MdOutlineDownload size={16} />
+          <button className="border px-2 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
+          <MdOutlineDownload size={16} className="m-auto" />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>EXPORT</small>
           </button>
-        </>
+        </div>
+        </div>
       }
     >
       {exportToExcelState && (
@@ -272,46 +301,12 @@ const SalesReport = () => {
       <div className={Styles.inorderflex}>
         <div>
           <h2>
-            {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Sales Report` : "Your Sales Report"}
+          {/* ${(yearFor<2024)?("-"+yearFor):''} */}
+            {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Sales Report` : `Your Sales Report`}
             {manufacturerFilter && " for " + manufacturerFilter}
           </h2>
         </div>
         <div>
-          <div className={`d-flex align-items-center ${Styles.InputControll}`}>
-            <select onChange={(e) => setYearFor(e.target.value)}>
-              <option value={2015} selected={yearFor == 2015 ? true : false}>
-                2015
-              </option>
-              <option value={2016} selected={yearFor == 2016 ? true : false}>
-                2016
-              </option>
-              <option value={2017} selected={yearFor == 2017 ? true : false}>
-                2017
-              </option>
-              <option value={2018} selected={yearFor == 2018 ? true : false}>
-                2018
-              </option>
-              <option value={2019} selected={yearFor == 2019 ? true : false}>
-                2019
-              </option>
-              <option value={2020} selected={yearFor == 2020 ? true : false}>
-                2020
-              </option>
-              <option value={2021} selected={yearFor == 2021 ? true : false}>
-                2021
-              </option>
-              <option value={2022} selected={yearFor == 2022 ? true : false}>
-                2022
-              </option>
-              <option value={2023} selected={yearFor == 2023 ? true : false}>
-                2023
-              </option>
-              <option value={2024} selected={yearFor == 2024 ? true : false}>
-                2024
-              </option>
-            </select>
-            <button onClick={() => sendApiCall()}>Search Sales</button>
-          </div>
         </div>
       </div>
       {filteredSalesReportData?.length && !isLoading ? (

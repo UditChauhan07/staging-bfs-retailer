@@ -15,30 +15,36 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
     const [replaceCartProduct, setReplaceCartProduct] = useState({});
-    const [isModalOpen, setIsModalOpen] = useState(true)
+    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [selectBrand,setBrand] = useState();
     useEffect(() => {
     }, [productDetailId, productImages])
 
-    const orderSetting = (element, quantity) => {
+    const orderSetting = (element, quantity,manufacturer) => {
         setReplaceCartModalOpen(false);
-        addOrder(element, quantity, product.discount);
+        addOrder(element, quantity, product.discount,manufacturer);
     };
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
+        localStorage.setItem("manufacturer", element.ManufacturerName__c);
+        localStorage.setItem("ManufacturerId__c", element.ManufacturerId__c);
+        localStorage.setItem("address", JSON.stringify(accountDetails?.[element.ManufacturerId__c]?.ShippingAddress));
+        localStorage.setItem("shippingMethod", JSON.stringify({number:accountDetails?.[element.ManufacturerId__c]?.AccountNumber,method:accountDetails?.[element.ManufacturerId__c]?.ShippingMethod}));
+        localStorage.setItem("Sales_Rep__c", accountDetails?.[element.ManufacturerId__c]?.SalesRepId);
         element.salesPrice = salesPrice;
         if (Object.values(orders).length) {
             if (
-                Object.values(orders)[0]?.manufacturer?.id === localStorage.getItem("ManufacturerId__c") &&
+                Object.values(orders)[0]?.manufacturer?.id === element.ManufacturerId__c &&
                 Object.values(orders)[0].account.id === localStorage.getItem("AccountId__c") &&
                 Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
             ) {
-                orderSetting(element, quantity);
+                orderSetting(element, quantity,{id:element.ManufacturerId__c,name:element.ManufacturerName__c});
                 setReplaceCartModalOpen(false);
             } else {
                 setReplaceCartModalOpen(true);
                 setReplaceCartProduct({ product: element, quantity });
             }
         } else {
-            orderSetting(element, quantity);
+            orderSetting(element, quantity,{id:element.ManufacturerId__c,name:element.ManufacturerName__c});
         }
     };
 
@@ -83,23 +89,23 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 {data.map((product) => {
                     let listPrice = Number(product?.usdRetail__c?.replace('$', '').replace(',', ''));
                     let salesPrice = 0;
-                    let discount = accountDetails?.Discount?.margin;
+                    let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin;
                     let inputPrice = Object.values(orders)?.find((order) => order.product.Id === product?.Id && order.manufacturer.name === product?.ManufacturerName__c && order.account.id === localStorage.getItem("AccountId__c"))?.product?.salesPrice;
                     if (product?.Category__c === "TESTER") {
-                        discount = accountDetails?.Discount?.testerMargin
-                        salesPrice = (+listPrice - (accountDetails?.Discount?.testerMargin / 100) * +listPrice).toFixed(2)
+                        discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin
+                        salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin / 100) * +listPrice).toFixed(2)
                     } else if (product?.Category__c === "Samples") {
-                        discount = accountDetails?.Discount?.sample
-                        salesPrice = (+listPrice - (accountDetails?.Discount?.sample / 100) * +listPrice).toFixed(2)
+                        discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample
+                        salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample / 100) * +listPrice).toFixed(2)
                     } else {
-                        salesPrice = (+listPrice - (accountDetails?.Discount?.margin / 100) * +listPrice).toFixed(2)
+                        salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin / 100) * +listPrice).toFixed(2)
                     }
                     return (
                     <div className={Styles.cardElement}>
                         {/* <div className={Styles.salesHolder}>{product.Sales}</div> */}
-                        {productImages?.isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? '/assets/images/makeup1.png'} /> : <LoaderV2 />}
+                        {productImages?.isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id);setBrand(product.ManufacturerId__c) }} src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? '/assets/images/makeup1.png'} /> : <LoaderV2 />}
                         <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
-                        <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id) }}>{product?.Name.substring(0, 20)}...</p>
+                        <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id);setBrand(product.ManufacturerId__c) }}>{product?.Name.substring(0, 20)}...</p>
                         {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                         <p className={Styles.priceHolder}>
                             <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;{orders[product?.Id]?<Link to={'/my-bag'}>${salesPrice}</Link>:<p>${salesPrice}</p>}</p>
@@ -107,18 +113,18 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                             {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
                             <div className="d-flex">
                                 <QuantitySelector min={product?.Min_Order_QTY__c || 0} value={orders[product?.Id]?.quantity} onChange={(quantity) => {
-                                    onQuantityChange(product, quantity, inputPrice || parseFloat(salesPrice), accountDetails?.Discount);
+                                    onQuantityChange(product, quantity, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount);
                                 }} />
-                                <button className="ml-4" onClick={() => onQuantityChange(product, 0, inputPrice || parseFloat(salesPrice), accountDetails?.Discount)}><DeleteIcon fill="red" /></button>
+                                <button className="ml-4" onClick={() => onQuantityChange(product, 0, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)}><DeleteIcon fill="red" /></button>
                             </div>
                         </> : to ?
                             <Link to={to} className={Styles.linkHolder}><p className={Styles.btnHolder}>add to Cart</p></Link>
-                            : <p className={Styles.btnHolder} onClick={() => onQuantityChange(product, product?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), accountDetails?.Discount)} style={{ cursor: 'pointer' }}>Add to Cart</p>}
+                            : <p className={Styles.btnHolder} onClick={() => onQuantityChange(product, product?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)} style={{ cursor: 'pointer' }}>Add to Cart</p>}
                     </div>)
                 })}
             </div>
         </div>
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} accountDetails={accountDetails} AccountId={localStorage.getItem("AccountId__c")} ManufacturerId={localStorage.getItem("ManufacturerId__c")}/>
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} accountDetails={accountDetails?.[product?.ManufacturerId__c]} AccountId={localStorage.getItem("AccountId__c")} ManufacturerId={localStorage.getItem("ManufacturerId__c")}/>
     </section>)
 }
 export default TopProductCard;

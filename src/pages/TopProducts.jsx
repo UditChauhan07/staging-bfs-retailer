@@ -4,6 +4,7 @@ import { GetAuthData, ShareDrive, getProductImageAll, getRetailerBrands, topProd
 import Loading from "../components/Loading";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
+import { CloseButton } from "../lib/svg";
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const TopProducts = () => {
@@ -18,7 +19,7 @@ const TopProducts = () => {
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    btnHandler({manufacturerId:"a0O1O00000XYBvQUAX",month:monthIndex + 1});
+    btnHandler({manufacturerId:null,month:monthIndex + 1});
     let indexMonth = [];
     let helperArray = [];
     months.map((month, i) => {
@@ -153,10 +154,11 @@ const TopProducts = () => {
         minWidth="167px"
       /> */}
       <button
-        className="border px-2.5 py-1 leading-tight"
-        onClick={() => { btnHandler({manufacturerId:"a0O1O00000XYBvQUAX",month:monthIndex + 1}); }}
+        className="border px-2.5 py-1 leading-tight d-grid"
+        onClick={() => { btnHandler({manufacturerId:null,month:monthIndex + 1}); }}
       >
-        CLEAR ALL
+               <CloseButton crossFill={'#fff'} height={20} width={20} />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
       </button>
     </>
     }>
