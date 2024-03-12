@@ -142,8 +142,8 @@ export function fetchBeg() {
 
 
 export async function DestoryAuth() {
-  // localStorage.clear();
-  // window.location.href = window.location.origin;
+  localStorage.clear();
+  window.location.href = window.location.origin;
   return true;
 }
 
@@ -209,7 +209,7 @@ export async function getOrderDetailsInvoice({ rawData }) {
   bodyContent.append("key", rawData.key);
   bodyContent.append("opportunity_id", rawData.id);
 
-  let response = await fetch(url + "3JlgPqaeYIveHd6", {
+  let response = await fetch(url + "yDJTccwNd7sgrTr", {
     method: "POST",
     body: bodyContent,
     headers: headersList,
@@ -218,9 +218,10 @@ export async function getOrderDetailsInvoice({ rawData }) {
   if (data.status == 300) {
     DestoryAuth();
   } else {
-    return data.data;
+    return {data:data.data,attachment:data.attachedmenetdata};
   }
 }
+
 
 export async function getSupportFormRaw({ rawData }) {
   let headersList = {
