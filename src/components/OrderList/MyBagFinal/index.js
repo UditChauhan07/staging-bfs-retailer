@@ -19,7 +19,8 @@ function MyBagFinal() {
   const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
   const Key = JSON.parse(localStorage.getItem("Api Data"));
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
-  const [ productDetailId, setProductDetailId] = useState(null)
+  const [productDetailId, setProductDetailId] = useState(null)
+  const [invoices, setInvoice] = useState([]);
   useEffect(() => {
     // let rawData = {key:Key.data.access_token,id:OrderId}
     // getOrderDetailsBasedId({rawData}).then((res)=>{
@@ -37,11 +38,7 @@ function MyBagFinal() {
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-  // getOrderDetailsInvoice({ rawData: { key: Key.data.access_token, id: OrderId } }).then((response) => {
-  //   console.log({ response });
-  // }).catch((error) => {
-  //   console.error({ error });
-  // })
+
   const getOrderDetails = async () => {
     let data = ShareDrive();
     if (!data) {
@@ -84,6 +81,11 @@ function MyBagFinal() {
             console.log({ err });
           })
         }
+        getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
+          setInvoice(response.data)
+        }).catch((error) => {
+          console.error({ error });
+        })
       }).catch((err1) => {
         console.log({ err1 });
       })
@@ -97,7 +99,7 @@ function MyBagFinal() {
   const invoiceHandler = () => {
     if (false) {
     } else {
-      GetAuthData().then((user)=>{
+      GetAuthData().then((user) => {
         let ticket = {
           orderStatusForm: {
             accountId: OrderData?.AccountId,
@@ -114,17 +116,33 @@ function MyBagFinal() {
           },
         };
         let statusOfSupport = supportShare(ticket)
-        .then((response) => {
-          if (response) navigate("/orderStatusForm");
-        })
-        .catch((error) => {
-          console.error({ error });
-        });
-      }).catch((err)=>{
-        console.error({err});
+          .then((response) => {
+            if (response) navigate("/orderStatusForm");
+          })
+          .catch((error) => {
+            console.error({ error });
+          });
+      }).catch((err) => {
+        console.error({ err });
       })
     }
   };
+
+  function downloadFiles(invoices) {
+    GetAuthData().then((user) => {
+    invoices.forEach(file => {
+      const link = document.createElement("a");
+      link.href = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+      link.download = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }).catch((err) => {
+    console.log({ err });
+  })
+  }
+
   if (!isLoading) return <Loading />;
 
   return (
@@ -176,18 +194,18 @@ function MyBagFinal() {
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
-                                  <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
+                                    <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
                                       {
                                         !productImage.isLoaded ? <LoaderV2 /> :
                                           productImage.images?.[item.ProductCode] ?
                                             productImage.images[item.ProductCode]?.ContentDownloadUrl ?
-                                              <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
-                                              : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
-                                            : <img src={Img1} alt="img" onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
+                                              <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                              : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                       }
                                     </div>
                                     <div className={Styles.Mainbox3}>
-                                    <h2 onClick={()=>{setProductDetailId(item?.Product2Id)}} style={{cursor:'pointer'}}>{item.Name.split(OrderData.Name)}</h2>
+                                      <h2 onClick={() => { setProductDetailId(item?.Product2Id) }} style={{ cursor: 'pointer' }}>{item.Name.split(OrderData.Name)}</h2>
                                       <p>
                                         <span className={Styles.Span1}>
                                           ${Number(item.ListPrice).toFixed(2)}
@@ -278,9 +296,9 @@ function MyBagFinal() {
                     </div>
                   </div>
 
-                  {true && (
+                  {invoices.length>0 && (
                     <div className={Styles.ShipBut}>
-                      <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler()}>
+                      <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
                         <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
                       </button>
                     </div>
@@ -291,7 +309,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={OrderData.AccountId} ManufacturerId={OrderData.ManufacturerId__c}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={OrderData.AccountId} ManufacturerId={OrderData.ManufacturerId__c} />
     </div>
   );
 }
