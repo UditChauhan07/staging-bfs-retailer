@@ -5,6 +5,7 @@ import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import { SearchIcon } from "../lib/svg";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 function MyBagOrder(props) {
@@ -27,25 +28,25 @@ function MyBagOrder(props) {
 
   const csvData = ({ data }) => {
     let finalData = [];
-    let accountDetails = {"":"Account Name"," ":data.Name}
-    let brandDetail = {"":"Brand Name"," ":data.ManufacturerName__c}
-    let poDetail = {"":"PO Number"," ":data.PO_Number__c}
-    let orderNumberDetail = {"":"Order Number"," ":data.Order_Number__c}
-    let trackingumberDetail = {"":"Tracking Number"," ":data.Tracking__c}
+    let accountDetails = { "": "Account Name", " ": data.Name }
+    let brandDetail = { "": "Brand Name", " ": data.ManufacturerName__c }
+    let poDetail = { "": "PO Number", " ": data.PO_Number__c }
+    let orderNumberDetail = { "": "Order Number", " ": data.Order_Number__c }
+    let trackingumberDetail = { "": "Tracking Number", " ": data.Tracking__c }
     finalData.push(accountDetails)
     finalData.push(brandDetail)
     finalData.push(poDetail)
-    if(data?.Order_Number__c) finalData.push(orderNumberDetail)
-    if(data?.Tracking__c) finalData.push(trackingumberDetail)
-    let productHeaderDetail = {"":"Product Name"," ":"Product Qty","  ":"Product Price"}
-  if(data?.OpportunityLineItems?.length>0) finalData.push(productHeaderDetail)
+    if (data?.Order_Number__c) finalData.push(orderNumberDetail)
+    if (data?.Tracking__c) finalData.push(trackingumberDetail)
+    let productHeaderDetail = { "": "Product Name", " ": "Product Qty", "  ": "Product Price" }
+    if (data?.OpportunityLineItems?.length > 0) finalData.push(productHeaderDetail)
     if (data?.OpportunityLineItems.length) {
       data?.OpportunityLineItems?.map((ele) => {
-            let temp = {};
-            temp[""] = ele.Name;
-            temp[" "] = ele.Quantity;
-            temp["  "] = ele.UnitPrice;
-            finalData.push(temp);
+        let temp = {};
+        temp[""] = ele.Name;
+        temp[" "] = ele.Quantity;
+        temp["  "] = ele.UnitPrice;
+        finalData.push(temp);
       });
     }
     return finalData;
@@ -61,23 +62,28 @@ function MyBagOrder(props) {
   };
   return (
     <AppLayout filterNodes={
-        orderDetail?.Id &&
-          <div className="dropdown dropdown-toggle border px-2.5 py-1 leading-tight d-flex" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <div className=" d-grid" role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <MdOutlineDownload size={16} className="m-auto" />
-              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Download</small>
-            </div>
-            <ul className="dropdown-menu">
-              <li>
-                <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
-              </li>
-              <li>
-                <div className="dropdown-item text-start" onClick={() => generateXLSX(orderDetail)}>&nbsp;XLSX</div>
-              </li>
-            </ul>
+      orderDetail?.Id &&
+      <div className="d-flex justify-content-end mr-2">
+        <div className="dropdown dropdown-toggle border px-2.5 py-1 leading-tight d-flex" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div className=" d-grid" role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <MdOutlineDownload size={16} className="m-auto" />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Download</small>
           </div>
+          <ul className="dropdown-menu">
+            <li>
+              <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
+            </li>
+            <li>
+              <div className="dropdown-item text-start" onClick={() => generateXLSX(orderDetail)}>&nbsp;XLSX</div>
+            </li>
+          </ul>
+        </div>
+        <button onClick={() => window.print()} className="border px-2 py-1 leading-tight d-grid ml-1"> <SearchIcon fill="#fff" width={20} height={20} />
+          <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Print</small>
+        </button>
+      </div>
     }>
       <div className="col-12">
         <MyBagFinal setOrderDetail={setOrderDetail} />
