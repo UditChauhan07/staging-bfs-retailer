@@ -10,7 +10,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import LoaderV2 from "../../loader/v2";
 import ProductDetails from "../../../pages/productDetails";
 
-function MyBagFinal() {
+function MyBagFinal({setOrderDetail}) {
   const [OrderData, setOrderData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -58,6 +58,7 @@ function MyBagFinal() {
           }
         }
         setOrderData(res);
+        setOrderDetail(res)
         setIsLoading(true);
         if (res.OpportunityLineItems.length > 0) {
           let productCode = "";
@@ -149,10 +150,11 @@ function MyBagFinal() {
     <div>
       <section>
         <div className=" mt-4">
-          <div>
+          <div id="orderDetailerContainer">
             <div className={Styles.MyBagFinalTop}>
               <div className={Styles.MyBagFinalRight}>
                 <svg
+                data-html2canvas-ignore
                   xmlns="http://www.w3.org/2000/svg"
                   style={{ cursor: "pointer" }}
                   width="24"
@@ -207,7 +209,7 @@ function MyBagFinal() {
                                     <div className={Styles.Mainbox3}>
                                       <h2 onClick={() => { setProductDetailId(item?.Product2Id) }} style={{ cursor: 'pointer' }}>{item.Name.split(OrderData.Name)}</h2>
                                       <p>
-                                        <span className={Styles.Span1}>
+                                        <span className={Styles.Span1} data-html2canvas-ignore>
                                           ${Number(item.ListPrice).toFixed(2)}
                                         </span>
                                         <span className={Styles.Span2}>
@@ -297,7 +299,7 @@ function MyBagFinal() {
                   </div>
 
                   {invoices.length>0 && (
-                    <div className={Styles.ShipBut}>
+                    <div className={Styles.ShipBut} data-html2canvas-ignore>
                       <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
                         <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
                       </button>
