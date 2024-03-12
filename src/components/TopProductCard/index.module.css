@@ -18,15 +18,25 @@
   margin: auto;
   position: relative;
 }
-.salesHolder{
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 25px;
-    padding: 2px;
-    width: 35px;
+.salesHolder {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 25px;
+  padding: 2px;
+  width: 35px;
 }
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .salesIcon { animation: rotate 4s linear infinite; }
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.salesIcon {
+  animation: rotate 4s linear infinite;
+}
 .imgHolder {
   width: 175px;
   height: 175px;
@@ -49,6 +59,17 @@
   color: #6a6a6a;
   cursor: pointer;
   text-align: center;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.salesIcon {
+  animation: rotate 4s linear infinite;
 }
 .priceHolder {
   font-family: Montserrat-500;
@@ -120,4 +141,3 @@
   width: 100px;
   height: 30px;
 }
-

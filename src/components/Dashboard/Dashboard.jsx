@@ -263,6 +263,7 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
+            console.log({dashboard});
             let totalOrder = 0;
             let totalPrice = 0;
             let totalTarget = 0;
@@ -279,7 +280,10 @@ function Dashboard({ dashboardData }) {
               })
               // setBrandData({ isLoaded: true, data: temp })
             }
-            setBox({ RETAILERS: activeBrand || 0, GROWTH: 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
+            let oldSalesAmount = dashboard?.oldSalesAmount||0;
+            let currentSalesAmount = totalPrice||0
+            let growth = parseInt(((currentSalesAmount-oldSalesAmount)/oldSalesAmount)*100)
+            setBox({ RETAILERS: activeBrand || 0, GROWTH: growth||0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
             let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
