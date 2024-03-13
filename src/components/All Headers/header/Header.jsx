@@ -6,7 +6,7 @@ const Header = () => {
   const navigate = useNavigate();
   const path = window.location.pathname;
   return (
-    <div className="">
+    <div className="d-none-print">
     <div id={`${styles.main}`} className="d-flex justify-content-between  align-items-center gap-1">
       <p className={`m-0 ${styles.text}`}>
         <Link to="/top-products" className="linkStyle">
