@@ -16,6 +16,12 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
   const [errorOnlist, setErrorOnList] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
+  const [orderType, setorderType] = useState("wholesale")
+  let orderTypeList = [
+    { value: "wholesale", label: "Whole Sales" },
+    { value: "preorder", label: "Pre-Order" },
+  ]
+
   const CheckError = (data) => {
     let totalQty = 0;
     let errorCount = data.reduce((accumulator, item) => {
@@ -23,6 +29,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
 
       if (item?.Quantity) {
         let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name ||(productDetails.Min_Order_QTY__c>0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
+        orderType == "preorder" ? (error == false) ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = productDetails?.Category__c?.toLowerCase() == "preorder" : error = error
         return accumulator + (error ? 1 : 0);
       } else {
         totalQty += 1;
@@ -99,15 +106,13 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     setOrders({});
     GetAuthData()
       .then((user) => {
-        let orderList = [];
-        let orderType = "Wholesale Number";
         let productCount = 0;
         data.map((element) => {
           if (element.Quantity && Number.isInteger(element?.Quantity)) {
             let product = getProductData(element["Product Code"] || element["ProductCode"]);
+            if (orderType == "preorder" ? product?.Category__c?.toLowerCase() == "preorder" : product?.Category__c?.toLowerCase() != "preorder") {
             if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c ||element?.Quantity % product.Min_Order_QTY__c === 0)) {
               productCount++;
-              if (product.Category__c == "PREORDER") orderType = "Pre Order";
               let item = {};
               let discountAmount = discount?.margin;
               if (product.Category__c === "TESTER") {
@@ -136,6 +141,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               addOrder(product, element["Quantity"], discount);
             }
           }
+        }
         });
         if (productCount) {
           // navigate("/my-bag");
@@ -154,13 +160,24 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (errorOnlist > 0) {
       setOpenModal(true);
     }
-  }, [errorOnlist]);
+  }, [errorOnlist,orderType]);
   if (!showTable) {
     return (
       <div>
         {/* <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleFileChange} /> */}
         <form className="d-flex justify-content-between">
-          <input type="file" ref={fileInputRef} accept=".csv" onChange={handleFileChange} />
+          <div className="d-flex">
+            <div className="d-flex flex-column">
+              <label for="ordertTypeId" style={{ fontSize: '11px', textAlign: 'start' }}>Order Type</label>
+              <select id="ordertTypeId" onChange={(e) => { setorderType(e.target.value) }}>
+                {orderTypeList.map((element) => <option value={element.value} selected={element.value == orderType}>{element.label}</option>)}
+              </select>
+            </div>
+            <div className="d-flex flex-column ml-2">
+              <label for="orderFile" style={{ fontSize: '11px', textAlign: 'start' }}>File</label>
+              <input type="file" id="orderFile" ref={fileInputRef} accept=".csv" onChange={handleFileChange} />
+            </div>
+          </div>
           <input
             type="reset"
             value={"reset"}
@@ -239,6 +256,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                   let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
                     let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || productDetails.Min_Order_QTY__c ? item?.Quantity % productDetails.Min_Order_QTY__c !== 0 : false;
+                    orderType == "preorder" ? (error == false) ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = productDetails?.Category__c?.toLowerCase() == "preorder" : error = error
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>

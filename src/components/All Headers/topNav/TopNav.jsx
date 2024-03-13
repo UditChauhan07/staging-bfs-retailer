@@ -30,7 +30,7 @@ const TopNav = () => {
     <>
       {/* {userDetails?.status === 200 ? ( */}
       <>
-        <div className={styles.NeedNone}>
+        <div className={`${styles.NeedNone} d-none-print`}>
           <ModalPage
             open={modalOpen}
             onClose={() => setModalOpen(false)}

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <>
-    <div className="container">
+    <div className="container d-none-print">
       <div className=" ">
         {/* left part */}
         <div className="row ">
