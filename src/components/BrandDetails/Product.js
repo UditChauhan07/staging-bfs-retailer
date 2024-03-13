@@ -207,6 +207,7 @@ function Product() {
   };
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
+    if(begValue.Account.id == localStorage.getItem("AccountId__c")&&begValue.Manufacturer.id == localStorage.getItem("ManufacturerId__c")){
     if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
       let bagPrice = 0;
       let bagTesterPrice = 0;
@@ -231,6 +232,9 @@ function Product() {
       setEmptyBag(true);
       setAlert(0);
     }
+  }else{
+    navigate("/my-bag");
+  }
   };
   useEffect(() => {
     setEmptyBag(false);
