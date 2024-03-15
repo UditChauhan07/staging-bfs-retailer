@@ -92,7 +92,7 @@ const SalesReport = () => {
   const csvData = useMemo(() => {
     return filteredSalesReportData?.map((ele) =>
       ele.Orders.map((item) => ({
-        ManufacturerName__c: ele.ManufacturerName__c,
+        ManufacturerName: ele.ManufacturerName__c,
         AccountName: item.Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
