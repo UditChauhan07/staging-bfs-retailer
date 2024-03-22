@@ -15,36 +15,42 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
     const [replaceCartProduct, setReplaceCartProduct] = useState({});
-    const [isModalOpen, setIsModalOpen] = useState(true);
-    const [selectBrand,setBrand] = useState();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectBrand, setBrand] = useState();
+    const [salesRepId, setsalesRepId] = useState();
     useEffect(() => {
     }, [productDetailId, productImages])
 
-    const orderSetting = (element, quantity,manufacturer) => {
+    const orderSetting = (element, quantity, manufacturer) => {
         setReplaceCartModalOpen(false);
-        addOrder(element, quantity, product.discount,manufacturer);
+        addOrder(element, quantity, product.discount, manufacturer);
     };
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
-        localStorage.setItem("manufacturer", element.ManufacturerName__c);
-        localStorage.setItem("ManufacturerId__c", element.ManufacturerId__c);
-        localStorage.setItem("address", JSON.stringify(accountDetails?.[element.ManufacturerId__c]?.ShippingAddress));
-        localStorage.setItem("shippingMethod", JSON.stringify({number:accountDetails?.[element.ManufacturerId__c]?.AccountNumber,method:accountDetails?.[element.ManufacturerId__c]?.ShippingMethod}));
-        localStorage.setItem("Sales_Rep__c", accountDetails?.[element.ManufacturerId__c]?.SalesRepId);
-        element.salesPrice = salesPrice;
-        if (Object.values(orders).length) {
-            if (
-                Object.values(orders)[0]?.manufacturer?.id === element.ManufacturerId__c &&
-                Object.values(orders)[0].account.id === localStorage.getItem("AccountId__c") &&
-                Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
-            ) {
-                orderSetting(element, quantity,{id:element.ManufacturerId__c,name:element.ManufacturerName__c});
-                setReplaceCartModalOpen(false);
+        if (accountDetails?.[element.ManufacturerId__c]?.SalesRepId) {
+            setIsModalOpen(false);
+            localStorage.setItem("manufacturer", element.ManufacturerName__c);
+            localStorage.setItem("ManufacturerId__c", element.ManufacturerId__c);
+            localStorage.setItem("address", JSON.stringify(accountDetails?.[element.ManufacturerId__c]?.ShippingAddress));
+            localStorage.setItem("shippingMethod", JSON.stringify({ number: accountDetails?.[element.ManufacturerId__c]?.AccountNumber, method: accountDetails?.[element.ManufacturerId__c]?.ShippingMethod }));
+            localStorage.setItem("Sales_Rep__c", accountDetails?.[element.ManufacturerId__c]?.SalesRepId);
+            element.salesPrice = salesPrice;
+            if (Object.values(orders).length) {
+                if (
+                    Object.values(orders)[0]?.manufacturer?.id === element.ManufacturerId__c &&
+                    Object.values(orders)[0].account.id === localStorage.getItem("AccountId__c") &&
+                    Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
+                ) {
+                    orderSetting(element, quantity, { id: element.ManufacturerId__c, name: element.ManufacturerName__c });
+                    setReplaceCartModalOpen(false);
+                } else {
+                    setReplaceCartModalOpen(true);
+                    setReplaceCartProduct({ product: element, quantity });
+                }
             } else {
-                setReplaceCartModalOpen(true);
-                setReplaceCartProduct({ product: element, quantity });
+                orderSetting(element, quantity, { id: element.ManufacturerId__c, name: element.ManufacturerName__c });
             }
         } else {
-            orderSetting(element, quantity,{id:element.ManufacturerId__c,name:element.ManufacturerName__c});
+            setIsModalOpen(true)
         }
     };
 
@@ -84,6 +90,27 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 }}
             />
         ) : null}
+        {isModalOpen ? (
+            <ModalPage
+                open
+                content={
+                    <div className="d-flex flex-column gap-3">
+                        <h2>Warning</h2>
+                        <p>
+                            You don't have any sales rep now on this brand <br></br> Contact to your Sales Rep.
+                        </p>
+                        <div className="d-flex justify-content-around ">
+                            <button className={Styles.btn} onClick={() => setIsModalOpen(false)}>
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                }
+                onClose={() => {
+                    setIsModalOpen(false);
+                }}
+            />
+        ) : null}
         <div>
             <div className={Styles.dGrid}>
                 {data.map((product) => {
@@ -101,30 +128,30 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                         salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin / 100) * +listPrice).toFixed(2)
                     }
                     return (
-                    <div className={Styles.cardElement}>
-                        <div className={Styles.salesHolder}><svg class="salesIcon" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="45" fill="none" stroke="#ccc" stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283"> <animate attributeName="stroke-dashoffset" from="283" to="0" dur="2s" fill="freeze" /> </circle> <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#6a6a6a" font-family="Montserrat-500" font-size="36px" line-height="42px" text-shadow="2px 2px 2px rgba(0, 0, 0, 0.5)" text-transform="uppercase"> <tspan>{product.Sales}</tspan> </text> </svg></div>
-                        {productImages?.isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id);setBrand(product.ManufacturerId__c) }} src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? '/assets/images/makeup1.png'} /> : <LoaderV2 />}
-                        <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
-                        <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id);setBrand(product.ManufacturerId__c) }}>{product?.Name.substring(0, 20)}...</p>
-                        {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
-                        <p className={Styles.priceHolder}>
-                            <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;{orders[product?.Id]?<Link to={'/my-bag'}>${salesPrice}</Link>:<p>${salesPrice}</p>}</p>
-                        {orders[product?.Id] ? <>
-                            {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
-                            <div className="d-flex">
-                                <QuantitySelector min={product?.Min_Order_QTY__c || 0} value={orders[product?.Id]?.quantity} onChange={(quantity) => {
-                                    onQuantityChange(product, quantity, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount);
-                                }} />
-                                <button className="ml-4" onClick={() => onQuantityChange(product, 0, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)}><DeleteIcon fill="red" /></button>
-                            </div>
-                        </> : to ?
-                            <Link to={to} className={Styles.linkHolder}><p className={Styles.btnHolder}>add to Cart</p></Link>
-                            : <p className={Styles.btnHolder} onClick={() => onQuantityChange(product, product?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)} style={{ cursor: 'pointer' }}>Add to Cart</p>}
-                    </div>)
+                        <div className={Styles.cardElement}>
+                            <div className={Styles.salesHolder}><svg class="salesIcon" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="45" fill="none" stroke="#ccc" stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283"> <animate attributeName="stroke-dashoffset" from="283" to="0" dur="2s" fill="freeze" /> </circle> <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#6a6a6a" font-family="Montserrat-500" font-size="36px" line-height="42px" text-shadow="2px 2px 2px rgba(0, 0, 0, 0.5)" text-transform="uppercase"> <tspan>{product.Sales}</tspan> </text> </svg></div>
+                            {productImages?.isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id); setBrand(product.ManufacturerId__c);setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId??null) }} src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? '/assets/images/makeup1.png'} /> : <LoaderV2 />}
+                            <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                            <p className={Styles.titleHolder} onClick={() => { setProductDetailId(product.Id); setBrand(product.ManufacturerId__c);setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId??null) }}>{product?.Name.substring(0, 20)}...</p>
+                            {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
+                            <p className={Styles.priceHolder}>
+                                <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;{orders[product?.Id] ? <Link to={'/my-bag'}>${salesPrice}</Link> : <p>${salesPrice}</p>}</p>
+                            {orders[product?.Id] ? <>
+                                {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
+                                <div className="d-flex">
+                                    <QuantitySelector min={product?.Min_Order_QTY__c || 0} value={orders[product?.Id]?.quantity} onChange={(quantity) => {
+                                        onQuantityChange(product, quantity, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount);
+                                    }} />
+                                    <button className="ml-4" onClick={() => onQuantityChange(product, 0, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)}><DeleteIcon fill="red" /></button>
+                                </div>
+                            </> : to ?
+                                <Link to={to} className={Styles.linkHolder}><p className={Styles.btnHolder}>add to Cart</p></Link>
+                                : <p className={Styles.btnHolder} onClick={() => onQuantityChange(product, product?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)} style={{ cursor: 'pointer' }}>Add to Cart</p>}
+                        </div>)
                 })}
             </div>
         </div>
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} accountDetails={accountDetails?.[product?.ManufacturerId__c]} AccountId={localStorage.getItem("AccountId__c")} ManufacturerId={localStorage.getItem("ManufacturerId__c")}/>
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} accountDetails={accountDetails?.[product?.ManufacturerId__c]} AccountId={localStorage.getItem("AccountId__c")} ManufacturerId={localStorage.getItem("ManufacturerId__c")} SalesRepId={salesRepId}/>
     </section>)
 }
 export default TopProductCard;

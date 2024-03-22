@@ -51,7 +51,7 @@ function MyBagFinal({setOrderDetail}) {
           if (!data[res?.ManufacturerId__c]) {
             data[res?.ManufacturerId__c] = {};
           }
-          if (Object.values(data[res?.ManufacturerId__c]).length > 0) {
+          if (Object.values(data[res?.ManufacturerId__c])?.length > 0) {
             setProductImage({ isLoaded: true, images: data[res?.ManufacturerId__c] })
           } else {
             setProductImage({ isLoaded: false, images: {} })
@@ -60,11 +60,11 @@ function MyBagFinal({setOrderDetail}) {
         setOrderData(res);
         setOrderDetail(res)
         setIsLoading(true);
-        if (res.OpportunityLineItems.length > 0) {
+        if (res.OpportunityLineItems?.length > 0) {
           let productCode = "";
           res.OpportunityLineItems?.map((element, index) => {
             productCode += `'${element?.ProductCode}'`
-            if (res.OpportunityLineItems.length - 1 != index) productCode += ', ';
+            if (res.OpportunityLineItems?.length - 1 != index) productCode += ', ';
           })
           getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
             if (res) {
@@ -309,7 +309,7 @@ function MyBagFinal({setOrderDetail}) {
                     </div>
                   </div>
 
-                  {invoices.length>0 && (
+                  {invoices?.length>0 && (
                     <div className={Styles.ShipBut} data-html2canvas-ignore>
                       <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
                         <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
