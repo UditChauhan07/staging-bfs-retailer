@@ -188,7 +188,7 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
           </table>
         </div>
       </div>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={localStorage.getItem("ManufacturerId__c")} AccountId={localStorage.getItem("AccountId__c")}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={localStorage.getItem("ManufacturerId__c")} AccountId={localStorage.getItem("AccountId__c")} SalesRepId={localStorage.getItem("Sales_Rep__c")}/>
     </>
   );
 };

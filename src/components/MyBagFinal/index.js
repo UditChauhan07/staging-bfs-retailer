@@ -98,6 +98,7 @@ function MyBagFinal() {
   }
 
   const orderPlaceHandler = () => {
+    if(localStorage.getItem("Sales_Rep__c")){
     let fetchBag = fetchBeg();
     setIsOrderPlaced(1);
     GetAuthData()
@@ -154,6 +155,9 @@ function MyBagFinal() {
       .catch((error) => {
         console.error({ error });
       });
+    }else{
+      alert("no sales rep.")
+    }
   };
   const handleRemoveProductFromCart = (ele) => {
     addOrder(ele.product, 0, ele.discount);
@@ -433,7 +437,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")}/>
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>
   );

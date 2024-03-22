@@ -19,7 +19,7 @@ const TopProducts = () => {
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    btnHandler({manufacturerId:null,month:monthIndex + 1});
+    btnHandler({ manufacturerId: null, month: monthIndex + 1 });
     let indexMonth = [];
     let helperArray = [];
     months.map((month, i) => {
@@ -77,17 +77,23 @@ const TopProducts = () => {
       })
 
       topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountId: user.data.accountId }).then((products) => {
-        let result = products.data.sort(function (a, b) {
-          return b.Sales - a.Sales;
-        });
-        localStorage.setItem("Sales_Rep__c", products?.accountDetails?.SalesRepId)
+        let result = [];
+        console.log({ products });
+        if (products?.data?.length > 0) {
+          result = products?.data?.sort(function (a, b) {
+            return b.Sales - a.Sales;
+          });
+          localStorage.setItem("address", JSON.stringify(products?.accountDetails[Object.keys(products?.accountDetails)?.[0]]?.ShippingAddress))
+          localStorage.setItem("manufacturer", products?.data?.[0]?.ManufacturerName__c)
+        } else {
+          localStorage.removeItem("manufacturer")
+          localStorage.removeItem("address")
+        }
+
         localStorage.setItem("Account", user.data.accountName)
         localStorage.setItem("AccountId__c", user.data.accountId)
-        localStorage.setItem("address", JSON.stringify(products?.accountDetails?.ShippingAddress))
-        localStorage.setItem("shippingMethod", JSON.stringify({ number: products?.accountDetails?.AccountNumber, method: products?.accountDetails?.ShippingMethod }))
-        localStorage.setItem("manufacturer", products.data?.[0]?.ManufacturerName__c)
         localStorage.setItem("ManufacturerId__c", manufacturerFilter)
-        setTopProductList({ isLoaded: true, data: result, message: products.message, accountDetails: products.accountDetails })
+        setTopProductList({ isLoaded: true, data: result, message: products?.message, accountDetails: products?.accountDetails })
         if (result.length > 0) {
           let productCode = "";
           result?.map((product, index) => {
@@ -119,12 +125,12 @@ const TopProducts = () => {
       console.log({ error });
     })
   }
-  const btnHandler = ({month,manufacturerId}) => {
+  const btnHandler = ({ month, manufacturerId }) => {
     setIsLoaded(false)
     setTopProductList({ isLoaded: false, data: [], message: null })
-      setManufacturerFilter(manufacturerId);
-      setSelectedMonth(month);
-      SearchData({ selectedMonth:month, manufacturerFilter:manufacturerId })
+    setManufacturerFilter(manufacturerId);
+    setSelectedMonth(month);
+    SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId })
   }
   return (
     <AppLayout filterNodes={<>
@@ -137,7 +143,7 @@ const TopProducts = () => {
           label: manufacturer.Name,
           value: manufacturer.Id,
         }))}
-        onChange={(value) => btnHandler({manufacturerId:value,month:selectedMonth})}
+        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth })}
       />
       <FilterItem
         label="Month"
@@ -145,7 +151,7 @@ const TopProducts = () => {
         name="Month"
         value={selectedMonth}
         options={monthList}
-        onChange={(value) => btnHandler({manufacturerId:manufacturerFilter,month:value})}
+        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value })}
       />
       {/* <FilterSearch
         onChange={(e) => setSearchText(e.target.value)}
@@ -155,10 +161,10 @@ const TopProducts = () => {
       /> */}
       <button
         className="border px-2.5 py-1 leading-tight d-grid"
-        onClick={() => { btnHandler({manufacturerId:null,month:monthIndex + 1}); }}
+        onClick={() => { btnHandler({ manufacturerId: null, month: monthIndex + 1 }); }}
       >
-               <CloseButton crossFill={'#fff'} height={20} width={20} />
-            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
+        <CloseButton crossFill={'#fff'} height={20} width={20} />
+        <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
       </button>
     </>
     }>
