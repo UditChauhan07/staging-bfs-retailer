@@ -29,57 +29,59 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                     {product?.data?.imgSrc?.length > 0 ? <Slider data={product?.data?.imgSrc} /> : <Slider data={fakeProductSlider} />}
                 </div>
                 <div className="col-8 ml-4 product-card-element-holder" >
-                    <h2 style={{ textAlign: 'start' }}>{product?.data?.Name}</h2>
-                    <p style={{ textAlign: 'start' }}><b>By</b>, {product?.data?.ManufacturerName__c}</p>
-                    <p style={{ textAlign: 'start' }}>Code Number: {product?.data?.ProductCode},</p>
-                    <p style={{ textAlign: 'start' }}>UPC Number: {product?.data?.ProductUPC__c},</p>
-                    {product?.data?.Description && <p style={{ textAlign: 'start' }}>{product?.data?.Description}</p>}
-                    <p style={{ textAlign: 'start' }}>Min Qty to buy: {product?.data?.Min_Order_QTY__c}</p>
-                    {product?.discount == 0 ? <p style={{ textAlign: 'start' }}><span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>&nbsp;${salesPrice}</p> : <p style={{ textAlign: 'start' }}>{product?.data?.usdRetail__c}</p>}
-                    {product?.data?.Category__c && <p style={{ textAlign: 'start' }}>Category: {product?.data?.Category__c}</p>}
-                    {product.data?.Collection__c && <p style={{ textAlign: 'start' }}>Collection: {product.data?.Collection__c}</p>}
+                    <h2 style={{ textAlign: 'start' }}><b>{product?.data?.Name}</b></h2>
+                    <p style={{ textAlign: 'start' }}><b>By</b>, <b>{product?.data?.ManufacturerName__c}</b></p>
+                    {product?.discount == 0 ? <p style={{ textAlign: 'start' }}><span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>&nbsp;${salesPrice}</p> : <p style={{ textAlign: 'start' }}><b>{product?.data?.usdRetail__c}</b></p>}
+                    {product?.data?.Description && <p style={{ textAlign: 'start', color:"#898989"}}>{product?.data?.Description}</p>}
+                    <p style={{ textAlign: 'start',color:"#898989" }}>Code Number: <b style={{color:"black"}}>{product?.data?.ProductCode},</b></p>
+                    <p style={{ textAlign: 'start',color:"#898989" }}>UPC Number: <b style={{color:"black"}}>{product?.data?.ProductUPC__c},</b></p>
+                 <p style={{ textAlign: 'start',color:"#898989" }}>Min Qty to buy: <b style={{color:"black"}}>{product?.data?.Min_Order_QTY__c}</b></p>
+                     {product?.data?.Category__c && <p style={{ textAlign: 'start',color:"#898989" }}>Category: <b style={{color:"black"}}>{product?.data?.Category__c}</b></p>}
+                    {product.data?.Collection__c && <p style={{ textAlign: 'start',color:"#898989" }}>Collection: <b style={{color:"black"}}>{product.data?.Collection__c}</b></p>}
                     {(isAddtoCart && product?.discount) && <>
 
                         {orders[product?.data?.Id] ?
-                            <>
+                         
+                            <div className="d-flex flex-column">
                                 <p style={{ textAlign: 'start' }}>$
                                     {false ? <input type="number" className={Styles.priceInputHolder} value={inputPrice} placeholder={Number(inputPrice).toFixed(2)}
                                         onChange={(e) => { onPriceChangeHander(product?.data, e.target.value < 10 ? e.target.value.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0) }} id="limit_input" minLength={0} maxLength={4}
                                         name="limit_input" /> : salesPrice}
 
                                 </p>
-                                <div className="d-flex">
+                                <div className="d-flex gap-1">
                                     <QuantitySelector min={product?.data?.Min_Order_QTY__c || 0} value={orders[product?.data?.Id]?.quantity} onChange={(quantity) => {
                                         onQuantityChange(product?.data, quantity, inputPrice || parseFloat(salesPrice), product?.discount);
                                     }} />
                                     <button className="ml-4" onClick={() => onQuantityChange(product?.data, 0, inputPrice || parseFloat(salesPrice), product?.discount)}><DeleteIcon fill="red" /></button>
                                 </div>
                                 <p className="mt-2" style={{ textAlign: 'start' }}>Total: <b>{inputPrice * orders[product?.data?.Id]?.quantity}</b></p>
-                            </> :
+                                </div>
+                      :
                             <button className={Styles.button} onClick={() => onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount)}>Add to cart</button>}
                     </>}
                 </div>
             </div>
-            {product.data?.Full_Product_Description__c && <p style={{ textAlign: 'start' }}>Product Full Description: {product.data?.Full_Product_Description__c}</p>}
-            {product.data?.Desired_Result__c && <div dangerouslySetInnerHTML={{ __html: `Product Desired Result: ${product.data?.Desired_Result__c}` }} />}
-            {product.data?.Key_Ingredients__c && <p style={{ textAlign: 'start' }}>Product Basic Ingredients List: {product.data?.Key_Ingredients__c}</p>}
-            {product.data?.Full_Ingredients_List__c && <p style={{ textAlign: 'start' }}>Product Full Ingredients List: {product.data?.Full_Ingredients_List__c}</p>}
-            {product.data?.Size_Volume_Weight__c && <p style={{ textAlign: 'start' }}>Product Weight: {product.data?.Size_Volume_Weight__c}</p>}
-            {product.data?.Skin_Tone__c && <p style={{ textAlign: 'start' }}>Product Tone: {product.data?.Skin_Tone__c}</p>}
-            {product.data?.Skin_Type__c && <p style={{ textAlign: 'start' }}>Product Type: {product.data?.Skin_Type__c}</p>}
-            {product.data?.Travel_or_Full_Size__c && <p style={{ textAlign: 'start' }}>Product Size: {product.data?.Travel_or_Full_Size__c}</p>}
-            {product?.data?.Newness_Alias__c && <p style={{ textAlign: 'start' }}>Product Newness Name: {product?.data?.Newness_Alias__c},</p>}
-            <p style={{ textAlign: 'start' }}>Product Season: {product?.data?.Season__c},</p>
-            <p style={{ textAlign: 'start' }}>Product Create Date: {new Date(product?.data?.CreatedDate).toDateString()}</p>
-            <p style={{ textAlign: 'start' }}>Product Launch Date: {product?.data?.Launch_Date__c}</p>
-            <p style={{ textAlign: 'start' }}>Product Ship Date: {product?.data?.Ship_Date__c}</p>
+            {product.data?.Full_Product_Description__c && <p style={{ textAlign: 'start', color:'#898989' }}><b style={{color:"black"}}>Product Full Description:</b> {product.data?.Full_Product_Description__c}</p>}
+            {product.data?.Desired_Result__c && <div style={{ textAlign: 'start',color:'#898989' }} dangerouslySetInnerHTML={{ __html: `Product Desired Result: ${product.data?.Desired_Result__c}` }} />}
+            {product.data?.Key_Ingredients__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Basic Ingredients List:</b> {product.data?.Key_Ingredients__c}</p>}
+            {product.data?.Full_Ingredients_List__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Full Ingredients List:</b> {product.data?.Full_Ingredients_List__c}</p>}
+            {product.data?.Size_Volume_Weight__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Weight:</b> {product.data?.Size_Volume_Weight__c}</p>}
+            {product.data?.Skin_Tone__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Tone:</b> {product.data?.Skin_Tone__c}</p>}
+            {product.data?.Skin_Type__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Type:</b> {product.data?.Skin_Type__c}</p>}
+            {product.data?.Travel_or_Full_Size__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Size: </b>{product.data?.Travel_or_Full_Size__c}</p>}
+            {product?.data?.Newness_Alias__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Newness Name:</b> {product?.data?.Newness_Alias__c},</p>}
+            <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Season: </b>{product?.data?.Season__c},</p>
+            <p style={{ textAlign: 'start',color:'#898989'}}><b style={{color:"black"}}>Product Create Date:</b> {new Date(product?.data?.CreatedDate).toDateString()}</p>
+            <p style={{ textAlign: 'start' ,color:'#898989'}}><b style={{color:"black"}}> Product Launch Date:</b> {product?.data?.Launch_Date__c}</p>
+            <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Product Ship Date:</b> {product?.data?.Ship_Date__c}</p>
             {/* <p style={{ textAlign: 'start' }}>Product Edit Date: {new Date(product?.data?.LastModifiedDate).toDateString()},</p> */}
-            {(product.data?.Point_of_difference_1__c || product.data?.Point_of_difference_2__c || product.data?.Point_of_difference_3__c) && <p style={{ textAlign: 'start' }}>Point of Difference: <ol>
+            {(product.data?.Point_of_difference_1__c || product.data?.Point_of_difference_2__c || product.data?.Point_of_difference_3__c) && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Point of Difference:</b> <ol>
                 {product.data?.Point_of_difference_1__c && <li>{product.data?.Point_of_difference_1__c}</li>}
                 {product.data?.Point_of_difference_2__c && <li>{product.data?.Point_of_difference_2__c}</li>}
                 {product.data?.Point_of_difference_3__c && <li>{product.data?.Point_of_difference_3__c}</li>}
             </ol></p>}
-            {product.data?.Usage_and_Application_Tips__c && <p style={{ textAlign: 'start' }}>Usages Tups: {product.data?.Usage_and_Application_Tips__c}
+            {product.data?.Usage_and_Application_Tips__c && <p style={{ textAlign: 'start',color:'#898989' }}><b style={{color:"black"}}>Usages Tups:</b> {product.data?.Usage_and_Application_Tips__c}
                 <ol>
                     {product.data?.Use_it_with_Option_1__c && <li>{product.data?.Use_it_with_Option_1__c}</li>}
                     {product.data?.Use_it_with_Option_2__c && <li>{product.data?.Use_it_with_Option_2__c}</li>}

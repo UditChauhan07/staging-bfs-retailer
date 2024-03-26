@@ -72,3 +72,8 @@
   display: grid;
   place-content: center;
 }
+.soonHolder {
+  font-size: 6.5px;
+  letter-spacing: 0.5px;
+  text-align: end;
+}
