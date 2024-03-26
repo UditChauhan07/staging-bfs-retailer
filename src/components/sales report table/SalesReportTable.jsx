@@ -30,7 +30,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
             className=""
             style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto",width:'100%' }}
           >
-            <table id="salesReportTable" className="table table-responsive">
+            <table id="salesReportTable" className="table table-responsive" style={{minHeight:"600px"}}>
               <thead>
                 <tr>
                   <th

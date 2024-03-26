@@ -73,7 +73,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bobbi Brown",
-          date: "01/Dec/2023",
+          date: "01/DEC/2023",
           OCDDate: "01/JAN/2024",
           image: "/assets/images/Smoothing1.png",
           name: "Vitamin Enriched Smoothing Serum",
@@ -83,7 +83,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Bobbi Brown",
-          date: "01/Dec/2023",
+          date: "01/DEC/2023",
           OCDDate: "01/JAN/2024",
           image: "/assets/images/Smoothing2.png",
           name: "Soothing Cleansing Oil Relaunch ",
@@ -93,7 +93,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Byredo",
-          date: "TBD/Dec/2023",
+          date: "TBD/DEC/2023",
           OCDDate: "25/JAN/2024",
           image: "/assets/images/Smoothing16.png",
           name: "Liquid Lipstick Matte",
@@ -146,7 +146,7 @@ const MarketingCalendar = () => {
           brandLogo: "/assets/images/Diptuque.png",
         }, {
           brand: "Diptyque",
-          date: "22/Jan/2023",
+          date: "22/JAN/2023",
           OCDDate: "15/Feb/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Tuberose Candle",
@@ -156,7 +156,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "22/Jan/2023",
+          date: "22/JAN/2023",
           OCDDate: "15/Feb/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Tuberose Candle",
@@ -166,7 +166,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "22/Jan/2023",
+          date: "22/JAN/2023",
           OCDDate: "15/Feb/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Do Son EDP",
@@ -176,7 +176,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "22/Jan/2023",
+          date: "22/JAN/2023",
           OCDDate: "15/Feb/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Do Son EDP",
@@ -214,7 +214,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bumble and Bumble",
-          date: "15/Jan/2023",
+          date: "15/JAN/2023",
           OCDDate: "01/JAN/2024",
           image: "/assets/images/Smoothing6.png",
           name: "DrySpun LIGHT",
@@ -243,7 +243,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "TBD/Mar/2024",
+          date: "TBD/MAR/2024",
           OCDDate: "TBD/Apr/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Coffee Candle",
@@ -253,7 +253,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "TBD/Mar/2024",
+          date: "TBD/MAR/2024",
           OCDDate: "TBD/Apr/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Cookie Candle",
@@ -263,7 +263,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "TBD/Mar/2024",
+          date: "TBD/MAR/2024",
           OCDDate: "TBD/Apr/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Whipped Cream Candle",
@@ -273,7 +273,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Diptyque",
-          date: "TBD/Mar/2024",
+          date: "TBD/MAR/2024",
           OCDDate: "TBD/Apr/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Mini Candle Boxed Set",
@@ -305,7 +305,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bumble and Bumble",
-          date: "15/Feb/2024",
+          date: "15/FEB/2024",
           OCDDate: "01/Mar/2024",
           image: "/assets/images/Smoothing10.png",
           name: "HIO Trial Kit",
@@ -318,7 +318,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bumble and Bumble",
-          date: "15/Feb/2024",
+          date: "15/FEB/2024",
           OCDDate: "01/Mar/2024",
           image: "/assets/images/Smoothing8.png",
           name: "Bond Trial Kit",
@@ -329,7 +329,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bumble and Bumble",
-          date: "15/Feb/2024",
+          date: "15/FEB/2024",
           OCDDate: "01/Mar/2024",
           image: "/assets/images/Smoothing9.png",
           name: "Bb. Curl Trial Kit ",
@@ -341,7 +341,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bumble and Bumble",
-          date: "15/Feb/2024",
+          date: "15/FEB/2024",
           OCDDate: "01/Mar/2024",
           image: "/assets/images/Smoothing7.png",
           name: "Thickening Trial Kit",
@@ -352,7 +352,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "ReVive",
-          date: "20/Mar/2024",
+          date: "20/MAR/2024",
           OCDDate: "ASAP",
           image: "/assets/images/Smoothing25.png",
           name: "Brightening Serum ",
@@ -412,8 +412,7 @@ const MarketingCalendar = () => {
           brand: "Maison Margiela",
           date: "01/APR/2024",
           OCDDate: "01/MAY/2024",
-
-          image: "/assets/images/19.png",
+           image: "/assets/images/19.png",
           name: "From the Garden Candle",
           size: "165 g",
           description: "A collection of high-end scented candles from Maison Margiela, inviting you to relive forgotten memories and emotions at home.",
@@ -422,9 +421,8 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bobbi Brown",
-          date: "01/Mar/2024",
+          date: "01/MAR/2024",
           OCDDate: "01/Apr/2024",
-
           image: "/assets/images/Smoothing3.png",
           name: "Long Wear Cream Liner Sticks",
           size: "N/A",
@@ -433,7 +431,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Bobbi Brown",
-          date: "01/Mar/2024",
+          date: "01/MAR/2024",
           OCDDate: "01/Apr/2024",
           image: "/assets/images/Smoothing4.png",
           name: "Long Wear Cream Shadow Sticks Shade Extension",
@@ -444,7 +442,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/Mar/2024",
+          date: "TBD/MAR/2024",
           OCDDate: "04/Apr/2024",
           image: "/assets/images/Smoothing17.png",
           name: "Mineralescape Eyeshadow",
@@ -483,7 +481,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Bobbi Brown",
-          date: "01/Apr/2024",
+          date: "01/APR/2024",
           OCDDate: "05/May/2024",
           image: "/assets/images/Smoothing5.png",
           name: "Extra Lip Serum",
@@ -494,7 +492,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "01/Apr/2024",
+          date: "01/APR/2024",
           OCDDate: "05/May/2024",
 
           image: "/assets/images/Smoothing11.png",
@@ -506,7 +504,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/Apr/2024",
+          date: "TBD/APR/2024",
           OCDDate: "02/May/2024",
           image: "/assets/images/Smoothing18.png",
           name: "The Lipstick – Satin",
@@ -532,9 +530,8 @@ const MarketingCalendar = () => {
         },
         {
           brand: "Byredo",
-          date: "01/May/2024",
+          date: "01/MAY/2024",
           OCDDate: "01/Jun/2024",
-
           image: "/assets/images/Smoothing12.png",
           name: "Mojave Ghost Alcohol",
           size: "100 ml",
@@ -544,7 +541,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/May/2024",
+          date: "TBD/MAY/2024",
           OCDDate: "06/Jun/2024",
           image: "/assets/images/Smoothing19.png",
           name: "Mojave Ghost Eyeshadow",
@@ -566,7 +563,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "ReVive",
-          date: "01/Jun/2024",
+          date: "01/JUN/2024",
           OCDDate: "ASAP",
           image: "/assets/images/Smoothing26.png",
           name: "Advanced Lip Perioral Serum Reformulation",
@@ -576,7 +573,7 @@ const MarketingCalendar = () => {
         },
         {
           brand: "ESTEE LAUDER",
-          date: "03/Jun/2024",
+          date: "03/JUN/2024",
           OCDDate: "15/JUL/2024",
           image: "/assets/images/23.png",
           name: "Revitalizing Supreme+ Youth Power Crème ",
@@ -604,7 +601,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/Jul/2024",
+          date: "TBD/JUL/2024",
           OCDDate: "29/Aug/2024",
           image: "/assets/images/Smoothing13.png",
           name: "TBD Candle",
@@ -615,7 +612,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/Jul/2024",
+          date: "TBD/JUl/2024",
           OCDDate: "22/Aug/2024",
           image: "/assets/images/Smoothing20.png",
           name: "The Lipstick – Satin ",
@@ -643,7 +640,7 @@ const MarketingCalendar = () => {
 
         {
           brand: "Byredo",
-          date: "TBD/Aug/2024",
+          date: "TBD/AUG/2024",
           OCDDate: "TBD/Sep/2024",
           image: "/assets/images/Smoothing15.png",
           name: "Mojave Ghost Absolu",
@@ -660,7 +657,7 @@ const MarketingCalendar = () => {
       content: [
         {
           brand: "Byredo",
-          date: "TBD/Sep/2024",
+          date: "TBD/SEP/2024",
           OCDDate: "03/Oct/2024",
           image: "/assets/images/Smoothing14.png",
           name: "Fall EDP",
@@ -694,7 +691,6 @@ const MarketingCalendar = () => {
           brand: "Maison Margiela",
           date: "01/DEC/2023",
           OCDDate: "01/JAN/2024",
-
           image: "/assets/images/17.png",
           name: "Under The Stars EDT ",
           size: "200 ml",
