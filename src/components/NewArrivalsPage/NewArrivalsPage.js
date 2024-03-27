@@ -104,7 +104,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             <>
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Cart</h1>
-                <p className={` ${StylesModal.ModalContent}`}>This Product Available soon. Please check back later.</p>
+                <p className={` ${StylesModal.ModalContent}`}>This product will be available soon. Please check back later</p>
                 <div className="d-flex justify-content-center">
                   <button
                     className={`${StylesModal.modalButton}`}
