@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./table.module.css";
 import Loading from "../Loading";
 const SalesReportTable = ({ salesData, year,ownerPermission }) => {
+  const allOrdersEmpty = salesData.every(item => item.Orders.length <= 0);
   const d = new Date();
   let month = d.getMonth();
   let currentYear = d.getFullYear();
@@ -120,7 +121,14 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                 </tr>
               </thead>
               <tbody>
-                {salesData.map((ele) => {
+              { allOrdersEmpty ? (
+                    <div className={`${styles.NodataText} py-4 w-full lg:min-h-[300px] xl:min-h-[380px]`} key="no-data">
+                        <p >
+                          No data found
+                        </p>
+                    </div>
+                  ) : 
+                salesData.map((ele) => {
                   return ele.Orders.map((item, index) => {
                     totalOrder += Number(item.totalOrders);
                     totalOrderPrice += Number(item.totalorderPrice);
