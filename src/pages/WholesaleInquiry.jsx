@@ -6,7 +6,7 @@ import HelpSection from '../components/Footer/HelpSection'
 import Footer from '../components/Footer/Footer'
 import MobileHeader from '../components/All Headers/mobileHeader/MobileHeader'
 
-const CustomerCare = () => {
+const WholesaleInquiry = () => {
   return (
     <>
     <div className="container-fluid p-0 m-0">
@@ -43,4 +43,4 @@ const CustomerCare = () => {
   )
 }
 
-export default CustomerCare
+export default WholesaleInquiry

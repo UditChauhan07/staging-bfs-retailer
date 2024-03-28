@@ -90,10 +90,14 @@ const SalesReport = () => {
   }, [manufacturerFilter, salesReportData, highestOrders, searchBy, searchBySalesRep]);
 
   const csvData = useMemo(() => {
-    return filteredSalesReportData?.map((ele) =>
+    const dataWithTotals = filteredSalesReportData?.map((ele) =>
       ele.Orders.map((item) => ({
         ManufacturerName: ele.ManufacturerName__c,
         AccountName: item.Name,
+        AccountType: item.AccountType,
+        DateOpen: item.DateOpen,
+        Status: item.Status,
+        AccountRepo: item?.AccountRepo ?? JSON.parse(localStorage.getItem("Api Data")).data.Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,
@@ -119,11 +123,59 @@ const SalesReport = () => {
         DecOrders: item.Dec.items?.length,
         DecAmount: item.Dec.amount,
         TotalOrders: item.totalOrders,
-        totalAmount: item.totalorderPrice,
+        TotalAmount: item.totalorderPrice,
       }))
     ).flat();
-  }, [filteredSalesReportData, manufacturerFilter]);
+  
+ const totals = {
+      ManufacturerName: "Total", 
+      JanOrders: dataWithTotals.reduce((total, item) => total + (item.JanOrders || 0), 0),
+      JanAmount: dataWithTotals.reduce((total, item) => total + (item.JanAmount || 0), 0),
+      
+      FebOrders: dataWithTotals.reduce((total, item) => total + (item.FebOrders || 0), 0),
+      FebAmount: dataWithTotals.reduce((total, item) => total + (item.FebAmount || 0), 0),
 
+      MarOrders: dataWithTotals.reduce((total, item) => total + (item.MarOrders || 0), 0),
+      MarAmount: dataWithTotals.reduce((total, item) => total + (item.MarAmount || 0), 0),
+
+      AprOrders: dataWithTotals.reduce((total, item) => total + (item.AprOrders || 0), 0),
+      AprAmount: dataWithTotals.reduce((total, item) => total + (item.AprAmount || 0), 0),
+      
+      MayOrders: dataWithTotals.reduce((total, item) => total + (item.MayOrders || 0), 0),
+      MayAmount: dataWithTotals.reduce((total, item) => total + (item.MayAmount || 0), 0),
+
+      JunOrders: dataWithTotals.reduce((total, item) => total + (item.JunOrders || 0), 0),
+      JunAmount: dataWithTotals.reduce((total, item) => total + (item.JunAmount || 0), 0),
+
+      JulOrders: dataWithTotals.reduce((total, item) => total + (item.JulOrders || 0), 0),
+      JulAmount: dataWithTotals.reduce((total, item) => total + (item.JulAmount || 0), 0),
+
+      AugOrders: dataWithTotals.reduce((total, item) => total + (item.AugOrders || 0), 0),
+      AugAmount: dataWithTotals.reduce((total, item) => total + (item.AugAmount || 0), 0),
+
+      SepOrders: dataWithTotals.reduce((total, item) => total + (item.SepOrders || 0), 0),
+      SepAmount: dataWithTotals.reduce((total, item) => total + (item.SepAmount || 0), 0),
+
+      OctOrders: dataWithTotals.reduce((total, item) => total + (item.OctOrders || 0), 0),
+      OctAmount: dataWithTotals.reduce((total, item) => total + (item.OctAmount || 0), 0),
+
+      NovOrders: dataWithTotals.reduce((total, item) => total + (item.NovOrders || 0), 0),
+      NovAmount: dataWithTotals.reduce((total, item) => total + (item.NovAmount || 0), 0),
+
+    DecOrders: dataWithTotals.reduce((total, item) => total + (item.DecOrders || 0), 0),
+     DecAmount: dataWithTotals.reduce((total, item) => total + (item.DceAmount || 0), 0),
+
+     TotalOrders: dataWithTotals.reduce((total, item) => total + (item.TotalOrders || 0), 0),
+      TotalAmount: dataWithTotals.reduce((total, item) => total + (item.TotalAmount || 0), 0),
+  
+    
+    };
+  
+    const dataWithTotalRow = [...dataWithTotals, totals];
+  
+    return dataWithTotalRow;
+  }, [filteredSalesReportData, manufacturerFilter]);
+  
   const handleExportToExcel = () => {
     setExportToExcelState(true);
   };

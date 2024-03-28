@@ -11,10 +11,14 @@ import Logout from "./components/Logout";
 import MyRetailersPage from "./pages/MyRetailersPage";
 import { UserProvider } from "./context/UserContext";
 import BrandsPage from "./pages/BrandsPage";
-
+import WholesaleInquiry from "./pages/WholesaleInquiry"
 import CustomerCare from "./pages/CustomerCare";
 import AboutUs from "./pages/AboutUs";
 import EducationCenter from "./pages/EducationCenter";
+import Careers from "./pages/Careers"
+import Instagram from "./pages/Instagram"
+import JoinUs from "./pages/JoinUs"
+import Linkdin from "./pages/Linkdin"
 import NewArrivals from "./pages/NewArrivals";
 import CustomerSupport from "./pages/CustomerSupport";
 import MarketingCalendar from "./pages/MarketingCalendar";
@@ -31,6 +35,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
 import ProductDetails from "./pages/productDetails";
+
 function App() {
   // const Redirect = ({ href }) => {
   //   window.location.href = href;
@@ -79,12 +84,17 @@ function App() {
               element={<EducationCenter />}
             ></Route>
             <Route path="/about-us" element={<AboutUs />}></Route>
-            {/* <Route path="/wholesale-inquiry" elements={<WholesaleInquiry />}></Route> */}
+            <Route path="/wholesale-inquiry" element={<WholesaleInquiry />}></Route>
+            <Route path="/careers" element={<Careers/>}></Route>
+            <Route path="/instagram" element={<Instagram/>}></Route>
+            <Route path="/join-us" element={<JoinUs/>}></Route>
+            <Route path="/linkdin" element={<Linkdin/>}></Route>
             <Route path="logout" element={<Logout />}></Route>
             <Route path="/sign-up" element={<SignUp />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/customerService" element={<CustomerServiceForm />}></Route>
+          
             {/* 1234 */}
           </Routes>
         </BrowserRouter>
