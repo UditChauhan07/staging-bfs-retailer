@@ -24,7 +24,8 @@
   right: 0;
   min-width: 25px;
   padding: 2px;
-  width: 35px;
+  width: 44px;
+  height: 40px;
 }
 @keyframes rotate {
   from {
