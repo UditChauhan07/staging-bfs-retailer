@@ -102,6 +102,139 @@ const TargetReport = () => {
     return `$${Number(value).toFixed(2)}`;
   };
   const allOrdersEmpty = filteredTargetData.every((item) => item.Orders?.length <= 0);
+  const exportToExcel2 = () => {
+    setExportToExcelState(false);
+    
+    const totalRow = {
+      SalesRepName: "TOTAL",
+      AccountName: "",
+      ManufacturerName: "",
+      JanuaryTarget: 0,
+      JanuarySale: 0,
+      JanuaryDiff: 0,
+
+      FebruaryTarget: 0,
+      FebruarySale: 0,
+      FebruaryDiff: 0,
+
+      MarchTarget: 0,
+      MarchSale: 0,
+      MarchDiff: 0,
+
+      AprilTarget: 0,
+      AprilSale: 0,
+      AprilDiff: 0,
+
+      MayTarget: 0,
+      MaySale: 0,
+      MayDiff: 0,
+
+      JuneTarget: 0,
+      JuneSale: 0,
+      JuneDiff: 0,
+
+      JulyTarget: 0,
+      JulySale: 0,
+      JulyDiff: 0,
+
+      AugustTarget: 0,
+      AugustSale: 0,
+      AugustDiff: 0,
+
+      SeptemberTarget: 0,
+      SeptemberSale: 0,
+      SeptemberDiff: 0,
+
+      OctoberTarget: 0,
+      OctoberSale: 0,
+      OctoberDiff: 0,
+
+      NovemberTarget: 0,
+      NovemberSale: 0,
+      NovemberDiff: 0,
+
+      DecemberTarget: 0,
+      DecemberSale: 0,
+      DecemberDiff: 0,
+
+      
+      TotalTarget: 0,
+      TotalSale: 0,
+      TotalDiff: 0,
+    };
+  
+    filteredTargetData.forEach(element => {
+      totalRow.JanuaryTarget += parseFloat(element.January.target);
+      totalRow.JanuarySale += parseFloat(element.January.sale);
+      totalRow.JanuaryDiff += parseFloat(element.January.diff);
+
+      totalRow.FebruaryTarget += parseFloat(element.February.target);
+      totalRow.FebruarySale += parseFloat(element.February.sale);
+      totalRow.FebruaryDiff += parseFloat(element.February.diff);
+
+      totalRow.MarchTarget += parseFloat(element.March.target);
+      totalRow.MarchSale += parseFloat(element.March.sale);
+      totalRow.MarchDiff += parseFloat(element.March.diff);
+
+      totalRow.AprilTarget += parseFloat(element.April.target);
+      totalRow.AprilSale += parseFloat(element.April.sale);
+      totalRow.AprilDiff += parseFloat(element.April.diff);
+      
+      totalRow.MayTarget += parseFloat(element.May.target);
+      totalRow.MaySale += parseFloat(element.May.sale);
+      totalRow.MayDiff += parseFloat(element.May.diff);
+
+      totalRow.JuneTarget += parseFloat(element.June.target);
+      totalRow.JuneSale += parseFloat(element.June.sale);
+      totalRow.JuneDiff += parseFloat(element.June.diff);
+      
+      totalRow.JulyTarget += parseFloat(element.July.target);
+      totalRow.JulySale += parseFloat(element.July.sale);
+      totalRow.JulyDiff += parseFloat(element.July.diff);
+
+      totalRow.AugustTarget += parseFloat(element.August.target);
+      totalRow.AugustSale += parseFloat(element.August.sale);
+      totalRow.AugustDiff += parseFloat(element.August.diff);
+      
+      totalRow.SeptemberTarget += parseFloat(element.September.target);
+      totalRow.SeptemberSale += parseFloat(element.September.sale);
+      totalRow.SeptemberDiff += parseFloat(element.September.diff);
+
+      totalRow.OctoberTarget += parseFloat(element.October.target);
+      totalRow.OctoberSale += parseFloat(element.October.sale);
+      totalRow.OctoberDiff += parseFloat(element.October.diff);
+
+      totalRow.NovemberTarget += parseFloat(element.November.target);
+      totalRow.NovemberSale += parseFloat(element.November.sale);
+      totalRow.NovemberDiff += parseFloat(element.November.diff);
+
+      totalRow.DecemberTarget += parseFloat(element.December.target);
+      totalRow.DecemberSale += parseFloat(element.December.sale);
+      totalRow.DecemberDiff += parseFloat(element.December.diff);
+
+    
+      // Repeat the same for other months and total columns
+      // ...
+      totalRow.TotalTarget += parseFloat(element.Total.target);
+      totalRow.TotalSale += parseFloat(element.Total.sale);
+      totalRow.TotalDiff += parseFloat(element.Total.diff);
+    });
+  
+   const dataWithTotalRow = [...csvData(), totalRow];
+  const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
+  const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  const data = new Blob([excelBuffer], { type: fileType });
+  
+    let title = target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : "Target Report";
+    if (manufacturerFilter) {
+      title += " for " + getManufactureName(manufacturerFilter);
+    }
+    title += ` ${new Date().toDateString()}`;
+  
+    FileSaver.saveAs(data, title + fileExtension);
+  };
+
   const csvData = () => {
     let finalData = [];
     if (filteredTargetData.length) {
@@ -375,7 +508,7 @@ const TargetReport = () => {
                 <h1 className={`fs-5 ${styles.ModalHeader}`}>Warning</h1>
                 <p className={` ${styles.ModalContent}`}>Do you want to download Target Report?</p>
                 <div className="d-flex justify-content-center gap-3 ">
-                  <button className={`${styles.modalButton}`} onClick={exportToExcel}>
+                  <button className={`${styles.modalButton}`} onClick={exportToExcel2}>
                     OK
                   </button>
                   <button className={`${styles.modalButton}`} onClick={() => setExportToExcelState(false)}>
