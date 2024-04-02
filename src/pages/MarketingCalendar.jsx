@@ -3,6 +3,7 @@ import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
+import Loading from "../components/Loading";
 import { MdOutlineDownload } from "react-icons/md";
 import { GetAuthData, getRetailerBrands, } from "../lib/store";
 import * as FileSaver from "file-saver";
@@ -12,7 +13,7 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 
 const MarketingCalendar = () => {
-
+  const [isLoading, setIsLoading] = useState(false);
   const [productList, setProductList] = useState([
     {
       month: "Jan",
@@ -984,7 +985,14 @@ const MarketingCalendar = () => {
         </>
       }
     >
-      <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+       {brand?.length && !isLoading ? (
+         <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+      ) : brand.length && !isLoading ? (
+        <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
+      ) : (
+        <Loading height={"70vh"} />
+      )}
+     
     </AppLayout>
   );
 };

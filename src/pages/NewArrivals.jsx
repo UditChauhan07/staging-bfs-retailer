@@ -5,6 +5,7 @@ import Pagination from "../components/Pagination/Pagination";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
+import Loading from "../components/Loading";
 import { GetAuthData, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -16,7 +17,7 @@ const NewArrivals = () => {
 
   let PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [productList, setProductList] = useState([
     {
       month: "Jan",
@@ -988,10 +989,15 @@ const NewArrivals = () => {
         </>
       }
     >
-      <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
-        
-     
-    </AppLayout>
+      {brand?.length && !isLoading ? (
+         <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+      ) : brand.length && !isLoading ? (
+        <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
+      ) : (
+        <Loading height={"70vh"} />
+      )}
+    
+         </AppLayout>
   );
 };
 

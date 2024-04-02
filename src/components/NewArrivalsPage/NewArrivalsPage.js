@@ -4,6 +4,7 @@ import LoaderV2 from "./../loader/v2";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+// import Pagination from "../components/Pagination/Pagination";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
@@ -11,6 +12,7 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
+
   const [isEmpty, setIsEmpty] = useState(false);
   // useEffect(() => {
   //   let temp = true;
@@ -130,45 +132,46 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                   return month.content.map((product) => {
                     if (!selectBrand || selectBrand == product.brand) {
                       return (
-                        <>
-                          <div className={Styles.cardElement}>
-                            {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
-                            <img src={product.image} alt={product.name} />
-                            <p className={Styles.brandHolder}>{product?.brand}</p>
-                            <p
-                              className={Styles.titleHolder}
-                              onClick={() => {
-                                setProductDetailId(product.Id);
-                              }}
-                            >
-                              {product?.name?.substring(0, 15)}...
-                            </p>
-                            <p className={Styles.priceHolder}>$ -- . --</p>
-                            {to ? (
-                              <Link className={Styles.linkHolder}>
-                                <p className={Styles.btnHolder}>
-                                  add to Cart <small className={Styles.soonHolder}>coming soon</small>
-                                </p>
-                              </Link>
-                            ) : (
-                              <div onClick={() => setModalShow(true)} className={Styles.linkHolder}>
-                                <p className={Styles.btnHolder}>
-                                  add to Cart <small className={Styles.soonHolder}>coming soon</small>
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </>
+                        <div className={`w-full last:mb-0 mb-4 ${Styles.HoverArrow}`}>
+                           <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
+                        <div className={Styles.cardElement}>
+                          {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
+                          <img src={product.image} alt={product.name} />
+                          <p className={Styles.brandHolder}>{product?.brand}</p>
+                          <p
+                            className={Styles.titleHolder}
+                            onClick={() => {
+                              setProductDetailId(product.Id);
+                            }}
+                          >
+                            {product?.name?.substring(0, 15)}...
+                          </p>
+                          <p className={Styles.priceHolder}>$ -- . --</p>
+                          {to ? (
+                            <Link className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder}>
+                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
+                              </p>
+                            </Link>
+                          ) : (
+                            <div onClick={() => setModalShow(true)} className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder}>
+                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                         </div>
+                       </div>
                       );
                     }
                   });
                 }
               })
             ) : (
-              <div style={{ fontSize: "20px" }}>No data found</div>
+              <div style={{fontSize:"20px"}}>No data found</div>
             )}
           </div>
-          {/* )} */}
         </div>
         <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
       </section>
