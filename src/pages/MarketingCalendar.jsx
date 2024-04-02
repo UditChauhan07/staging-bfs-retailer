@@ -31,8 +31,7 @@ const MarketingCalendar = () => {
         {
           brand: "Re-Nutriv",
           date: "26/FEB/2024",
-          OCDDate:
-            "26/FEB/2024",
+          OCDDate:"26/FEB/2024",
           image: "/assets/images/27.png",
           name: "Re Nutriv Ultimate Diamond Brilliance Crème REFILL ",
           size: "50 ml",
@@ -147,7 +146,7 @@ const MarketingCalendar = () => {
         }, {
           brand: "Diptyque",
           date: "22/JAN/2023",
-          OCDDate: "15/Feb/2024",
+          OCDDate: "15/FEB/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Tuberose Candle",
           size: "190g",
@@ -157,7 +156,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "22/JAN/2023",
-          OCDDate: "15/Feb/2024",
+          OCDDate: "15/FEB/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Tuberose Candle",
           size: "300g",
@@ -167,7 +166,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "22/JAN/2023",
-          OCDDate: "15/Feb/2024",
+          OCDDate: "15/FEB/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Do Son EDP",
           size: "75 ml",
@@ -177,7 +176,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "22/JAN/2023",
-          OCDDate: "15/Feb/2024",
+          OCDDate: "15/FEB/2024",
           image: "/assets/images/Smoothing22.png",
           name: "Do Son EDP",
           size: "100 ml",
@@ -244,7 +243,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "TBD/MAR/2024",
-          OCDDate: "TBD/Apr/2024",
+          OCDDate: "TBD/APR/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Coffee Candle",
           size: "190g",
@@ -254,7 +253,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "TBD/MAR/2024",
-          OCDDate: "TBD/Apr/2024",
+          OCDDate: "TBD/APR/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Cookie Candle",
           size: "190g",
@@ -264,7 +263,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "TBD/MAR/2024",
-          OCDDate: "TBD/Apr/2024",
+          OCDDate: "TBD/APR/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Whipped Cream Candle",
           size: "190g",
@@ -274,7 +273,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "TBD/MAR/2024",
-          OCDDate: "TBD/Apr/2024",
+          OCDDate: "TBD/APR/2024",
           image: "/assets/images/Smoothing23.png",
           name: "Mini Candle Boxed Set",
           size: "3*70g",
@@ -306,7 +305,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bumble and Bumble",
           date: "15/FEB/2024",
-          OCDDate: "01/Mar/2024",
+          OCDDate: "01/MAR/2024",
           image: "/assets/images/Smoothing10.png",
           name: "HIO Trial Kit",
           size: "N/A",
@@ -319,7 +318,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bumble and Bumble",
           date: "15/FEB/2024",
-          OCDDate: "01/Mar/2024",
+          OCDDate: "01/MAR/2024",
           image: "/assets/images/Smoothing8.png",
           name: "Bond Trial Kit",
           size: "N/A",
@@ -330,7 +329,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bumble and Bumble",
           date: "15/FEB/2024",
-          OCDDate: "01/Mar/2024",
+          OCDDate: "01/MAR/2024",
           image: "/assets/images/Smoothing9.png",
           name: "Bb. Curl Trial Kit ",
           size: "N/A",
@@ -342,7 +341,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bumble and Bumble",
           date: "15/FEB/2024",
-          OCDDate: "01/Mar/2024",
+          OCDDate: "01/MAR/2024",
           image: "/assets/images/Smoothing7.png",
           name: "Thickening Trial Kit",
           size: "N/A",
@@ -422,7 +421,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bobbi Brown",
           date: "01/MAR/2024",
-          OCDDate: "01/Apr/2024",
+          OCDDate: "01/APR/2024",
           image: "/assets/images/Smoothing3.png",
           name: "Long Wear Cream Liner Sticks",
           size: "N/A",
@@ -432,7 +431,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bobbi Brown",
           date: "01/MAR/2024",
-          OCDDate: "01/Apr/2024",
+          OCDDate: "01/APR/2024",
           image: "/assets/images/Smoothing4.png",
           name: "Long Wear Cream Shadow Sticks Shade Extension",
           size: "30 ml",
@@ -443,7 +442,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/MAR/2024",
-          OCDDate: "04/Apr/2024",
+          OCDDate: "04/APR/2024",
           image: "/assets/images/Smoothing17.png",
           name: "Mineralescape Eyeshadow",
           size: "N/A",
@@ -482,7 +481,7 @@ const MarketingCalendar = () => {
         {
           brand: "Bobbi Brown",
           date: "01/APR/2024",
-          OCDDate: "05/May/2024",
+          OCDDate: "05/MAY/2024",
           image: "/assets/images/Smoothing5.png",
           name: "Extra Lip Serum",
           size: "N/A",
@@ -493,7 +492,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "01/APR/2024",
-          OCDDate: "05/May/2024",
+          OCDDate: "05/MAY/2024",
 
           image: "/assets/images/Smoothing11.png",
           name: "Mojave Ghost Solid",
@@ -505,7 +504,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/APR/2024",
-          OCDDate: "02/May/2024",
+          OCDDate: "02/MAY/2024",
           image: "/assets/images/Smoothing18.png",
           name: "The Lipstick – Satin",
           size: "N/A",
@@ -531,7 +530,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "01/MAY/2024",
-          OCDDate: "01/Jun/2024",
+          OCDDate: "01/JUN/2024",
           image: "/assets/images/Smoothing12.png",
           name: "Mojave Ghost Alcohol",
           size: "100 ml",
@@ -542,7 +541,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/MAY/2024",
-          OCDDate: "06/Jun/2024",
+          OCDDate: "06/JUN/2024",
           image: "/assets/images/Smoothing19.png",
           name: "Mojave Ghost Eyeshadow",
           size: "N/A",
@@ -553,7 +552,7 @@ const MarketingCalendar = () => {
         {
           brand: "Diptyque",
           date: "TBD/2024",
-          OCDDate: "04/Jun/2024",
+          OCDDate: "04/JUN/2024",
           image: "/assets/images/Smoothing24.png",
           name: "Citronnelle ",
           size: "109g",
@@ -602,8 +601,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/JUL/2024",
-          OCDDate: "29/Aug/2024",
-          image: "/assets/images/Smoothing13.png",
+          OCDDate: "29/AUG/images/Smoothing13.png",
           name: "TBD Candle",
           size: "240 g",
           description: "Our best-selling candles are crafted in elegant smoked black glass, featuring black wax and wicks.",
@@ -613,7 +611,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/JUl/2024",
-          OCDDate: "22/Aug/2024",
+          OCDDate: "22/AUG/2024",
           image: "/assets/images/Smoothing20.png",
           name: "The Lipstick – Satin ",
           size: "N/A",
@@ -641,7 +639,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/AUG/2024",
-          OCDDate: "TBD/Sep/2024",
+          OCDDate: "TBD/SEP/2024",
           image: "/assets/images/Smoothing15.png",
           name: "Mojave Ghost Absolu",
           size: "50 ml",
@@ -658,7 +656,7 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/SEP/2024",
-          OCDDate: "03/Oct/2024",
+          OCDDate: "03/OCT/2024",
           image: "/assets/images/Smoothing14.png",
           name: "Fall EDP",
           size: "50 ml",

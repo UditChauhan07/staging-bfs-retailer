@@ -13,6 +13,7 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 
 const NewArrivals = () => {
+
   let PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -988,6 +989,8 @@ const NewArrivals = () => {
       }
     >
       <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+        
+     
     </AppLayout>
   );
 };

@@ -196,10 +196,8 @@ const SalesReport = () => {
     setSearchBySalesRep("");
     setYearForTableSort(2024);
   };
-
-  const navigate = useNavigate();
-
-  const getSalesData = async (yearFor) => {
+const navigate = useNavigate();
+const getSalesData = async (yearFor) => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
     const result = await salesReportApi.salesReportData({ yearFor });
