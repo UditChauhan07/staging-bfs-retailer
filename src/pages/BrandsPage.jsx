@@ -6,7 +6,6 @@ import { useManufacturer } from "../api/useManufacturer";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router";
 import Layout from "../components/Layout/Layout";
-
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
