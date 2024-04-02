@@ -48,7 +48,7 @@ const TargetReport = () => {
             });
             setSalesRepList(salesRep);
             setTarget(targetRes);
-            setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
+            // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
             setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null);
           })
           .catch((targetErr) => {
@@ -410,7 +410,7 @@ const TargetReport = () => {
             });
             setSalesRepList(salesRep);
             setTarget(targetRes);
-            setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : manufacturerFilter);
+            // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : manufacturerFilter);
             setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : searchSaleBy);
           })
           .catch((targetErr) => {
