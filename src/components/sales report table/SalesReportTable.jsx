@@ -23,6 +23,9 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
     Nov: 0,
     Dec: 0,
   };
+  const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
+    return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  }
   return (
     <>
       {salesData.length ? (
@@ -157,64 +160,64 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                           {item?.AccountName==item?.Name?item?.Name:item?.AccountName||item.Name}
                         </td>
                         {(currentYear == year) ? month >= 0 && <td className={`${styles.td}`}>
-                          ${Number(item.Jan.amount).toFixed(2)}
+                          ${formentAcmount(item.Jan.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Jan.amount).toFixed(2)}
+                          ${formentAcmount(item.Jan.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 1 && <td className={`${styles.td}`}>
-                          ${Number(item.Feb.amount).toFixed(2)}
+                          ${formentAcmount(item.Feb.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Feb.amount).toFixed(2)}
+                          ${formentAcmount(item.Feb.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 2 && <td className={`${styles.td}`}>
-                          ${Number(item.Mar.amount).toFixed(2)}
+                          ${formentAcmount(item.Mar.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Mar.amount).toFixed(2)}
+                          ${formentAcmount(item.Mar.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 3 && <td className={`${styles.td}`}>
-                          ${Number(item.Apr.amount).toFixed(2)}
+                          ${formentAcmount(item.Apr.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Apr.amount).toFixed(2)}
+                          ${formentAcmount(item.Apr.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 4 && <td className={`${styles.td}`}>
-                          ${Number(item.May.amount).toFixed(2)}
+                          ${formentAcmount(item.May.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.May.amount).toFixed(2)}
+                          ${formentAcmount(item.May.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 5 && <td className={`${styles.td}`}>
-                          ${Number(item.Jun.amount).toFixed(2)}
+                          ${formentAcmount(item.Jun.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Jun.amount).toFixed(2)}
+                          ${formentAcmount(item.Jun.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 6 && <td className={`${styles.td}`}>
-                          ${Number(item.Jul.amount).toFixed(2)}
+                          ${formentAcmount(item.Jul.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Jul.amount).toFixed(2)}
+                          ${formentAcmount(item.Jul.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 7 && <td className={`${styles.td}`}>
-                          ${Number(item.Aug.amount).toFixed(2)}
+                          ${formentAcmount(item.Aug.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Aug.amount).toFixed(2)}
+                          ${formentAcmount(item.Aug.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 8 && <td className={`${styles.td}`}>
-                          ${Number(item.Sep.amount).toFixed(2)}
+                          ${formentAcmount(item.Sep.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Sep.amount).toFixed(2)}
+                          ${formentAcmount(item.Sep.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 9 && <td className={`${styles.td}`}>
-                          ${Number(item.Oct.amount).toFixed(2)}
+                          ${formentAcmount(item.Oct.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Oct.amount).toFixed(2)}
+                          ${formentAcmount(item.Oct.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 10 && <td className={`${styles.td}`}>
-                          ${Number(item.Nov.amount).toFixed(2)}
+                          ${formentAcmount(item.Nov.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Nov.amount).toFixed(2)}
+                          ${formentAcmount(item.Nov.amount)}
                         </td>}
                         {(currentYear == year) ? month >= 11 && <td className={`${styles.td}`}>
-                          ${Number(item.Dec.amount).toFixed(2)}
+                          ${formentAcmount(item.Dec.amount)}
                         </td> : <td className={`${styles.td}`}>
-                          ${Number(item.Dec.amount).toFixed(2)}
+                          ${formentAcmount(item.Dec.amount)}
                         </td>}
                         <td
                           className={`${styles.td} ${styles.stickySecondLastColumn}`}
@@ -224,7 +227,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                         <td
                           className={`${styles.td} ${styles.stickyLastColumn}`}
                         >
-                          ${Number(item?.totalorderPrice).toFixed(2)}
+                          ${formentAcmount(item?.totalorderPrice)}
                         </td>
                       </tr>
                     );
@@ -242,110 +245,110 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   {(currentYear == year) ? month >= 0 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jan).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jan)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jan).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jan)}
                   </td>}
                   {(currentYear == year) ? month >= 1 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Feb).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Feb)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Feb).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Feb)}
                   </td>}
                   {(currentYear == year) ? month >= 2 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Mar).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Mar)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Mar).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Mar)}
                   </td>}
                   {(currentYear == year) ? month >= 3 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Apr).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Apr)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Apr).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Apr)}
                   </td>}
                   {(currentYear == year) ? month >= 4 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.May).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.May)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.May).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.May)}
                   </td>}
                   {(currentYear == year) ? month >= 5 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jun).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jun)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jun).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jun)}
                   </td>}
                   {(currentYear == year) ? month >= 6 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jul).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jul)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Jul).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Jul)}
                   </td>}
                   {(currentYear == year) ? month >= 7 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Aug).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Aug)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Aug).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Aug)}
                   </td>}
                   {(currentYear == year) ? month >= 8 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Sep).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Sep)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Sep).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Sep)}
                   </td>}
                   {(currentYear == year) ? month >= 9 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Oct).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Oct)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Oct).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Oct)}
                   </td>}
                   {(currentYear == year) ? month >= 10 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Nov).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Nov)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Nov).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Nov)}
                   </td>}
                   {(currentYear == year) ? month >= 11 && <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Dec).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Dec)}
                   </td> : <td
                     className={`${styles.lastRow}  ${styles.lastRowMonth}  ${styles.stickyLastRow}`}
                   >
-                    ${Number(monthTotalAmount.Dec).toFixed(2)}
+                    ${formentAcmount(monthTotalAmount.Dec)}
                   </td>}
                   <td
                     className={`${styles.lastRow} ${styles.stickyLastRow} ${styles.stickySecondLastColumn}`}
@@ -355,7 +358,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   <td
                     className={`${styles.lastRow} ${styles.stickyLastRow} ${styles.stickyLastColumn}`}
                   >
-                    ${Number(totalOrderPrice).toFixed(2)}
+                    ${formentAcmount(totalOrderPrice)}
                   </td>
                 </tr>
               </tfoot>

@@ -429,6 +429,9 @@ const TargetReport = () => {
     { label: currentDate.getFullYear(), value: currentDate.getFullYear() },
     { label: currentDate.getFullYear() - 1, value: currentDate.getFullYear() - 1 },
   ];
+  const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
+    return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  }
   return (
     <AppLayout
       filterNodes={
@@ -734,57 +737,57 @@ const TargetReport = () => {
                           <td className={`${Styles.td} ${Styles.stickyFirstColumn}`}>{element?.SalesRepName}</td>
                           <td className={`${Styles.td} ${Styles.stickySecondColumn}`}>{element?.AccountName}</td>
                           <td className={`${Styles.td} ${Styles.stickyThirdColumn}`}>{element.ManufacturerName}</td>
-                          <td className={`${Styles.td}`}>${Number(element.January.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.January.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.January.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.January.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.January.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.January.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.February.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.February.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.February.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.February.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.February.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.February.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.March.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.March.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.March.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.March.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.March.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.March.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.April.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.April.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.April.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.April.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.April.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.April.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.May.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.May.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.May.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.May.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.May.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.May.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.June.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.June.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.June.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.June.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.June.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.June.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.July.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.July.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.July.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.July.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.July.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.July.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.August.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.August.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.August.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.August.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.August.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.August.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.September.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.September.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.September.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.September.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.September.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.September.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.October.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.October.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.October.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.October.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.October.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.October.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.November.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.November.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.November.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.November.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.November.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.November.diff)}</td>
 
-                          <td className={`${Styles.td}`}>${Number(element.December.target).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.December.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td}`}>${Number(element.December.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.December.target)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.December.sale)}</td>
+                          <td className={`${Styles.td}`}>${formentAcmount(element.December.diff)}</td>
 
-                          <td className={`${Styles.td} ${Styles.stickyThirdLastColumn}`}>${Number(element.Total.target).toFixed(2)}</td>
-                          <td className={`${Styles.td} ${Styles.stickySecondLastColumn}`}>${Number(element.Total.sale).toFixed(2)}</td>
-                          <td className={`${Styles.td} ${Styles.stickyLastColumn}`}>${Number(element.Total.diff).toFixed(2)}</td>
+                          <td className={`${Styles.td} ${Styles.stickyThirdLastColumn}`}>${formentAcmount(element.Total.target)}</td>
+                          <td className={`${Styles.td} ${Styles.stickySecondLastColumn}`}>${formentAcmount(element.Total.sale)}</td>
+                          <td className={`${Styles.td} ${Styles.stickyLastColumn}`}>${formentAcmount(element.Total.diff)}</td>
                         </tr>
                       );
                     })
@@ -796,121 +799,121 @@ const TargetReport = () => {
                       TOTAL
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jan.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jan.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jan.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jan.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jan.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jan.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Feb.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Feb.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Feb.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Feb.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Feb.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Feb.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Mar.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Mar.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Mar.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Mar.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Mar.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Mar.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Apr.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Apr.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Apr.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Apr.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Apr.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Apr.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.May.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.May.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.May.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.May.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.May.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.May.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jun.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jun.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jun.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jun.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jun.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jun.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jul.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jul.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jul.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jul.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Jul.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Jul.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Aug.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Aug.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Aug.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Aug.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Aug.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Aug.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Sep.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Sep.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Sep.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Sep.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Sep.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Sep.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Oct.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Oct.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Oct.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Oct.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Oct.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Oct.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Nov.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Nov.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Nov.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Nov.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Nov.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Nov.diff)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Dec.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Dec.target)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Dec.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Dec.sale)}
                     </td>
                     <td className={`${Styles.lastRow}  ${Styles.lastRowMonth}  ${Styles.stickyLastRow}`}>
-                      ${Number(monthTotalAmount.Dec.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Dec.diff)}
                     </td>
                     <td className={`${Styles.lastRow} ${Styles.stickyLastRow} ${Styles.stickyThirdLastColumn}`}>
-                      ${Number(monthTotalAmount.Total.target).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Total.target)}
                     </td>
                     <td className={`${Styles.lastRow} ${Styles.stickyLastRow} ${Styles.stickySecondLastColumn}`}>
-                      ${Number(monthTotalAmount.Total.sale).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Total.sale)}
                     </td>
                     <td className={`${Styles.lastRow} ${Styles.stickyLastRow} ${Styles.stickyLastColumn}`}>
-                      ${Number(monthTotalAmount.Total.diff).toFixed(2)}
+                      ${formentAcmount(monthTotalAmount.Total.diff)}
                     </td>
                   </tr>
                 </tfoot>

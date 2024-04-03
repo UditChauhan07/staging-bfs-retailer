@@ -165,6 +165,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                   </svg>
                 </div>
                 {productImages?.isLoaded ? (
+                  <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
+                  <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
                   <img
                     className={Styles.imgHolder}
                     onClick={() => {
@@ -174,6 +176,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     }}
                     src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "/assets/images/makeup1.png"}
                   />
+                  </div>
+                  </div>
                 ) : (
                   <LoaderV2 />
                 )}
