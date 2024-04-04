@@ -646,3 +646,23 @@ export async function topProduct({month,manufacturerId,accountId}) {
     return data;
   }
 }
+
+export async function getSessionStatus({key,retailerId}) {
+
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+  console.log({key,retailerId})
+  let response = await fetch(url + "v3/VQzxx7VoZqQrVKe", {
+    method: "POST",
+    body: JSON.stringify({key,retailerId}),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data;
+  }
+}

@@ -293,6 +293,7 @@ export const SearchIcon = ({width=18,height=18,fill="#000"})=>{
   <path d="M14.9998 15L12.7498 12.75" stroke={fill} stroke-linecap="round" />
 </svg>)
 }
+
 export const CalenderIcon = () => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 2 20 20" fill="none">

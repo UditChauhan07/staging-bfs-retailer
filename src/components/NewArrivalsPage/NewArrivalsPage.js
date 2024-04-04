@@ -132,11 +132,14 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                   return month.content.map((product) => {
                     if (!selectBrand || selectBrand == product.brand) {
                       return (
-                        <div className={`w-full last:mb-0 mb-4 ${Styles.HoverArrow}`}>
-                           <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
+                       
                         <div className={Styles.cardElement}>
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
+                          <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
+                           <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
                           <img src={product.image} alt={product.name} />
+                          </div>
+                       </div>
                           <p className={Styles.brandHolder}>{product?.brand}</p>
                           <p
                             className={Styles.titleHolder}
@@ -161,8 +164,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                             </div>
                           )}
                         </div>
-                         </div>
-                       </div>
+                        
                       );
                     }
                   });
