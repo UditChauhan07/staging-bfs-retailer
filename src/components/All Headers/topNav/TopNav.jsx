@@ -4,19 +4,34 @@ import { Link, useNavigate } from "react-router-dom";
 import { NeedHelp } from "../../../lib/svg";
 import ModalPage from "../../Modal UI";
 import SelectCaseReason from "../../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
-import { GetAuthData } from "../../../lib/store";
+import { GetAuthData,getSessionStatus } from "../../../lib/store";
 // import Redirect from "../../Redirect";
 const TopNav = () => {
   const navigate = useNavigate();
-  const [userName,setUserName] = useState("");
+  const [userName, setUserName] = useState(localStorage.getItem("Name"));
   const [modalOpen, setModalOpen] = useState(false);
+  // useEffect(()=>{
+  //   GetAuthData().then((res)=>{
+  //     setUserName(res.data.firstName+" "+res.data.lastName)
+  //   }).catch((err)=>{
+  //     console.log({err});
+  //   })
+  // },[])
+
   useEffect(()=>{
-    GetAuthData().then((res)=>{
-      setUserName(res.data.firstName+" "+res.data.lastName)
-    }).catch((err)=>{
-      console.log({err});
+    GetAuthData().then((user)=>{
+      console.log(user)
+      getSessionStatus({key:user.data?.x_access_token,retailerId:user.data?.retailerId}).then((status)=>{
+
+        setUserName(status?.data?.FirstName +" "+ status?.data?.LastName)
+      }).catch((statusErr)=>{
+        console.log({statusErr});
+      })
+    }).catch((userErr)=>{
+      console.log({userErr});
     })
   },[])
+
 
   // console.log("userDetails", userDetails);
   const reasons = {
