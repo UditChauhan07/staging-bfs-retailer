@@ -107,7 +107,7 @@
 
 .rememInput input[type="checkbox"]:checked {
   accent-color: #000;
-  margin-top: -17px;
+  margin-top: -2px;
 }
 
 /* new */
@@ -252,6 +252,7 @@
   text-decoration-line: underline;
   text-underline-offset: 3px;
 }
+
 
 @media only screen and (max-width: 480px) {
   .ReCheck {

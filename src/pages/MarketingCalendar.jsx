@@ -128,7 +128,7 @@ const MarketingCalendar = () => {
           brand: "Diptyque",
           date: "TBD",
           OCDDate: "16/JAN/2024",
-          image: "/assets/images/Smoothing2s1.png",
+          image: "/assets/images/Smoothings1.png",
           name: "Valentine’s Duo",
           size: "190 g",
           description: "A delicate, scented declaration of love incorporating elements of tenderness and passion, flowers and leaves.",
@@ -602,7 +602,8 @@ const MarketingCalendar = () => {
         {
           brand: "Byredo",
           date: "TBD/JUL/2024",
-          OCDDate: "29/AUG/images/Smoothing13.png",
+          OCDDate: "29/AUG/2024",
+          image: "/assets/images/Smoothing13.png",
           name: "TBD Candle",
           size: "240 g",
           description: "Our best-selling candles are crafted in elegant smoked black glass, featuring black wax and wicks.",
