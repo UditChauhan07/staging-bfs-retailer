@@ -213,7 +213,7 @@ function CreateAccountForm() {
 
                     {/* How do you sell to your customers? */}
                     <div className={style.innerInformationRadio}>
-                      <div className={`${style.SvgLogo} ${style.SvgLogo1}`}>
+                      <div className={`${style.SvgLogo} ${style.SvgLogo1}`} style={{marginTop:"-1%"}}>
                         <QuestionMark />
                       </div>
 
@@ -283,7 +283,7 @@ function CreateAccountForm() {
                     </div>
                     {/* Choose Brands to Apply */}
                     <div className={style.innerInformationRadio}>
-                      <div className={`${style.SvgLogo} ${style.SvgLogo2}`}>
+                      <div className={`${style.SvgLogo} ${style.SvgLogo2}`} style={{marginTop:"-1%"}}>
                         <ChooseBrand />
                       </div>
 

@@ -75,6 +75,7 @@ line-height: 24px; /* 150% */
 }
 
 .labelIN input{
+    margin-bottom: 10px;
     border-bottom: 1px solid #d9d9d9;
     border-top: 0px ;
     border-left: 0px;
@@ -143,13 +144,14 @@ stroke: #000;
 
 .SvgLogo{
     position: relative;
+    margin-top: -43px;
 }
 
 .SvgLogo::after{
     position: absolute;
     content: "";
     width: 1px;
-    height: 57px;
+    height: 63px;
     background-color: transparent;
     /* color: #474747; */
     border-right: 1px dashed #000;
@@ -157,6 +159,8 @@ stroke: #000;
     right: 50%;
     top: 43px;
 }
+
+
 
 
 .SvgLogo1::after{
