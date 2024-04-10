@@ -61,7 +61,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
                     style={{ maxWidth: '100px', border: '1px solid rgb(204, 204, 204)', borderRadius: '5px', padding: '1px 5px' }}
                     onChange={handleNameChange} /><br />
                   {limitInput.length >= 4 && (
-                    <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This filed can not contain more than 4 characters.</span>
+                    <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This field can not contain more than 4 characters.</span>
                   )}
                   {newQtyInput % min != 0 && <p style={{ color: 'red', fontSize: '11px', textAlign: '' }}>* invalid</p>}
                 </p>
