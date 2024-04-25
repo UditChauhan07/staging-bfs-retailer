@@ -666,3 +666,119 @@ export async function getSessionStatus({key,retailerId}) {
     return data;
   }
 }
+export async function getMarketingCalendar({ key, manufacturerId }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(originAPi + "/beauty/v3/eVC3IaiEEz3x7ym", {
+    method: "POST",
+    body: JSON.stringify({ key, manufacturerId }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.data;
+  }
+}
+
+// export async function getOrderDetailsPdf({ key, opportunity_id }) {
+//   let headersList = {
+//     Accept: "*/*",
+//     "Content-Type": "application/json",
+//   };
+
+//   let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/0DS68FOD7s", {
+//     method: "POST",
+//     body: JSON.stringify({ key, opportunity_id }),
+//     headers: headersList,
+//   });
+//   let data = JSON.parse(await response.text());
+//   if (data.status == 300) {
+//     DestoryAuth();
+//   } else {
+//     return data?.file||false;
+//   }
+// }
+
+// export async function getMarketingCalendarPDF({ key, manufacturerId,month }) {
+//   let headersList = {
+//     Accept: "*/*",
+//     "Content-Type": "application/json",
+//   };
+
+//   let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf", {
+//     method: "POST",
+//     body: JSON.stringify({ key, manufacturerId,month }),
+//     headers: headersList,
+//   });
+//   let data = JSON.parse(await response.text());
+//   console.log({data});
+//   if (data.status == 300) {
+//     DestoryAuth();
+//   } else {
+//     return data?.file||false;
+//   }
+// }
+
+
+export const hexabrand = {
+  a0O3b00000hym7GEAQ: "#38A3A5",
+  a0O3b00000fQrZyEAK: "#9EC1DA",
+  a0O1O00000XYBvQUAX: "#f6b6ad",
+  a0O3b00000pY2vqEAC: "#ffe3d5",
+  a0O3b00000p80IJEAY: "#fff9ed",
+  a0O3b00000lCFmREAW: "#a6a0d4",
+  a0ORb000000BQ0nMAG: "#206BA1",
+  a0O3b00000p7zqKEAQ: "#BEE6DC",
+  a0O3b00000ffNzbEAE: "#A66C98",
+  a0O3b00000p4F4DEAU: "#6D597A",
+  a0O3b00000p4F4CEAU: "#CBA188",
+  a0ORb0000000uwfMAA: "#EFD6B1",
+  a0O3b00000p4F4HEAU: "#D9D9D9",
+  a0ORb000000QzsfMAC: "#B7C8B3",
+  a0O1O00000XYBvkUAH: "#6D243E",
+  a0O1O00000XYBvaUAH: "#4B95DD",
+  a0ORb000000nDfFMAU:"#deb887",
+  a0ORb000000nDIiMAM:"#deb887"
+};
+
+export const hexabrandText = {
+  a0O3b00000hym7GEAQ: "#ffffff",
+  a0O3b00000fQrZyEAK: "#2a516d",
+  a0O1O00000XYBvQUAX: "#972111",
+  a0O3b00000pY2vqEAC: "#bb3e00",
+  a0O3b00000p80IJEAY: "#c58300",
+  a0O3b00000lCFmREAW: "#352e66",
+  a0ORb000000BQ0nMAG: "#0d2b40",
+  a0O3b00000p7zqKEAQ: "#2f7967",
+  a0O3b00000ffNzbEAE: "#EEDD82",
+  a0O3b00000p4F4DEAU: "#ffffff",
+  a0O3b00000p4F4CEAU: "#5e3d29",
+  a0ORb0000000uwfMAA: "#8a5e1c",
+  a0O3b00000p4F4HEAU: "#575757",
+  a0ORb000000QzsfMAC: "#445840",
+  a0O1O00000XYBvkUAH: "#ffffff",
+  a0O1O00000XYBvaUAH: "#ffffff",
+  a0ORb000000nDfFMAU:"#deb887",
+  a0ORb000000nDIiMAM:"#deb887"
+};
+
+
+export function DateConvert(dateString) {
+  if (dateString) {
+    const [year, month, day] = dateString.split(/[-/]/);
+    if (day && month && year) {
+      let parsedDate = new Date(`${month}/${day}/${year}`);
+      if (!isNaN(parsedDate.getTime())) {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        let launchDateFormattedDate = new Intl.DateTimeFormat("en-US", options).format(new Date(parsedDate));
+        return launchDateFormattedDate;
+      }
+    }
+    // throw new Error("Invalid date string");
+  }
+}
