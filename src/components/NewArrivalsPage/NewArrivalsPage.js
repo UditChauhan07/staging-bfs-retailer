@@ -10,6 +10,7 @@ import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
+
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
 
@@ -44,14 +45,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
     const newValues = filterData?.flatMap((month) => month?.content).slice(startIndex, endIndex);
 
     setpagination([{ content: newValues }]);
-    console.log(newValues);
   }, [filterData, PageSize, currentPage]);
   // .................
   useEffect(() => {
     if (!month && !selectBrand) {
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
-          return brand.some((brand) => brand.Name === item.brand);
+          return brand.some((brand) => brand.Name === item.ManufacturerName__c);
         });
         return { ...months, content: filterData, pagination };
       });
@@ -62,11 +62,11 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
           // let match = item.OCDDate.split("/")
-          // console.log(match)
           if (month) {
             if (selectBrand) {
-              if (selectBrand == item.brand) {
-                return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.brand;
+              if (selectBrand == item.ManufacturerName__c) {
+                // console.log({aa:item.date.toLowerCase().includes(month.toLowerCase()),})
+                return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
               return item.date.toLowerCase().includes(month.toLowerCase());
@@ -74,7 +74,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             // return match.includes(month.toUpperCase() )
           } else {
             if (selectBrand) {
-              if (selectBrand == item.brand) {
+              if (selectBrand == item.ManufacturerName__c) {
                 return true;
               }
             } else {
@@ -130,24 +130,24 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
               pagination?.map((month, index) => {
                 if (month.content?.length) {
                   return month.content.map((product) => {
-                    if (!selectBrand || selectBrand == product.brand) {
+                    if (!selectBrand || selectBrand == product.ManufacturerName__c) {
                       return (
-                       
+
                         <div className={Styles.cardElement}>
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
-                           <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                          <img src={product.image} alt={product.name} />
+                            <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
+                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} />
+                            </div>
                           </div>
-                       </div>
-                          <p className={Styles.brandHolder}>{product?.brand}</p>
+                          <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
                           <p
                             className={Styles.titleHolder}
                             onClick={() => {
                               setProductDetailId(product.Id);
                             }}
                           >
-                            {product?.name?.substring(0, 15)}...
+                            {product?.Name?.substring(0, 15)}...
                           </p>
                           <p className={Styles.priceHolder}>$ -- . --</p>
                           {to ? (
@@ -164,14 +164,14 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                             </div>
                           )}
                         </div>
-                        
+
                       );
                     }
                   });
                 }
               })
             ) : (
-              <div style={{fontSize:"20px"}}>No data found</div>
+              <div style={{ fontSize: "20px" }}>No data found</div>
             )}
           </div>
         </div>
