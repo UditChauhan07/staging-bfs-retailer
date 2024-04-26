@@ -5,7 +5,7 @@ import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import Loading from "../components/Loading";
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getMarketingCalendar, getRetailerBrands, } from "../lib/store";
+import { GetAuthData, getMarketingCalendar, getMarketingCalendarPDF, getRetailerBrands, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
@@ -15,37 +15,18 @@ const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sh
 const MarketingCalendar = () => {
   const [isLoaded, setIsloaed] = useState(false);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
+  const [pdfLoadingText, setPdfLoadingText] = useState(".");
   const [productList, setProductList] = useState([]);
-  // let brands = [
-  //   { value: null, label: "All" },
-  //   { value: "Susanne Kaufmann", label: "Susanne Kaufmann" },
-  //   { value: "AERIN", label: "AERIN" },
-  //   { value: "ARAMIS", label: "ARAMIS" },
-  //   { value: "Bobbi Brown", label: "Bobbi Brown" },
-  //   { value: "Bumble and Bumble", label: "Bumble and Bumble" },
-  //   { value: "Byredo", label: "Byredo" },
-  //   { value: "BY TERRY", label: "BY TERRY" },
-  //   { value: "Diptyque", label: "Diptyque" },
-  //   { value: "Kevyn Aucoin Cosmetics", label: "Kevyn Aucoin Cosmetics" },
-  //   { value: "ESTEE LAUDER", label: "ESTEE LAUDER" },
-  //   { value: "L'Occitane", label: "L'Occitane" },
-  //   { value: "Maison Margiela", label: "Maison Margiela" },
-  //   { value: "ReVive", label: "ReVive" },
-  //   { value: "RMS Beauty", label: "RMS Beauty" },
-  //   { value: "Smashbox", label: "Smashbox" },
-  //   { value: "Re-Nutriv", label: "Re-Nutriv" },
-  //   { value: "Victoria Beckham Beauty", label: "Victoria Beckham Beauty" },
-  // ];
   const [month, setMonth] = useState("");
   let months = [
-    { value: null,  label:"All"},
+    { value: null, label: "All" },
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
     { value: "MAR", label: "MAR" },
     { value: "APR", label: "APR" },
     { value: "MAY", label: "MAY" },
     { value: "JUN", label: "JUN" },
-    { value: "JULY", label: "JULY"},
+    { value: "JULY", label: "JULY" },
     { value: "AUG", label: "AUG" },
     { value: "SEP", label: "SEP" },
     { value: "OCT", label: "OCT" },
@@ -69,7 +50,7 @@ const MarketingCalendar = () => {
           setProductList(productRes)
           setIsloaed(true)
           setTimeout(() => {
-  
+
             var element = document.getElementById("Apr");
             if (element) {
               element.scrollIntoView();
@@ -85,7 +66,61 @@ const MarketingCalendar = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand, month,isLoaded])
+  }, [selectBrand, month, isLoaded])
+
+  const LoadingEffect = () => {
+    const intervalId = setInterval(() => {
+      if (pdfLoadingText.length > 6) {
+        setPdfLoadingText('.');
+      } else {
+        setPdfLoadingText(prev => prev + '.');
+      }
+      if (pdfLoadingText.length > 12) {
+        setPdfLoadingText('');
+      }
+    }, 1000);
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+    }, 10000);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }
+  const generatePdfServerSide = () => {
+    setPDFIsloaed(true);
+    LoadingEffect();
+    GetAuthData().then((user) => {
+      let manufacturerId = null;
+      let manufacturerStr = "";
+      brand.map((item, index) => {
+        manufacturerStr += "'" + item.Id + "'";
+        if (index != brand.length - 1) {
+          manufacturerStr += ", ";
+        }
+        if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
+      })
+      getMarketingCalendarPDF({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        if (file) {
+          const a = document.createElement('a');
+          a.href = originAPi + "/download/" + file + "/1/index";
+          // a.target = '_blank'
+          setPDFIsloaed(false);
+          a.click();
+        } else {
+          const a = document.createElement('a');
+          a.href = originAPi + "/download/blank.pdf/1/index";
+          // a.target = '_blank'
+          setPDFIsloaed(false);
+          a.click();
+        }
+      }).catch((pdfErr) => {
+        console.log({ pdfErr });
+      })
+    }).catch((userErr) => {
+      console.log({ userErr });
+    })
+  }
 
   // ...............................
   const generatePdf = () => {
@@ -224,7 +259,7 @@ const MarketingCalendar = () => {
             </div>
             <ul className="dropdown-menu">
               <li>
-                <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
+                <div className="dropdown-item text-start" onClick={() => generatePdfServerSide()}>&nbsp;Pdf</div>
               </li>
               <li>
                 <div className="dropdown-item text-start" onClick={() => generateXLSX()}>&nbsp;XLSX</div>
@@ -234,12 +269,12 @@ const MarketingCalendar = () => {
         </>
       }
     >
-       {isLoaded ? (
-         <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+      {isLoaded ? (
+        <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
       ) : (
         <Loading height={"70vh"} />
       )}
-     
+
     </AppLayout>
   );
 };

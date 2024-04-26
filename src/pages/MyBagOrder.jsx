@@ -6,10 +6,13 @@ import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { SearchIcon } from "../lib/svg";
+import { GetAuthData, getOrderDetailsPdf, originAPi } from "../lib/store";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 function MyBagOrder(props) {
   const [orderDetail, setOrderDetail] = useState([]);
+  const [isPDFLoaded, setPDFIsloaed] = useState(false);
+  const [pdfLoadingText, setPdfLoadingText] = useState(".");
   const generatePdf = () => {
     const element = document.getElementById('orderDetailerContainer'); // The HTML element you want to convert
     // element.style.padding = "10px"
@@ -25,6 +28,54 @@ function MyBagOrder(props) {
 
     html2pdf().set(opt).from(element).save();
   };
+  const generatePdfServerSide = () => {
+    if (orderDetail?.Id) {
+      setPDFIsloaed(true);
+      LoadingEffect()
+      GetAuthData().then((user) => {
+        getOrderDetailsPdf({ key: user.data.x_access_token, opportunity_id: orderDetail?.Id }).then((file) => {
+          if (file) {
+            const a = document.createElement('a');
+            a.href = originAPi + "/download/" + file + "/2/index";
+            // a.target = '_blank'
+            console.log({ a });
+            setPDFIsloaed(false);
+            a.click();
+          } else {
+            const a = document.createElement('a');
+            a.href = originAPi + "/download/blank.pdf/2/index";
+            // a.target = '_blank'
+            setPDFIsloaed(false);
+            a.click();
+          }
+        }).catch((pdfErr) => {
+          console.log({ pdfErr });
+        })
+      }).catch((userErr) => {
+        console.log({ userErr });
+      })
+    }
+  }
+
+  const LoadingEffect = ()=>{
+    const intervalId = setInterval(() => {
+      if (pdfLoadingText.length > 6) {
+        setPdfLoadingText('.');
+      } else {
+        setPdfLoadingText(prev => prev + '.');
+      }
+      if (pdfLoadingText.length > 12) {
+        setPdfLoadingText('');
+      }
+    }, 1000);
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+    }, 10000);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }
 
   const csvData = ({ data }) => {
     let finalData = [];
@@ -73,7 +124,7 @@ function MyBagOrder(props) {
           </div>
           <ul className="dropdown-menu">
             <li>
-              <div className="dropdown-item text-start" onClick={() => generatePdf()}>&nbsp;Pdf</div>
+              <div className="dropdown-item text-start" onClick={() => generatePdfServerSide()}>&nbsp;Pdf</div>
             </li>
             <li>
               <div className="dropdown-item text-start" onClick={() => generateXLSX(orderDetail)}>&nbsp;XLSX</div>
@@ -86,7 +137,8 @@ function MyBagOrder(props) {
       </div>
     }>
       <div className="col-12">
-        <MyBagFinal setOrderDetail={setOrderDetail} />
+      {isPDFLoaded ? <div className="d-flex" style={{ height: '50vh' }}><p className="m-auto">Generating Pdf..<span>{pdfLoadingText}</span></p></div> :
+        <MyBagFinal setOrderDetail={setOrderDetail} />}
       </div>
     </AppLayout>
   );

@@ -1,4 +1,5 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
+// export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2000"
 
 let url = `${originAPi}/retailer/`;
@@ -685,44 +686,44 @@ export async function getMarketingCalendar({ key, manufacturerId }) {
   }
 }
 
-// export async function getOrderDetailsPdf({ key, opportunity_id }) {
-//   let headersList = {
-//     Accept: "*/*",
-//     "Content-Type": "application/json",
-//   };
+export async function getOrderDetailsPdf({ key, opportunity_id }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
 
-//   let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/0DS68FOD7s", {
-//     method: "POST",
-//     body: JSON.stringify({ key, opportunity_id }),
-//     headers: headersList,
-//   });
-//   let data = JSON.parse(await response.text());
-//   if (data.status == 300) {
-//     DestoryAuth();
-//   } else {
-//     return data?.file||false;
-//   }
-// }
+  let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/0DS68FOD7s", {
+    method: "POST",
+    body: JSON.stringify({ key, opportunity_id }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.file||false;
+  }
+}
 
-// export async function getMarketingCalendarPDF({ key, manufacturerId,month }) {
-//   let headersList = {
-//     Accept: "*/*",
-//     "Content-Type": "application/json",
-//   };
+export async function getMarketingCalendarPDF({ key, manufacturerId,month,manufacturerStr }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
 
-//   let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf", {
-//     method: "POST",
-//     body: JSON.stringify({ key, manufacturerId,month }),
-//     headers: headersList,
-//   });
-//   let data = JSON.parse(await response.text());
-//   console.log({data});
-//   if (data.status == 300) {
-//     DestoryAuth();
-//   } else {
-//     return data?.file||false;
-//   }
-// }
+  let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc46", {
+    method: "POST",
+    body: JSON.stringify({ key, manufacturerId,month,manufacturerStr }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({data});
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.file||false;
+  }
+}
 
 
 export const hexabrand = {
@@ -742,8 +743,8 @@ export const hexabrand = {
   a0ORb000000QzsfMAC: "#B7C8B3",
   a0O1O00000XYBvkUAH: "#6D243E",
   a0O1O00000XYBvaUAH: "#4B95DD",
-  a0ORb000000nDfFMAU:"#deb887",
-  a0ORb000000nDIiMAM:"#deb887"
+  a0ORb000000nDfFMAU:"#073763",
+  a0ORb000000nDIiMAM:"#7f6000"
 };
 
 export const hexabrandText = {
