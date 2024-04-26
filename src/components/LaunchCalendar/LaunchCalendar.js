@@ -102,7 +102,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                     <div className="BothDateTopFlex">
                                       <div className="ShipDate">
                                         <span>Ship Date</span>
-                                        <div className={`DateCurrent0${(index % 3) + 1}`} style={{ backgroundColor: hexabrand[product.ManufacturerId__c], color: hexabrandText[product.ManufacturerId__c] }}>{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
+                                        {/* style={{ backgroundColor: hexabrand[product.ManufacturerId__c], color: hexabrandText[product.ManufacturerId__c] }} */}
+                                        <div className={`DateCurrent0${(index % 3) + 1}`} >{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
                                       </div>
                                       <div className="ShipDate EDate">
                                         <span>OCD</span>
