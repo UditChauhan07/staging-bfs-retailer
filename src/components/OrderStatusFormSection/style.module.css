@@ -145,3 +145,11 @@ letter-spacing: 1.12px;
     width: 95%;
   }
 }
+@media (max-width: 1024.98px) {
+  .attachLabelDiv{
+    width: 100%;
+  }
+  .container{
+    width: 75%;
+  }
+}

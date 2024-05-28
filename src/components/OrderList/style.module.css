@@ -447,3 +447,19 @@ cursor: pointer;
     text-align: start;
   }
 }
+@media (max-width: 1024.98px) {
+  .poNumber{
+    text-align: right;
+    padding: 15px 20px;
+  }
+  .poNumber h3{
+    font-size: 14px;
+  }
+  .poNumber p{
+    font-size: 18px;
+  }
+  .warp{
+    padding: 0 10px!important;
+    flex-wrap: wrap;
+  }
+}

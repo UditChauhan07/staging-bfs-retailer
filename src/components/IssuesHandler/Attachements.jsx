@@ -50,7 +50,7 @@ const Attachements = ({files,setFile,setDesc,orderConfirmed,SubmitHandler}) => {
         <div className={Styles.attachContainer}>
         <div className={Styles.dFlex}>
             <div className={Styles.attachHolder}>
-                <p className={Styles.subTitle}>upload some Attachements</p>
+                <p className={Styles.subTitle}>upload some attachments</p>
                 <label className={Styles.attachLabel} for="attachement"><div><div className={Styles.attachLabelDiv}><BiUpload/></div></div></label>
                 <input type="file" style={{width:0,height:0}} id="attachement" onChange={handleChange} multiple  accept="image/*"/>
                 <div className={Styles.imgHolder}>
