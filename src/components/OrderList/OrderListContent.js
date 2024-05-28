@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { GetAuthData, supportShare } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
-function OrderListContent({ data }) {
+function OrderListContent({ data,hideDetailedShow=false }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
@@ -199,7 +199,7 @@ function OrderListContent({ data }) {
                       <h3>Total</h3>
                       <p>${Number(item.Amount).toFixed(2)}</p>
                     </div>
-                    <div className={Styles.TicketWidth}>
+                    <div className={Styles.TicketWidth} style={hideDetailedShow?{display:'none'}:null}>
                       {/* <button className="me-4">View Ticket</button> */}
                       <Link to="/orderDetails">
                         <button onClick={() => MyBagId(item.Id)}>

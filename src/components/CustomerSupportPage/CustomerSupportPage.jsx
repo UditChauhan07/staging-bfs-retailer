@@ -48,7 +48,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
           <div className="row">
             <div className="col-lg-3 col-md-12 col-sm-12">
               <div className={Styles.supportLeft}>
-                <Link to={"/order-list"}>
+                <Link to={"/orderStatus"}>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <OrderStatusIcon width={42} height={42} />
