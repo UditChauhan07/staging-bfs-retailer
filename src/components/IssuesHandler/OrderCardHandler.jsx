@@ -8,7 +8,7 @@ import { BiCheck, BiLeftArrow, BiLock, BiRightArrow } from "react-icons/bi";
 import Select from "react-select";
 import ModalPage from "../Modal UI";
 
-const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj,setSubject,Actual_Amount__cObj }) => {
+const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj,setSubject,Actual_Amount__cObj,contactName,setSalesRepId }) => {
     const { setOrderConfirmed, orderConfirmed } = orderConfirmedStatus || null;
     const { accountId, setAccountId } = accountIdObj || null;
     const { manufacturerId, setManufacturerId } = manufacturerIdObj || null;
@@ -67,11 +67,13 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             let accountItemID = null;
             orders.map((item) => {
                 if (e.target.value == item.Id) {
+                    console.log({item});
                     getOrderDetails({ order: item })
                     setManufacturerId(item.ManufacturerId__c)
                     setAccountId(item.AccountId)
                     accountItemID = item.AccountId
                     setActual_Amount__c(item.Amount)
+                    setSalesRepId(item.OwnerId)
                 }
             })
             setSearchPO(null);
@@ -79,16 +81,6 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             if (inputValue) {
                 inputValue.value = null;
             }
-            let contactList = [];
-            accountList.map(element => (
-                element.Id == accountItemID &&
-                element.contact.map((con) => {
-                    {
-                        contactList.push({ label: con.Name, value: con.Id })
-                    }
-                })
-            ))
-            setContacts(contactList)
         }
     }
     useEffect(() => { }, [searchPo, errorProductCount, productImage])
@@ -396,12 +388,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                                 menuPosition={"fixed"}
                                                                 menuShouldScrollIntoView={false}
                                                             /> */}
-                                                            <select id="contactSelector" style={{width:'200px'}} className="form-control" onChange={(e) => { setContactId(e.target.value) }} title={!contactId ? "Please select Contact":null}>
-                                                                <option>Select Contact</option>
-                                                                {contacts.map(element => (
-                                                                    <option value={element.value}>{element.label}</option>
-                                                                ))}
-                                                            </select>
+                                                            {contactName}
                                                         </p>
                                                     </div>
                                                     {(orderId == item.Id && !orderConfirmed) && <div className={Styles1.Margitotal}>
