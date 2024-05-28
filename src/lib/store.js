@@ -262,6 +262,7 @@ export async function getSupportFormRaw({ rawData }) {
 }
 
 export async function getAllAccount({ user }) {
+  console.log({user});
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -270,7 +271,7 @@ export async function getAllAccount({ user }) {
     key: user.x_access_token,
     salesRepId: user.Sales_Rep__c,
   };
-  let response = await fetch(url + "v3/fmJJCh9HaL33Iqp", {
+  let response = await fetch(originAPi + "v3/fmJJCh9HaL33Iqp", {
     method: "POST",
     headers: headersList,
     body: JSON.stringify(body),
@@ -300,6 +301,29 @@ export async function postSupport({ rawData }) {
     DestoryAuth();
   } else {
     return data.data;
+  }
+}
+export async function uploadFileSupport({ key, supportId, files }) {
+  if (files.length) {
+
+    let headersList = {
+      "Accept": "*/*", key, supportId
+    }
+    console.log({ headersList });
+    let bodyContent = new FormData();
+    files.map((file) => {
+      bodyContent.append("files", file.file);
+    })
+    let response = await fetch(originAPi + "/unCb9Coo4FFqCtG/w72MrdYNHfsSsqe", {
+      method: "POST",
+      body: bodyContent,
+      headers: headersList
+    });
+
+    let data = JSON.parse(await response.text());
+    if (data) {
+      return data.data
+    }
   }
 }
 //retailer

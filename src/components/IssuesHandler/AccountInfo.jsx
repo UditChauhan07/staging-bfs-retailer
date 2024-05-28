@@ -4,29 +4,36 @@ import Select from "react-select";
 import styles from "../OrderStatusFormSection/style.module.css";
 import { AccountInfoValidation } from "../../validation schema/AccountInfoValidation";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData }) => {
+import { useEffect, useState } from "react";
+import { uploadFileSupport } from "../../lib/store";
+import Loading from "../Loading";
+import { BiUpload } from "react-icons/bi";
+const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepId,setSubmitForm }) => {
     const navigate = useNavigate();
 
     const initialValues = {
         description: "",
         account: null
     };
-    const SearchableSelect = (FieldProps) => {
-        return (
-            <Select
-                type="text"
-                options={FieldProps.options}
-                {...FieldProps.field}
-                onChange={(option) => {
-                    console.log(option, FieldProps);
-                    FieldProps.form.setFieldValue(FieldProps.field.name, option);
-                }}
-                value={FieldProps.options ? FieldProps.options.find((option) => option.value === FieldProps.field.value?.value) : ""}
-            />
-        );
-    };
+    let [files, setFile] = useState([])
+    function handleChange(e) {
+        let tempFile = [];
+        let reqfiles = e.target.files;
+        if (reqfiles) {
+            if (reqfiles.length > 0) {
+                Object.keys(reqfiles).map((index) => {
+                    let url = URL.createObjectURL(reqfiles[index])
+                    if (url) {
+                        tempFile.push({ preview: url, file: reqfiles[index] });
+                    }
+                    // this thoughing me Failed to execute 'createObjectURL' on 'URL': Overload resolution failed?
+                })
+            }
+        }
+        setFile(tempFile);
+    }
     const onSubmitHandler = (values) => {
+        setSubmitForm(true)
         let subject = `Customer Service for ${reason}`;
         GetAuthData()
             .then((user) => {
@@ -35,7 +42,8 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData }) => {
                         orderStatusForm: {
                             typeId: "0123b0000007z9pAAA",
                             reason: reason,
-                            salesRepId: user.Sales_Rep__c,
+                            contactId: user.data.retailerId,
+                            salesRepId: dSalesRepId,
                             accountId: user.data.accountId,
                             desc: values.description,
                             priority: "Medium",
@@ -47,7 +55,20 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData }) => {
                         .then((response) => {
                             if (response) {
                                 if (response) {
-                                    navigate("/CustomerSupportDetails?id=" + response);
+                                    if (files.length > 0) {
+                                        uploadFileSupport({ key: user?.data?.x_access_token, supportId: response, files }).then((fileUploader) => {
+                                            if (fileUploader) {
+                                                setSubmitForm(false)
+                                                navigate("/CustomerSupportDetails?id=" + response);
+                                            }
+                                        }).catch((fileErr) => {
+                                            setSubmitForm(false)
+                                            console.log({ fileErr });
+                                        })
+                                    } else {
+                                        setSubmitForm(false)
+                                        navigate("/CustomerSupportDetails?id=" + response);
+                                    }
                                 }
                             }
                         })
@@ -71,6 +92,18 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData }) => {
                             <Field component="textarea" placeholder="Description" rows={4} name="description" defaultValue={initialValues.description}></Field>
                         </label>
                         <ErrorMessage component={TextError} name="description" />
+                        <div className={styles.attachHolder}>
+                            <p className={styles.subTitle}>upload some Attachements</p>
+                            <label className={styles.attachLabel} for="attachement"><div><div className={styles.attachLabelDiv}><BiUpload /></div></div></label>
+                            <input type="file" style={{ width: 0, height: 0 }} id="attachement" onChange={handleChange} multiple accept="image/*" />
+                            <div className={styles.imgHolder}>
+                                {files.map((file, index) => (
+                                    <a href={file?.preview} target="_blank" title="Click to Download">
+                                        <img src={file?.preview} key={index} alt={file?.preview} />
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
                         <div className={styles.dFlex}>
                             {" "}
                             <Link to={"/customer-support"} className={styles.btn}>

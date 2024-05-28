@@ -21,11 +21,14 @@ const BMAIssues = () => {
   const [subject, setSubject] = useState();
   const [accountId, setAccountId] = useState(null)
   const [contactId, setContactId] = useState(null)
+  const [salesRepId, setSalesRepId] = useState(null)
+  const [contactName, setContactName] = useState(null)
   const [manufacturerId, setManufacturerId] = useState(null)
   const [Actual_Amount__c, setActual_Amount__c] = useState(null)
   const [errorList, setErrorList] = useState({});
   const [searchPo, setSearchPO] = useState(null);
   const [sumitForm,setSubmitForm] = useState(false)
+  const [dSalesRepId,setDSalesRep] = useState();
   const reasons = [
     { name: "Charges", icon: '/assets/Charges.svg', desc: "extra amount paid for order?" },
     { name: "Product Missing", icon: '/assets/missing.svg', desc: "can't find product in Order?" },
@@ -46,14 +49,15 @@ const BMAIssues = () => {
     setFile([])
     setDesc()
     setAccountId(null)
-    setContactId(null)
     setManufacturerId(null)
     setActual_Amount__c(null)
     setErrorList({})
   }
   useEffect(() => {
     GetAuthData()
-      .then((response) => {
+    .then((response) => {
+        setContactId(response.data.retailerId)
+        setContactName(response.data.firstName +" "+response.data.lastName)
         getOrderCustomerSupport({
           user: {
             key: response.data.x_access_token,
@@ -62,6 +66,9 @@ const BMAIssues = () => {
         })
           .then((order) => {
             let sorting = sortingList(order);
+            if(sorting.length){
+              setDSalesRep(sorting[0].OwnerId)
+            }
             setOrders(sorting);
           })
           .catch((error) => {
@@ -97,8 +104,8 @@ const BMAIssues = () => {
             orderStatusForm: {
               typeId: "0123b0000007z9pAAA",
               reason: reason,
-              salesRepId: user.Sales_Rep__c,
-              contactId,
+              salesRepId,
+              contactId:user.data.retailerId,
               accountId,
               opportunityId: orderId,
               manufacturerId,
@@ -108,7 +115,7 @@ const BMAIssues = () => {
               subject,
               Actual_Amount__c,
             },
-            key: user.x_access_token,
+            key: user.data.x_access_token,
           };
           postSupportAny({ rawData })
             .then((response) => {
@@ -116,13 +123,13 @@ const BMAIssues = () => {
                 if (response) {
                   if (files.length > 0) {
 
-                    // uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
-                    //   if (fileUploader) {
-                    //     navigate("/CustomerSupportDetails?id=" + response);
-                    //   }
-                    // }).catch((fileErr) => {
-                    //   console.log({ fileErr });
-                    // })
+                    uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
+                      if (fileUploader) {
+                        navigate("/CustomerSupportDetails?id=" + response);
+                      }
+                    }).catch((fileErr) => {
+                      console.log({ fileErr });
+                    })
                   } else {
                     navigate("/CustomerSupportDetails?id=" + response);
                   }
@@ -143,10 +150,10 @@ const BMAIssues = () => {
     {sumitForm ? <div style={{height:'80vh'}} className="d-flex justify-content-center align-items-center"><Loading/></div>:
       <>
       <BMAIHandler reasons={reasons} setReason={setReason} reason={reason} resetHandler={resetHandler}/>
-      {reason != "Update Account Info" && <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} />}
+      {reason != "Update Account Info" && <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId}/>}
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} SubmitHandler={SubmitHandler} />}
-      {reason == "Update Account Info" && <AccountInfo reason={reason} Accounts={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} />}
+      {reason == "Update Account Info" && <AccountInfo reason={reason} Accounts={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
       </>}
     </section>
   </CustomerSupportLayout>)
