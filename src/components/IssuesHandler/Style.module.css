@@ -4,6 +4,9 @@
   height: 40px;
   width: auto;
 }
+.flexBox {
+  display: flex;
+}
 .reasonCard {
   height: 60px;
   border: 0.5px solid #d5d9d9;
@@ -81,4 +84,10 @@
 .descHolder {
   margin: 5px 5px 0 0;
   font-size: 11px;
+}
+
+@media (max-width: 1024.98px) {
+  .reasonHolder{
+    grid-template-columns: repeat(3,auto);
+  }
 }
