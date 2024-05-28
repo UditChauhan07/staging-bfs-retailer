@@ -15,7 +15,6 @@
   padding: 20px 15px;
   align-items: center;
   margin: 10px 0px 25px 0;
-  flex-wrap: wrap;
 }
 
 .supportLeftContent h2 {
@@ -219,8 +218,13 @@
 }
 
 @media (max-width: 767px) {
-  .supportLeft {
+    .supportLeft {
     gap: 10px;
     grid-template-columns: repeat(1, auto);
-  }
+}
+}
+@media (max-width: 1024.98px) {
+    .supportLeftBox{
+        flex-wrap: wrap;
+    }
 }
