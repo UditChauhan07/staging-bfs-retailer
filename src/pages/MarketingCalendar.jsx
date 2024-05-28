@@ -40,6 +40,7 @@ const MarketingCalendar = () => {
   const [isEmpty, setIsEmpty] = useState(false);
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
+
   useEffect(() => {
     GetAuthData().then((user) => {
       let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
@@ -88,8 +89,6 @@ const MarketingCalendar = () => {
     };
   }
   const generatePdfServerSide = (version = 0) => {
-    setPDFIsloaed(true);
-    LoadingEffect();
     GetAuthData().then((user) => {
       let manufacturerId = null;
       let manufacturerStr = "";
@@ -297,13 +296,13 @@ const MarketingCalendar = () => {
             </div>
             <ul className="dropdown-menu">
               <li>
-                <div className="dropdown-item text-start" onClick={() => generatePdfServerSide()}>&nbsp;Pdf</div>
+                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide()}}>&nbsp;Pdf</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => generatePdfServerSide(1)}>&nbsp;PDF Quickview 1</div>
+                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide(1)}}>&nbsp;PDF Quickview 1</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => generatePdfServerSide(2)}>&nbsp;PDF Quickview 2</div>
+                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide(2)}}>&nbsp;PDF Quickview 2</div>
               </li>
               <li>
                 <div className="dropdown-item text-start" onClick={() => generateXLSX()}>&nbsp;XLSX</div>
@@ -313,11 +312,8 @@ const MarketingCalendar = () => {
         </>
       }
     >
-      {isLoaded ? (
-        <LaunchCalendar selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
-      ) : (
-        <Loading height={"70vh"} />
-      )}
+       {isPDFLoaded ? <Loading  height={"70vh"} /> :
+        isLoaded ? <LaunchCalendar brand={brand} month={month} productList={productList} /> : <Loading  height={"70vh"} />}
 
     </AppLayout>
   );

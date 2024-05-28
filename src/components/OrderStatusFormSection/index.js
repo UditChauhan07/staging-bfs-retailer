@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import styles from "./style.module.css";
-import { GetAuthData, getSupportFormRaw, postSupport, supportClear, supportDriveBeg, supportShare } from "../../lib/store";
+import { GetAuthData, getSupportFormRaw, postSupport, supportClear, supportDriveBeg, supportShare, uploadFileSupport } from "../../lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { OrderStatusSchema } from "../../validation schema/OrderStatusValidation";
 import TextError from "../../validation schema/TextError";
 import Select from "react-select";
+import { BiUpload } from "react-icons/bi";
+import Loading from "../Loading";
 
 const OrderStatusFormSection = () => {
   const navigate = useNavigate();
   const [supportTicketData, setTicket] = useState();
   const [activeBtn, setActive] = useState(false);
+  const [submitLoad,setSubmitLoad] = useState(false)
 
   useEffect(() => {
     let data = supportDriveBeg();
@@ -30,6 +33,7 @@ const OrderStatusFormSection = () => {
       });
   };
   const onSubmitHandler = (values) => {
+    setSubmitLoad(true)
     setActive(true);
     let temp = supportTicketData;
     temp.orderStatusForm["desc"] = values.description;
@@ -44,7 +48,20 @@ const OrderStatusFormSection = () => {
               .then((response) => {
                 let flush = supportClear();
                 if (response) {
-                  navigate("/CustomerSupportDetails?id=" + response);
+                  if (files.length > 0) {
+                    uploadFileSupport({ key: user?.data?.x_access_token, supportId: response, files }).then((fileUploader) => {
+                      if (fileUploader) {
+                        setSubmitLoad(false)
+                        navigate("/CustomerSupportDetails?id=" + response);
+                      }
+                    }).catch((fileErr) => {
+                      setSubmitLoad(false)
+                      console.log({ fileErr });
+                    })
+                  } else {
+                    setSubmitLoad(false)
+                    navigate("/CustomerSupportDetails?id=" + response);
+                  }
                 }
               })
               .catch((err) => {
@@ -63,21 +80,26 @@ const OrderStatusFormSection = () => {
   const initialValues = {
     description: supportTicketData?.orderStatusForm?.desc || ""
   };
-  const SearchableSelect = (FieldProps) => {
-    return (
-      <Select
-        type="text"
-        options={FieldProps.options}
-        {...FieldProps.field}
-        onChange={(option) => {
-          console.log(option, FieldProps);
-          FieldProps.form.setFieldValue(FieldProps.field.name, option);
-        }}
-        value={FieldProps.options ? FieldProps.options.find((option) => option.value === FieldProps.field.value?.value) : ""}
-      />
-    );
-  };
+  let [files, setFile] = useState([])
+  function handleChange(e) {
+    let tempFile = [];
+    let reqfiles = e.target.files;
+    if (reqfiles) {
+      if (reqfiles.length > 0) {
+        Object.keys(reqfiles).map((index) => {
+          let url = URL.createObjectURL(reqfiles[index])
+          if (url) {
+            tempFile.push({ preview: url, file: reqfiles[index] });
+          }
+          // this thoughing me Failed to execute 'createObjectURL' on 'URL': Overload resolution failed?
+        })
+      }
+    }
+    setFile(tempFile);
+  }
   return (
+    <>
+    {submitLoad ? <Loading height={"70vh"} /> :
     <Formik initialValues={initialValues} validationSchema={OrderStatusSchema} onSubmit={onSubmitHandler}>
       {(formProps) => (
         <div className={styles.container}>
@@ -88,15 +110,31 @@ const OrderStatusFormSection = () => {
               <Field component="textarea" placeholder="Description" rows={4} name="description" defaultValue={initialValues.description}></Field>
             </label>
             <ErrorMessage component={TextError} name="description" />
-            <label className="mt-2">
-              <input
-                type="checkbox"
-                checked={supportTicketData?.orderStatusForm?.sendEmail}
-                onChange={(e) => {
-                  onChangeHandler("sendEmail", e.target.checked);
-                }}
-              />
+            <div className={styles.attachHolder}>
+              <p className={styles.subTitle}>upload some Attachements</p>
+              <label className={styles.attachLabel} for="attachement"><div><div className={styles.attachLabelDiv}><BiUpload /></div></div></label>
+              <input type="file" style={{ width: 0, height: 0 }} id="attachement" onChange={handleChange} multiple accept="image/*" />
+              <div className={styles.imgHolder}>
+                {files.map((file, index) => (
+                  <a href={file?.preview} target="_blank" title="Click to Download">
+                    <img src={file?.preview} key={index} alt={file?.preview} />
+                  </a>
+                ))}
+              </div>
+            </div>
+            <label className={styles.labelHolder} title="Please select for get email Notification">
               &nbsp;Send Updates via email
+              <p className="ml-2">
+                <input
+                  type="checkbox"
+                  
+                  checked={supportTicketData?.orderStatusForm?.sendEmail}
+                  onChange={(e) => {
+                    onChangeHandler("sendEmail", e.target.checked);
+                  }}
+                />&nbsp;
+                Yes Please
+              </p>
             </label>
             <div className={styles.dFlex}>
               {" "}
@@ -108,7 +146,8 @@ const OrderStatusFormSection = () => {
           </Form>
         </div>
       )}
-    </Formik>
+    </Formik>}
+    </>
   );
 };
 export default OrderStatusFormSection;

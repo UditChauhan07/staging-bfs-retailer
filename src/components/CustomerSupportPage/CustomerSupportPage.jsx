@@ -60,13 +60,13 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     </div>
                   </div>
                 </Link>
-
+                <Link to={"/customerService"}>
                 <div
                   className={Styles.supportLeftBox}
                   style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setModalOpen(true);
-                  }}
+                  // onClick={() => {
+                  //   setModalOpen(true);
+                  // }}
                 >
                   <div className={Styles.supportLeftImg}>
                     <CustomerServiceIcon width={42} height={42} />
@@ -76,6 +76,7 @@ function CustomerSupportPage({ data, PageSize, currentPage, manufacturerFilter, 
                     <p>Resolving Concerns Serving Solutions</p>
                   </div>
                 </div>
+                </Link>
                 <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
