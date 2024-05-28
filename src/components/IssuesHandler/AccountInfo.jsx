@@ -93,7 +93,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                         </label>
                         <ErrorMessage component={TextError} name="description" />
                         <div className={styles.attachHolder}>
-                            <p className={styles.subTitle}>upload some Attachements</p>
+                            <p className={styles.subTitle}>upload some attachments</p>
                             <label className={styles.attachLabel} for="attachement"><div><div className={styles.attachLabelDiv}><BiUpload /></div></div></label>
                             <input type="file" style={{ width: 0, height: 0 }} id="attachement" onChange={handleChange} multiple accept="image/*" />
                             <div className={styles.imgHolder}>

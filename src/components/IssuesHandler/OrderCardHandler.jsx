@@ -244,7 +244,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                             </div>
                                         </div>
 
-                                        <div className={Styles.productDetail} style={{padding:'0 30px'}}>
+                                        <div className={`${Styles.productDetail} ${item.Id == orderId?Styles.warp:null}`} style={{padding:'0 30px'}}>
                                             <div className={Styles.Prod1}>
                                                 <div className={Styles.ProtuctInnerBox}>
                                                     <div className={Styles.BoxBlack}>
@@ -313,7 +313,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className={Styles1.totalProductPrice} style={{width:'225px'}}>
+                                            <div className={Styles1.totalProductPrice} >
                                                 {(orderId && (!searchPo || searchPo == "")) && <>
                                                     <div className={Styles1.Margitotal}>
                                                         <p className={Styles1.detailsTitleHolder}>Customer Support For</p>

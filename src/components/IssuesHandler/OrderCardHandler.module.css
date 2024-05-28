@@ -177,3 +177,12 @@
   line-height: normal;
   letter-spacing: 1.4px;
 }
+
+@media (max-width: 1024.98px) {
+  .totalProductPrice{
+    width: 100%;
+  }
+  .orderListHolder{
+    width: 100%;
+  }
+}

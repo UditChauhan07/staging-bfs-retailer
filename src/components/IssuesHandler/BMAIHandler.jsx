@@ -52,7 +52,7 @@ const BMAIHandler = ({ reasons, reason, setReason,resetHandler }) => {
                 <div className={Styles.reasonHolder}>
                     {reasons.map((item) => {
                         return (<div className={`${Styles.reasonCard} ${reason == item.name ? Styles.activeReason : ''}`} title={reason != item.name ? `Click here to Select '${item.name}'` : null} id={reason == item.name ? "reason" : ""} onClick={reason == item.name ? shakeHandler : () => OnChangeHandler(item.name)}>
-                            <div style={{ display: 'flex' }}>
+                            <div className={Styles.flexBox}>
                                 <img src={item.icon} alt={item.name} className={Styles.iconHolder} />
                                 <p className={Styles.textHolder}>{item.name}</p>
                             </div>

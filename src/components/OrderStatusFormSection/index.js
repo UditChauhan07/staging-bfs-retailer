@@ -111,7 +111,7 @@ const OrderStatusFormSection = () => {
             </label>
             <ErrorMessage component={TextError} name="description" />
             <div className={styles.attachHolder}>
-              <p className={styles.subTitle}>upload some Attachements</p>
+              <p className={styles.subTitle}>upload some attachments</p>
               <label className={styles.attachLabel} for="attachement"><div><div className={styles.attachLabelDiv}><BiUpload /></div></div></label>
               <input type="file" style={{ width: 0, height: 0 }} id="attachement" onChange={handleChange} multiple accept="image/*" />
               <div className={styles.imgHolder}>
@@ -138,7 +138,7 @@ const OrderStatusFormSection = () => {
             </label>
             <div className={styles.dFlex}>
               {" "}
-              <Link to={"/order-list"} className={styles.btn}>
+              <Link to={"/orderStatus"} className={styles.btn}>
                 Cancel
               </Link>
               <input type="submit" className={styles.btn} value={"Submit"} disabled={activeBtn} />
