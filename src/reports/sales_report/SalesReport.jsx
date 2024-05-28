@@ -94,10 +94,6 @@ const SalesReport = () => {
       ele.Orders.map((item) => ({
         ManufacturerName: ele.ManufacturerName__c,
         AccountName: item.Name,
-        AccountType: item.AccountType,
-        DateOpen: item.DateOpen,
-        Status: item.Status,
-        AccountRepo: item?.AccountRepo ?? JSON.parse(localStorage.getItem("Api Data")).data.Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,
