@@ -1,6 +1,6 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:2000"
+// export const originAPi = "http://localhost:6194"
 
 let url = `${originAPi}/retailer/`;
 const orderKey = "orders";
@@ -13,22 +13,37 @@ const support = "AP0HBuNwbNnuhKR";
 const shareKey = "3a16FWFtoPA5FMC";
 // export const originAPi = "https://dev.beautyfashionsales.com"
 
-export function ShareDrive (data, remove = false){
-  if(remove){
+export const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export function ShareDrive(data, remove = false) {
+  if (remove) {
     localStorage.removeItem(shareKey);
     return true;
   }
-  if(data){
+  if (data) {
     localStorage.setItem(shareKey, JSON.stringify(data))
     return true;
-  }else{
+  } else {
     let strData = localStorage.getItem(shareKey);
     return JSON.parse(strData);
   }
 }
 
 export async function AuthCheck() {
-  console.log({aa:JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))});
+  console.log({ aa: JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7")) });
   if (JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))) {
     return true;
   } else {
@@ -41,7 +56,7 @@ export function formatNumber(num) {
     return (num / 1000).toFixed(1) + 'K';
   } else if (num >= 1000000) {
     return (num / 1000000).toFixed(0) + 'M';
-  }else if(num <0){
+  } else if (num < 0) {
     return (num / 1000).toFixed(1) + 'K';
   } else {
     return num;
@@ -119,7 +134,7 @@ export function fetchBeg() {
       name: null,
       id: null,
       address: null,
-      shippingMethod:null
+      shippingMethod: null
     },
     Manufacturer: {
       name: null,
@@ -219,7 +234,7 @@ export async function getOrderDetailsInvoice({ rawData }) {
   if (data.status == 300) {
     DestoryAuth();
   } else {
-    return {data:data.data,attachment:data.attachedmenetdata};
+    return { data: data.data, attachment: data.attachedmenetdata };
   }
 }
 
@@ -350,9 +365,9 @@ export async function OrderPlaced({ order }) {
   } else if (data.status == 300) {
     DestoryAuth();
   } else {
-    if(data?.data){
+    if (data?.data) {
       return data.data
-    }else{
+    } else {
       return false;
     }
   }
@@ -368,13 +383,35 @@ export async function getOrderList({ user, month }) {
   bodyContent.append("AccountId", user.accountId);
   bodyContent.append("month", month === "last-6-months" ? "" : month);
 
-  let response = await fetch(originAPi+ "/retailer/sWNZ2zjgP0prhlI", {
+  let response = await fetch(originAPi + "/retailer/sWNZ2zjgP0prhlI", {
     method: "POST",
     body: bodyContent,
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getOrderCustomerSupport({ user, month }) {
+  let headersList = {
+    Accept: "*/*",
+  };
+
+  let bodyContent = new FormData();
+  bodyContent.append("key", user.key);
+  bodyContent.append("AccountId", user.accountId);
+  bodyContent.append("month", month === "last-6-months" ? "" : month);
+  let response = await fetch(originAPi + "/retailer/7Zcldl3YmUOrhmF", {
+    method: "POST",
+    body: bodyContent,
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text()); 
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -391,13 +428,13 @@ export async function getOrderDetailId({ rawData }) {
   bodyContent.append("key", rawData.key);
   bodyContent.append("opportunity_id", rawData.opportunity_id);
 
-  let response = await fetch(originAPi+ "/retailer/rrIWkEGMzSBJzBg", {
+  let response = await fetch(originAPi + "/retailer/rrIWkEGMzSBJzBg", {
     method: "POST",
     body: bodyContent,
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -427,7 +464,7 @@ export async function getDashboardata({ user }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -479,14 +516,14 @@ export async function getSupportDetails({ rawData }) {
 }
 
 export async function getTargetReportAll({ user, year, preOrder }) {
-  console.log({user});
+  console.log({ user });
   if (user) {
     let headersList = {
       Accept: "*/*",
     };
     let bodyContent = new FormData();
     bodyContent.append("key", user?.data?.x_access_token);
-      bodyContent.append("accountId", user?.data?.accountId);
+    bodyContent.append("accountId", user?.data?.accountId);
     if (year) {
       bodyContent.append('year', year);
     }
@@ -500,7 +537,7 @@ export async function getTargetReportAll({ user, year, preOrder }) {
       headers: headersList,
     });
     let data = JSON.parse(await response.text());
-    console.log({data});
+    console.log({ data });
     if (data.status == 300) {
       DestoryAuth();
     } else {
@@ -570,7 +607,7 @@ export async function getProductImage({ rawData }) {
 }
 
 export async function getProductImageAll({ rawData }) {
-  console.log({rawData});
+  console.log({ rawData });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -578,7 +615,7 @@ export async function getProductImageAll({ rawData }) {
 
   // let response = await fetch(url + "v3/Ftr7xyLKqgFo5MO", {
   let response = await fetch(url + "hm8CnzTBfdfjXLZ", {
-    
+
     method: "POST",
     body: JSON.stringify(rawData),
     headers: headersList,
@@ -629,7 +666,7 @@ export async function getProductList({ rawData }) {
   }
 }
 
-export async function topProduct({month,manufacturerId,accountId}) {
+export async function topProduct({ month, manufacturerId, accountId }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -637,7 +674,7 @@ export async function topProduct({month,manufacturerId,accountId}) {
 
   let response = await fetch(url + "IParlpz6lDE6kfU", {
     method: "POST",
-    body: JSON.stringify({month,manufacturerId,accountId}),
+    body: JSON.stringify({ month, manufacturerId, accountId }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -648,16 +685,16 @@ export async function topProduct({month,manufacturerId,accountId}) {
   }
 }
 
-export async function getSessionStatus({key,retailerId}) {
+export async function getSessionStatus({ key, retailerId }) {
 
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-  console.log({key,retailerId})
+  console.log({ key, retailerId })
   let response = await fetch(url + "v3/VQzxx7VoZqQrVKe", {
     method: "POST",
-    body: JSON.stringify({key,retailerId}),
+    body: JSON.stringify({ key, retailerId }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -692,7 +729,7 @@ export async function getOrderDetailsPdf({ key, opportunity_id }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/0DS68FOD7s", {
+  let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/0DS68FOD7s", {
     method: "POST",
     body: JSON.stringify({ key, opportunity_id }),
     headers: headersList,
@@ -701,30 +738,67 @@ export async function getOrderDetailsPdf({ key, opportunity_id }) {
   if (data.status == 300) {
     DestoryAuth();
   } else {
-    return data?.file||false;
+    return data?.file || false;
   }
 }
 
-export async function getMarketingCalendarPDF({ key, manufacturerId,month,manufacturerStr }) {
+export async function getMarketingCalendarPDF({ key, manufacturerId, month, manufacturerStr }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+  let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc46", {
+    method: "POST",
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({ data });
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.file || false;
+  }
+}
+
+export async function getMarketingCalendarPDFV2({ key, manufacturerId, month,manufacturerStr }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(originAPi+"/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc46", {
+  let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId,month,manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month,manufacturerStr }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
-    return data?.file||false;
+    return data?.file || false;
   }
 }
 
+export async function getMarketingCalendarPDFV3({ key, manufacturerId, month,manufacturerStr }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/H893PuzIaG1miIo", {
+    method: "POST",
+    body: JSON.stringify({ key, manufacturerId, month,manufacturerStr }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.file || false;
+  }
+}
 
 export const hexabrand = {
   a0O3b00000hym7GEAQ: "#38A3A5",
@@ -743,8 +817,8 @@ export const hexabrand = {
   a0ORb000000QzsfMAC: "#B7C8B3",
   a0O1O00000XYBvkUAH: "#6D243E",
   a0O1O00000XYBvaUAH: "#4B95DD",
-  a0ORb000000nDfFMAU:"#073763",
-  a0ORb000000nDIiMAM:"#7f6000"
+  a0ORb000000nDfFMAU: "#073763",
+  a0ORb000000nDIiMAM: "#7f6000"
 };
 
 export const hexabrandText = {
@@ -764,8 +838,8 @@ export const hexabrandText = {
   a0ORb000000QzsfMAC: "#445840",
   a0O1O00000XYBvkUAH: "#ffffff",
   a0O1O00000XYBvaUAH: "#ffffff",
-  a0ORb000000nDfFMAU:"#deb887",
-  a0ORb000000nDIiMAM:"#deb887"
+  a0ORb000000nDfFMAU: "#deb887",
+  a0ORb000000nDIiMAM: "#deb887"
 };
 
 

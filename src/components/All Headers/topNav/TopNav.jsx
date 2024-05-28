@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { NeedHelp } from "../../../lib/svg";
+import { CustomerServiceIcon, NeedHelp, OrderStatusIcon } from "../../../lib/svg";
 import ModalPage from "../../Modal UI";
 import SelectCaseReason from "../../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
 import { GetAuthData,getSessionStatus } from "../../../lib/store";
@@ -62,20 +62,19 @@ const TopNav = () => {
                   Need Help?&nbsp; <NeedHelp />
                   {/* </a> */}
                   <ul className="dropdown-menu">
-                    <li 
-                    onClick={() => navigate("/order-list")}
-                    >
-                      <Link to="" className="dropdown-item text-start">
-                        Order Status
+                  <li onClick={() => navigate("/orderStatus")}>
+                      <Link to="/order-list" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                        <OrderStatusIcon width={15} height={15}/>&nbsp;Order Status
                       </Link>
                     </li>
                     <li
-                      // onClick={() => {
-                      //   setModalOpen(true);
-                      // }}
+                      onClick={() => {
+                        // setModalOpen(true);
+                        navigate("/customerService")
+                      }}
                     >
-                      <Link to="" className="dropdown-item text-start">
-                        Customer Services
+                      <Link to="/customerService" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                       <CustomerServiceIcon width={15} height={15}/>&nbsp;Customer Services
                       </Link>
                     </li>
                   </ul>
