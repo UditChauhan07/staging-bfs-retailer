@@ -42,7 +42,7 @@ const Header = () => {
                     navigate("/sales-report");
                   }}
                 >
-                  Sales Report
+                  Purchase Report
                 </Link>
               </li>
               <li>

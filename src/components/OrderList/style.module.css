@@ -373,6 +373,11 @@ cursor: pointer;
   width: 75%;
   margin: auto;
 }
+
+.OrderMainFull {
+  width: 100%;
+  margin: auto;
+}
 .tool {
   cursor: pointer;
 }
