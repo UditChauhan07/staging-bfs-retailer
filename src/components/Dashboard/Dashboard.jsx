@@ -7,7 +7,7 @@ import img2 from "./Images/Vector.png";
 import img3 from "./Images/Group.png";
 import img4 from "./Images/Group1.png";
 import { PieChart, Pie, Cell } from "recharts";
-import { AuthCheck, GetAuthData, formatNumber, getDashboardata, hexabrand } from "../../lib/store";
+import { AuthCheck, GetAuthData, formatNumber, getDashboardata, hexabrand, months } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import AppLayout from "../AppLayout";
@@ -285,13 +285,15 @@ function Dashboard({ dashboardData }) {
             let currentSalesAmount = totalPrice||0
             let growth = parseInt(((currentSalesAmount-oldSalesAmount)/oldSalesAmount)*100)
             setBox({ RETAILERS: activeBrand || 0, GROWTH: growth||0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
-            let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
+            // let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
+            let tempValue = (totalPrice / (totalPrice*2) * 100) <= 100 ? totalPrice / (totalPrice*2) * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
               { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
               { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
             ])
-            setTargetValue(formatNumber(totalTarget || 0));
+            setTargetValue(formatNumber(totalPrice*2 || 0));
+            // setTargetValue(formatNumber(totalTarget || 0));
             setAchievedSales(formatNumber(totalPrice || 0));
             setIsLoading(true)
             //ownManuFactureData
@@ -435,7 +437,7 @@ function Dashboard({ dashboardData }) {
                   data: []
                 }
                 monthNames.map((month, index) => {
-                  raw.data.push(indexValue[month].sale)
+                  raw.data.push(indexValue[month].sale.toFixed(2))
                 })
                 temp.push(raw)
               })
@@ -450,7 +452,8 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
-
+  const [PurchaseYear,setPurchaseYear] = useState(currentYear)
+  const [PurchaseMonth,setPurchaseMonth] = useState(currentMonth)
   const changeMonthHandler = (value) => {
     setIsLoading(false);
     setManufacturerSalesYaer([]);
@@ -459,6 +462,8 @@ function Dashboard({ dashboardData }) {
     const valuePlit = value.split("|");
     let month = valuePlit[1] || null;
     let year = valuePlit[0] || null;
+    setPurchaseYear(year)
+    setPurchaseMonth(month)
     getDataHandler({ month, year });
   };
   const RADIAN = Math.PI / 180;
@@ -490,7 +495,6 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
-  console.log({ isLoading });
   return (
     <AppLayout
       filterNodes={
@@ -537,7 +541,7 @@ function Dashboard({ dashboardData }) {
                     <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
                   </div>
                   <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>GROWTH 2023 VS 2024</p>
+                    <p className={`text-end ${Styles.activetext}`}>Total GROWTH {PurchaseYear-1} VS {PurchaseYear}</p>
                     <h1 className={`text-end ${Styles.activetext1}`}>
                       {box.GROWTH}<span>%</span>
                     </h1>
@@ -580,7 +584,7 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-7">
-            <p className={Styles.Tabletext}>Your Purchase By Brand</p>
+            <p className={Styles.Tabletext}>Your Purchases by brand {PurchaseYear}</p>
 
             <div className={Styles.donuttop}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
@@ -595,7 +599,7 @@ function Dashboard({ dashboardData }) {
             </div>
           </div>
           <div className="col-lg-5">
-            <p className={Styles.Tabletext}>Your Purchase Performance Score in 2024</p>
+            <p className={Styles.Tabletext}>Your Retail Performance Score {PurchaseYear}</p>
             <div className={Styles.donuttop1}>
               {!isLoading ? (
                 <ContentLoader />
@@ -625,7 +629,7 @@ function Dashboard({ dashboardData }) {
 
         <div className="row mt-5">
           <div className="">
-            <p className={Styles.Tabletext}>Total Purchase By Brand</p>
+            <p className={Styles.Tabletext}>Total purchases by Brand per Month</p>
             <div className={Styles.graphmain}>
               <Chart options={dataa.options} series={manufacturerSalesYear} type="area" width="100%" height="100%" />
             </div>

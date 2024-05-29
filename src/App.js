@@ -51,11 +51,7 @@ function App() {
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/newness-report" element={<NewnessReport />}></Route>
             <Route path="/Target-Report" element={<TargetReport />}></Route>
-
-            <Route
-              path="/comparison-report"
-              element={<ComparisonReport />}
-            ></Route>
+            <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
             {/* <Route path="/product/:name" element={<ProductDetails/>}></Route> */}
@@ -68,10 +64,7 @@ function App() {
             <Route path="/order" element={<BrandsPage />}></Route>
             {/*  */}
             <Route path="/customer-care" element={<CustomerCare />}></Route>
-            <Route
-              path="/customer-support"
-              element={<CustomerSupport />}
-            ></Route>
+            <Route path="/customer-support" element={<CustomerSupport />}></Route>
             <Route
               path="/CustomerSupportDetails"
               element={<CustomerSupportDetails />}

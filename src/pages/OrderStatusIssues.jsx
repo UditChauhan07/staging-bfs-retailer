@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 
-let PageSize = 10;
+let PageSize = 5;
 
 const OrderStatusIssues = ()=>{
     const [currentPage, setCurrentPage] = useState(1);
@@ -138,7 +138,7 @@ const OrderStatusIssues = ()=>{
             <section>
               <div className="">
                 <div className={Styles.orderMainDiv}>
-                  <div className={Styles.OrderMainPr}>
+                  <div className={Styles.OrderMainFull}>
                     <div className={Styles.inorderflex}>
                       <div>
                         <h2>Your Orders</h2>
