@@ -447,6 +447,11 @@
     font-size: 14px;
   }
 }
+@media (max-width: 1450px) {
+  .activetext{
+    font-size: 13px;
+  }
+}
 
 @media (max-width: 1299px) {
   .activetext1 {
