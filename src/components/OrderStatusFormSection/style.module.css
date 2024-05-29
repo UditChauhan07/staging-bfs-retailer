@@ -1,6 +1,6 @@
 .container {
-  width: 60%;
-  margin: 2rem auto;
+  width: 75%;
+  margin:1rem auto;
 }
 .containerTitle {
   color: #000;
@@ -28,7 +28,7 @@
   border-radius: 8px;
   border: 1px solid #d5d9d9;
   text-align: center;
-  padding: 2rem 4rem;
+  padding: 0.5rem 4rem;
   width: 500px;
   display: flex;
   justify-content: center;
@@ -107,12 +107,12 @@
 .btn{
   padding: 0.5rem 2rem;
 border: 1px solid #000;
-background: #FFF;
+background: #000;
 text-align: center;
 text-transform: uppercase;
 cursor: pointer;
 text-decoration: none;
-color: #000;
+color: #FFF;
 }
 .btn:hover{
   background: #000;

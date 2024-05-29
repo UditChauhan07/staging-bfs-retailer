@@ -49,7 +49,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
             desc: null,
             opportunityId: data.Id,
             priority: "Medium",
-            sendEmail: false,
+            sendEmail: true,
           },
         };
         // console.log("beg", beg);

@@ -12,6 +12,7 @@ import Loading from "../Loading";
 const OrderStatusFormSection = () => {
   const navigate = useNavigate();
   const [supportTicketData, setTicket] = useState();
+  console.log({supportTicketData});
   const [activeBtn, setActive] = useState(false);
   const [submitLoad,setSubmitLoad] = useState(false)
 
@@ -122,7 +123,7 @@ const OrderStatusFormSection = () => {
                 ))}
               </div>
             </div>
-            <label className={styles.labelHolder} title="Please select for get email Notification">
+            {/* <label className={styles.labelHolder} title="Please select for get email Notification">
               &nbsp;Send Updates via email
               <p className="ml-2">
                 <input
@@ -135,7 +136,7 @@ const OrderStatusFormSection = () => {
                 />&nbsp;
                 Yes Please
               </p>
-            </label>
+            </label> */}
             <div className={styles.dFlex}>
               {" "}
               <Link to={"/orderStatus"} className={styles.btn}>

@@ -47,7 +47,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                             <div className="col-lg-3 col-md-12 col-sm-12">
                                 <div className={Styles.supportLeft}>
                                     <Link to={"/orderStatus"} className={`${(path == "/orderStatus" || path == "/orderStatusForm") && Styles1.activeReason}`}>
-                                        <div className={`${Styles.supportLeftBox} cardHover`} >
+                                        <div className={`${Styles.supportLeftBox} cardHover`}>
                                             <div className={Styles.supportLeftImg}>
                                                 <OrderStatusIcon width={42} height={42} />
                                             </div>
@@ -61,7 +61,6 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                     <Link to={"/customerService"} className={`${path == "/customerService" && Styles1.activeReason}`}>
                                         <div
                                             className={`${Styles.supportLeftBox} cardHover`}
-                                            style={{ cursor: "pointer" }}
                                         // onClick={() => {
                                         //   setModalOpen(true);
                                         // }}
@@ -89,44 +88,6 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             <div className={Styles.supportLeftContent}>
                                                 <h2>Brand Management Approval </h2>
                                                 <p>Effective Management</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div className={`${Styles.supportLeftBox} cardHover`}>
-                                            <div className={Styles.supportLeftImg}>
-                                                <MarketingSupportIcon width={42} height={42} />
-                                            </div>
-
-                                            <div className={Styles.supportLeftContent}>
-                                                <h2>Marketing Request</h2>
-                                                <p>Elevate Your Marketing with Proactive Solutions.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div className={`${Styles.supportLeftBox} cardHover`}>
-                                            <div className={Styles.supportLeftImg}>
-                                                <DisplayIssuesIcon width={42} height={42} />
-                                            </div>
-
-                                            <div className={Styles.supportLeftContent}>
-                                                <h2>Displays Issues </h2>
-                                                <p>Empowering Solutions for Effective Management</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={`${Styles.supportLeftBox} cardHover`}>
-                                            <div className={Styles.supportLeftImg}>
-                                                <DIFTestIcon width={42} height={42} />
-                                            </div>
-
-                                            <div className={Styles.supportLeftContent}>
-                                                <h2>DIF Tester Issue </h2>
-                                                <p>Empowering Solutions for Effective Management</p>
                                             </div>
                                         </div>
                                     </div>
