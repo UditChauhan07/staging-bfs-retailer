@@ -27,9 +27,10 @@ const ErrorProductCard = ({ Styles1, productErrorHandler, errorList, setProductD
                     return;
                 }
                 ErrorProductQtyHandler(errorList?.[product.Id]?.Id, e.target.value)
-            }} readOnly={readOnly} />
+            }} readOnly={readOnly} placeholder="Enter Qty"/>
             <br />
-            <small style={{ fontSize: '9px' }}>{`Enter ${reason}'s Qty`}</small></td>}
+            {/* <small style={{ fontSize: '9px' }}>{`Enter ${reason}'s Qty`}</small> */}
+            </td>}
     </tr>)
 }
 export default ErrorProductCard;
