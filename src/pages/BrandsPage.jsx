@@ -31,7 +31,7 @@ const brandsImageMap = {
   ARAMIS: "Aramis.png",
   "Victoria Beckham Beauty": "victoria.png",
   "Re-Nutriv": "Re-Nutriv-2.png",
-  "L'Occitane": "Looctaine.png",
+  "LOccitane": "LOccitane.png",
 };
 
 const defaultImage = "default.jpg";
