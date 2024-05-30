@@ -15,7 +15,7 @@ const BMAIssues = () => {
   const [orders, setOrders] = useState([]);
   const [orderId, setOrderId] = useState(null);
   const [orderConfirmed, setOrderConfirmed] = useState(false)
-  const [sendEmail, setSendEmail] = useState(false)
+  const [sendEmail, setSendEmail] = useState(true)
   const [files, setFile] = useState([]);
   const [desc, setDesc] = useState();
   const [subject, setSubject] = useState();
@@ -145,16 +145,14 @@ const BMAIssues = () => {
         console.log(error);
       });
   }
+  if(sumitForm) return <Loading height={'80vh'}/>;
   return (<CustomerSupportLayout>
     <section>
-    {sumitForm ? <div style={{height:'80vh'}} className="d-flex justify-content-center align-items-center"><Loading/></div>:
-      <>
       <BMAIHandler reasons={reasons} setReason={setReason} reason={reason} resetHandler={resetHandler}/>
       {reason != "Update Account Info" && <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId}/>}
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} SubmitHandler={SubmitHandler} />}
       {reason == "Update Account Info" && <AccountInfo reason={reason} Accounts={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
-      </>}
     </section>
   </CustomerSupportLayout>)
 }

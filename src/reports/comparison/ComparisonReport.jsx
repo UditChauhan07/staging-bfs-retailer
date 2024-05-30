@@ -6,11 +6,11 @@ import { useComparisonReport } from "../../api/useComparisonReport";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { FilterItem } from "../../components/FilterItem";
-import { useManufacturer } from "../../api/useManufacturer";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import { GetAuthData, getRetailerBrands } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
@@ -18,11 +18,11 @@ const ComparisonReport = () => {
   const [exportToExcelState, setExportToExcelState] = useState(false);
 
   const initialValues = {
-    ManufacturerId__c: "a0O3b00000p7zqKEAQ",
     month: date.getMonth() + 1,
     year: date.getFullYear(),
+    AccountId__c:null
   };
-  const { data: manufacturers } = useManufacturer();
+  const [manufacturers,setManufacturers] = useState([]);
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
@@ -33,16 +33,27 @@ const ComparisonReport = () => {
   if (apiData?.data?.length) {
     apiData?.data?.map((ele) => {
       return csvData.push({
-        AccountName: ele.AccountName,
-        Estee_Lauder_Number__c: ele.Estee_Lauder_Number__c,
-        Sales_Rep__c: ele.Sales_Rep__c,
-        retail_revenue__c: `$${Number(ele.retail_revenue__c).toFixed(2)}`,
-        Whole_Sales_Amount: `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
+        Brand: ele.ManufacturerName__c,
+        "Estee Lauder Number": ele.Estee_Lauder_Number__c,
+        "Sales Rep": ele.Sales_Rep__c,
+        "Retail Revenue": `$${Number(ele.retail_revenue__c).toFixed(2)}`,
+        "Wholesale Amount": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
       });
     });
   }
   useEffect(() => {
-    sendApiCall();
+    GetAuthData().then((user)=>{
+      filter.AccountId__c = user.data.accountId
+      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
+      getRetailerBrands({rawData}).then((resManu)=>{
+        setManufacturers(resManu);
+        sendApiCall();
+      }).catch((err)=>{
+        console.log({err});
+      })
+    }).catch((userErr)=>{
+      console.log({userErr});
+    })
   }, []);
 
   const handleExportToExcel = () => {
@@ -73,17 +84,17 @@ const ComparisonReport = () => {
     <AppLayout
       filterNodes={
         <>
-          <FilterItem
+          {/* <FilterItem
             minWidth="220px"
             label="All Manufacturers"
             name="All-Manufacturers"
             value={filter.ManufacturerId__c}
-            options={manufacturers?.data?.map((manufacturer) => ({
+            options={manufacturers?.map((manufacturer) => ({
               label: manufacturer.Name,
               value: manufacturer.Id,
             }))}
             onChange={(value) => setFilter((prev) => ({ ...prev, ManufacturerId__c: value }))}
-          />
+          /> */}
           <FilterItem
             minWidth="220px"
             label="Months"

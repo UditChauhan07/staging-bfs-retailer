@@ -56,7 +56,7 @@ const BrandManagementModal = ({ onClose, recordType }) => {
     subject: null,
     attachment: null,
     description: null,
-    sendViaEmail: false,
+    sendViaEmail: true,
   });
   useEffect(() => {
     const filteredContacts = accountList.filter((ele) => ele.Id == formData.account)[0]?.["contact"];

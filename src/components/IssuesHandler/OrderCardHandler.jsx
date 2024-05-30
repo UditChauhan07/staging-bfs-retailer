@@ -122,7 +122,6 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
         if (error.length) {
             let confimationStatus = true;
             if (reason != "Charges") {
-
                 error.map((id) => {
                     if ((errorList[id].issue == 0 || !errorList[id].issue) || errorList[id].issue > errorList[id].Quantity) {
                         confimationStatus = false;
@@ -147,23 +146,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                         myElement.style.borderBottom = "1px solid #ccc"
                     }
                 })
-                if(!contactId){
-                    const myElement = document.getElementById("contactSelector");
-                    if(myElement){
-                        myElement.scrollIntoView({ behavior: "smooth", block: "center" });
-                        myElement.style.borderBottom = "1px solid red"
-                        shakeHandler(`contactSelector`)
-                        
-                    }
-                    
-                }else{
-                    const myElement = document.getElementById("contactSelector");
-                    if(myElement){
-                        myElement.style.borderBottom = "1px solid #ccc"
-                    }
-                    document.getElementById("AttachementSection")?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    setOrderConfirmed(true)
-                }
+                setOrderConfirmed(true)
             }
         } else {
             setemptyProduct(true)
@@ -184,6 +167,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             lock1.classList.add(Styles1.shake)
         }
     }
+    let show = 0;
     return (<section style={{ borderBottom: '1px solid #ccc' }}>
         {emptyProduct ? (
           <ModalPage
@@ -206,7 +190,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             }}
           />
         ) : null}
-        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you want to handle:</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{width:'120px'}} />} {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
+        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{width:'120px'}} />} {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
         {reason && reason != "Update Account Info" &&
             <div className={`${Styles1.orderListHolder} ${Styles1.openListHolder}`} style={(orderId && (!searchPo || searchPo == "")) ? { overflow: 'unset', height: 'auto', border: 0 } : {}}>
                 <div>
@@ -221,11 +205,12 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                             searchPo?.toLowerCase()) || item.AccountName?.toLowerCase().includes(
                                 searchPo?.toLowerCase()) || item.ManufacturerName__c?.toLowerCase().includes(
                                     searchPo?.toLowerCase())) : !orderId) || orderId == item.Id) {
+                                        show++;
                             return (
                                 <div className={` ${Styles.orderStatement} cardHover ${orderId == item.Id ? Styles1.selOrder : ''}`} style={{ paddingBottom: '15px' }} key={index}>
-                                    <label for={`order${item.Id}`} style={{ width: '100%', position: 'relative' }} className={(index % 2 == 0) ? Styles1.cardEnterRight : Styles1.cardEnterLeft}>
+                                    <div  style={{ position: 'relative' }} className={(index % 2 == 0) ? Styles1.cardEnterRight : Styles1.cardEnterLeft}>
                                         <input type="radio" id={`order${item.Id}`} value={item.Id} onClick={(e) => { orderSelectHandler(e) }} name="order" className={Styles1.inputHolder} checked={item.Id == orderId} />
-                                        <div className={Styles.poNumber} style={item.Id == orderId ? { background: 'linear-gradient(90deg, #FFFFFF 0%,#000000 100%)' } : {}}>
+                                        <label title={!orderId ?"click to select":null} for={`order${item.Id}`} className={Styles.poNumber} style={item.Id == orderId ? {width: '100%', background: 'linear-gradient(90deg, #FFFFFF 0%,#000000 100%)' } : {width: '100%'}}>
                                             <div className={Styles1.dFlex}>
                                                 <div className={Styles.poNumb1}>
                                                     <h3>PO Number</h3>
@@ -242,7 +227,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                 <h3 style={item.Id == orderId ? { color: '#fff' } : {}}>Ship To </h3>
                                                 <p style={item.Id == orderId ? { color: '#fff' } : {}}>{item.AccountName}</p>
                                             </div>
-                                        </div>
+                                        </label>
 
                                         <div className={`${Styles.productDetail} ${item.Id == orderId?Styles.warp:null}`} style={{padding:'0 30px'}}>
                                             <div className={Styles.Prod1}>
@@ -400,12 +385,13 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                 </>}
                                             </div>
                                         </div>
-                                    </label>
+                                    </div>
                                     {orderId && <b aria-label="Click Here" title="Click here" onClick={() => { resetForm() }} style={{ cursor: 'pointer', marginLeft: '15px', textDecoration: 'underline' }}>Wrong Order. Want to Change Order?</b>}
                                 </div>
                             )
                         }
                     }):<p style={{textAlign:'center'}}>No Order Found</p>}
+                    {show ==0 && <p style={{textAlign:'center'}}>No Order Found</p>}
                 </div >
             </div >}
         <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={accountId} ManufacturerId={manufacturerId} />
