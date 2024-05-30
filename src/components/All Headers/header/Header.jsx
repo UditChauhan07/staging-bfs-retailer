@@ -47,6 +47,17 @@ const Header = () => {
               </li>
               <li>
                 <Link
+                  to="/comparison-report"
+                  className="dropdown-item text-start"
+                  onClick={() => {
+                    navigate("/comparison-report");
+                  }}
+                >
+                  comparison Report
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/Target-Report"
                   className="dropdown-item  text-start"
                   onClick={() => {

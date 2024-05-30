@@ -120,6 +120,7 @@ const OrderStatusIssues = ()=>{
           <Filters
             onChange={handleFilterChange}
             value={filterValue}
+            monthHide={false}
             resetFilter={() => {
               onFilterChange({
                 manufacturer: null,
