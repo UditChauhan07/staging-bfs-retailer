@@ -105,7 +105,7 @@ const OrderStatusFormSection = () => {
       {(formProps) => (
         <div className={styles.container}>
           <Form className={styles.formContainer}>
-            <b className={styles.containerTitle}>Order Status : {supportTicketData?.orderStatusForm?.reason}</b>
+            <b className={styles.containerTitle}>{supportTicketData?.orderStatusForm?.reason == "Status of Order"?"Status of the order":supportTicketData?.orderStatusForm?.reason == "Invoice"?"Invoice of the order":supportTicketData?.orderStatusForm?.reason == "Tracking Status"?"Tracking status of the order":null}</b>
             <label className={styles.labelHolder}>
               Describe your issues
               <Field component="textarea" placeholder="Description" rows={4} name="description" defaultValue={initialValues.description}></Field>

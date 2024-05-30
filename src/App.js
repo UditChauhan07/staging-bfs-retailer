@@ -36,6 +36,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
 import ProductDetails from "./pages/productDetails";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
+import CustomerService from "./pages/CustomerService";
 import BMAIssues from "./pages/BMAIssues";
 
 function App() {
@@ -90,7 +91,8 @@ function App() {
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             {/* <Route path="/customerService" element={<CustomerServiceForm />}></Route> */}
             <Route path="/orderStatus" element={<OrderStatusIssues/>}/>
-            <Route path="/customerService" element={<BMAIssues />}></Route>
+            <Route path="/customerService" element={<CustomerService />}></Route>
+            <Route path="/brandManagementApproval" element={<BMAIssues />}></Route>
             {/* 1234 */}
           </Routes>
         </BrowserRouter>
