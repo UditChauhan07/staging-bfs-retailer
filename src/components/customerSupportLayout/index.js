@@ -74,13 +74,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             </div>
                                         </div>
                                     </Link>
-                                    {/* Brand Management Approval */}
-                                    <div
-                                        style={{ cursor: "pointer" }}
-                                        onClick={() => {
-                                            setBrandManagementModalOpen(true);
-                                        }}
-                                    >
+                                    {/* <Link to={"/brandManagementApproval"} className={`${path == "/brandManagementApproval" && Styles1.activeReason}`}>
                                         <div className={`${Styles.supportLeftBox} cardHover`}>
                                             <div className={Styles.supportLeftImg}>
                                                 <DefaultSupportIcon width={42} height={42} />
@@ -88,6 +82,18 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             <div className={Styles.supportLeftContent}>
                                                 <h2>Brand Management Approval </h2>
                                                 <p>Effective Management</p>
+                                            </div>
+                                        </div>
+                                    </Link> */}
+                                    <div style={{cursor:'pointer'}}>
+                                        <div className={Styles.supportLeftBox}>
+                                            <div className={Styles.supportLeftImg}>
+                                                <DisplayIssuesIcon width={42} height={42} />
+                                            </div>
+
+                                            <div className={Styles.supportLeftContent}>
+                                                <h2>Displays Issues </h2>
+                                                <p>Empowering Solutions for Effective Management</p>
                                             </div>
                                         </div>
                                     </div>
