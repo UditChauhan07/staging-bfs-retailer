@@ -48,7 +48,7 @@ const BMAIHandler = ({ reasons, reason, setReason,resetHandler }) => {
           />
         ) : null}
             <div>
-                <p className={Styles.reasonTitle}>Select  a reason for your visit:</p>
+                <p className={Styles.reasonTitle}>How can we help you?</p>
                 <div className={Styles.reasonHolder}>
                     {reasons.map((item) => {
                         return (<div className={`${Styles.reasonCard} ${reason == item.name ? Styles.activeReason : ''}`} title={reason != item.name ? `Click here to Select '${item.name}'` : null} id={reason == item.name ? "reason" : ""} onClick={reason == item.name ? shakeHandler : () => OnChangeHandler(item.name)}>
