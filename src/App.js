@@ -48,7 +48,7 @@ function App() {
       <BagProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/sales-report" element={<SalesReport />}></Route>
+            <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/newness-report" element={<NewnessReport />}></Route>
             <Route path="/Target-Report" element={<TargetReport />}></Route>
@@ -92,7 +92,7 @@ function App() {
             {/* <Route path="/customerService" element={<CustomerServiceForm />}></Route> */}
             <Route path="/orderStatus" element={<OrderStatusIssues/>}/>
             <Route path="/customerService" element={<CustomerService />}></Route>
-            <Route path="/brandManagementApproval" element={<BMAIssues />}></Route>
+            {/* <Route path="/brandManagementApproval" element={<BMAIssues />}></Route> */}
             {/* 1234 */}
           </Routes>
         </BrowserRouter>
