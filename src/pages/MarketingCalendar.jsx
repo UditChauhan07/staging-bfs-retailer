@@ -11,6 +11,7 @@ import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const MarketingCalendar = () => {
   const [isLoaded, setIsloaed] = useState(false);
@@ -185,16 +186,24 @@ const MarketingCalendar = () => {
         // let match = item.OCDDate.split("/")
         if (month) {
           if (selectBrand) {
-            if (selectBrand == item.brand) {
-              return item.date.toLowerCase().includes(month.toLowerCase())
+            if (selectBrand == item.ManufacturerName__c) {
+              if (month == "TBD") {
+                return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              } else {
+                return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              }
             }
           } else {
-            return item.date.toLowerCase().includes(month.toLowerCase())
+            if (month == "TBD") {
+              return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+            } else {
+              return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+            }
           }
           // return match.includes(month.toUpperCase() )
         } else {
           if (selectBrand) {
-            if (selectBrand == item.brand) {
+            if (selectBrand == item.ManufacturerName__c) {
               return true;
             }
           } else {
@@ -312,7 +321,7 @@ const MarketingCalendar = () => {
       }
     >
        {isPDFLoaded ? <Loading  height={"70vh"} /> :
-        isLoaded ? <LaunchCalendar brand={brand} month={month} productList={productList} /> : <Loading  height={"70vh"} />}
+        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <Loading  height={"70vh"} />}
 
     </AppLayout>
   );
