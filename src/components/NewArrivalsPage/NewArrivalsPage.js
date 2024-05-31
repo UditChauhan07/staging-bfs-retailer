@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
+import Loading from "../Loading";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
 
@@ -94,7 +95,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   }, [month, selectBrand, productList, brand]);
   // console.log(filterData,"isEmpty")
   // ................
-
+  if(isLoaded) return <Loading height={'70vh'} />
   return (
     <>
       {modalShow ? (
@@ -123,14 +124,14 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
           }}
         />
       ) : null}
-      <section>
+      <section id="newArrivalsSection">
         <div>
           <div className={Styles.dGrid}>
             {!isEmpty ? (
               pagination?.map((month, index) => {
                 if (month.content?.length) {
                   return month.content.map((product) => {
-                    if (!selectBrand || selectBrand == product.ManufacturerName__c) {
+                    if (true) {
                       return (
 
                         <div className={Styles.cardElement}>
