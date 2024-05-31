@@ -183,10 +183,9 @@ const MarketingCalendar = () => {
     const newValues = productList?.map((months) => {
       const filterData = months.content?.filter((item) => {
         // let match = item.OCDDate.split("/")
-        // console.log(match)
         if (month) {
-          if (brand) {
-            if (brand == item.brand) {
+          if (selectBrand) {
+            if (selectBrand == item.brand) {
               return item.date.toLowerCase().includes(month.toLowerCase())
             }
           } else {
@@ -194,8 +193,8 @@ const MarketingCalendar = () => {
           }
           // return match.includes(month.toUpperCase() )
         } else {
-          if (brand) {
-            if (brand == item.brand) {
+          if (selectBrand) {
+            if (selectBrand == item.brand) {
               return true;
             }
           } else {
@@ -218,12 +217,12 @@ const MarketingCalendar = () => {
           ele.content.map((item) => {
             let temp = {};
             temp["MC Month"] = ele.month;
-            temp["Product Title"] = item.name;
-            temp["Product Description"] = item.description;
-            temp["Product Size"] = item.size;
-            temp["Product Ship Date"] = item.date;
-            temp["Product OCD Date"] = item.OCDDate;
-            temp["Product Brand"] = item.brand;
+            temp["Product Title"] = item.Name;
+            temp["Product Description"] = item.Description;
+            temp["Product Size"] = item.Size_Volume_Weight__c;
+            temp["Product Ship Date"] = item.Ship_Date__c;
+            temp["Product OCD Date"] = item.Launch_Date__c;
+            temp["Product Brand"] = item.ManufacturerName__c;
             finalData.push(temp);
           })
         }
@@ -237,8 +236,8 @@ const MarketingCalendar = () => {
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
     let filename = `Marketing Calender`;
-    if (brand) {
-      filename = brand
+    if (selectBrand) {
+      filename = selectBrand
     }
     FileSaver.saveAs(data, `${filename} ${new Date()}` + fileExtension);
   };
