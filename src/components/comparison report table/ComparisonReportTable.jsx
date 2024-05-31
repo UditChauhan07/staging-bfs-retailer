@@ -36,7 +36,7 @@ const ComparisonReportTable = ({ comparisonData }) => {
                               <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.ManufacturerName__c}</td>
                               <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c??'NA'} </td>
                               <td className={`${styles.td}`}>{ele.Sales_Rep__c}</td>
-                              <td className={`${styles.td}`}>${ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>
+                              <td className={`${styles.td}`}>{ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>
                               <td className={`${styles.td}`}>${formentAcmount(Number(ele.Whole_Sales_Amount).toFixed(2))}</td>
                             </tr>
                           </>
