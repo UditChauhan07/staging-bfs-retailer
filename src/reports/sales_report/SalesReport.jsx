@@ -181,7 +181,7 @@ const SalesReport = () => {
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, `Sales Report ${new Date().toDateString()}` + fileExtension);
+    FileSaver.saveAs(data, `Purchase Report ${new Date().toDateString()}` + fileExtension);
   };
   const resetFilter = () => {
     setManufacturerFilter(null);
@@ -327,7 +327,7 @@ const getSalesData = async (yearFor) => {
             <>
               <div style={{ maxWidth: "330px" }}>
                 <h1 className={`fs-5 ${styles.ModalHeader}`}>Warning</h1>
-                <p className={` ${styles.ModalContent}`}>Do you want to download Sales Report?</p>
+                <p className={` ${styles.ModalContent}`}>Do you want to download Purchase Report?</p>
                 <div className="d-flex justify-content-center gap-3 ">
                   <button className={`${styles.modalButton}`} onClick={exportToExcel}>
                     OK
@@ -348,7 +348,7 @@ const getSalesData = async (yearFor) => {
         <div>
           <h2>
           {/* ${(yearFor<2024)?("-"+yearFor):''} */}
-            {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Sales Report` : `Your Sales Report`}
+            {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Purchase Report` : `Your Purchase Report`}
             {manufacturerFilter && " for " + manufacturerFilter}
           </h2>
         </div>
