@@ -41,6 +41,7 @@ const NewArrivals = () => {
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
   const [isLoaded, setIsloaed] = useState(false);
+  const [filterLoad,setFilterLoad] = useState(false);
 
   useEffect(() => {
     HandleClear()
@@ -82,6 +83,8 @@ const NewArrivals = () => {
     setSelectBrand(null);
     setIsEmpty(false)
   }
+
+  
 
   const generatePdf = () => {
     const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
@@ -194,7 +197,19 @@ const NewArrivals = () => {
             value={month}
             options={months}
             onChange={(value) => {
-              setMonth(value);
+              setFilterLoad(true);
+              let imgElement = document.getElementById("newArrivalsSection").querySelectorAll("img");
+              let keys = Object.keys(imgElement);
+              console.log({imgElement});
+
+              if(keys.length>0){
+                keys.map((key)=>{
+                  console.log({aa:imgElement[key]});
+                  imgElement[key].removeAttribute('src');
+                })
+              }
+              setTimeout(()=>{setFilterLoad(false);setMonth(value);}, 1000);
+              
             }}
           />
           <button
@@ -209,7 +224,7 @@ const NewArrivals = () => {
       }
     >
       {isLoaded ? (
-        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} month={month} productList={productList} />
+        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
       ) : (
         <Loading height={"70vh"} />
       )}

@@ -12,6 +12,14 @@ background: #FFF;
   margin: auto;
   /* display: flex; */
 }
+.upArrow {
+  margin-left: 25px;
+  width: 25px;
+  height: 25px;
+  border-bottom: 10px solid #fff;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+}
 .productCount {
   margin-top: 4px;
   margin-left: 6px;
