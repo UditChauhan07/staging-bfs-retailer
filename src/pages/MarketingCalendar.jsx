@@ -48,7 +48,6 @@ const MarketingCalendar = () => {
       getRetailerBrands({ rawData }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
-          console.log({ productRes });
           setProductList(productRes)
           setIsloaed(true)
           setTimeout(() => {
@@ -207,7 +206,7 @@ const MarketingCalendar = () => {
               return true;
             }
           } else {
-            return true;
+            return brand.some((brand) => brand.Name === item.ManufacturerName__c);
           }
           // If month is not provided, return all items
         }
