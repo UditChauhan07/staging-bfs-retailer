@@ -103,7 +103,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             <div className="d-flex flex-column gap-3">
               <h2>Warning</h2>
               <p>
-                You don't have any sales rep now on this brand <br></br> Contact to your Sales Rep.
+              You can not order from this brand.<br/> Kindly contact your Sales Rep
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btn} onClick={() => setIsModalOpen(false)}>
