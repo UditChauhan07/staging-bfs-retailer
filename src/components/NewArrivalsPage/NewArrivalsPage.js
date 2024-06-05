@@ -132,13 +132,23 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 if (month.content?.length) {
                   return month.content.map((product) => {
                     if (true) {
+                      let listPrice = "$-- . --";
+                      if(product?.usdRetail__c){
+                        if(Number(product?.usdRetail__c?.replace("$", ""))){
+                          listPrice= "$"+Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                        }else{
+                          listPrice = product?.usdRetail__c
+                        }
+                      }
                       return (
 
                         <div className={Styles.cardElement}>
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
                             <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} />
+                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name}  onClick={() => {
+                              setProductDetailId(product.Id);
+                            }} />
                             </div>
                           </div>
                           <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
@@ -150,7 +160,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           >
                             {product?.Name?.substring(0, 15)}...
                           </p>
-                          <p className={Styles.priceHolder}>$ -- . --</p>
+                          <p className={Styles.priceHolder}>{listPrice??"-- . --"}</p>
                           {to ? (
                             <Link className={Styles.linkHolder}>
                               <p className={Styles.btnHolder}>
