@@ -671,7 +671,7 @@ function Dashboard({ dashboardData }) {
           </div>
         </div>
         <div className="row my-3">
-          <div className="col-lg-7">
+          <div className="col-lg-6">
             <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth] + '-' + PurchaseYear}</p>
             <div className={Styles.donuttop} style={{ height: '635px' }}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
@@ -680,30 +680,28 @@ function Dashboard({ dashboardData }) {
                 <ContentLoader />
               ) : (
                 <>
-                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="90%" height="400px" />
+                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="95%" height="600px" />
                 </>
               )}
             </div>
           </div>
-          <div className="col-lg-5">
+          <div className="col-lg-6">
             <div className="d-flex">
-
-
               <div className="col-lg-6">
                 <p className={Styles.Tabletext}>Purchases Performance</p>
                 <div className={Styles.donuttop1}>
                   {!isLoading ? (
                     <ContentLoader />
                   ) : (
-                    <div className="container">
-                      <p className={`text-end ${Styles.Tabletxt}`}>
+                    <div>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
                         Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0 }}>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
                         Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
-                        <PieChart width={350} height={350}>
+                        <PieChart width={300} height={300}>
                           <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
                             {needle_data.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -722,15 +720,15 @@ function Dashboard({ dashboardData }) {
                   {!isLoading ? (
                     <ContentLoader />
                   ) : (
-                    <div className="container">
-                      <p className={`text-end ${Styles.Tabletxt}`}>
+                    <div>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
                         Retail Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0 }}>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
                         Retail Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
-                        <PieChart width={350} height={350}>
+                        <PieChart width={300} height={300}>
                           <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data2} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
                             {needle_data2.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />

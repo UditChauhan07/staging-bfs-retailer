@@ -128,9 +128,10 @@ const CustomerService = () => {
             .then((response) => {
               if (response) {
                 if (response) {
+                  console.log({files});
                   if (files.length > 0) {
-
                     uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
+                      console.log({fileUploader});
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }
