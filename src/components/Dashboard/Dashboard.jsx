@@ -190,6 +190,8 @@ function Dashboard({ dashboardData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [targetValue, setTargetValue] = useState();
+  const [retailerNum, setRetailerNum] = useState();
+  const [retailerTarget, setRetailerTarget] = useState();
   const [achievedSales, setAchievedSales] = useState();
   const [needle_data, setNeedle_data] = useState([]);
   const [needle_data2, setNeedle_data2] = useState([]);
@@ -288,18 +290,36 @@ function Dashboard({ dashboardData }) {
             let currentSalesAmount = totalPrice || 0
             let growth = parseInt(((currentSalesAmount - oldSalesAmount) / oldSalesAmount) * 100)
             setBox({ RETAILERS: activeBrand || 0, GROWTH: growth || 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
-            let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
+            let yearlyPrice = 0
+            let yearlyTarget = 0;
+            if (dashboard?.yearlyManufacturerData) {
+
+              let yearlyDataKey = Object.keys(dashboard?.yearlyManufacturerData)
+              activeBrand = yearlyDataKey.length;
+              // let temp = [];
+              yearlyDataKey.map((id) => {
+                // temp.push(dashboard.yearlyManufacturerData[id])
+                yearlyPrice += dashboard.yearlyManufacturerData[id]?.total?.sale
+                yearlyTarget += dashboard.yearlyManufacturerData[id]?.total?.target
+              })
+            }
+            let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
               { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
               { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
             ])
+            let tempValue2 = ((dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100) <= 100 ? (dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100 : 100;
+            setRValue(tempValue2)
             setNeedle_data2([
-              { name: "A", value: parseInt(tempValue * 2), color: "#16BC4E" },
-              { name: "B", value: parseInt(0), color: "rgb(171 195 203)" },
+              { name: "A", value: parseInt(tempValue2), color: "#16BC4E" },
+              { name: "B", value: parseInt(tempValue2 > 0 ? 100 - tempValue2 : 100), color: "rgb(171 195 203)" },
             ])
-            setTargetValue(formatNumber(totalTarget || 0));
-            setAchievedSales(formatNumber(totalPrice || 0));
+            setTargetValue(formatNumber(yearlyTarget || 0));
+            setRetailerTarget(formatNumber((yearlyTarget*2) || 0))
+            setAchievedSales(formatNumber(yearlyPrice || 0));
+            setRetailerNum(formatNumber(dashboard.retailerNumberValue || 0))
+
             setIsLoading(true)
             //ownManuFactureData
             if (dashboard?.monthlyManufactureData) {
@@ -478,6 +498,7 @@ function Dashboard({ dashboardData }) {
   const iR = 50;
   const oR = 100;
   const [value, setValue] = useState((box.REVENUE / box.TARGET * 100) <= 100 ? box.REVENUE / box.TARGET * 100 : 100)
+  const [Rvalue, setRValue] = useState((retailerNum / retailerTarget * 100) <= 100 ? retailerNum / retailerTarget * 100 : 100)
   const needle = (value, data, cx, cy, iR, oR, color) => {
     let total = value;
     // needle_data.forEach((v) => {
@@ -507,6 +528,7 @@ function Dashboard({ dashboardData }) {
     //   total += v.value;
     // });
     let ang = 180 - ((value / 100) * 180);
+    console.log({value});
     // if (value == 0) {
     //   ang = 180;
     // }
@@ -650,8 +672,8 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-7">
-            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth]+'-'+PurchaseYear}</p>
-            <div className={Styles.donuttop} style={{height:'635px'}}>
+            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth] + '-' + PurchaseYear}</p>
+            <div className={Styles.donuttop} style={{ height: '635px' }}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
               <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
               {!isLoading ? (
@@ -702,10 +724,10 @@ function Dashboard({ dashboardData }) {
                   ) : (
                     <div className="container">
                       <p className={`text-end ${Styles.Tabletxt}`}>
-                        Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
+                        Retail Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
                       </p>
                       <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0 }}>
-                        Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
+                        Retail Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
                         <PieChart width={350} height={350}>
@@ -714,7 +736,7 @@ function Dashboard({ dashboardData }) {
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
-                          {needle2(value, needle_data2, cx, cy, iR, oR, "#000000")}
+                          {needle2(Rvalue, needle_data2, cx, cy, iR, oR, "#000000")}
                         </PieChart>
                       </div>
                     </div>
@@ -722,7 +744,7 @@ function Dashboard({ dashboardData }) {
                 </div>
               </div>
             </div>
-            <div className={Styles.DashboardWidth} style={{marginTop:'1rem'}}>
+            <div className={Styles.DashboardWidth} style={{ marginTop: '1rem' }}>
               <p className={Styles.Tabletext}>Month to date(MTD): Goal by Brand</p>
               <div className={`${Styles.goaltable} cardShadowHover`}>
                 <div className="">
@@ -738,47 +760,47 @@ function Dashboard({ dashboardData }) {
                           <th scope="col">Diff.</th>
                         </tr>
                       </thead>
-                      {!isLoading ? <IsTableLoading/> :
-                      goalList ? (
-                        <tbody>
-                          {goalList?.map((e) => {
-                            // console.log("e.....", e);
-                            goalTarget += Number(e?.MonthlyTarget || 0);
-                            goalSale += Number(e.MonthlySale || 0);
-                            goalDiff += Number(e?.Difference || 0);
-                            let targetDiff = e.TargetRollover
-                            return (
-                              <tr key={e}>
-                                <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }}>
-                                  <UserIcon /> {e.ManufacturerName}
-                                </td>
-                                <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>
-                                <td className={Styles.tabletd}>${formatNumber(e.MonthlySale || 0)}</td>
-                                {/* <td className={Styles.tabletd}>${formatNumber(e?.diff || 0)}</td> */}
-                                <td className={`${Styles.tabletd} ${Styles.flex}`}><span style={{ lineHeight: '20px' }}>${formatNumber(e.Difference || 0)}</span><span className={e.Difference <= 0 ? Styles.matchHolder : Styles.shortHolder}>{e.Difference <= 0 ? 'MATCH' : 'SHORT'}</span></td>
-                              </tr>
-                            );
-                          })}
-                          <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
-                            <th scope="col" className="ps-3">
-                              Total
-                            </th>
-                            <th scope="col">${formatNumber(goalTarget) ?? "0"}</th>
-                            <th scope="col">${formatNumber(goalSale) ?? "0"}</th>
-                            <th scope="col">${formatNumber(goalDiff) ?? "0"}</th>
-                          </tr>
-                        </tbody>
-                      ) : (
-                        <tbody>
-                          <td></td>
-                          <td>
-                            <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
-                              <p className={`${Styles.tablenodata}`}>No Data Found</p>
-                            </div>
-                          </td>
-                          <td></td>
-                        </tbody>
-                      )}
+                      {!isLoading ? <IsTableLoading /> :
+                        goalList ? (
+                          <tbody>
+                            {goalList?.map((e) => {
+                              // console.log("e.....", e);
+                              goalTarget += Number(e?.MonthlyTarget || 0);
+                              goalSale += Number(e.MonthlySale || 0);
+                              goalDiff += Number(e?.Difference || 0);
+                              let targetDiff = e.TargetRollover
+                              return (
+                                <tr key={e}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }}>
+                                    <UserIcon /> {e.ManufacturerName}
+                                  </td>
+                                  <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>
+                                  <td className={Styles.tabletd}>${formatNumber(e.MonthlySale || 0)}</td>
+                                  {/* <td className={Styles.tabletd}>${formatNumber(e?.diff || 0)}</td> */}
+                                  <td className={`${Styles.tabletd} ${Styles.flex}`}><span style={{ lineHeight: '20px' }}>${formatNumber(e.Difference || 0)}</span><span className={e.Difference <= 0 ? Styles.matchHolder : Styles.shortHolder}>{e.Difference <= 0 ? 'MATCH' : 'SHORT'}</span></td>
+                                </tr>
+                              );
+                            })}
+                            <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                              <th scope="col" className="ps-3">
+                                Total
+                              </th>
+                              <th scope="col">${formatNumber(goalTarget) ?? "0"}</th>
+                              <th scope="col">${formatNumber(goalSale) ?? "0"}</th>
+                              <th scope="col">${formatNumber(goalDiff) ?? "0"}</th>
+                            </tr>
+                          </tbody>
+                        ) : (
+                          <tbody>
+                            <td></td>
+                            <td>
+                              <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                                <p className={`${Styles.tablenodata}`}>No Data Found</p>
+                              </div>
+                            </td>
+                            <td></td>
+                          </tbody>
+                        )}
                     </table>
                   </div>
                 </div>
