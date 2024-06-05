@@ -34,7 +34,7 @@ function FullQuearyDetail({ data, setRest }) {
                 key: userData.x_access_token,
                 comment: {
                     ParentId: data.Id,
-                    CommentBody: `${userData.firstName + ' ' + userData.lastName} Wrote:\n${comment}`
+                    CommentBody: `${userData.firstName + ' ' + userData.lastName} Wrote: \n${comment}`
                 }
             }
             postSupportComment({ rawData }).then((response) => {
@@ -133,7 +133,7 @@ function FullQuearyDetail({ data, setRest }) {
                                     <div className={`${Detail.ActivityContentImform} ${Detail.SendFlex}`}>
                                         <textarea placeholder='Add a comment...' rows="4" cols="50" value={comment} onChange={(e) => { setComment(e.target.value) }}></textarea>
 
-                                        <div className={Detail.SendButtonChat} onClick={() => CommentPostHandler()}>
+                                        <div className={Detail.SendButtonChat} style={{cursor:"pointer"}} onClick={() => CommentPostHandler()}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="58" height="58" viewBox="0 0 58 58" fill="none">
                                                 <path d="M40.5327 21.9402C40.7375 21.6765 40.8382 21.3451 40.8151 21.0105C40.7921 20.6758 40.647 20.3618 40.408 20.1293C40.1691 19.8968 39.8532 19.7624 39.5219 19.7523C39.1905 19.7421 38.8672 19.8568 38.6147 20.0743L14.6397 40.712L1.97907 35.7578C1.42832 35.5445 0.949652 35.1758 0.599955 34.6953C0.250258 34.2149 0.0442326 33.643 0.00635955 33.0476C-0.0315135 32.4522 0.100358 31.8582 0.386305 31.3364C0.672252 30.8146 1.10025 30.3868 1.61945 30.1039L54.18 0.313574C54.5931 0.088433 55.0588 -0.0189959 55.5276 0.00275323C55.9963 0.0245024 56.4503 0.174613 56.8413 0.437064C57.2323 0.699515 57.5455 1.06446 57.7475 1.49294C57.9496 1.92142 58.0328 2.39736 57.9884 2.86996L53.3778 51.4973C53.3316 51.996 53.171 52.477 52.9088 52.9019C52.6466 53.3268 52.29 53.6839 51.8674 53.9448C51.4447 54.2057 50.9678 54.3632 50.4744 54.4048C49.981 54.4464 49.4849 54.3709 49.0254 54.1843L33.6168 48.1479L23.9439 57.3191C23.5869 57.6566 23.1399 57.8808 22.6583 57.964C22.1767 58.0471 21.6816 57.9856 21.2342 57.7871C20.7867 57.5885 20.4066 57.2616 20.1409 56.8468C19.8752 56.432 19.7354 55.9475 19.739 55.4532V48.2505L40.5327 21.9402Z" fill="black" />
                                             </svg>
