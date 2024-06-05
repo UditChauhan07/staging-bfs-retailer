@@ -2,7 +2,7 @@ import { BiLock, BiSave, BiUpload } from "react-icons/bi";
 import Styles from "./Attachements.module.css";
 import { useEffect } from "react";
 
-const Attachements = ({ files, setFile, setDesc, orderConfirmed, SubmitHandler }) => {
+const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) => {
     function handleChange(e) {
         let tempFile = [];
         let reqfiles = e.target.files;
@@ -71,7 +71,7 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, SubmitHandler }
                         <textarea name="desc" id="" className={Styles.textAreaPut} onKeyUp={(e) => setDesc(e.target.value)}></textarea>
                     </div>
                 </div>
-                <button className={Styles.btnHolder} onClick={SubmitHandler}><BiSave />&nbsp;Submit</button>
+                <button className={Styles.btnHolder} onClick={()=>setConfirm(true)}><BiSave />&nbsp;Submit</button>
             </div>}
     </section>)
 }
