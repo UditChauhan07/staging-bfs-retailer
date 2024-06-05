@@ -8,7 +8,7 @@ import { GetAuthData,getSessionStatus } from "../../../lib/store";
 // import Redirect from "../../Redirect";
 const TopNav = () => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState(localStorage.getItem("Name"));
+  const [userName, setUserName] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   // useEffect(()=>{
   //   GetAuthData().then((res)=>{
@@ -83,10 +83,10 @@ const TopNav = () => {
               </p>
             </div>
             <div className="d-flex justify-content-center align-items-center gap-3">
-              <p className={`m-0 ${styles.welcomeText}`}>
+              {userName&&<p className={`m-0 ${styles.welcomeText}`}>
                 Welcome,
-                <span className={`m-0 ${styles.nameText}`}>{userName ?? "User"}</span>
-              </p>
+                <span className={`m-0 ${styles.nameText}`}>{userName}</span>
+              </p>}
               <div className={styles.vr}></div>
               <p className={`m-0 ${styles.nameText}`}>
                 <Link to="/order-list" className="linkStyle">

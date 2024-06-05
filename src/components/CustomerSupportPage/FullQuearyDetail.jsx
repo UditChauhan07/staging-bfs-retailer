@@ -30,9 +30,9 @@ function FullQuearyDetail({ data, setRest }) {
         return strTime;
     }
     const CommentPostHandler = () => {
-        setBtnAct(false)
         setComment('');
         if (comment.trim() != '') {
+            setBtnAct(false)
             let rawData = {
                 key: userData.x_access_token,
                 comment: {
@@ -77,7 +77,7 @@ function FullQuearyDetail({ data, setRest }) {
                                     <span>{data.Account.Name}</span>&nbsp; raised this on {date.getDate()}/{monthNames[date.getMonth()]}/{date.getFullYear()} </p>
 
                             </div>
-                            <p style={{ marginTop: "1rem" }}>{data.Description}</p>
+                            <p style={{ marginTop: "1rem" }}>{data.Description.split("User Desc:").length == 2 ? <>{data.Description.split("User Desc:")[1].split("Issue Desc:")[1]}<br/><b>User Description:</b> {data.Description.split("User Desc:")[1].split("Issue Desc:")[0]}</>:data.Description}</p>
 
                             <h6>Activity</h6>
                             <div className={Detail.HeightGiven}>
