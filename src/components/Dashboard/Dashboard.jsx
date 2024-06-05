@@ -12,6 +12,7 @@ import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
+import { UserIcon } from "../../lib/svg";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -113,7 +114,7 @@ const monthList = [
 ];
 
 function Dashboard({ dashboardData }) {
-  const [dataa,setDataa] = useState({
+  const [dataa, setDataa] = useState({
     series: [
       {
         name: "Diptyque",
@@ -152,7 +153,7 @@ function Dashboard({ dashboardData }) {
         curve: "smooth",
         width: 2,
       },
-  
+
       dataLabels: {
         enabled: true,
       },
@@ -164,7 +165,7 @@ function Dashboard({ dashboardData }) {
           opacityTo: 0,
         },
       },
-  
+
       xaxis: {
         categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       },
@@ -173,7 +174,7 @@ function Dashboard({ dashboardData }) {
           text: "$ (Dollar)",
         },
       },
-  
+
       tooltip: {
         y: {
           formatter: function (val) {
@@ -191,6 +192,7 @@ function Dashboard({ dashboardData }) {
   const [targetValue, setTargetValue] = useState();
   const [achievedSales, setAchievedSales] = useState();
   const [needle_data, setNeedle_data] = useState([]);
+  const [needle_data2, setNeedle_data2] = useState([]);
 
 
   //dashboard varibale used
@@ -263,7 +265,8 @@ function Dashboard({ dashboardData }) {
         }
         getDashboardata({ user })
           .then((dashboard) => {
-            console.log({dashboard});
+            setGoalList(dashboard.goalByMonth ?? [])
+            console.log({ dashboard });
             let totalOrder = 0;
             let totalPrice = 0;
             let totalTarget = 0;
@@ -281,19 +284,21 @@ function Dashboard({ dashboardData }) {
               })
               // setBrandData({ isLoaded: true, data: temp })
             }
-            let oldSalesAmount = dashboard?.oldSalesAmount||0;
-            let currentSalesAmount = totalPrice||0
-            let growth = parseInt(((currentSalesAmount-oldSalesAmount)/oldSalesAmount)*100)
-            setBox({ RETAILERS: activeBrand || 0, GROWTH: growth||0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
-            // let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
-            let tempValue = (totalPrice / (totalPrice*2) * 100) <= 100 ? totalPrice / (totalPrice*2) * 100 : 100;
+            let oldSalesAmount = dashboard?.oldSalesAmount || 0;
+            let currentSalesAmount = totalPrice || 0
+            let growth = parseInt(((currentSalesAmount - oldSalesAmount) / oldSalesAmount) * 100)
+            setBox({ RETAILERS: activeBrand || 0, GROWTH: growth || 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
+            let tempValue = (totalPrice / totalTarget * 100) <= 100 ? totalPrice / totalTarget * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
               { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
               { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
             ])
-            setTargetValue(formatNumber(totalPrice*2 || 0));
-            // setTargetValue(formatNumber(totalTarget || 0));
+            setNeedle_data2([
+              { name: "A", value: parseInt(tempValue * 2), color: "#16BC4E" },
+              { name: "B", value: parseInt(0), color: "rgb(171 195 203)" },
+            ])
+            setTargetValue(formatNumber(totalTarget || 0));
             setAchievedSales(formatNumber(totalPrice || 0));
             setIsLoading(true)
             //ownManuFactureData
@@ -341,7 +346,7 @@ function Dashboard({ dashboardData }) {
                     curve: "smooth",
                     width: 2,
                   },
-              
+
                   dataLabels: {
                     enabled: true,
                   },
@@ -353,7 +358,7 @@ function Dashboard({ dashboardData }) {
                       opacityTo: 0,
                     },
                   },
-              
+
                   xaxis: {
                     categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
                   },
@@ -362,7 +367,7 @@ function Dashboard({ dashboardData }) {
                       text: "$ (Dollar)",
                     },
                   },
-              
+
                   tooltip: {
                     y: {
                       formatter: function (val) {
@@ -452,8 +457,9 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
-  const [PurchaseYear,setPurchaseYear] = useState(currentYear)
-  const [PurchaseMonth,setPurchaseMonth] = useState(currentMonth)
+  const [PurchaseYear, setPurchaseYear] = useState(currentYear)
+  const [PurchaseMonth, setPurchaseMonth] = useState(currentMonth)
+  const [goalList, setGoalList] = useState([]);
   const changeMonthHandler = (value) => {
     setIsLoading(false);
     setManufacturerSalesYaer([]);
@@ -495,6 +501,66 @@ function Dashboard({ dashboardData }) {
     const yp = y0 + length * sin;
     return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
   };
+  const needle2 = (value, data, cx, cy, iR, oR, color) => {
+    let total = value;
+    // needle_data.forEach((v) => {
+    //   total += v.value;
+    // });
+    let ang = 180 - ((value / 100) * 180);
+    // if (value == 0) {
+    //   ang = 180;
+    // }
+    const length = (iR + 2.4 * oR) / 3;
+    const sin = Math.sin(-RADIAN * ang);
+    const cos = Math.cos(-RADIAN * ang);
+    const r = 5;
+    const x0 = cx + 5;
+    const y0 = cy + 5;
+    const xba = x0 + r * sin;
+    const yba = y0 - r * cos;
+    const xbb = x0 - r * sin;
+    const ybb = y0 + r * cos;
+    const xp = x0 + length * cos;
+    const yp = y0 + length * sin;
+    return [<circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />, <path d={`M${xba} ${yba}L${xbb} ${ybb} L${xp} ${yp} L${xba} ${yba}`} stroke="#none" fill={color} />];
+  };
+  let goalTarget = 0;
+  let goalSale = 0;
+  let goalDiff = 0;
+  function IsTableLoading() {
+    return (
+      <>
+        <tr>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+          <td>
+            <ContentLoader />
+          </td>
+        </tr>
+      </>
+    );
+  }
   return (
     <AppLayout
       filterNodes={
@@ -541,7 +607,7 @@ function Dashboard({ dashboardData }) {
                     <img src={img2} alt="" className={`text-center ${Styles.iconactive}`} />
                   </div>
                   <div className="">
-                    <p className={`text-end ${Styles.activetext}`}>Total GROWTH {PurchaseYear-1} VS {PurchaseYear}</p>
+                    <p className={`text-end ${Styles.activetext}`}>Total GROWTH {PurchaseYear - 1} VS {PurchaseYear}</p>
                     <h1 className={`text-end ${Styles.activetext1}`}>
                       {box.GROWTH}<span>%</span>
                     </h1>
@@ -584,9 +650,8 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-7">
-            <p className={Styles.Tabletext}>Your Purchases by brand {PurchaseYear}</p>
-
-            <div className={Styles.donuttop}>
+            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth]+'-'+PurchaseYear}</p>
+            <div className={Styles.donuttop} style={{height:'635px'}}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
               <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
               {!isLoading ? (
@@ -599,30 +664,125 @@ function Dashboard({ dashboardData }) {
             </div>
           </div>
           <div className="col-lg-5">
-            <p className={Styles.Tabletext}>Your Retail Performance Score {PurchaseYear}</p>
-            <div className={Styles.donuttop1}>
-              {!isLoading ? (
-                <ContentLoader />
-              ) : (
-                <div className="container">
-                  <p className={`text-end ${Styles.Tabletxt}`}>
-                    Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
-                  </p>
-                  <p className={`text-end ${Styles.Tabletxt1}`}>
-                    Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
-                  </p>
-                  <div className={Styles.donutbox}>
-                    <PieChart width={400} height={400}>
-                      <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
-                        {needle_data.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      {needle(value, needle_data, cx, cy, iR, oR, "#000000")}
-                    </PieChart>
+            <div className="d-flex">
+
+
+              <div className="col-lg-6">
+                <p className={Styles.Tabletext}>Purchases Performance</p>
+                <div className={Styles.donuttop1}>
+                  {!isLoading ? (
+                    <ContentLoader />
+                  ) : (
+                    <div className="container">
+                      <p className={`text-end ${Styles.Tabletxt}`}>
+                        Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
+                      </p>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0 }}>
+                        Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
+                      </p>
+                      <div className={Styles.donutbox}>
+                        <PieChart width={350} height={350}>
+                          <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
+                            {needle_data.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          {needle(value, needle_data, cx, cy, iR, oR, "#000000")}
+                        </PieChart>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <p className={Styles.Tabletext}>Retail Performance</p>
+                <div className={Styles.donuttop1}>
+                  {!isLoading ? (
+                    <ContentLoader />
+                  ) : (
+                    <div className="container">
+                      <p className={`text-end ${Styles.Tabletxt}`}>
+                        Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
+                      </p>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0 }}>
+                        Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
+                      </p>
+                      <div className={Styles.donutbox}>
+                        <PieChart width={350} height={350}>
+                          <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data2} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
+                            {needle_data2.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          {needle2(value, needle_data2, cx, cy, iR, oR, "#000000")}
+                        </PieChart>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className={Styles.DashboardWidth} style={{marginTop:'1rem'}}>
+              <p className={Styles.Tabletext}>Month to date(MTD): Goal by Brand</p>
+              <div className={`${Styles.goaltable} cardShadowHover`}>
+                <div className="">
+                  <div className={Styles.table_scroll}>
+                    <table className="table table-borderless ">
+                      <thead>
+                        <tr className={Styles.tablerow}>
+                          <th scope="col" className="ps-3">
+                            Opportunity Owner
+                          </th>
+                          <th scope="col">Sale Target</th>
+                          <th scope="col">Sale Amount</th>
+                          <th scope="col">Diff.</th>
+                        </tr>
+                      </thead>
+                      {!isLoading ? <IsTableLoading/> :
+                      goalList ? (
+                        <tbody>
+                          {goalList?.map((e) => {
+                            // console.log("e.....", e);
+                            goalTarget += Number(e?.MonthlyTarget || 0);
+                            goalSale += Number(e.MonthlySale || 0);
+                            goalDiff += Number(e?.Difference || 0);
+                            let targetDiff = e.TargetRollover
+                            return (
+                              <tr key={e}>
+                                <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }}>
+                                  <UserIcon /> {e.ManufacturerName}
+                                </td>
+                                <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>
+                                <td className={Styles.tabletd}>${formatNumber(e.MonthlySale || 0)}</td>
+                                {/* <td className={Styles.tabletd}>${formatNumber(e?.diff || 0)}</td> */}
+                                <td className={`${Styles.tabletd} ${Styles.flex}`}><span style={{ lineHeight: '20px' }}>${formatNumber(e.Difference || 0)}</span><span className={e.Difference <= 0 ? Styles.matchHolder : Styles.shortHolder}>{e.Difference <= 0 ? 'MATCH' : 'SHORT'}</span></td>
+                              </tr>
+                            );
+                          })}
+                          <tr className={`${Styles.tablerow} ${Styles.stickyBottom}`}>
+                            <th scope="col" className="ps-3">
+                              Total
+                            </th>
+                            <th scope="col">${formatNumber(goalTarget) ?? "0"}</th>
+                            <th scope="col">${formatNumber(goalSale) ?? "0"}</th>
+                            <th scope="col">${formatNumber(goalDiff) ?? "0"}</th>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          <td></td>
+                          <td>
+                            <div className={`d-flex justify-content-start align-items-center`} style={{ minHeight: "230px" }}>
+                              <p className={`${Styles.tablenodata}`}>No Data Found</p>
+                            </div>
+                          </td>
+                          <td></td>
+                        </tbody>
+                      )}
+                    </table>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
