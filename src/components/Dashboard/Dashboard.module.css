@@ -44,7 +44,10 @@
   line-height: 32px;
   letter-spacing: 1.12px;
 }
-
+.flex {
+  display: flex;
+  flex-direction: column;
+}
 .tablerow {
   --bs-table-bg: #f8f8f8;
   color: #000;
@@ -56,6 +59,13 @@
   position: sticky;
   top: 0rem;
   font-size: 20px;
+}
+.calHolder {
+  letter-spacing: 1px;
+  font-size: 9px;
+  line-height: 9px;
+  padding: 0;
+  margin: 0;
 }
 .stickyBottom{
   position: sticky;
@@ -256,7 +266,7 @@
 
 .donuttop1 {
   width: 95%;
-  height: 220px;
+  height: 250px;
   border: 1px black dashed;
   background-color: rgb(252, 252, 252);
 }
@@ -266,7 +276,36 @@
   align-items: center;
   display: flex;
 }
-
+.shortHolder {
+  font-size: 8px;
+  border-radius: 5px;
+  font-weight: bolder;
+  background: red;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 8px;
+  text-align: center;
+  padding: 2px;
+  width: fit-content;
+  border: 1px solid red;
+  letter-spacing: 1px;
+  margin-left: 15%;
+}
+.matchHolder {
+  font-weight: bolder;
+  border-radius: 5px;
+  letter-spacing: 1px;
+  font-size: 8px;
+  background: green;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 8px;
+  text-align: center;
+  padding: 2px;
+  width: fit-content;
+  border: 1px solid green;
+  margin-left: 15%;
+}
 .Tabletextt {
   color: #000;
   text-align: center;
