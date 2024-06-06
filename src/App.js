@@ -26,7 +26,6 @@ import MyBag from "./pages/MyBag";
 import OrderListPage from "./pages/OrderListPage";
 import Product from "./components/BrandDetails/Product";
 import BagProvider from "./context/BagContext";
-// import OrderList from "./pages/OrderListPage";
 import MyBagOrder from "./pages/MyBagOrder";
 import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
@@ -40,9 +39,6 @@ import CustomerService from "./pages/CustomerService";
 import BMAIssues from "./pages/BMAIssues";
 
 function App() {
-  // const Redirect = ({ href }) => {
-  //   window.location.href = href;
-  // };
   return (
     <UserProvider>
       <BagProvider>
@@ -55,7 +51,6 @@ function App() {
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
-            {/* <Route path="/product/:name" element={<ProductDetails/>}></Route> */}
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
@@ -63,7 +58,6 @@ function App() {
             <Route path="/orders" element={<Product />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
             <Route path="/order" element={<BrandsPage />}></Route>
-            {/*  */}
             <Route path="/customer-care" element={<CustomerCare />}></Route>
             <Route path="/customer-support" element={<CustomerSupport />}></Route>
             <Route
@@ -89,11 +83,8 @@ function App() {
             <Route path="/sign-up" element={<SignUp />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
-            {/* <Route path="/customerService" element={<CustomerServiceForm />}></Route> */}
             <Route path="/orderStatus" element={<OrderStatusIssues/>}/>
             <Route path="/customerService" element={<CustomerService />}></Route>
-            {/* <Route path="/brandManagementApproval" element={<BMAIssues />}></Route> */}
-            {/* 1234 */}
           </Routes>
         </BrowserRouter>
       </BagProvider>
