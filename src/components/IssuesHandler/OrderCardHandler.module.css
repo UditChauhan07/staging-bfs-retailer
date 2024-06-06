@@ -125,6 +125,7 @@ tr th{
   justify-content: center;
   align-items: center;
   float: right;
+  width: max-content;
 }
 .imgHolder {
   display: grid;
