@@ -159,12 +159,11 @@ function FullQuearyDetail({ data, setRest }) {
                                 <p>{data.Status}</p>
                             </div>
 
-                            <div className={Detail.ControlPriority}>
+                            {/* <div className={Detail.ControlPriority}>
                                 <h3>Priority</h3>
-                                <p>
-                                    {data.Priority == "High" ? <SupportStatusRed /> : data.Priority == "Medium" ? <SupportStatusYellow /> : <SupportStatusGreen />}
-                                    {data.Priority} Priority</p>
-                            </div>
+                                <p>{data.Priority == "High" ? <SupportStatusRed /> : data.Priority == "Medium" ? <SupportStatusYellow /> : <SupportStatusGreen />}
+                                {data.Priority} Priority</p>
+                            </div> */}
 
 
                             {data.ManufacturerName__c && <div className={Detail.ManufactureID}>

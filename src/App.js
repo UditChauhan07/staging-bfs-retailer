@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
-import MyRetailersPage from "./pages/MyRetailersPage";
 import { UserProvider } from "./context/UserContext";
 import BrandsPage from "./pages/BrandsPage";
 import WholesaleInquiry from "./pages/WholesaleInquiry"
@@ -26,18 +25,14 @@ import MyBag from "./pages/MyBag";
 import OrderListPage from "./pages/OrderListPage";
 import Product from "./components/BrandDetails/Product";
 import BagProvider from "./context/BagContext";
-// import OrderList from "./pages/OrderListPage";
 import MyBagOrder from "./pages/MyBagOrder";
 import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
-import CustomerServiceForm from "./pages/CustomerServiceForm";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
-import ProductDetails from "./pages/productDetails";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
-import BMAIssues from "./pages/BMAIssues";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -55,7 +50,6 @@ function App() {
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
-            {/* <Route path="/product/:name" element={<ProductDetails/>}></Route> */}
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
@@ -63,37 +57,24 @@ function App() {
             <Route path="/orders" element={<Product />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
             <Route path="/order" element={<BrandsPage />}></Route>
-            {/*  */}
             <Route path="/customer-care" element={<CustomerCare />}></Route>
             <Route path="/customer-support" element={<CustomerSupport />}></Route>
-            <Route
-              path="/CustomerSupportDetails"
-              element={<CustomerSupportDetails />}
-            ></Route>
+            <Route path="/CustomerSupportDetails" element={<CustomerSupportDetails />} ></Route>
             <Route path="/new-arrivals" element={<NewArrivals />}></Route>
-            <Route
-              path="/marketing-calendar"
-              element={<MarketingCalendar />}
-            ></Route>
-            <Route
-              path="/education-center"
-              element={<EducationCenter />}
-            ></Route>
+            <Route path="/marketing-calendar" element={<MarketingCalendar />} ></Route>
+            <Route path="/education-center" element={<EducationCenter />}></Route>
             <Route path="/about-us" element={<AboutUs />}></Route>
             <Route path="/wholesale-inquiry" element={<WholesaleInquiry />}></Route>
-            <Route path="/careers" element={<Careers/>}></Route>
-            <Route path="/instagram" element={<Instagram/>}></Route>
-            <Route path="/join-us" element={<JoinUs/>}></Route>
-            <Route path="/linkdin" element={<Linkdin/>}></Route>
+            <Route path="/careers" element={<Careers />}></Route>
+            <Route path="/instagram" element={<Instagram />}></Route>
+            <Route path="/join-us" element={<JoinUs />}></Route>
+            <Route path="/linkdin" element={<Linkdin />}></Route>
             <Route path="logout" element={<Logout />}></Route>
             <Route path="/sign-up" element={<SignUp />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
-            {/* <Route path="/customerService" element={<CustomerServiceForm />}></Route> */}
-            <Route path="/orderStatus" element={<OrderStatusIssues/>}/>
+            <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
-            {/* <Route path="/brandManagementApproval" element={<BMAIssues />}></Route> */}
-            {/* 1234 */}
           </Routes>
         </BrowserRouter>
       </BagProvider>

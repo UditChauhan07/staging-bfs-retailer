@@ -51,13 +51,10 @@ const MarketingCalendar = () => {
           setProductList(productRes)
           setIsloaed(true)
           setTimeout(() => {
-
-            var element = document.getElementById("Apr");
+            let getMonth = new Date().getMonth();
+            var element = document.getElementById(monthNames[getMonth]);
             if (element) {
-              element.scrollIntoView();
-              element.scrollIntoView(false);
-              element.scrollIntoView({ block: "end" });
-              element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+              element.scrollIntoView({ behavior: "smooth", block: "center" });
             }
           }, 2000);
         }).catch((err) => console.log({ err }))
