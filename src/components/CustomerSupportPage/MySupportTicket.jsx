@@ -20,11 +20,11 @@ function MySupportTicket({ data, PageSize, currentPage }) {
                         {filteredOrders?.length > 0 && filteredOrders.map((item, index) => {
                             const date = new Date(item.Date_Opened__c);
                             return (
-                                <Link to={`${'/CustomerSupportDetails?id='+item.Id}`} className={Styles.QuearyTicket}>
+                                <Link to={`${'/CustomerSupportDetails?id=' + item.Id}`} className={Styles.QuearyTicket}>
                                     <div className={Styles.customerProblem}>
                                         <p>
-                                        {item.RecordType?.Name ? item.RecordType?.Name == "Customer Service Issues" ?<CustomerServiceIcon />: item.RecordType?.Name == "Order Status"?
-                                            <OrderStatusIcon />:item.RecordType?.Name == "Management Cases"||"Marketing Support Issues"? <MarketingSupportIcon />:<DefaultSupportIcon/>:<DefaultSupportIcon/>}
+                                            {item.RecordType?.Name ? item.RecordType?.Name == "Customer Service Issues" ? <CustomerServiceIcon /> : item.RecordType?.Name == "Order Status" ?
+                                                <OrderStatusIcon /> : item.RecordType?.Name == "Management Cases" || "Marketing Support Issues" ? <MarketingSupportIcon /> : <DefaultSupportIcon /> : <DefaultSupportIcon />}
                                             <span className={Styles.Queary}>{item.RecordType?.Name ? item.RecordType?.Name : "No Record Type"} </span>&nbsp;for&nbsp;
                                             <span className={Styles.Underline}>{item.Reason} </span>&nbsp;having PO<span className={Styles.PoNumberStatus}>#{item.Associated_PO_Number__c}</span> &nbsp;<span className={Styles.CreatedInBold}>Created</span>&nbsp;on&nbsp; <span className={Styles.QuearyRiseDate}>{`${date.getDate()} ${monthNames[date.getMonth()]}`}</span>
                                         </p>
@@ -42,7 +42,7 @@ function MySupportTicket({ data, PageSize, currentPage }) {
                                             <p className={Styles.ShopNameLocation}>
                                                 <UserChecked />&nbsp;{item.Account.Name}
                                             </p>
-                                            <p className={Styles.Para2}>{item.ManufacturerName__c &&<>For&nbsp;<span className={Styles.BrandMName}>{item.ManufacturerName__c}</span></>}</p>
+                                            <p className={Styles.Para2}>{item.ManufacturerName__c && <>For&nbsp;<span className={Styles.BrandMName}>{item.ManufacturerName__c}</span></>}</p>
 
                                         </div>
 
@@ -51,10 +51,9 @@ function MySupportTicket({ data, PageSize, currentPage }) {
                                             <h6>{`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`}</h6>
                                         </div>
 
-                                        <div className={Styles.CustomerCloneColor}>
+                                        {/* <div className={Styles.CustomerCloneColor}>
                                         {item.Priority == "High"?<SupportStatusRed/> :item.Priority == "Medium"?<SupportStatusYellow/>:<SupportStatusGreen/>}
-
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </Link>
                             )

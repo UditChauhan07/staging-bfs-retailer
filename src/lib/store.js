@@ -502,7 +502,7 @@ export async function getSupportList({ user }) {
   };
   let bodyContent = new FormData();
   bodyContent.append("key", user?.data?.x_access_token);
-  bodyContent.append("accountId", user?.data?.accountId);
+  bodyContent.append("accountId", "0013b000020oDPDAA2"||user?.data?.accountId);
 
   let response = await fetch(url + "XIj26x1E4d2kMKg", {
     method: "POST",
