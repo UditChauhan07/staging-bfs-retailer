@@ -25,6 +25,12 @@ function MyBagFinal() {
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
+  const [limitInput, setLimitInput] = useState("");
+
+  const handleNameChange = (event) => {
+      const limit = 20;
+      setLimitInput(event.target.value.slice(0, limit));
+    };
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
@@ -45,7 +51,6 @@ function MyBagFinal() {
             data[bagValue?.Manufacturer?.id] = {};
           }
           if (Object.values(data[bagValue.Manufacturer.id]).length > 0) {
-            console.log({aaas:Object.values(data[bagValue.Manufacturer.id]).length});
             setProductImage({ isLoaded: true, images: data[bagValue.Manufacturer.id] })
           } else {
             setProductImage({ isLoaded: false, images: {} })
@@ -93,15 +98,17 @@ function MyBagFinal() {
   }
 
   const orderPlaceHandler = () => {
+    if(localStorage.getItem("Sales_Rep__c")){
+    let fetchBag = fetchBeg();
     setIsOrderPlaced(1);
     GetAuthData()
       .then((user) => {
         // let bagValue = fetchBeg()
-        if (bagValue) {
+        if (fetchBag) {
           // setButtonActive(true)
           let list = [];
           let orderType = "Wholesale Numbers";
-          let productLists = Object.values(bagValue.orderList);
+          let productLists = Object.values(fetchBag.orderList);
           if (productLists.length) {
             productLists.map((product) => {
               if (product.product.Category__c == "PREORDER") orderType = "Pre Order";
@@ -115,26 +122,26 @@ function MyBagFinal() {
             });
           }
           let begToOrder = {
-            AccountId: bagValue?.Account?.id,
-            Name: bagValue?.Account?.name,
-            ManufacturerId__c: bagValue?.Manufacturer?.id,
+            AccountId: fetchBag?.Account?.id,
+            Name: fetchBag?.Account?.name,
+            ManufacturerId__c: fetchBag?.Manufacturer?.id,
             PONumber: PONumber,
             desc: orderDesc,
             SalesRepId: localStorage.getItem("Sales_Rep__c"),
             Type: orderType,
-            ShippingCity:bagValue?.Account?.address?.city,
-            ShippingStreet:bagValue?.Account?.address?.street,
-            ShippingState:bagValue?.Account?.address?.state,
-            ShippingCountry:bagValue?.Account?.address?.country,
-            ShippingZip:bagValue?.Account?.address?.postalCode,
+            ShippingCity:fetchBag?.Account?.address?.city,
+            ShippingStreet:fetchBag?.Account?.address?.street,
+            ShippingState:fetchBag?.Account?.address?.state,
+            ShippingCountry:fetchBag?.Account?.address?.country,
+            ShippingZip:fetchBag?.Account?.address?.postalCode,
             list,
             key: user.data.x_access_token,
-            shippingMethod:bagValue.Account.shippingMethod
+            shippingMethod:fetchBag.Account.shippingMethod
           };
           OrderPlaced({ order: begToOrder })
             .then((response) => {
               if (response) {
-                bagValue.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
+                fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                 localStorage.removeItem("orders");
                 navigate("/order-list");
                 setIsOrderPlaced(2);
@@ -148,6 +155,9 @@ function MyBagFinal() {
       .catch((error) => {
         console.error({ error });
       });
+    }else{
+      alert("no sales rep.")
+    }
   };
   const handleRemoveProductFromCart = (ele) => {
     addOrder(ele.product, 0, ele.discount);
@@ -241,7 +251,12 @@ function MyBagFinal() {
                   {!isPOEditable ? (
                     <b> {buttonActive ? PONumber : "---"}</b>
                   ) : (
-                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }} />
+                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }} 
+                    id="limit_input"
+                    name="limit_input"
+                    value={limitInput}
+                    onChange={handleNameChange}
+                    />
                   )}
                 </h5>
                 {!isPOEditable && (
@@ -422,7 +437,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")}/>
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>
   );

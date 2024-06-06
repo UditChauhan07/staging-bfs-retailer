@@ -34,7 +34,7 @@ const CustomerSupportDetails = () => {
       });
   }, [deatilsId,reset]);
   if (!deatilsId || deatilsId == "") return navigate("/customer-support");
-  if (!isLoaded) return <Loading />;
+  if (!isLoaded) return <Loading height={'80vh'}/>;
   return (
     <AppLayout>
       <FullQuearyDetail data={detailsData} setRest={setRest}/>

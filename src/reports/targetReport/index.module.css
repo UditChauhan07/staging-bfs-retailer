@@ -14,6 +14,14 @@
   letter-spacing: 1.12px;
   padding-left: 20px !important;
 }
+
+.breakHolder{
+  width: 2px;
+  height: 100%;
+  background: #fff;
+  margin: auto;
+}
+
 .month {
   background-color: #eeeeee !important;
   color: #000 !important;

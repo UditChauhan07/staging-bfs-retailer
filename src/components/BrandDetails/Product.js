@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import styles from "./styles.module.css";
 import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
-import { MdOutlineDownload } from "react-icons/md";
+import { MdOutlineDownload, MdOutlineUpload } from "react-icons/md";
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Loading from "../Loading";
@@ -12,7 +12,7 @@ import ModalPage from "../Modal UI";
 import { useBag } from "../../context/BagContext";
 import { GetAuthData, ShareDrive, fetchBeg ,getProductImageAll, getProductList} from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
-import { BackArrow } from "../../lib/svg";
+import { BackArrow, CloseButton } from "../../lib/svg";
 import AppLayout from "../AppLayout";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -207,6 +207,7 @@ function Product() {
   };
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
+    if(begValue.Account.id == localStorage.getItem("AccountId__c")&&begValue.Manufacturer.id == localStorage.getItem("ManufacturerId__c")){
     if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
       let bagPrice = 0;
       let bagTesterPrice = 0;
@@ -231,6 +232,9 @@ function Product() {
       setEmptyBag(true);
       setAlert(0);
     }
+  }else{
+    navigate("/my-bag");
+  }
   };
   useEffect(() => {
     setEmptyBag(false);
@@ -419,17 +423,19 @@ function Product() {
                 />
                 <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Enter Product name,UPC & SKU"} minWidth="260px" />
                 <button
-                  className="border px-2.5 py-1 leading-tight tracking-[1.2px] uppercase"
+                  className="border px-2 py-1 leading-tight tracking-[1.2px] uppercase d-grid"
                   onClick={() => {
                     setSortBy("Price: High To Low");
                     setSearchBy("");
                     setProductTypeFilter("Wholesale");
                   }}
                 >
-                  CLEAR ALL
+                                              <CloseButton crossFill={'#fff'} height={20} width={20} />
+              <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
                 </button>
-                <button className="border px-2.5 py-1 leading-tight uppercase tracking-[1.2px]" onClick={() => setOrderFromModal(true)}>
-                  Upload Order Form
+                <button className="border px-2 py-1 leading-tight uppercase tracking-[1.2px] d-grid" onClick={() => setOrderFromModal(true)}>
+                <MdOutlineUpload size={20} className="m-auto"/>
+                    <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>Order Form</small>
                 </button></>}
                
               </>

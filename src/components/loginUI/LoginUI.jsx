@@ -117,13 +117,7 @@ const LoginUI = () => {
                     Remember me
                   </div>
 
-                  <div className={styles.Forget}> <Link to={"/sign-up"}>
-                <div style={{color:'#000'}} onClick={() => navigate("/sign-up")}>
-                  <p>
-                    Don’t have an account ? <span>Sign up.</span>
-                  </p>
-                </div>
-              </Link></div>
+                  <div className={styles.Forget}>Forgot your password?</div>
                 </div>
 
                 <div className={styles.ButtonLogin}>
@@ -132,7 +126,15 @@ const LoginUI = () => {
                   </button>
                 </div>
               </Form>
+              <Link to={"/sign-up"}>
+                <div className={styles.SignUpW} onClick={() => navigate("/sign-up")}>
+                  <p>
+                    Don’t have an account ? <span>Sign up.</span>
+                  </p>
+                </div>
+              </Link>
             </div>
+
 
             <div className={styles.PolicyA}>
               <p>

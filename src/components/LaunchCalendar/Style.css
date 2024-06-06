@@ -31,7 +31,7 @@ h1.TopHeading {
     left: 0;
     color: #237C94;  
     text-align: center;
-    background-color: #ECFBFF;
+    background-color: #e5e5e5;
     font-size: 18px;    
     border-radius: 100px;
     font-weight: 600;
@@ -60,7 +60,7 @@ h1.TopHeading {
     margin-left: 50px;
 }
 .DateCurrent01 {
-    background-color: #ecfbff;
+    background-color: #e5e5e5;
     color: #237ca2;
     font-size: 18px;
     font-weight: 500;
@@ -71,7 +71,7 @@ h1.TopHeading {
     letter-spacing: 1.2px;
 }
 .DateCurrent02 {
-    background-color: #eaffee;
+    background-color: #f3e8e0;
     color: #3c9a4e;
     font-size: 18px;
     font-weight: 500;
@@ -82,7 +82,7 @@ h1.TopHeading {
     letter-spacing: 1.2px;
   }
   .DateCurrent03 {
-    background-color: #ffdcdc;
+    background-color: #e0d3cc;
     color: #9e4545;
     font-size: 16px;
     font-weight: 500;
@@ -122,7 +122,7 @@ span.ProductQty {
     color: #fff;
     text-align: center;
     margin-left: 10px;
-    padding: 2px 8px;
+    padding: 5px 8px 5px 8px;
     border-radius: 7px;
     text-transform: uppercase;
     font-size: 15px;
@@ -165,7 +165,7 @@ width: 60px;
   color: #3C9A4E;
   font-size: 18px;
   text-align: center;
-  background-color: #EAFFEE;
+  background-color: #f3e8e0;
   font-size: 18px;
   font-weight: 600;
   border-radius: 100px;
@@ -193,7 +193,7 @@ width: 60px;
   color: #9E4545;
   font-size: 18px;
   text-align: center;
-  background-color: #FFDCDC;
+  background-color: #e0d3cc;
   font-size: 18px;
   font-weight: 600;
   border-radius: 100px;
@@ -307,7 +307,7 @@ gap: 2px !important;
         color: #fff;
         text-align: center;
         margin-left: 10px;
-        padding: 0px 8px 10px 8px;
+        padding: 5px 8px 5px 8px;
         border-radius: 7px;
         text-transform: uppercase;
         font-size: 14px;

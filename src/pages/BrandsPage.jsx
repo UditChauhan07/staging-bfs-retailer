@@ -6,10 +6,10 @@ import { useManufacturer } from "../api/useManufacturer";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router";
 import Layout from "../components/Layout/Layout";
-
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
+import { CloseButton, EmailIcon } from "../lib/svg";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -31,19 +31,19 @@ const brandsImageMap = {
   ARAMIS: "Aramis.png",
   "Victoria Beckham Beauty": "victoria.png",
   "Re-Nutriv": "Re-Nutriv-2.png",
-  "L'Occitane": "Looctaine.png",
+  "LOccitane": "LOccitane.png",
 };
 
 const defaultImage = "default.jpg";
 
 const BrandsPage = () => {
-  const [manufacturers,setManufacturers] = useState({isLoading:false,data:[]});
+  const [manufacturers, setManufacturers] = useState({ isLoading: false, data: [] });
   // const [highestRetailers, setHighestRetailers] = useState(true);
   const [searchBy, setSearchBy] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [userData,setUserData] = useState({}); 
-  const [filteredPageData,setFilteredPageData] = useState([]); 
-  
+  const [sortBy, setSortBy] = useState(null);
+  const [userData, setUserData] = useState({});
+  const [filteredPageData, setFilteredPageData] = useState([]);
+  const [label, setLabel] = useState();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -51,45 +51,66 @@ const BrandsPage = () => {
     if (!userData) {
       navigate("/");
     }
-    GetAuthData().then((user)=>{
-      setUserData(user.data)
-      getRetailerBrands({rawData:{accountId:user?.data?.accountId,key:user?.data?.x_access_token,}}).then((prodcut)=>{
-        setManufacturers({...manufacturers, isLoading : true , data : prodcut})
-      }).catch((getProductError)=>{
-        console.log({getProductError});
+    GetAuthData()
+      .then((user) => {
+        setUserData(user.data);
+        getRetailerBrands({ rawData: { accountId: user?.data?.accountId, key: user?.data?.x_access_token } })
+          .then((prodcut) => {
+            setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
+          })
+          .catch((getProductError) => {
+            console.log({ getProductError });
+          });
       })
-    }).catch((err)=>{
-      console.log({err});
-    })
+      .catch((err) => {
+        console.log({ err });
+      });
   }, []);
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     if (!Array.isArray(manufacturers?.data)) {
-          return [];
-        }
-        let newValues = manufacturers?.data?.map((brand) => brand);
-    
-        if (searchBy) {
-          newValues = newValues?.filter((value) =>
-            value.Name?.toLowerCase().includes(searchBy?.toLowerCase())
-          );
-        }
-        if (sortBy) {
-          newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
-        } else {
-          newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
-        }
-        if (sortBy) {
-          if (sortBy === "a-z") {
-            newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
-          } else if (sortBy === "z-a") {
-            newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
-          }
-        }
-    
-      setFilteredPageData(newValues)
-    }, [searchBy, manufacturers, sortBy]);
+      return [];
+    }
+    let newValues = manufacturers?.data?.map((brand) => brand);
+
+    if (searchBy) {
+      newValues = newValues?.filter((value) => value.Name?.toLowerCase().includes(searchBy?.toLowerCase()));
+    }
+    // ..............
+    switch (sortBy) {
+      case "highest":
+        newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
+        break;
+      case "lowest":
+        newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
+        break;
+      case "a-z":
+        newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
+        break;
+      case "z-a":
+        newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
+        break;
+      default:
+        newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
+    }
+    // ...............
+    // if (sortBy) {
+    //   newValues = newValues?.sort((a, b) => b.productCount - a.productCount);
+    // } else {
+    //   newValues = newValues?.sort((a, b) => a.productCount - b.productCount);
+    // }
+    // if (sortBy) {
+    //   if (sortBy === "a-z") {
+    //     newValues = newValues?.sort((a, b) => a.Name?.localeCompare(b.Name));
+    //   } else if (sortBy === "z-a") {
+    //     newValues = newValues?.sort((a, b) => b.Name?.localeCompare(a.Name));
+    //   }
+    // }
+    // ..............
+    setFilteredPageData(newValues);
+  }, [searchBy, manufacturers, sortBy]);
   console.log({ filteredPageData });
+
   
   return (
     <>
@@ -97,7 +118,7 @@ const BrandsPage = () => {
         filterNodes={
           <>
             <FilterItem
-              label="Sort by"
+              label="sort by"
               name="Sort-by"
               value={sortBy}
               options={[
@@ -111,33 +132,31 @@ const BrandsPage = () => {
                 },
                 {
                   label: "Highest Product ",
-                  value: true,
+                  value: "highest",
                 },
                 {
                   label: "Lowest Product",
-                  value: false,
+                  value: "lowest",
                 },
               ]}
               onChange={(value) => {
                 setSortBy(value);
+               
               }}
             />
-            
-            <FilterSearch
-              onChange={(e) => setSearchBy(e.target.value)}
-              value={searchBy}
-              placeholder={"Search by brands"}
-              minWidth={"155px"}
-            />
+
+            <FilterSearch onChange={(e) => setSearchBy(e.target.value)} value={searchBy} placeholder={"Search by brands"} minWidth={"155px"} />
             <button
-              className="border px-2.5 py-1 leading-tight"
+              className="border px-2.5 py-1 leading-tight d-grid"
               onClick={() => {
                 // setHighestRetailers(true);
                 setSearchBy("");
-                setSortBy("");
+                setSortBy(null);
+                setLabel("sortBy")
               }}
             >
-              CLEAR ALL
+                            <CloseButton crossFill={'#fff'} height={20} width={20} />
+              <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
             </button>
           </>
         }
@@ -157,21 +176,14 @@ const BrandsPage = () => {
               {filteredPageData?.length ? (
                 <>
                   {filteredPageData?.map((brand, index) => (
-                    <BrandCard
-                      key={index}
-                      image={brandsImageMap[brand?.Name] || defaultImage}
-                      brand={brand}
-                      userData={userData}
-                    />
+                    <BrandCard key={index} image={brandsImageMap[brand?.Name] || defaultImage} brand={brand} userData={userData} />
                   ))}
                 </>
               ) : null}
             </div>
             {!filteredPageData?.length && (
               <div className="lg:min-h-[300px] xl:min-h-[380px]">
-                <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
-                  No data found
-                </div>
+                <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
               </div>
             )}
           </div>
@@ -182,4 +194,3 @@ const BrandsPage = () => {
 };
 
 export default BrandsPage;
-

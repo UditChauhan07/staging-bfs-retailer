@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ProductDetails from "../../pages/productDetails";
+import { hexabrand, hexabrandText } from "../../lib/store";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-function LaunchCalendar({ productList, selectBrand,brand, month }) {
+function LaunchCalendar({ productList, selectBrand, brand, month }) {
   const [isEmpty, setIsEmpty] = useState(false);
   // useEffect(() => {
   //   let temp = true;
@@ -16,41 +18,52 @@ function LaunchCalendar({ productList, selectBrand,brand, month }) {
   //   });
   // }, [selectBrand]);
 
-
+  const [productDetailId, setProductDetailId] = useState();
   const [filterData, setFilterData] = useState()
   useEffect(() => {
     if (!month && !selectBrand) {
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
-          return brand.some((brand) => brand.Name === item.brand);
+          return brand.some((brand) => brand.Name === item.ManufacturerName__c);
         });
         return { ...months, content: filterData };
       });
       setFilterData(newValues)
       setIsEmpty(false);
 
-    }else{
+    } else {
       let isEmptyFlag = true;
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
           // let match = item.OCDDate.split("/")
-          // console.log(match)
           if (month) {
             if (selectBrand) {
-              if (selectBrand == item.brand) {
-                return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.brand;
+              if (selectBrand == item.ManufacturerName__c) {
+                if (month == "TBD") {
+                  return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+                } else {
+                  return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+                }
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase())
+              if (month == "TBD") {
+                return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              } else {
+                return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              }
             }
             // return match.includes(month.toUpperCase() )
           } else {
             if (selectBrand) {
-              if (selectBrand == item.brand) {
-                return true;
+              if (selectBrand == item.ManufacturerName__c) {
+                if (brand.some((brand) => brand.Name === item.ManufacturerName__c)) {
+                  return true;
+                }
               }
             } else {
-              return true;
+              if (brand.some((brand) => brand.Name === item.ManufacturerName__c)) {
+                return true;
+              }
             }
             // If month is not provided, return all items
           }
@@ -64,57 +77,62 @@ function LaunchCalendar({ productList, selectBrand,brand, month }) {
       setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
-    
-  }, [month,selectBrand,productList,brand]);
 
-return (
+  }, [month, selectBrand, productList, brand]);
+
+  return (
     <div id="Calendar">
       <div className="container">
         <h1 className="TopHeading">Marketing Calendar</h1>
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
-              {!isEmpty? (
+              {!isEmpty ? (
                 filterData?.map((month, index) => {
-                  if (month.content.length>0) {
+                  if (month.content.length) {
                     return (
                       <li key={index}>
                         <span className={`timelineHolder0${(index % 3) + 1}`}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
-                          if (!selectBrand || selectBrand == product.brand){
-                          return (
-                            <>
-                              <div className="timeline-content" key={productIndex}>
-                                <div className="ProductInfo">
-                                  <div className="BothDateTopFlex">
-                                    <div className="ShipDate">
-                                      <span>Ship Date</span>
-                                      <div className={`DateCurrent0${(index % 3) + 1}`}>{product.date}</div>
-                                    </div>
-                                    <div className="ShipDate EDate">
-                                      <span>OCD</span>
-                                      <div className="DateEod">{product.OCDDate}</div>
-                                    </div>
-                                  </div>
-                                  <div className="d-flex mt-2">
-                                    <div className="m-auto ProductImg">
-                                      <img src={product.image} alt={product.name} />
-                                    </div>
-                                    <div className="LaunchProductDetail">
-                                      <h3>{product.name}</h3>
-                                      <div className="size">
-                                        Size <span className="ProductQty">{product.size}</span>
+                          if (!selectBrand || selectBrand == product.ManufacturerName__c) {
+                            return (
+                              <>
+                                <div className="timeline-content" key={productIndex}>
+                                  <div className="ProductInfo">
+                                    <div className="BothDateTopFlex">
+                                      <div className="ShipDate">
+                                        <span>Ship Date</span>
+                                        {/* style={{ backgroundColor: hexabrand[product.ManufacturerId__c], color: hexabrandText[product.ManufacturerId__c] }} */}
+                                        <div className={`DateCurrent0${(index % 3) + 1}`} >{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
                                       </div>
-                                      <p>{product.description}</p>
+                                      <div className="ShipDate EDate">
+                                        <span>OCD</span>
+                                        <div className="DateEod">{product.Launch_Date__c ? product.Launch_Date__c.split("-")[2] + '/' + monthNames[parseInt(product.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Launch_Date__c.split("-")[0] : 'NA'}</div>
+                                      </div>
+                                    </div>
+                                    <div className="d-flex mt-2">
+                                      <div className="m-auto ProductImg">
+                                        <img src={product?.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
+                                          setProductDetailId(product.Id);
+                                        }} style={{ cursor: 'pointer' }} />
+                                      </div>
+                                      <div className="LaunchProductDetail">
+                                        <h3 onClick={() => {
+                                          setProductDetailId(product.Id);
+                                        }} style={{ cursor: 'pointer' }}>{product.Name}</h3>
+                                        <div className="size">
+                                          Size <span className="ProductQty">{product.Size_Volume_Weight__c}</span>
+                                        </div>
+                                        <p>{product.Description}</p>
+                                      </div>
                                     </div>
                                   </div>
+                                  <div className="launchBrand">
+                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} />
+                                  </div>
                                 </div>
-                                <div className="launchBrand">
-                                  <img className="img-fluid" src={product.brandLogo} alt={`${product.name} logo`} />
-                                </div>
-                              </div>
-                            </>
-                          );
+                              </>
+                            );
                           }
                         })}
                       </li>
@@ -144,6 +162,7 @@ return (
           </div>
         </div>
       </div>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false}/>
     </div>
   );
 }

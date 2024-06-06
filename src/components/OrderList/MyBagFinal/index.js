@@ -10,7 +10,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import LoaderV2 from "../../loader/v2";
 import ProductDetails from "../../../pages/productDetails";
 
-function MyBagFinal() {
+function MyBagFinal({setOrderDetail}) {
   const [OrderData, setOrderData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,7 +19,8 @@ function MyBagFinal() {
   const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
   const Key = JSON.parse(localStorage.getItem("Api Data"));
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
-  const [ productDetailId, setProductDetailId] = useState(null)
+  const [productDetailId, setProductDetailId] = useState(null)
+  const [invoices, setInvoice] = useState([]);
   useEffect(() => {
     // let rawData = {key:Key.data.access_token,id:OrderId}
     // getOrderDetailsBasedId({rawData}).then((res)=>{
@@ -37,11 +38,7 @@ function MyBagFinal() {
   let BodyContent = new FormData();
   BodyContent.append("key", Key.data.access_token);
   BodyContent.append("opportunity_id", OrderId);
-  // getOrderDetailsInvoice({ rawData: { key: Key.data.access_token, id: OrderId } }).then((response) => {
-  //   console.log({ response });
-  // }).catch((error) => {
-  //   console.error({ error });
-  // })
+
   const getOrderDetails = async () => {
     let data = ShareDrive();
     if (!data) {
@@ -54,19 +51,20 @@ function MyBagFinal() {
           if (!data[res?.ManufacturerId__c]) {
             data[res?.ManufacturerId__c] = {};
           }
-          if (Object.values(data[res?.ManufacturerId__c]).length > 0) {
+          if (Object.values(data[res?.ManufacturerId__c])?.length > 0) {
             setProductImage({ isLoaded: true, images: data[res?.ManufacturerId__c] })
           } else {
             setProductImage({ isLoaded: false, images: {} })
           }
         }
         setOrderData(res);
+        setOrderDetail(res)
         setIsLoading(true);
-        if (res.OpportunityLineItems.length > 0) {
+        if (res.OpportunityLineItems?.length > 0) {
           let productCode = "";
           res.OpportunityLineItems?.map((element, index) => {
             productCode += `'${element?.ProductCode}'`
-            if (res.OpportunityLineItems.length - 1 != index) productCode += ', ';
+            if (res.OpportunityLineItems?.length - 1 != index) productCode += ', ';
           })
           getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
             if (res) {
@@ -84,6 +82,11 @@ function MyBagFinal() {
             console.log({ err });
           })
         }
+        getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
+          setInvoice(response.data)
+        }).catch((error) => {
+          console.error({ error });
+        })
       }).catch((err1) => {
         console.log({ err1 });
       })
@@ -97,7 +100,7 @@ function MyBagFinal() {
   const invoiceHandler = () => {
     if (false) {
     } else {
-      GetAuthData().then((user)=>{
+      GetAuthData().then((user) => {
         let ticket = {
           orderStatusForm: {
             accountId: OrderData?.AccountId,
@@ -114,27 +117,54 @@ function MyBagFinal() {
           },
         };
         let statusOfSupport = supportShare(ticket)
-        .then((response) => {
-          if (response) navigate("/orderStatusForm");
-        })
-        .catch((error) => {
-          console.error({ error });
-        });
-      }).catch((err)=>{
-        console.error({err});
+          .then((response) => {
+            if (response) navigate("/orderStatusForm");
+          })
+          .catch((error) => {
+            console.error({ error });
+          });
+      }).catch((err) => {
+        console.error({ err });
       })
     }
   };
+
+  function downloadFiles(invoices) {
+    GetAuthData().then((user) => {
+    invoices.forEach(file => {
+      const link = document.createElement("a");
+      link.href = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+      link.download = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }).catch((err) => {
+    console.log({ err });
+  })
+  }
+
   if (!isLoading) return <Loading />;
 
   return (
     <div>
+            <style>
+        {`@media print {
+  .MainInnerPrint {
+    height: unset;
+  }
+  .filter-container,.d-none-print {
+    display: none;
+  }
+}`}
+      </style>
       <section>
         <div className=" mt-4">
-          <div>
+          <div id="orderDetailerContainer">
             <div className={Styles.MyBagFinalTop}>
               <div className={Styles.MyBagFinalRight}>
                 <svg
+                data-html2canvas-ignore
                   xmlns="http://www.w3.org/2000/svg"
                   style={{ cursor: "pointer" }}
                   width="24"
@@ -142,6 +172,7 @@ function MyBagFinal() {
                   viewBox="0 0 24 16"
                   fill="none"
                   onClick={handleback}
+                  className="d-none-print"
                 >
                   <path
                     d="M8.94284 2.27615C9.46349 1.75544 9.46349 0.911229 8.94284 0.390521C8.42213 -0.130174 7.57792 -0.130174 7.05721 0.390521L2.3911 5.05666C2.39092 5.05684 2.39128 5.05648 2.3911 5.05666L0.390558 7.05721C0.153385 7.29442 0.024252 7.59868 0.00313201 7.90895C-0.00281464 7.99562 -0.000321319 8.08295 0.010852 8.17002C0.0431986 8.42308 0.148118 8.66868 0.325638 8.87322C0.348651 8.89975 0.372651 8.92535 0.397585 8.94989L7.05721 15.6095C7.57792 16.1302 8.42213 16.1302 8.94284 15.6095C9.46349 15.0888 9.46349 14.2446 8.94284 13.7239L4.55231 9.33335H22.6667C23.4031 9.33335 24 8.73642 24 8.00002C24 7.26362 23.4031 6.66668 22.6667 6.66668H4.55231L8.94284 2.27615Z"
@@ -169,27 +200,27 @@ function MyBagFinal() {
                       Order Details ({OrderData?.OpportunityLineItems?.length})
                     </h3>
                     <div className={Styles.scrollP}>
-                      <div className={Styles.MainInner}>
+                      <div className={`${Styles.MainInner} MainInnerPrint`}>
                         <div className={Styles.Mainbox3}>
                           {OrderData.OpportunityLineItems?.length > 0 ? (
                             OrderData.OpportunityLineItems?.map((item) => {
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
-                                  <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
+                                    <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
                                       {
                                         !productImage.isLoaded ? <LoaderV2 /> :
                                           productImage.images?.[item.ProductCode] ?
                                             productImage.images[item.ProductCode]?.ContentDownloadUrl ?
-                                              <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
-                                              : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
-                                            : <img src={Img1} alt="img" onClick={()=>{setProductDetailId(item?.Product2Id)}}/>
+                                              <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                              : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                       }
                                     </div>
                                     <div className={Styles.Mainbox3}>
-                                    <h2 onClick={()=>{setProductDetailId(item?.Product2Id)}} style={{cursor:'pointer'}}>{item.Name.split(OrderData.Name)}</h2>
+                                      <h2 onClick={() => { setProductDetailId(item?.Product2Id) }} style={{ cursor: 'pointer' }}>{item.Name.split(OrderData.Name)}</h2>
                                       <p>
-                                        <span className={Styles.Span1}>
+                                        <span className={Styles.Span1} data-html2canvas-ignore>
                                           ${Number(item.ListPrice).toFixed(2)}
                                         </span>
                                         <span className={Styles.Span2}>
@@ -278,9 +309,9 @@ function MyBagFinal() {
                     </div>
                   </div>
 
-                  {true && (
-                    <div className={Styles.ShipBut}>
-                      <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler()}>
+                  {invoices?.length>0 && (
+                    <div className={Styles.ShipBut} data-html2canvas-ignore>
+                      <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
                         <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
                       </button>
                     </div>
@@ -291,7 +322,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={OrderData.AccountId} ManufacturerId={OrderData.ManufacturerId__c}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={OrderData.AccountId} ManufacturerId={OrderData.ManufacturerId__c} />
     </div>
   );
 }

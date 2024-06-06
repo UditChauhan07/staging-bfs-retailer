@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import { GetAuthData, getRetailerBrands } from "../../lib/store";
+import { CloseButton } from "../../lib/svg";
 
-const Filters = ({ value, onChange, resetFilter }) => {
+const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
   const [manufacturerData,setManufacturerData ] = useState([]);
   useEffect(()=>{
     GetAuthData().then((user)=>{
@@ -23,7 +24,7 @@ const Filters = ({ value, onChange, resetFilter }) => {
 
   return (
     <>
-      <FilterItem
+      {monthHide&&<FilterItem
         label="Months"
         name="Months"
         value={value.month}
@@ -42,7 +43,7 @@ const Filters = ({ value, onChange, resetFilter }) => {
           },
         ]}
         onChange={handleMonthFilter}
-      />
+      />}
       <FilterItem
         label="MANUFACTURER"
         name="MANUFACTURER"
@@ -64,10 +65,11 @@ const Filters = ({ value, onChange, resetFilter }) => {
         minWidth="167px"
       /> */}
       <button
-        className="border px-2.5 py-1 leading-tight"
+        className="border px-2 py-1 leading-tight d-grid"
         onClick={resetFilter}
       >
-        CLEAR ALL
+                            <CloseButton crossFill={'#fff'} height={20} width={20} />
+                    <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
       </button>
     </>
   );

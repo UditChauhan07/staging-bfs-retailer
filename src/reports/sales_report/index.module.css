@@ -11,6 +11,12 @@
   text-transform: uppercase;
   border: none;
 }
+.breakHolder{
+  width: 2px;
+  height: 100%;
+  background: #fff;
+  margin: auto;
+}
 .inorderflex {
   display: flex;
   justify-content: space-between;

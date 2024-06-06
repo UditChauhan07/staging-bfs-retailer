@@ -1,22 +1,37 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { NeedHelp } from "../../../lib/svg";
+import { CustomerServiceIcon, NeedHelp, OrderStatusIcon } from "../../../lib/svg";
 import ModalPage from "../../Modal UI";
 import SelectCaseReason from "../../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
-import { GetAuthData } from "../../../lib/store";
+import { GetAuthData,getSessionStatus } from "../../../lib/store";
 // import Redirect from "../../Redirect";
 const TopNav = () => {
   const navigate = useNavigate();
-  const [userName,setUserName] = useState("");
+  const [userName, setUserName] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  // useEffect(()=>{
+  //   GetAuthData().then((res)=>{
+  //     setUserName(res.data.firstName+" "+res.data.lastName)
+  //   }).catch((err)=>{
+  //     console.log({err});
+  //   })
+  // },[])
+
   useEffect(()=>{
-    GetAuthData().then((res)=>{
-      setUserName(res.data.firstName+" "+res.data.lastName)
-    }).catch((err)=>{
-      console.log({err});
+    GetAuthData().then((user)=>{
+      console.log(user)
+      getSessionStatus({key:user.data?.x_access_token,retailerId:user.data?.retailerId}).then((status)=>{
+
+        setUserName(status?.data?.FirstName +" "+ status?.data?.LastName)
+      }).catch((statusErr)=>{
+        console.log({statusErr});
+      })
+    }).catch((userErr)=>{
+      console.log({userErr});
     })
   },[])
+
 
   // console.log("userDetails", userDetails);
   const reasons = {
@@ -30,7 +45,7 @@ const TopNav = () => {
     <>
       {/* {userDetails?.status === 200 ? ( */}
       <>
-        <div className={styles.NeedNone}>
+        <div className={`${styles.NeedNone} d-none-print`}>
           <ModalPage
             open={modalOpen}
             onClose={() => setModalOpen(false)}
@@ -47,20 +62,19 @@ const TopNav = () => {
                   Need Help?&nbsp; <NeedHelp />
                   {/* </a> */}
                   <ul className="dropdown-menu">
-                    <li 
-                    onClick={() => navigate("/order-list")}
-                    >
-                      <Link to="" className="dropdown-item text-start">
-                        Order Status
+                  <li onClick={() => navigate("/orderStatus")}>
+                      <Link to="/order-list" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                        <OrderStatusIcon width={15} height={15}/>&nbsp;Order Status
                       </Link>
                     </li>
                     <li
-                      // onClick={() => {
-                      //   setModalOpen(true);
-                      // }}
+                      onClick={() => {
+                        // setModalOpen(true);
+                        navigate("/customerService")
+                      }}
                     >
-                      <Link to="" className="dropdown-item text-start">
-                        Customer Services
+                      <Link to="/customerService" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                       <CustomerServiceIcon width={15} height={15}/>&nbsp;Customer Services
                       </Link>
                     </li>
                   </ul>
@@ -69,10 +83,10 @@ const TopNav = () => {
               </p>
             </div>
             <div className="d-flex justify-content-center align-items-center gap-3">
-              <p className={`m-0 ${styles.welcomeText}`}>
+              {userName&&<p className={`m-0 ${styles.welcomeText}`}>
                 Welcome,
-                <span className={`m-0 ${styles.nameText}`}>{userName ?? "User"}</span>
-              </p>
+                <span className={`m-0 ${styles.nameText}`}>{userName}</span>
+              </p>}
               <div className={styles.vr}></div>
               <p className={`m-0 ${styles.nameText}`}>
                 <Link to="/order-list" className="linkStyle">

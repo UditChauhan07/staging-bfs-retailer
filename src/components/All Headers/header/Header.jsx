@@ -6,7 +6,7 @@ const Header = () => {
   const navigate = useNavigate();
   const path = window.location.pathname;
   return (
-    <div className="">
+    <div className="d-none-print">
     <div id={`${styles.main}`} className="d-flex justify-content-between  align-items-center gap-1">
       <p className={`m-0 ${styles.text}`}>
         <Link to="/top-products" className="linkStyle">
@@ -32,17 +32,28 @@ const Header = () => {
       <p className={`m-0  ${styles.text}`}>
         <Link to="" className="linkStyle">
           <div className="dropdown dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {path === "/sales-report" ? "Sales Report" : null || path === "/newness-report" ? "Newness Report" : null || path === "/comparison-report" ? "Comparison Report" : null || path === "/Target-Report" ? "Target Report" : "Reports"}
+            {path === "/purchase-report" ? "Purchase Report" : null || path === "/newness-report" ? "Newness Report" : null || path === "/comparison-report" ? "Comparison Report" : null || path === "/Target-Report" ? "Target Report" : "Reports"}
             <ul className="dropdown-menu">
               <li>
                 <Link
-                  to="/sales-report"
+                  to="/purchase-report"
                   className="dropdown-item text-start"
                   onClick={() => {
-                    navigate("/sales-report");
+                    navigate("/purchase-report");
                   }}
                 >
-                  Sales Report
+                  Purchase Report
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/comparison-report"
+                  className="dropdown-item text-start"
+                  onClick={() => {
+                    navigate("/comparison-report");
+                  }}
+                >
+                  comparison Report
                 </Link>
               </li>
               <li>

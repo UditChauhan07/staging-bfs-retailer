@@ -2,6 +2,9 @@ import React from "react";
 import Loading from "../Loading";
 import styles from "./table.module.css";
 const ComparisonReportTable = ({ comparisonData }) => {
+  const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
+    return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  }
   return (
     <>
       {comparisonData ? (
@@ -12,7 +15,7 @@ const ComparisonReportTable = ({ comparisonData }) => {
                 <thead>
                   <tr>
                     <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
-                      Retail Store
+                     Brand
                     </th>
                     <th className={`${styles.th}  ${styles.stickyMonth}`} style={{ minWidth: "200px" }}>
                       Estee Lauder Number
@@ -30,11 +33,11 @@ const ComparisonReportTable = ({ comparisonData }) => {
                         return (
                           <>
                             <tr key={index}>
-                              <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.AccountName}</td>
-                              <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c} </td>
+                              <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.ManufacturerName__c}</td>
+                              <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c??'NA'} </td>
                               <td className={`${styles.td}`}>{ele.Sales_Rep__c}</td>
-                              <td className={`${styles.td}`}>${Number(ele.retail_revenue__c).toFixed(2)}</td>
-                              <td className={`${styles.td}`}>${Number(ele.Whole_Sales_Amount).toFixed(2)}</td>
+                              <td className={`${styles.td}`}>{ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>
+                              <td className={`${styles.td}`}>${formentAcmount(Number(ele.Whole_Sales_Amount).toFixed(2))}</td>
                             </tr>
                           </>
                         );

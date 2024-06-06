@@ -61,7 +61,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
                     style={{ maxWidth: '100px', border: '1px solid rgb(204, 204, 204)', borderRadius: '5px', padding: '1px 5px' }}
                     onChange={handleNameChange} /><br />
                   {limitInput.length >= 4 && (
-                    <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This filed cannot contain more than 4 characters.</span>
+                    <span className="form-error text-danger ps-1 m-0 fs-10 w-100">This field can not contain more than 4 characters.</span>
                   )}
                   {newQtyInput % min != 0 && <p style={{ color: 'red', fontSize: '11px', textAlign: '' }}>* invalid</p>}
                 </p>
@@ -103,7 +103,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
         -
       </button>
 
-      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e) => { (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 9999) && qtyChangeHandler({ newQty: parseInt(e.target.value || 0), previous: padWithZero(value) }) }} />
+      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e) => { (parseInt(e.target.value) >= 0 && parseInt(e.target.value) <= 1000) && qtyChangeHandler({ newQty: parseInt(e.target.value || 0), previous: padWithZero(value) }) }} />
       <button
         onClick={() => {
           // functionality for 1 addition

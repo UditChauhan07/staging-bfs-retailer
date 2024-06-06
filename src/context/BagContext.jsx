@@ -58,7 +58,6 @@ const BagProvider = ({ children }) => {
     return true
   };
   const parseOrderObjectWithDiscount = (product, quantity, discount,account,manufacturer) => {
-    console.log({account,manufacturer});
     return {
       quantity: quantity,
       product,

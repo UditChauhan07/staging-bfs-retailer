@@ -63,7 +63,6 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
       });
   }, [step]);
   const onChangeHandler = (e) => {
-    console.log({ valu: e.target.value });
     if (reason == null) {
       if (e.target.value == "Update Account Info") {
         setStep(2);
@@ -142,7 +141,7 @@ const SelectCaseReason = ({ reasons, onClose, recordType }) => {
               desc,
               opportunityId: orderData.opportunityId,
               priority: "Medium",
-              sendEmail: false,
+              sendEmail: true,
               subject,
             },
             key: user?.data?.x_access_token,

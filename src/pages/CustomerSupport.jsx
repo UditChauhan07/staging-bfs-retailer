@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomerSupportPage from "../components/CustomerSupportPage/CustomerSupportPage";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
@@ -6,6 +6,7 @@ import { DestoryAuth, GetAuthData, getRetailerBrands, getSupportList } from "../
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
+import { CloseButton } from "../lib/svg";
 
 let PageSize = 10;
 const CustomerSupport = () => {
@@ -51,6 +52,19 @@ const CustomerSupport = () => {
         console.error(err);
       });
   }, []);
+  const filteredData = useMemo(() => {
+    let newValues = supportList;
+    if (manufacturerFilter) {
+      newValues = newValues.filter((item) => item.ManufacturerId__c === manufacturerFilter);
+    }
+    if (searchBy) {
+      newValues = newValues?.filter((value) => value.CaseNumber?.toLowerCase().includes(searchBy?.toLowerCase()));
+    }
+    if (retailerFilter) {
+      newValues = newValues.filter((item) => item.AccountId === retailerFilter);
+    }
+    return newValues;
+  }, [supportList, retailerFilter, manufacturerFilter, searchBy]);
   return (
     <AppLayout
       filterNodes={
@@ -74,14 +88,15 @@ const CustomerSupport = () => {
           />
 
           <button
-            className="border px-2.5 py-1 leading-tight"
+            className="border px-2.5 py-1 leading-tight d-grid"
             onClick={() => {
               setManufacturerFilter(null);
               setRetailerFilter(null);
               setSearchBy("");
             }}
           >
-            CLEAR ALL
+                    <CloseButton crossFill={'#fff'} height={20} width={20} />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
           </button>
         </>
       }
@@ -91,7 +106,7 @@ const CustomerSupport = () => {
           <Loading />
         ) : (
           <CustomerSupportPage
-            data={supportList}
+            data={filteredData}
             currentPage={currentPage}
             PageSize={PageSize}
             manufacturerFilter={manufacturerFilter}
@@ -102,7 +117,7 @@ const CustomerSupport = () => {
         <Pagination
           className="pagination-bar"
           currentPage={currentPage}
-          totalCount={supportList?.length}
+          totalCount={filteredData?.length}
           pageSize={PageSize}
           onPageChange={(page) => setCurrentPage(page)}
         />
