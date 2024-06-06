@@ -43,19 +43,19 @@ function App() {
       <BagProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Login />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/purchase-report" element={<SalesReport />}></Route>
-            <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/newness-report" element={<NewnessReport />}></Route>
             <Route path="/Target-Report" element={<TargetReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/" element={<Login />}></Route>
-            <Route path="/logout" element={<Logout />}></Route>
-            <Route path="/dashboard" element={<Dashboard />}></Route>
-            <Route path="/orders" element={<Product />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
+            <Route path="/orders" element={<Product />}></Route>
+            <Route path="/order-list" element={<OrderListPage />}></Route>
+            <Route path="/orderDetails" element={<MyBagOrder />}></Route>
             <Route path="/order" element={<BrandsPage />}></Route>
             <Route path="/customer-care" element={<CustomerCare />}></Route>
             <Route path="/customer-support" element={<CustomerSupport />}></Route>
@@ -71,10 +71,10 @@ function App() {
             <Route path="/linkdin" element={<Linkdin />}></Route>
             <Route path="logout" element={<Logout />}></Route>
             <Route path="/sign-up" element={<SignUp />}></Route>
-            <Route path="/orderDetails" element={<MyBagOrder />}></Route>
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
+            <Route path="/logout" element={<Logout />}></Route>
           </Routes>
         </BrowserRouter>
       </BagProvider>

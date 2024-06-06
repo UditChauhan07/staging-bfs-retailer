@@ -21,7 +21,6 @@ function MyBagFinal({ setOrderDetail }) {
   const navigate = useNavigate();
 
   const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
-  const Key = JSON.parse(localStorage.getItem("Api Data"));
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
   const [productDetailId, setProductDetailId] = useState(null)
   const [invoices, setInvoice] = useState([]);
@@ -36,13 +35,11 @@ function MyBagFinal({ setOrderDetail }) {
     getOrderDetails();
   }, []);
 
+
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json;charset=UTF-8",
   };
-  let BodyContent = new FormData();
-  BodyContent.append("key", Key.data.access_token);
-  BodyContent.append("opportunity_id", OrderId);
 
   const getOrderDetails = async () => {
     let data = ShareDrive();
@@ -52,6 +49,7 @@ function MyBagFinal({ setOrderDetail }) {
     GetAuthData().then((user) => {
       let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
       getOrderDetailId({ rawData }).then((res) => {
+        console.log({res});
         if (res?.ManufacturerId__c) {
           if (!data[res?.ManufacturerId__c]) {
             data[res?.ManufacturerId__c] = {};
@@ -88,7 +86,8 @@ function MyBagFinal({ setOrderDetail }) {
           })
         }
         getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
-          setInvoice(response.data)
+          console.log({response});
+          setInvoice(response?.data)
         }).catch((error) => {
           console.error({ error });
         })
@@ -136,8 +135,8 @@ function MyBagFinal({ setOrderDetail }) {
     GetAuthData().then((user) => {
       invoices.forEach(file => {
         const link = document.createElement("a");
-        link.href = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
-        link.download = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+        link.href = `${file.VersionDataUrl}`;
+        link.download = `${file.VersionDataUrl}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
