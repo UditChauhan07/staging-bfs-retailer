@@ -26,7 +26,7 @@ const ComparisonReport = () => {
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  sortArrayHandler(apiData?.data,g=>g.ManufacturerName__c)
+  sortArrayHandler(apiData?.data||[],g=>g.ManufacturerName__c)
   //csv Data
   let csvData = [];
   if (apiData?.data?.length) {
