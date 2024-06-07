@@ -46,10 +46,6 @@ function App() {
             <Route path="/" element={<Login />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/dashboard" element={<Dashboard />}></Route>
-            <Route path="/purchase-report" element={<SalesReport />}></Route>
-            <Route path="/newness-report" element={<NewnessReport />}></Route>
-            <Route path="/Target-Report" element={<TargetReport />}></Route>
-            <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
@@ -74,6 +70,9 @@ function App() {
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
+            <Route path="/Target-Report" element={<TargetReport />}></Route>
+            <Route path="/purchase-report" element={<SalesReport />}></Route>
+            <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
           </Routes>
         </BrowserRouter>
