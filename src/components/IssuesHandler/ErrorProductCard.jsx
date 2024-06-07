@@ -14,14 +14,13 @@ const ErrorProductCard = ({ Styles1, productErrorHandler, errorList, setProductD
                             : <img onClick={() => { setProductDetailId(product?.Product2Id) }} src={productImage.images[product.ProductCode]} className="zoomInEffect" alt="img" />
                         : <img onClick={() => { setProductDetailId(product?.Product2Id) }} src={originAPi + "/dummy.png"} className="zoomInEffect" alt="img" />
             }
-            <label for={product.Id}>{product.Name.split(AccountName)[1]}</label></td>
+            <label for={product.Id}>{product.Name.split(AccountName).length ==2 ?product.Name.split(AccountName)[1]:<>product.Name<br/><small style={{fontSize:'10px',color:'#ccc'}}>(not contains in order)</small></>}</label></td>
         <td>{product.ProductCode}</td>
-        <td>{product.Quantity}</td>
-        <td>{product.TotalPrice.toFixed(2)}</td>
+        <td>{product?.Quantity??0}</td>
+        <td>${parseFloat(product.TotalPrice).toFixed(2)}</td>
         {(reason && reason != "Charges" && errorList?.[product.Id]?.Id) && <td>
             <input type="text" max={product.Quantity} className={Styles1.productErrorQtyHolder} id={`oP${product.Id}`} value1={errorList?.[product.Id]?.issue ? errorList?.[product.Id]?.issue : null} onKeyUp={(e) => {
                 if(!Number(e.target.value)){
-                    console.log({e:errorList?.[product.Id]});
                     e.target.value = null;
                     ErrorProductQtyHandler(errorList?.[product.Id]?.Id, 0)
                     return;
