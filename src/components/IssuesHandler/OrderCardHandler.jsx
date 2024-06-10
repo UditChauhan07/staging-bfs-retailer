@@ -20,6 +20,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
     const [productList, setProductList] = useState([]);
     const [Viewmore, setviewmore] = useState(false);
     const [searchPo, setSearchPO] = useState(null);
+    const [searchItem, setSearchItem] = useState(null);
     const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
     const [productDetailId, setProductDetailId] = useState(null)
     const [errorProductCount, setErrorProductCount] = useState(0)
@@ -86,10 +87,11 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                             getProductList({ rawData }).then((productRes) => {
                                 let productCode = "";
                                 let temp = []
+                                console.log({ productRes });
                                 productRes?.data?.records?.map((product, index) => {
                                     productCode += `'${product?.ProductCode}'`
                                     if (productRes?.data?.records?.length - 1 != index) productCode += ', ';
-                                    if (!opcs.includes(e.Id)) {
+                                    if (!opcs.includes(product.Id)) {
                                         let pDiscount = 0;
                                         let listPrice = Number(product.usdRetail__c.replace('$', '').replace(',', ''));
                                         if (product.Category__c === "TESTER") {
@@ -151,7 +153,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             }
         }
     }
-    useEffect(() => { }, [searchPo, errorProductCount, productImage])
+    useEffect(() => { }, [searchPo, errorProductCount, productImage, searchItem])
 
     const resetForm = () => {
         setOrderId(null);
@@ -262,7 +264,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                 }}
             />
         ) : null}
-        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{ width: '120px' }} />} {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
+        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{ width: '120px' }} />} {reason == "Product Overage" && showProductList ?
+            <input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '120px' }} />:<button className={Styles1.btnHolder} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; All Products</button>
+        } {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
         {reason && reason != "Update Account Info" &&
             <div className={`${Styles1.orderListHolder} ${Styles1.openListHolder}`} style={(orderId && (!searchPo || searchPo == "")) ? { overflow: 'unset', height: 'auto', border: 0 } : {}}>
                 <div>
@@ -335,11 +339,18 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                                                 }
                                                                             })}
                                                                         {reason == "Product Overage" ? showProductList ?
-                                                                            productList.map((ele, index) => (
-                                                                                <ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler}
-                                                                                    readOnly={orderConfirmed} />
-                                                                            )
-                                                                            ) : <p className={Styles1.listHolder} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; Product List</p>
+                                                                            productList.map((ele, index) => {
+                                                                                if (!searchItem || (ele.ProductCode?.toLowerCase().includes(
+                                                                                    searchItem?.toLowerCase()) || ele.Name?.toLowerCase().includes(
+                                                                                        searchItem?.toLowerCase()) || ele.ProductUPC__c?.toLowerCase().includes(
+                                                                                            searchItem?.toLowerCase()))) {
+                                                                                    return (
+                                                                                        <ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler}
+                                                                                            readOnly={orderConfirmed} />
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                            ) : <p className={Styles1.listHolder} style={{display:'none'}} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; Product List</p>
                                                                             : null}
 
                                                                     </tbody>
