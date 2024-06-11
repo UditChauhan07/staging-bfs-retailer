@@ -264,9 +264,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                 }}
             />
         ) : null}
-        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{ width: '120px' }} />} {reason == "Product Overage" && showProductList ?
+        <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{ width: '120px' }} />} { reason && orderId ? reason == "Product Overage" && showProductList ?
             <input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '120px' }} />:<button className={Styles1.btnHolder} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; All Products</button>
-        } {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
+        :null} {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
         {reason && reason != "Update Account Info" &&
             <div className={`${Styles1.orderListHolder} ${Styles1.openListHolder}`} style={(orderId && (!searchPo || searchPo == "")) ? { overflow: 'unset', height: 'auto', border: 0 } : {}}>
                 <div>
