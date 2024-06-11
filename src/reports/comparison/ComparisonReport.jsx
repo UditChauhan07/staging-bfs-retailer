@@ -26,6 +26,7 @@ const ComparisonReport = () => {
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [userData,setUserData] = useState({});
   sortArrayHandler(apiData?.data||[],g=>g.ManufacturerName__c)
   //csv Data
   let csvData = [];
@@ -42,6 +43,7 @@ const ComparisonReport = () => {
   }
   useEffect(() => {
     GetAuthData().then((user) => {
+      setUserData(user)
       filter.AccountId__c = user.data.accountId
       sendApiCall();
     }).catch((userErr) => {
@@ -62,7 +64,8 @@ const ComparisonReport = () => {
   };
   const resetFilter = async () => {
     setIsLoading(true);
-    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+      initialValues.AccountId__c = userData?.data?.accountId
+      const result = await originalApiData.fetchComparisonReportAPI(initialValues);
     setApiData(result);
     setFilter(() => initialValues);
     setIsLoading(false);
