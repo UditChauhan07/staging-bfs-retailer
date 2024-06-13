@@ -16,6 +16,8 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const [modalShow, setModalShow] = useState(false);
 
   const [isEmpty, setIsEmpty] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [loadEffect, setEffect] = useState(0)
   // useEffect(() => {
   //   let temp = true;
   //   products.map((month) => {
@@ -35,6 +37,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const [pagination, setpagination] = useState([]);
 
   useEffect(() => {
+
     if (!filterData || filterData.length === 1) {
       console.error("Product list is empty or undefined.");
       return;
@@ -46,9 +49,11 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
     const newValues = filterData?.flatMap((month) => month?.content).slice(startIndex, endIndex);
 
     setpagination([{ content: newValues }]);
+
   }, [filterData, PageSize, currentPage]);
   // .................
   useEffect(() => {
+    if (loadEffect) setLoaded(true)
     if (!month && !selectBrand) {
       const newValues = productList?.map((months) => {
         const filterData = months.content?.filter((item) => {
@@ -92,10 +97,14 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
+    setEffect(loadEffect + 1)
+    setTimeout(() => {
+      setLoaded(false)
+    }, 500);
   }, [month, selectBrand, productList, brand]);
   // console.log(filterData,"isEmpty")
   // ................
-  if(isLoaded) return <Loading height={'70vh'} />
+  if (isLoaded) return <Loading height={'70vh'} />
   return (
     <>
       {modalShow ? (
@@ -133,10 +142,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                   return month.content.map((product) => {
                     if (true) {
                       let listPrice = "$-- . --";
-                      if(product?.usdRetail__c){
-                        if(Number(product?.usdRetail__c?.replace("$", ""))){
-                          listPrice= "$"+Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
-                        }else{
+                      if (product?.usdRetail__c) {
+                        if (Number(product?.usdRetail__c?.replace("$", ""))) {
+                          listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                        } else {
                           listPrice = product?.usdRetail__c
                         }
                       }
@@ -146,9 +155,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
                             <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name}  onClick={() => {
-                              setProductDetailId(product.Id);
-                            }} />
+                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
+                                setProductDetailId(product.Id);
+                              }} />
                             </div>
                           </div>
                           <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
@@ -160,7 +169,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           >
                             {product?.Name?.substring(0, 15)}...
                           </p>
-                          <p className={Styles.priceHolder}>{listPrice??"-- . --"}</p>
+                          <p className={Styles.priceHolder}>{listPrice ?? "-- . --"}</p>
                           {to ? (
                             <Link className={Styles.linkHolder}>
                               <p className={Styles.btnHolder}>

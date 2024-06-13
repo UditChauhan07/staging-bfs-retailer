@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Styles from "./Styles.module.css";
-import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
 import { Link, useNavigate } from "react-router-dom";
@@ -218,7 +217,7 @@ function MyBagFinal({ setOrderDetail }) {
                                             productImage.images[item.ProductCode]?.ContentDownloadUrl ?
                                               <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                               : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
-                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                            : <img src={"/assets/images/dummy.png"} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                       }
                                     </div>
                                     <div className={Styles.Mainbox3}>
