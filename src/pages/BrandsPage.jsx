@@ -34,7 +34,7 @@ const brandsImageMap = {
   "LOccitane": "LOccitane.png",
 };
 
-const defaultImage = "default.jpg";
+const defaultImage = "dummy.png";
 
 const BrandsPage = () => {
   const [manufacturers, setManufacturers] = useState({ isLoading: false, data: [] });
