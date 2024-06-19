@@ -16,54 +16,6 @@ import { UserIcon } from "../../lib/svg";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
-    name: "January - 2023",
-    value: "2023|1",
-  },
-  {
-    name: "February - 2023",
-    value: "2023|2",
-  },
-  {
-    name: "March - 2023",
-    value: "2023|3",
-  },
-  {
-    name: "April - 2023",
-    value: "2023|4",
-  },
-  {
-    name: "May - 2023",
-    value: "2023|5",
-  },
-  {
-    name: "June - 2023",
-    value: "2023|6",
-  },
-  {
-    name: "July - 2023",
-    value: "2023|7",
-  },
-  {
-    name: "August - 2023",
-    value: "2023|8",
-  },
-  {
-    name: "September - 2023",
-    value: "2023|9",
-  },
-  {
-    name: "October - 2023",
-    value: "2023|10",
-  },
-  {
-    name: "November - 2023",
-    value: "2023|11",
-  },
-  {
-    name: "December - 2023",
-    value: "2023|12",
-  },
-  {
     name: "January - 2024",
     value: "2024|1",
   },

@@ -82,6 +82,8 @@
   letter-spacing: 2.2px;
   text-transform: uppercase;
   margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
 }
 .selOrder {
   border: 1px dashed #3c74b4 !important;
@@ -207,6 +209,10 @@ tr th{
   .totalProductPrice{
     width: 200px;
   }
+  .reasonTitle{
+    font-size: 17px;
+    font-weight: 600;
+  }
 }
   @media (max-width: 1024.98px) {
   .totalProductPrice{
@@ -214,5 +220,12 @@ tr th{
   }
   .orderListHolder{
     width: 100%;
+  }
+  .reasonTitle{
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btnHolder{
+    font-size: 11px;
   }
 }
