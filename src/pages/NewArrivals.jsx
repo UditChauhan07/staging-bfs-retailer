@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
-import Pagination from "../components/Pagination/Pagination";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import { MdOutlineDownload } from "react-icons/md";
 import Loading from "../components/Loading";
 import { GetAuthData, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
