@@ -85,9 +85,20 @@
   margin: 5px 5px 0 0;
   font-size: 11px;
 }
+@media (max-width: 1440.98px) {
+  .reasonTitle {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .reasonHolder {
+    grid-template-columns: repeat(3, auto);
+  }
+}
 
 @media (max-width: 1024.98px) {
-  .reasonHolder{
-    grid-template-columns: repeat(3,auto);
+
+  .reasonTitle {
+    font-size: 14px;
+    font-weight: 600;
   }
 }

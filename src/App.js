@@ -33,6 +33,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import TargetReport from "./reports/targetReport";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
+import PageNotFound from "./pages/PageNotFound";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -74,6 +75,7 @@ function App() {
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
+            <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>
       </BagProvider>

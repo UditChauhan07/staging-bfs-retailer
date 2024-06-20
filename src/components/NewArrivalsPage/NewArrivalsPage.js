@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import ProductDetails from "../../pages/productDetails";
-import LoaderV2 from "./../loader/v2";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";

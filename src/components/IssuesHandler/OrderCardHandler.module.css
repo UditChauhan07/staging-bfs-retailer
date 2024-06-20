@@ -82,6 +82,8 @@
   letter-spacing: 2.2px;
   text-transform: uppercase;
   margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
 }
 .selOrder {
   border: 1px dashed #3c74b4 !important;
@@ -199,6 +201,18 @@ tr th{
   line-height: normal;
   letter-spacing: 1.4px;
 }
+.errorCardHolder{
+  border-bottom: 1px solid #ccc; 
+  transition: box-shadow 0.3s
+}
+input[type='radio'] {
+  accent-color: #3c74b4;
+}
+.errorCardHolder:hover{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  background-color: #f7f7f7!important;
+}
 
 @media (max-width: 1440.98px) {
   tr th{
@@ -207,6 +221,10 @@ tr th{
   .totalProductPrice{
     width: 200px;
   }
+  .reasonTitle{
+    font-size: 17px;
+    font-weight: 600;
+  }
 }
   @media (max-width: 1024.98px) {
   .totalProductPrice{
@@ -214,5 +232,12 @@ tr th{
   }
   .orderListHolder{
     width: 100%;
+  }
+  .reasonTitle{
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btnHolder{
+    font-size: 11px;
   }
 }

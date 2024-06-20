@@ -27,7 +27,7 @@ const MarketingCalendar = () => {
     { value: "APR", label: "APR" },
     { value: "MAY", label: "MAY" },
     { value: "JUN", label: "JUN" },
-    { value: "JULY", label: "JULY" },
+    { value: "JUL", label: "JUL" },
     { value: "AUG", label: "AUG" },
     { value: "SEP", label: "SEP" },
     { value: "OCT", label: "OCT" },
