@@ -83,7 +83,7 @@ const CustomerService = () => {
   }, []);
 
   const SubmitHandler = () => {
-    setSubmitForm(true)
+    // setSubmitForm(true)
     GetAuthData()
       .then((user) => {
         if (user) {
@@ -92,7 +92,7 @@ const CustomerService = () => {
           if (errorlistObj.length) {
             errorlistObj.map((id) => {
               systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} for`
-              if (reason != "Charges") {
+              if (reason != "Charges" && errorList[id]?.Quantity) {
                 systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`
               } else {
                 systemStr += ` ${errorList[id].Quantity} Qty.\n`
@@ -131,7 +131,6 @@ const CustomerService = () => {
                   console.log({files});
                   if (files.length > 0) {
                     uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
-                      console.log({fileUploader});
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }

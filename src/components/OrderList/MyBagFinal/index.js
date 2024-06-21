@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Styles from "./Styles.module.css";
-import Img1 from "./Images/Eye1.png";
 import axios from "axios";
 import Loading from "../../Loading";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GetAuthData, ShareDrive, getOrderDetailId, getOrderDetailsBasedId, getOrderDetailsInvoice, getProductImageAll, originAPi, supportShare } from "../../../lib/store";
 import { MdOutlineDownload } from "react-icons/md";
 import LoaderV2 from "../../loader/v2";
 import ProductDetails from "../../../pages/productDetails";
+import { VscGitPullRequestNewChanges } from "react-icons/vsc";
+import { IoMdEye } from "react-icons/io";
+import { TbEyeClosed } from "react-icons/tb";
+import { RxEyeOpen } from "react-icons/rx";
 
-function MyBagFinal({setOrderDetail}) {
+function MyBagFinal({ setOrderDetail }) {
   const [OrderData, setOrderData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const OrderId = JSON.parse(localStorage.getItem("OpportunityId"));
-  const Key = JSON.parse(localStorage.getItem("Api Data"));
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
   const [productDetailId, setProductDetailId] = useState(null)
   const [invoices, setInvoice] = useState([]);
+  const [showTracking, setShowTracking] = useState(false)
   useEffect(() => {
     // let rawData = {key:Key.data.access_token,id:OrderId}
     // getOrderDetailsBasedId({rawData}).then((res)=>{
@@ -31,13 +34,11 @@ function MyBagFinal({setOrderDetail}) {
     getOrderDetails();
   }, []);
 
+
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json;charset=UTF-8",
   };
-  let BodyContent = new FormData();
-  BodyContent.append("key", Key.data.access_token);
-  BodyContent.append("opportunity_id", OrderId);
 
   const getOrderDetails = async () => {
     let data = ShareDrive();
@@ -47,6 +48,7 @@ function MyBagFinal({setOrderDetail}) {
     GetAuthData().then((user) => {
       let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
       getOrderDetailId({ rawData }).then((res) => {
+        console.log({res});
         if (res?.ManufacturerId__c) {
           if (!data[res?.ManufacturerId__c]) {
             data[res?.ManufacturerId__c] = {};
@@ -83,7 +85,8 @@ function MyBagFinal({setOrderDetail}) {
           })
         }
         getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
-          setInvoice(response.data)
+          console.log({response});
+          setInvoice(response?.data)
         }).catch((error) => {
           console.error({ error });
         })
@@ -97,9 +100,8 @@ function MyBagFinal({setOrderDetail}) {
   const handleback = () => {
     navigate("/order-list");
   };
-  const invoiceHandler = () => {
-    if (false) {
-    } else {
+  const invoiceHandler = (reason) => {
+    if (reason) {
       GetAuthData().then((user) => {
         let ticket = {
           orderStatusForm: {
@@ -111,15 +113,14 @@ function MyBagFinal({setOrderDetail}) {
             orderNumber: OrderData.Order_Number__c,
             poNumber: OrderData.PO_Number__c,
             priority: "Medium",
-            reason: "Invoice",
+            reason,
             salesRepId: OrderData.OwnerId,
-            sendEmail: false,
+            sendEmail: true,
           },
         };
-        let statusOfSupport = supportShare(ticket)
-          .then((response) => {
-            if (response) navigate("/orderStatusForm");
-          })
+        supportShare(ticket).then((response) => {
+          if (response) navigate("/orderStatusForm");
+        })
           .catch((error) => {
             console.error({ error });
           });
@@ -131,24 +132,26 @@ function MyBagFinal({setOrderDetail}) {
 
   function downloadFiles(invoices) {
     GetAuthData().then((user) => {
-    invoices.forEach(file => {
-      const link = document.createElement("a");
-      link.href = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
-      link.download = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-  }).catch((err) => {
-    console.log({ err });
-  })
+      invoices.forEach(file => {
+        const link = document.createElement("a");
+        link.href = `${file.VersionDataUrl}`;
+        link.download = `${file.VersionDataUrl}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }).catch((err) => {
+      console.log({ err });
+    })
   }
 
   if (!isLoading) return <Loading />;
-
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noreferrer");
+  };
   return (
     <div>
-            <style>
+      <style>
         {`@media print {
   .MainInnerPrint {
     height: unset;
@@ -164,7 +167,7 @@ function MyBagFinal({setOrderDetail}) {
             <div className={Styles.MyBagFinalTop}>
               <div className={Styles.MyBagFinalRight}>
                 <svg
-                data-html2canvas-ignore
+                  data-html2canvas-ignore
                   xmlns="http://www.w3.org/2000/svg"
                   style={{ cursor: "pointer" }}
                   width="24"
@@ -214,7 +217,7 @@ function MyBagFinal({setOrderDetail}) {
                                             productImage.images[item.ProductCode]?.ContentDownloadUrl ?
                                               <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                               : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
-                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
+                                            : <img src={"/assets/images/dummy.png"} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                       }
                                     </div>
                                     <div className={Styles.Mainbox3}>
@@ -290,12 +293,14 @@ function MyBagFinal({setOrderDetail}) {
                           {OrderData.Order_Number__c}
                         </p>
                       </div></>}
-                    {OrderData.Tracking__c && <>
+                    {showTracking && OrderData.Tracking__c && <>
                       <h2>Tracking Number</h2>
-                      <div className={Styles.ShipAdress}>
-                        <p>
-                          {OrderData.Tracking__c}
-                        </p>
+                      <div className={Styles.ShipAdress}  style={{ transition: 'all 250s linear'}}>
+                        {OrderData.Tracking_URL__c ? <button role="link"
+                          onClick={() => openInNewTab(OrderData.Tracking_URL__c)}>{OrderData.Tracking__c}</button> :
+                          <p>
+                            {OrderData.Tracking__c}
+                          </p>}
                       </div></>}
 
                     <div className={Styles.ShipAdress2}>
@@ -309,13 +314,24 @@ function MyBagFinal({setOrderDetail}) {
                     </div>
                   </div>
 
-                  {invoices?.length>0 && (
-                    <div className={Styles.ShipBut} data-html2canvas-ignore>
+                  <div className={Styles.ShipBut} data-html2canvas-ignore>
+                    {invoices?.length > 0 ? (
                       <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
-                        <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;INVOICE
+                        <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;Download INVOICE
                       </button>
-                    </div>
-                  )}
+                    ) : <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler("Invoice")}>
+                      <span style={{ margin: 'auto 0' }}><VscGitPullRequestNewChanges size={16} /></span>&nbsp;Request Invoice
+                    </button>}
+                  </div>
+                  <div className={Styles.ShipBut} data-html2canvas-ignore>
+                    {OrderData.Tracking__c ? (
+                      <button className="py-1 d-flex justify-content-center" onClick={() => setShowTracking(!showTracking)}>
+                        <span style={{ margin: 'auto 0'}} >{showTracking?<RxEyeOpen  size={16} style={{ transition: 'all 500s linear'}}/>:<TbEyeClosed size={16} style={{ transition: 'all 250s linear'}}/>}</span>&nbsp;Tracking Status
+                      </button>
+                    ) : <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler("Tracking Status")}>
+                      <span style={{ margin: 'auto 0' }}><VscGitPullRequestNewChanges size={16} /></span>&nbsp;Request Tracking
+                    </button>}
+                  </div>
                 </div>
               </div>
             </div>

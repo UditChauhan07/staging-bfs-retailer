@@ -21,11 +21,11 @@
   letter-spacing: 2.2px;
   text-transform: uppercase;
 }
-.attachContainer{
-    border: 1px dashed #3c74b4 !important;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
+.attachContainer {
+  border: 1px dashed #3c74b4 !important;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .dFlex {
   display: flex;
@@ -57,14 +57,14 @@
     transform: translate(0, 0);
   }
 }
-.imgHolder{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 100px);
-    gap: 5px;
+.imgHolder {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+  gap: 5px;
 }
-.imgHolder img{
-    width: 100px;
-    height: auto;
+.imgHolder img {
+  width: 100px;
+  height: auto;
 }
 .attachLabelDiv {
   background-color: #fff;
@@ -86,35 +86,49 @@
   border: 1px dashed #ccc;
   padding: 10px;
 }
-.textAreaPut{
-    width: 100%;
-    min-height: 150px;
-    height: 75%;
-    border-bottom: 1px solid #ccc;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    background: #F4F4F4;
+.textAreaPut {
+  width: 100%;
+  min-height: 150px;
+  height: 75%;
+  border-bottom: 1px solid #ccc;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background: #f4f4f4;
 }
-.textAreaPut:focus{
-    outline: none;
+.textAreaPut:focus {
+  outline: none;
 }
-.btnHolder{
-    color: #fff;
-    text-align: center;
-    font-family: "Montserrat";
-    font-size: 16px;
-    font-style: normal;
+.btnHolder {
+  color: #fff;
+  text-align: center;
+  font-family: "Montserrat";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  padding: 0px 10px;
+  line-height: 33px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  border: 1px solid #000;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  float: right;
+  max-width: 150px;
+  margin: 10px auto;
+}
+
+@media (max-width: 1440.98px) {
+  .reasonTitle {
+    font-size: 17px;
     font-weight: 600;
-    padding: 0px 10px;
-    line-height: 33px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-    border: 1px solid #000;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    float: right;
-    max-width: 150px;
-    margin: 10px auto;
   }
+}
+
+@media (max-width: 1024.98px) {
+  .reasonTitle {
+    font-size: 14px;
+    font-weight: 600;
+  }
+}

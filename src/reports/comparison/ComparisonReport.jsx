@@ -10,7 +10,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
-import { GetAuthData, getRetailerBrands } from "../../lib/store";
+import { GetAuthData, getRetailerBrands, sortArrayHandler } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
@@ -20,14 +20,14 @@ const ComparisonReport = () => {
   const initialValues = {
     month: date.getMonth() + 1,
     year: date.getFullYear(),
-    AccountId__c:null
+    AccountId__c: null
   };
-  const [manufacturers,setManufacturers] = useState([]);
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [userData,setUserData] = useState({});
+  sortArrayHandler(apiData?.data||[],g=>g.ManufacturerName__c)
   //csv Data
   let csvData = [];
   if (apiData?.data?.length) {
@@ -42,17 +42,12 @@ const ComparisonReport = () => {
     });
   }
   useEffect(() => {
-    GetAuthData().then((user)=>{
+    GetAuthData().then((user) => {
+      setUserData(user)
       filter.AccountId__c = user.data.accountId
-      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
-      getRetailerBrands({rawData}).then((resManu)=>{
-        setManufacturers(resManu);
-        sendApiCall();
-      }).catch((err)=>{
-        console.log({err});
-      })
-    }).catch((userErr)=>{
-      console.log({userErr});
+      sendApiCall();
+    }).catch((userErr) => {
+      console.log({ userErr });
     })
   }, []);
 
@@ -69,7 +64,8 @@ const ComparisonReport = () => {
   };
   const resetFilter = async () => {
     setIsLoading(true);
-    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+      initialValues.AccountId__c = userData?.data?.accountId
+      const result = await originalApiData.fetchComparisonReportAPI(initialValues);
     setApiData(result);
     setFilter(() => initialValues);
     setIsLoading(false);
@@ -117,24 +113,24 @@ const ComparisonReport = () => {
             }))}
             onChange={(value) => setFilter((prev) => ({ ...prev, year: value }))}
           />
-         <div className="d-flex gap-3">
+          <div className="d-flex gap-3">
             <button className="border px-2 d-grid py-1 leading-tight" onClick={sendApiCall}>
-            <SearchIcon fill="#fff" width={20} height={20}/>
-            <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>search</small>
+              <SearchIcon fill="#fff" width={20} height={20} />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>search</small>
             </button>
             <button className="border px-2 d-grid py-1 leading-tight" onClick={resetFilter}>
-            <CloseButton crossFill={'#fff'} height={20} width={20}/>
-            <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
+              <CloseButton crossFill={'#fff'} height={20} width={20} />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
             </button>
           </div>
           <button className="border px-2 d-grid py-1 leading-tight d-grid" onClick={handleExportToExcel}>
-          <MdOutlineDownload size={16} className="m-auto"/> 
-         <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>export</small>
+            <MdOutlineDownload size={16} className="m-auto" />
+            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>export</small>
           </button>
         </>
       }
     >
-       {exportToExcelState && (
+      {exportToExcelState && (
         <ModalPage
           open
           content={

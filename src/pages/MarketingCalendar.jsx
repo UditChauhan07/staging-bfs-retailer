@@ -27,7 +27,7 @@ const MarketingCalendar = () => {
     { value: "APR", label: "APR" },
     { value: "MAY", label: "MAY" },
     { value: "JUN", label: "JUN" },
-    { value: "JULY", label: "JULY" },
+    { value: "JUL", label: "JUL" },
     { value: "AUG", label: "AUG" },
     { value: "SEP", label: "SEP" },
     { value: "OCT", label: "OCT" },
@@ -51,13 +51,10 @@ const MarketingCalendar = () => {
           setProductList(productRes)
           setIsloaed(true)
           setTimeout(() => {
-
-            var element = document.getElementById("Apr");
+            let getMonth = new Date().getMonth();
+            var element = document.getElementById(monthNames[getMonth]);
             if (element) {
-              element.scrollIntoView();
-              element.scrollIntoView(false);
-              element.scrollIntoView({ block: "end" });
-              element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+              element.scrollIntoView({ behavior: "smooth", block: "center" });
             }
           }, 2000);
         }).catch((err) => console.log({ err }))

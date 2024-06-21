@@ -4,6 +4,8 @@
   border-right: 1px dashed #000;
   width: 99%;
   padding: 0 20px 0 0;
+  position: sticky;
+  top: 175px;
 }
 
 .supportLeftBox {
@@ -84,7 +86,7 @@
 
 .CaseNumber {
   border-left: 1px solid #e2e2e2;
-  padding: 0 23px;
+  padding: 0 15px;
   /* border-right:1px solid #000 ; */
 }
 
@@ -111,12 +113,13 @@
 
 .ShopNameBrand {
   border-left: 1px solid #e2e2e2;
-  padding: 0 20px;
-  min-width: 302px;
+  padding: 0 15px;
+  min-width: 200px;
+  max-width: 300px;
 }
 
 .CostomerStatusVisit {
-  padding: 0 20px 0 0;
+  /* padding: 0 20px 0 0; */
 }
 
 .ShopNameBrand p {
@@ -152,6 +155,7 @@
   letter-spacing: 1.12px;
   background-color: #ffead7;
   margin: 0;
+  max-width: 200px;
 }
 
 .CostomerStatusVisit h6 {
@@ -183,7 +187,7 @@
 }
 
 .Para2 {
-  margin: 5px 0 0 0 !important;
+  margin: 5px 0 0 20px !important;
 }
 .supportMain {
   margin-top: 50px;

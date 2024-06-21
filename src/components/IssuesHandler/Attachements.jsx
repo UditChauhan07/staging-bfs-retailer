@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) => {
     function handleChange(e) {
-        let tempFile = [];
+        let tempFile = [...files];
         let reqfiles = e.target.files;
         if (reqfiles) {
             if (reqfiles.length > 0) {
@@ -47,11 +47,19 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) =
     const ImageSlider = () => {
         return (
             files.map((file, index) => (
-                <a href={file?.preview} title="Click to Download">
-                    <img src={file?.preview} key={index} alt={file?.preview} />
+                <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', right: '5px', top: '-5px', color: '#000', zIndex: 1, cursor: 'pointer', fontSize: '18px' }} onClick={()=>{fileRemoveHandler(index)}}>x</span>
+                <a href={file?.preview} target="_blank" title="Click to Download">
+                  <img src={file?.preview} key={index} alt={file?.preview} />
                 </a>
+              </div>
             ))
         )
+    }
+    const fileRemoveHandler = (index) => {
+        let tempFile = [...files];
+        tempFile.splice(index, 1)
+        setFile(tempFile);
     }
     return (<section style={{ borderBottom: '1px solid #ccc' }} id="AttachementSection">
         <h2 className={Styles.reasonTitle}><span style={{ cursor: "pointer" }} onClick={shakeHandler}>Help us by sending some Details:</span> {!orderConfirmed && <BiLock style={{ float: 'right' }} id="lock2" />}</h2>

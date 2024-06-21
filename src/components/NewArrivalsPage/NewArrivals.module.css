@@ -17,6 +17,11 @@
   border-radius: 10px;
   margin: auto;
   position: relative;
+  transition: box-shadow 0.3s;
+}
+.cardElement:hover{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 .salesHolder{
     position: absolute;

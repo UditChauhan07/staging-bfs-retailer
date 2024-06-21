@@ -2,34 +2,12 @@ import React, { useMemo, useState } from "react";
 import Styles from "./Style.module.css";
 import MySupportTicket from "./MySupportTicket";
 import { Link } from "react-router-dom";
-import { CustomerServiceIcon, OrderStatusIcon, DefaultSupportIcon, MarketingSupportIcon, DIFTestIcon, DisplayIssuesIcon } from "../../lib/svg";
-import ModalPage from "../Modal UI";
-import SelectCaseReason from "../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
-import BrandManagementModal from "../Brand Management Approval/BrandManagementModal";
+import { CustomerServiceIcon, OrderStatusIcon, DisplayIssuesIcon } from "../../lib/svg";
 
 function CustomerSupportPage({ data, PageSize, currentPage }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [brandManagementModalOpen, setBrandManagementModalOpen] = useState(false);
-  const reasons = {
-    Charges: "Charges",
-    "Product Missing": "Product Missing",
-    "Product Overage Shipped": "Product Overage",
-    "Product Damage": "Product Damage",
-    "Update Account Info": "Update Account Info",
-  };
   return (
     <div>
       <div className="">
-        <ModalPage
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          content={<SelectCaseReason reasons={reasons} onClose={() => setModalOpen(false)} recordType={{ id: "0123b0000007z9pAAA", name: "Customer Service" }} />}
-        />
-        <ModalPage
-          open={brandManagementModalOpen}
-          onClose={() => setBrandManagementModalOpen(false)}
-          content={<BrandManagementModal onClose={() => setBrandManagementModalOpen(false)} recordType={{ id: "0123b000000GfOEAA0", name: "Brand Management Approval" }} />}
-        />
         <div className={Styles.supportMain}>
           <div className="row">
             <div className="col-lg-3 col-md-12 col-sm-12">

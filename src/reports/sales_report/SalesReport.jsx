@@ -93,7 +93,7 @@ const SalesReport = () => {
     const dataWithTotals = filteredSalesReportData?.map((ele) =>
       ele.Orders.map((item) => ({
         ManufacturerName: ele.ManufacturerName__c,
-        AccountName: item.Name,
+        AccountName: item?.AccountName||item.Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,

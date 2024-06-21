@@ -1,6 +1,6 @@
 export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:3001"
+// export const originAPi = "http://localhost:3005"
 
 let url = `${originAPi}/retailer/`;
 const orderKey = "orders";
@@ -62,6 +62,12 @@ export function formatNumber(num) {
     return num;
   }
 }
+export const sortArrayHandler = (arr, getter, order = 'asc') =>
+  arr.sort(
+    order === 'desc'
+      ? (a, b) => getter(b).localeCompare(getter(a))
+      : (a, b) => getter(a).localeCompare(getter(b))
+  );
 
 export function POGenerator() {
   let count = parseInt(localStorage.getItem(POCount)) || 1;
@@ -262,7 +268,7 @@ export async function getSupportFormRaw({ rawData }) {
 }
 
 export async function getAllAccount({ user }) {
-  console.log({user});
+  console.log({ user });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -435,7 +441,7 @@ export async function getOrderCustomerSupport({ user, month }) {
     body: bodyContent,
     headers: headersList,
   });
-  let data = JSON.parse(await response.text()); 
+  let data = JSON.parse(await response.text());
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -785,7 +791,7 @@ export async function getMarketingCalendarPDF({ key, manufacturerId, month, manu
   }
 }
 
-export async function getMarketingCalendarPDFV2({ key, manufacturerId, month,manufacturerStr }) {
+export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, manufacturerStr }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -793,7 +799,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month,man
 
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month,manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -805,7 +811,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month,man
   }
 }
 
-export async function getMarketingCalendarPDFV3({ key, manufacturerId, month,manufacturerStr }) {
+export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -813,7 +819,7 @@ export async function getMarketingCalendarPDFV3({ key, manufacturerId, month,man
 
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/H893PuzIaG1miIo", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month,manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
