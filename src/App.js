@@ -36,9 +36,6 @@ import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
 
 function App() {
-  // const Redirect = ({ href }) => {
-  //   window.location.href = href;
-  // };
   return (
     <UserProvider>
       <BagProvider>
