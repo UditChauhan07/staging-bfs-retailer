@@ -24,6 +24,7 @@ function MyBagFinal() {
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
+  const [confirm, setConfirm] = useState(false);
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
 
@@ -198,6 +199,30 @@ function MyBagFinal() {
   return (
     <div className="mt-4">
       <section>
+      <ModalPage
+          open={confirm || false}
+          content={
+            <div className="d-flex flex-column gap-3">
+              <h2 style={{textDecoration:'underline'}}>
+                Confirm
+              </h2>
+              <p>
+                Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
+              </p>
+              <div className="d-flex justify-content-around ">
+                <button className={Styles.btnHolder} onClick={orderPlaceHandler}>
+                  Submit
+                </button>
+                <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+          onClose={() => {
+            setConfirm(false);
+          }}
+        />
       {clearConfim ? (
         <ModalPage
           open
@@ -408,7 +433,7 @@ function MyBagFinal() {
                         onClick={() => {
                           if (Object.keys(orders).length) {
                             if (PONumber.length) {
-                              orderPlaceHandler();
+                              setConfirm(true)
                             } else {
                               setPONumberFilled(false);
                             }
