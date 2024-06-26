@@ -48,7 +48,7 @@ function MyBagFinal({ setOrderDetail }) {
     GetAuthData().then((user) => {
       let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
       getOrderDetailId({ rawData }).then((res) => {
-        console.log({res});
+        console.log({ res });
         if (res?.ManufacturerId__c) {
           if (!data[res?.ManufacturerId__c]) {
             data[res?.ManufacturerId__c] = {};
@@ -85,7 +85,7 @@ function MyBagFinal({ setOrderDetail }) {
           })
         }
         getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
-          console.log({response});
+          console.log({ response });
           setInvoice(response?.data)
         }).catch((error) => {
           console.error({ error });
@@ -295,7 +295,7 @@ function MyBagFinal({ setOrderDetail }) {
                       </div></>}
                     {showTracking && OrderData.Tracking__c && <>
                       <h2>Tracking Number</h2>
-                      <div className={Styles.ShipAdress}  style={{ transition: 'all 250s linear'}}>
+                      <div className={Styles.ShipAdress} style={{ transition: 'all 250s linear' }}>
                         {OrderData.Tracking_URL__c ? <button role="link"
                           onClick={() => openInNewTab(OrderData.Tracking_URL__c)}>{OrderData.Tracking__c}</button> :
                           <p>
@@ -326,7 +326,7 @@ function MyBagFinal({ setOrderDetail }) {
                   <div className={Styles.ShipBut} data-html2canvas-ignore>
                     {OrderData.Tracking__c ? (
                       <button className="py-1 d-flex justify-content-center" onClick={() => setShowTracking(!showTracking)}>
-                        <span style={{ margin: 'auto 0'}} >{showTracking?<RxEyeOpen  size={16} style={{ transition: 'all 500s linear'}}/>:<TbEyeClosed size={16} style={{ transition: 'all 250s linear'}}/>}</span>&nbsp;Tracking Status
+                        <span style={{ margin: 'auto 0' }} >{showTracking ? <RxEyeOpen size={16} style={{ transition: 'all 500s linear' }} /> : <TbEyeClosed size={16} style={{ transition: 'all 250s linear' }} />}</span>&nbsp;Tracking Status
                       </button>
                     ) : <button className="py-1 d-flex justify-content-center" onClick={() => invoiceHandler("Tracking Status")}>
                       <span style={{ margin: 'auto 0' }}><VscGitPullRequestNewChanges size={16} /></span>&nbsp;Request Tracking

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Detail from './Detail.module.css'
 import { SupportStatusGreen, SupportStatusRed, SupportStatusYellow, UserChecked } from '../../lib/svg'
-import { GetAuthData, getStrCode, postSupportComment } from '../../lib/store'
+import { DateConvert, GetAuthData, getStrCode, postSupportComment } from '../../lib/store'
 import { Link } from 'react-router-dom';
 import Loading from '../Loading';
 const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -74,7 +74,7 @@ function FullQuearyDetail({ data, setRest }) {
                                 <p>
                                     {/* formatAMPM(date)} */}
                                     <UserChecked />
-                                    <span>{data.Account.Name}</span>&nbsp; raised this on {date.getDate()}/{monthNames[date.getMonth()]}/{date.getFullYear()} </p>
+                                    <span>{data.Account.Name}</span>&nbsp; raised this on {DateConvert(data.Date_Opened__c)} </p>
 
                             </div>
                             <p style={{ marginTop: "1rem" }}>{data.Description.split("User Desc:").length == 2 ? <>{data.Description.split("User Desc:")[1].split("Issue Desc:")[1]}<br/><b>User Description:</b> {data.Description.split("User Desc:")[1].split("Issue Desc:")[0]}</>:data.Description}</p>

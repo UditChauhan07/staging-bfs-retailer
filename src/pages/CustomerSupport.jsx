@@ -58,7 +58,6 @@ const CustomerSupport = () => {
   const filteredData = useMemo(() => {
     let newValues = supportList;
     if (status.length > 0) {
-      console.log({ status });
       newValues = newValues.filter((item) => status.includes(item.Status));
     }
     if (manufacturerFilter) {

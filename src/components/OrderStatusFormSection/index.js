@@ -8,6 +8,7 @@ import TextError from "../../validation schema/TextError";
 import Select from "react-select";
 import { BiUpload } from "react-icons/bi";
 import Loading from "../Loading";
+import ModalPage from "../Modal UI";
 
 const OrderStatusFormSection = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const OrderStatusFormSection = () => {
   console.log({supportTicketData});
   const [activeBtn, setActive] = useState(false);
   const [submitLoad,setSubmitLoad] = useState(false)
+  const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
     let data = supportDriveBeg();
@@ -106,7 +108,32 @@ const OrderStatusFormSection = () => {
   return (
     <>
     {submitLoad ? <Loading height={"70vh"} /> :
-    <Formik initialValues={initialValues} validationSchema={OrderStatusSchema} onSubmit={onSubmitHandler}>
+    <>
+          <ModalPage
+        open={confirm || false}
+        content={
+          <div className="d-flex flex-column gap-3">
+            <h2>
+              Confirm  
+            </h2>
+            <p>
+              Are you sure you want to generate a ticket?<br/> This action cannot be undone.<br/> You will be redirected to the ticket page after the ticket is generated.
+            </p>
+            <div className="d-flex justify-content-around ">
+              <button className={styles.btn} onClick={() => onSubmitHandler(confirm)}>
+                Submit
+              </button>
+              <button className={styles.btn} onClick={() => setConfirm(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+        onClose={() => {
+          setConfirm(false);
+        }}
+      />
+    <Formik initialValues={initialValues} validationSchema={OrderStatusSchema} onSubmit={(values) => { setConfirm(values) }}>
       {(formProps) => (
         <div className={styles.container}>
           <Form className={styles.formContainer}>
@@ -155,7 +182,7 @@ const OrderStatusFormSection = () => {
           </Form>
         </div>
       )}
-    </Formik>}
+    </Formik></>}
     </>
   );
 };
