@@ -32,7 +32,7 @@ export const FilterItem = ({ label, options, onChange, minWidth, value, name = '
           <div className={Page.upArrow}></div>
           <ul
             className={`bg-white z-10 rounded-[5px] shadow-sm text-black py-2 pr-2 flex flex-col  list-disc`}
-
+            style={{maxHeight:'350px',overflowY:'scroll'}}
           >
             {options?.map((option, index) => (
               <li
