@@ -1,4 +1,4 @@
-import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, originAPi } from "../../lib/store";
+import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, originAPi, sortArrayHandler } from "../../lib/store";
 import Styles from "../OrderList/style.module.css"
 import Styles1 from "./OrderCardHandler.module.css"
 import { useEffect, useState } from "react";
@@ -113,6 +113,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                     }
                                 })
                                 // setProductList(temp)
+                                sortArrayHandler(temp, g => g.Name)
                                 setProductAllList(temp)
                                 let data = ShareDrive();
                                 if (!data) {
@@ -400,15 +401,14 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                                                     return (<ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler} readOnly={orderConfirmed} />)
                                                                                 }
                                                                             })}
-                                                                        {reason == "Product Overage" && !showProductList ? productList.length ?
+                                                                        {reason == "Product Overage" &&
                                                                             productList.map((ele, index) => {
                                                                                 return (
                                                                                     <ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler}
-                                                                                        readOnly={orderConfirmed}  style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} />
+                                                                                        readOnly={orderConfirmed} style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} />
                                                                                 )
                                                                             }
-                                                                            ) : <p className={Styles1.listHolder} style={{ display: 'none' }} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; Product List</p>
-                                                                            : null}
+                                                                            )}
 
                                                                     </tbody>
                                                                 </table>
