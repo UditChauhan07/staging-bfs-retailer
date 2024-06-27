@@ -1,7 +1,6 @@
 /* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from "react";
 import Styles from "./Styles.module.css";
-import Img1 from "./Images/Eye1.png";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { useNavigate } from "react-router-dom";
 import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, fetchBeg, getProductImageAll } from "../../lib/store";
@@ -13,6 +12,7 @@ import LoaderV2 from "../loader/v2";
 import ProductDetails from "../../pages/productDetails";
 
 function MyBagFinal() {
+  let Img1 = "/assets/images/dummy.png";
   const navigate = useNavigate();
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState(POGenerator());
@@ -311,7 +311,7 @@ function MyBagFinal() {
                                 <div className={Styles.Mainbox1M}>
                                   <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
                                   {
-                                      !productImage.isLoaded ? <LoaderV2 /> :
+                                      ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} />:!productImage.isLoaded ? <LoaderV2 /> :
                                         productImage.images?.[ele.product?.ProductCode] ?
                                           productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl ?
                                             <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(ele?.product?.Id)}}/>
