@@ -196,6 +196,7 @@ const navigate = useNavigate();
 const getSalesData = async (yearFor) => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
+    console.log({aaa:accountIds});
     const result = await salesReportApi.salesReportData({ yearFor,accountIds });
     let salesListName = [];
     let salesList = [];
