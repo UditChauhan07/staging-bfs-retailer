@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
-import { GetAuthData, getAllAccount, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
+import { GetAuthData, getAllAccount, getAllAccountOrders, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
 import OrderCardHandler from "../components/IssuesHandler/OrderCardHandler.jsx";
 import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useNavigate } from "react-router-dom";
@@ -60,11 +60,9 @@ const CustomerService = () => {
       .then((response) => {
         setContactId(response.data.retailerId)
         setContactName(response.data.firstName + " " + response.data.lastName)
-        getOrderCustomerSupport({
-          user: {
-            key: response.data.x_access_token,
-            accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
-          },
+        getAllAccountOrders({
+          key: response.data.x_access_token,
+          accountIds: JSON.stringify(response.data.accountIds)
         })
           .then((order) => {
             let sorting = sortingList(order);

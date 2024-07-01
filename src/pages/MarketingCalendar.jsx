@@ -5,7 +5,7 @@ import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import Loading from "../components/Loading";
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, getRetailerBrands, originAPi, } from "../lib/store";
+import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, getRetailerBrands, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
@@ -44,8 +44,7 @@ const MarketingCalendar = () => {
 
   useEffect(() => {
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
           setProductList(productRes)

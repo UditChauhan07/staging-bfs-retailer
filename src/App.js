@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SalesReport from "./reports/sales_report/SalesReport";
-import NewnessReport from "./reports/newness/NewnessReport";
 import ComparisonReport from "./reports/comparison/ComparisonReport";
 import "../node_modules/bootstrap/dist/js/bootstrap";
 import Login from "./pages/Login";
@@ -9,7 +8,7 @@ import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
 import { UserProvider } from "./context/UserContext";
-import BrandsPage from "./pages/BrandsPage";
+import MyRetailersPage from "./pages/MyRetailersPage";
 import WholesaleInquiry from "./pages/WholesaleInquiry"
 import CustomerCare from "./pages/CustomerCare";
 import AboutUs from "./pages/AboutUs";
@@ -50,7 +49,8 @@ function App() {
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
-            <Route path="/order" element={<BrandsPage />}></Route>
+            <Route path="/order" element={<MyRetailersPage />}></Route>
+            {/* <Route path="/order" element={<BrandsPage />}></Route> */}
             <Route path="/orders" element={<Product />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>

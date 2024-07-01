@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, ShareDrive, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
+import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
 import Loading from "../components/Loading";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
@@ -69,14 +69,13 @@ const TopProducts = () => {
       }
     }
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountId: user.data.accountId }).then((products) => {
+      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
         let result = [];
         console.log({ products });
         if (products?.data?.length > 0) {

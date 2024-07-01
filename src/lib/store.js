@@ -1,8 +1,9 @@
-export const originAPi = "https://b2b.beautyfashionsales.com"
+// export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:3005"
+export const originAPi = "http://localhost:6194"
 
 let url = `${originAPi}/retailer/`;
+let url2 = `${originAPi}/retailerv2/`;
 const orderKey = "orders";
 const accountIdKey = "AccountId__c";
 const brandIdKey = "ManufacturerId__c";
@@ -464,7 +465,6 @@ export async function getOrderDetailId({ rawData }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -474,23 +474,18 @@ export async function getOrderDetailId({ rawData }) {
 export async function getDashboardata({ user }) {
   let headersList = {};
   if (user.headers) {
-    headersList = user.headers || {};
+    headersList = { ...user.headers } || {};
   } else {
     headersList = {
       Accept: "*/*",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
+      "Access-Control-Allow-Origin": "*",
     };
   }
-
-  let bodyContent = new FormData();
-  bodyContent.append("key", user.data.x_access_token);
-  bodyContent.append("accountId", user.data.accountId);
-
-  let response = await fetch(url + "38Akka0hdLL8Kyo", {
+  console.log({ aaaaaaa: headersList });
+  let response = await fetch(url2 + "38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
-    body: bodyContent,
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -696,15 +691,15 @@ export async function getProductList({ rawData }) {
   }
 }
 
-export async function topProduct({ month, manufacturerId, accountId }) {
+export async function topProduct({ month, manufacturerId, accountIds }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url + "IParlpz6lDE6kfU", {
+  let response = await fetch(url2 + "IParlpz6lDE6kfU", {
     method: "POST",
-    body: JSON.stringify({ month, manufacturerId, accountId }),
+    body: JSON.stringify({ month, manufacturerId, accountIds }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -827,6 +822,81 @@ export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, ma
     DestoryAuth();
   } else {
     return data?.file || false;
+  }
+}
+
+
+export async function getAllAccountLocation({ key, accountIds }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/GQGpen0kmGHGPtx", {
+    method: "POST",
+    body: JSON.stringify({ key, accountIds }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.data || [];
+  }
+}
+
+export async function getAllAccountBrand({ key, accountIds }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/EACucX1daQv1ZhN", {
+    method: "POST",
+    body: JSON.stringify({ key, accountIds }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.data || [];
+  }
+}
+export async function getAllAccountOrders({ key, accountIds,month }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/UQPIByU1hllkP9m", {
+    method: "POST",
+    body: JSON.stringify({ key, accountIds,month }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.data || [];
+  }
+}
+export async function getAllAccountSupport({ key, accountIds }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/XIj26x1E4d2kMKg", {
+    method: "POST",
+    body: JSON.stringify({ key, accountIds }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data?.data || [];
   }
 }
 

@@ -147,6 +147,8 @@ function Dashboard({ dashboardData }) {
   const [achievedSales, setAchievedSales] = useState();
   const [needle_data, setNeedle_data] = useState([]);
   const [needle_data2, setNeedle_data2] = useState([]);
+  const [accountList, setAccountList] = useState([]);
+  const [account, setAccount] = useState()
 
 
   //dashboard varibale used
@@ -215,10 +217,15 @@ function Dashboard({ dashboardData }) {
       .then((user) => {
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
+          headers.key = user.data.x_access_token
           user.headers = headers;
+          if (!headers.accountIds) {
+            user.headers = { ...user.headers, accountIds: JSON.stringify(user.data.accountIds) }
+          }
         }
         getDashboardata({ user })
           .then((dashboard) => {
+            setAccountList(user.data.accountList)
             setGoalList(dashboard.goalByMonth ?? [])
             console.log({ dashboard });
             let totalOrder = 0;
@@ -268,7 +275,7 @@ function Dashboard({ dashboardData }) {
               { name: "B", value: parseInt(tempValue2 > 0 ? 100 - tempValue2 : 100), color: "rgb(171 195 203)" },
             ])
             setTargetValue(formatNumber(yearlyTarget || 0));
-            setRetailerTarget(formatNumber((yearlyTarget*2) || 0))
+            setRetailerTarget(formatNumber((yearlyTarget * 2) || 0))
             setAchievedSales(formatNumber(yearlyPrice || 0));
             setRetailerNum(formatNumber(dashboard.retailerNumberValue || 0))
 
@@ -442,7 +449,26 @@ function Dashboard({ dashboardData }) {
     let year = valuePlit[0] || null;
     setPurchaseYear(year)
     setPurchaseMonth(month)
-    getDataHandler({ month, year });
+    let accountIds = null;
+    if (account) {
+      accountIds = [account]
+      getDataHandler({ month, year, accountIds: JSON.stringify(accountIds) });
+    } else {
+      getDataHandler({ month, year });
+    }
+  };
+  const changeAccountHandler = (value) => {
+    setIsLoading(false);
+    setAccount(value)
+    setManufacturerSalesYaer([]);
+    setBox({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
+    let accountIds = null;
+    if (value) {
+      accountIds = [value]
+      getDataHandler({ month:PurchaseMonth, year:PurchaseYear, accountIds: JSON.stringify(accountIds) });
+    } else {
+      getDataHandler({ month:PurchaseMonth, year:PurchaseYear });
+    }
   };
   const RADIAN = Math.PI / 180;
   const cx = 150;
@@ -480,7 +506,7 @@ function Dashboard({ dashboardData }) {
     //   total += v.value;
     // });
     let ang = 180 - ((value / 100) * 180);
-    console.log({value});
+    console.log({ value });
     // if (value == 0) {
     //   ang = 180;
     // }
@@ -539,6 +565,19 @@ function Dashboard({ dashboardData }) {
     <AppLayout
       filterNodes={
         <>
+          <FilterItem
+            minWidth="220px"
+            label="All Account"
+            value={account}
+            options={[...accountList.map((month,i) => ({
+              label: month.Name,
+              value: month.Id,
+            })),{label:'All Accounts',value:null}]}
+            onChange={(value) => {
+              changeAccountHandler(value);
+            }}
+            name={"Account-menu"}
+          />
           <FilterItem
             minWidth="220px"
             label="Month-Year"
@@ -646,10 +685,10 @@ function Dashboard({ dashboardData }) {
                     <ContentLoader />
                   ) : (
                     <div>
-                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{ marginRight: '10px' }}>
                         Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
                         Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
@@ -673,10 +712,10 @@ function Dashboard({ dashboardData }) {
                     <ContentLoader />
                   ) : (
                     <div>
-                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{ marginRight: '10px' }}>
                         Retail Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
                         Retail Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
@@ -725,7 +764,7 @@ function Dashboard({ dashboardData }) {
                                     <UserIcon /> {e.ManufacturerName}
                                   </td>
                                   <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>
-                                  <td className={Styles.tabletd}>${e.MonthlySale? e.MonthlySale<1000? e.MonthlySale:formatNumber(e.MonthlySale):0}</td>
+                                  <td className={Styles.tabletd}>${e.MonthlySale ? e.MonthlySale < 1000 ? e.MonthlySale : formatNumber(e.MonthlySale) : 0}</td>
                                   {/* <td className={Styles.tabletd}>${formatNumber(e?.diff || 0)}</td> */}
                                   <td className={`${Styles.tabletd} ${Styles.flex}`}><span style={{ lineHeight: '20px' }}>${formatNumber(e.Difference || 0)}</span><span className={e.Difference <= 0 ? Styles.matchHolder : Styles.shortHolder}>{e.Difference <= 0 ? 'MATCH' : 'SHORT'}</span></td>
                                 </tr>

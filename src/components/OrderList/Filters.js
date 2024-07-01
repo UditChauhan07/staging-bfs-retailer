@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
-import { GetAuthData, getRetailerBrands } from "../../lib/store";
+import { GetAuthData, getAllAccountBrand } from "../../lib/store";
 import { CloseButton } from "../../lib/svg";
 
 const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
   const [manufacturerData,setManufacturerData ] = useState([]);
   useEffect(()=>{
     GetAuthData().then((user)=>{
-      let rawData={accountId:user.data.accountId,key:user.data.x_access_token}
-      getRetailerBrands({rawData}).then((resManu)=>{
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu)=>{
         setManufacturerData(resManu);
       }).catch((err)=>{
         console.log({err});

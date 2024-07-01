@@ -20,7 +20,7 @@ const ComparisonReport = () => {
   const initialValues = {
     month: date.getMonth() + 1,
     year: date.getFullYear(),
-    AccountId__c: null
+    accountIds: null
   };
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useComparisonReport();
@@ -33,6 +33,7 @@ const ComparisonReport = () => {
   if (apiData?.data?.length) {
     apiData?.data?.map((ele) => {
       return csvData.push({
+        "Account Name":ele.Retail_Store_Name__c,
         Brand: ele.ManufacturerName__c,
         "Estee Lauder Number": ele.Estee_Lauder_Number__c,
         "Sales Rep": ele.Sales_Rep__c,
@@ -44,8 +45,10 @@ const ComparisonReport = () => {
   useEffect(() => {
     GetAuthData().then((user) => {
       setUserData(user)
-      filter.AccountId__c = user.data.accountId
-      sendApiCall();
+      filter.accountIds = JSON.stringify(userData?.data?.accountIds)
+      if(filter.accountIds){
+        sendApiCall();
+      }
     }).catch((userErr) => {
       console.log({ userErr });
     })
@@ -64,7 +67,7 @@ const ComparisonReport = () => {
   };
   const resetFilter = async () => {
     setIsLoading(true);
-      initialValues.AccountId__c = userData?.data?.accountId
+      initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
       const result = await originalApiData.fetchComparisonReportAPI(initialValues);
     setApiData(result);
     setFilter(() => initialValues);

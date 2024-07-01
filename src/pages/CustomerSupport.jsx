@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import CustomerSupportPage from "../components/CustomerSupportPage/CustomerSupportPage";
 import { FilterItem, MultiFilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { DestoryAuth, GetAuthData, getRetailerBrands, getSupportList } from "../lib/store";
+import { DestoryAuth, GetAuthData, getAllAccountBrand, getAllAccountSupport, getRetailerBrands, getSupportList } from "../lib/store";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
@@ -24,10 +24,9 @@ const CustomerSupport = () => {
     GetAuthData()
       .then((user) => {
         if (user) {
-          let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-          getRetailerBrands({ rawData }).then((resManu) => {
+          getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
             setManufacturerData(resManu);
-            getSupportList({ user })
+            getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })
               .then((supports) => {
                 console.log({ supports });
                 if (supports) {

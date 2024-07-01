@@ -14,6 +14,9 @@ const ComparisonReportTable = ({ comparisonData }) => {
               <table id="salesReportTable" className="table table-responsive">
                 <thead>
                   <tr>
+                  <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
+                     Account Name
+                    </th>
                     <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
                      Brand
                     </th>
@@ -33,7 +36,8 @@ const ComparisonReportTable = ({ comparisonData }) => {
                         return (
                           <>
                             <tr key={index}>
-                              <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.ManufacturerName__c}</td>
+                              <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.Retail_Store_Name__c}</td>
+                              <td className={`${styles.td}`}>{ele.ManufacturerName__c}</td>
                               <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c??'NA'} </td>
                               <td className={`${styles.td}`}>{ele.Sales_Rep__c}</td>
                               <td className={`${styles.td}`}>{ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>

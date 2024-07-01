@@ -207,7 +207,7 @@ function MyBagFinal() {
                 Confirm
               </h2>
               <p>
-                Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
+                Are you sure you want to generate a order?<br /> This action cannot be undone.
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btnHolder} onClick={orderPlaceHandler}>

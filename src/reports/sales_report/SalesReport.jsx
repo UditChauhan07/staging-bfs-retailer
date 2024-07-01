@@ -14,7 +14,7 @@ import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
-import { GetAuthData, getRetailerBrands } from "../../lib/store";
+import { GetAuthData, getAllAccountBrand, getRetailerBrands } from "../../lib/store";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -196,7 +196,7 @@ const navigate = useNavigate();
 const getSalesData = async (yearFor) => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
-    const result = await salesReportApi.salesReportData({ yearFor });
+    const result = await salesReportApi.salesReportData({ yearFor,accountIds });
     let salesListName = [];
     let salesList = [];
     console.log({result});
@@ -220,11 +220,12 @@ const getSalesData = async (yearFor) => {
   };
   // console.log("salesReportData", salesReportData);
   const [manufacturerData, setManufacturerData] = useState([]);
+  const [accountIds,setAccountids] = useState([]);
   useEffect(() => {
     GetAuthData().then((user) => {
       if (user) {
-        let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-        getRetailerBrands({ rawData }).then((resManu) => {
+        setAccountids(JSON.stringify(user.data.accountIds))
+        getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
           getSalesData(yearFor);
           setManufacturerData(resManu);
         }).catch((err) => {

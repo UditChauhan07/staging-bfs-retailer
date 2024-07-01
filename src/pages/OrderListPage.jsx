@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Filters from "../components/OrderList/Filters";
 import Styles from "../components/OrderList/style.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getOrderList } from "../lib/store";
+import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
@@ -87,15 +87,13 @@ const OrderListPage = () => {
     setLoaded(false);
     GetAuthData()
       .then((response) => {
-        getOrderList({
-          user: {
-            key: response.data.x_access_token,
-            accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
-          },
+        getAllAccountOrders({
+          key: response.data.x_access_token,
+          accountIds: JSON.stringify(response.data.accountIds),
           month: filterValue.month,
         })
           .then((order) => {
-            console.log({order});
+            console.log({ order });
             let sorting = sortingList(order);
             setOrders(sorting);
             setLoaded(true);
