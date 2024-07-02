@@ -26,14 +26,15 @@ const ComparisonReport = () => {
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [userData,setUserData] = useState({});
-  sortArrayHandler(apiData?.data||[],g=>g.ManufacturerName__c)
+  const [userData, setUserData] = useState({});
+  const [accountList, setAccountList] = useState([]);
+  sortArrayHandler(apiData?.data || [], g => g.ManufacturerName__c)
   //csv Data
   let csvData = [];
   if (apiData?.data?.length) {
     apiData?.data?.map((ele) => {
       return csvData.push({
-        "Account Name":ele.Retail_Store_Name__c,
+        "Account Name": ele.Retail_Store_Name__c,
         Brand: ele.ManufacturerName__c,
         "Estee Lauder Number": ele.Estee_Lauder_Number__c,
         "Sales Rep": ele.Sales_Rep__c,
@@ -45,8 +46,9 @@ const ComparisonReport = () => {
   useEffect(() => {
     GetAuthData().then((user) => {
       setUserData(user)
-      filter.accountIds = JSON.stringify(userData?.data?.accountIds)
-      if(filter.accountIds){
+      setAccountList(user.data.accountList)
+      filter.accountIds = JSON.stringify(user?.data?.accountIds)
+      if (filter.accountIds) {
         sendApiCall();
       }
     }).catch((userErr) => {
@@ -67,10 +69,10 @@ const ComparisonReport = () => {
   };
   const resetFilter = async () => {
     setIsLoading(true);
-      initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
-      const result = await originalApiData.fetchComparisonReportAPI(initialValues);
-    setApiData(result);
     setFilter(() => initialValues);
+    initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
+    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+    setApiData(result);
     setIsLoading(false);
   };
   const sendApiCall = async () => {
@@ -79,21 +81,30 @@ const ComparisonReport = () => {
     setApiData(result);
     setIsLoading(false);
   };
+  const {accountIds} = filter
   return (
     <AppLayout
       filterNodes={
         <>
-          {/* <FilterItem
-            minWidth="220px"
-            label="All Manufacturers"
-            name="All-Manufacturers"
-            value={filter.ManufacturerId__c}
-            options={manufacturers?.map((manufacturer) => ({
-              label: manufacturer.Name,
-              value: manufacturer.Id,
-            }))}
-            onChange={(value) => setFilter((prev) => ({ ...prev, ManufacturerId__c: value }))}
-          /> */}
+          {accountList?.length > 1 &&
+            <FilterItem
+              minWidth="220px"
+              label="All Store"
+              value={JSON.parse(accountIds)?.length == 1 ? JSON.parse(accountIds)[0] : null}
+
+              options={[...accountList.map((month, i) => ({
+                label: month.Name,
+                value: month.Id,
+              })), { label: 'All Accounts', value: null }]}
+              onChange={(value) => {
+                if (value) {
+                  setFilter({...filter,accountIds:JSON.stringify([value])})
+                } else {
+                  resetFilter();
+                }
+              }}
+              name={"Account-menu"}
+            />}
           <FilterItem
             minWidth="220px"
             label="Months"

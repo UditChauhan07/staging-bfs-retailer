@@ -92,7 +92,11 @@ const TopProducts = () => {
         localStorage.setItem("Account", user.data.accountName)
         localStorage.setItem("AccountId__c", user.data.accountId)
         localStorage.setItem("ManufacturerId__c", manufacturerFilter)
-        setTopProductList({ isLoaded: true, data: result, message: products?.message, accountDetails: products?.accountDetails })
+        let message = products?.message
+        if(result.length==0){
+          message="No Data Found";
+        }
+        setTopProductList({ isLoaded: true, data: result, message, accountDetails: products?.accountDetails })
         if (result.length > 0) {
           let productCode = "";
           result?.map((product, index) => {
@@ -168,9 +172,9 @@ const TopProducts = () => {
     </>
     }>
       {!topProductList.isLoaded ? <Loading /> : (topProductList.data.length == 0 && topProductList.message) ?
-        <div className="row d-flex flex-column justify-content-around align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+        <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
-            <p className="m-0 fs-2 font-[Montserrat-400] text-[14px] tracking-[2.20px]">
+            <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px]">
               {topProductList.message}
             </p>
           </div>

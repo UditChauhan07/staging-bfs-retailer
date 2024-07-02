@@ -1,6 +1,6 @@
-// export const originAPi = "https://b2b.beautyfashionsales.com"
+export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-export const originAPi = "http://localhost:6194"
+// export const originAPi = "http://localhost:6194"
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
@@ -165,9 +165,9 @@ export function fetchBeg() {
 
 
 export async function DestoryAuth() {
-  localStorage.clear();
-  window.location.href = window.location.origin;
-  return true;
+  // localStorage.clear();
+  // window.location.href = window.location.origin;
+  // return true;
 }
 
 export async function GetAuthData() {
@@ -540,25 +540,16 @@ export async function getSupportDetails({ rawData }) {
   }
 }
 
-export async function getTargetReportAll({ user, year, preOrder }) {
-  console.log({ user });
+export async function getTargetReportAll({ user, year, preOrder, accountIds = null }) {
   if (user) {
     let headersList = {
       Accept: "*/*",
+      key: user?.data?.x_access_token,
+      accountIds:accountIds || JSON.stringify(user?.data?.accountIds),
+      year,preOrder
     };
-    let bodyContent = new FormData();
-    bodyContent.append("key", user?.data?.x_access_token);
-    bodyContent.append("accountId", user?.data?.accountId);
-    if (year) {
-      bodyContent.append('year', year);
-    }
-    if (preOrder) {
-      bodyContent.append('preorder', preOrder);
-    }
-    // console.log({bodyRaw});
-    let response = await fetch(originAPi + "/uBUAQkaqEISRPAv/K2uJd7bnERtviUv", {
+    let response = await fetch(url2 + "/K2uJd7bnERtviUv", {
       method: "POST",
-      body: bodyContent,
       headers: headersList,
     });
     let data = JSON.parse(await response.text());
@@ -863,7 +854,7 @@ export async function getAllAccountBrand({ key, accountIds }) {
     return data?.data || [];
   }
 }
-export async function getAllAccountOrders({ key, accountIds,month }) {
+export async function getAllAccountOrders({ key, accountIds, month }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -871,7 +862,7 @@ export async function getAllAccountOrders({ key, accountIds,month }) {
 
   let response = await fetch(url2 + "/UQPIByU1hllkP9m", {
     method: "POST",
-    body: JSON.stringify({ key, accountIds,month }),
+    body: JSON.stringify({ key, accountIds, month }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -897,6 +888,24 @@ export async function getAllAccountSupport({ key, accountIds }) {
     DestoryAuth();
   } else {
     return data?.data || [];
+  }
+}
+export async function getAllAccountStore({ key, retailerId }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/zxkaD90Zl3tboJ6", {
+    method: "POST",
+    body: JSON.stringify({ key, retailerId }),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data|| {};
   }
 }
 

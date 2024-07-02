@@ -14,7 +14,7 @@ import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
-import { GetAuthData, getAllAccountBrand, getRetailerBrands } from "../../lib/store";
+import { GetAuthData, getAllAccountBrand, getRetailerBrands, sortArrayHandler } from "../../lib/store";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -93,7 +93,7 @@ const SalesReport = () => {
     const dataWithTotals = filteredSalesReportData?.map((ele) =>
       ele.Orders.map((item) => ({
         ManufacturerName: ele.ManufacturerName__c,
-        AccountName: item?.AccountName||item.Name,
+        AccountName: item?.AccountName || item.Name,
         JanOrders: item.Jan.items?.length,
         JanAmount: item.Jan.amount,
         FebOrders: item.Feb.items?.length,
@@ -122,12 +122,12 @@ const SalesReport = () => {
         TotalAmount: item.totalorderPrice,
       }))
     ).flat();
-  
- const totals = {
-      ManufacturerName: "Total", 
+
+    const totals = {
+      ManufacturerName: "Total",
       JanOrders: dataWithTotals.reduce((total, item) => total + (item.JanOrders || 0), 0),
       JanAmount: dataWithTotals.reduce((total, item) => total + (item.JanAmount || 0), 0),
-      
+
       FebOrders: dataWithTotals.reduce((total, item) => total + (item.FebOrders || 0), 0),
       FebAmount: dataWithTotals.reduce((total, item) => total + (item.FebAmount || 0), 0),
 
@@ -136,7 +136,7 @@ const SalesReport = () => {
 
       AprOrders: dataWithTotals.reduce((total, item) => total + (item.AprOrders || 0), 0),
       AprAmount: dataWithTotals.reduce((total, item) => total + (item.AprAmount || 0), 0),
-      
+
       MayOrders: dataWithTotals.reduce((total, item) => total + (item.MayOrders || 0), 0),
       MayAmount: dataWithTotals.reduce((total, item) => total + (item.MayAmount || 0), 0),
 
@@ -158,20 +158,20 @@ const SalesReport = () => {
       NovOrders: dataWithTotals.reduce((total, item) => total + (item.NovOrders || 0), 0),
       NovAmount: dataWithTotals.reduce((total, item) => total + (item.NovAmount || 0), 0),
 
-    DecOrders: dataWithTotals.reduce((total, item) => total + (item.DecOrders || 0), 0),
-     DecAmount: dataWithTotals.reduce((total, item) => total + (item.DceAmount || 0), 0),
+      DecOrders: dataWithTotals.reduce((total, item) => total + (item.DecOrders || 0), 0),
+      DecAmount: dataWithTotals.reduce((total, item) => total + (item.DceAmount || 0), 0),
 
-     TotalOrders: dataWithTotals.reduce((total, item) => total + (item.TotalOrders || 0), 0),
+      TotalOrders: dataWithTotals.reduce((total, item) => total + (item.TotalOrders || 0), 0),
       TotalAmount: dataWithTotals.reduce((total, item) => total + (item.TotalAmount || 0), 0),
-  
-    
+
+
     };
-  
+
     const dataWithTotalRow = [...dataWithTotals, totals];
-  
+
     return dataWithTotalRow;
   }, [filteredSalesReportData, manufacturerFilter]);
-  
+
   const handleExportToExcel = () => {
     setExportToExcelState(true);
   };
@@ -192,15 +192,13 @@ const SalesReport = () => {
     setSearchBySalesRep("");
     setYearForTableSort(2024);
   };
-const navigate = useNavigate();
-const getSalesData = async (yearFor) => {
+  const navigate = useNavigate();
+  const getSalesData = async (yearFor, strAccountIds = "[]") => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
-    console.log({aaa:accountIds});
-    const result = await salesReportApi.salesReportData({ yearFor,accountIds });
+    const result = await salesReportApi.salesReportData({ yearFor, accountIds: strAccountIds });
     let salesListName = [];
     let salesList = [];
-    console.log({result});
     result.data.data.map((manu) => {
       if (manu.Orders.length) {
         manu.Orders.map((item) => {
@@ -221,14 +219,17 @@ const getSalesData = async (yearFor) => {
   };
   // console.log("salesReportData", salesReportData);
   const [manufacturerData, setManufacturerData] = useState([]);
-  const [accountIds,setAccountids] = useState([]);
+  const [accountIds, setAccountids] = useState("[]");
+  const [accountList, setAccountList] = useState([]);
   useEffect(() => {
     GetAuthData().then((user) => {
       if (user) {
         setAccountids(JSON.stringify(user.data.accountIds))
+        console.log({a:user.data.accountList});
+        setAccountList(user.data.accountList)
         getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
-          getSalesData(yearFor);
           setManufacturerData(resManu);
+          getSalesData(yearFor, JSON.stringify(user.data.accountIds));
         }).catch((err) => {
           console.log({ err });
         })
@@ -245,7 +246,18 @@ const getSalesData = async (yearFor) => {
     // getSalesData(yearFor);
     // setSearchBy("");
     // setSearchBySalesRep("");
-    getSalesData(yearFor);
+    if (!JSON.parse(accountIds).length) {
+      GetAuthData().then((user) => {
+        if (user) {
+          setAccountids(JSON.stringify(user.data.accountIds))
+          getSalesData(yearFor, JSON.stringify(user.data.accountIds));
+        }
+      }).catch((error) => {
+        console.log({ error });
+      })
+    } else {
+      getSalesData(yearFor, accountIds);
+    }
   };
   let yearList = [
     { value: 2024, label: 2024 },
@@ -263,62 +275,80 @@ const getSalesData = async (yearFor) => {
     <AppLayout
       filterNodes={
         <div className="d-flex justify-content-between m-auto" style={{ width: '99%' }}>
-        <div className="d-flex justify-content-start gap-4 col-3">
-          <FilterItem
-            label="year"
-            name="Year"
-            value={yearFor}
-            options={yearList}
-            onChange={(value) => setYearFor(value)}
-          />
-          <button onClick={() => sendApiCall()} className="border px-2 py-1 leading-tight d-grid"> <SearchIcon fill="#fff" width={20} height={20} />
-            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>search</small>
-          </button>
-        </div>
-        <div className="d-flex justify-content-around col-1"></div>
-        <div className="d-flex justify-content-around col-1"><hr className={Styles.breakHolder} /></div>
-        <div className="d-flex justify-content-end gap-4 col-7">
-          {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
-          <FilterItem
-            minWidth="220px"
-            label="All Manufacturers"
-            name="AllManufacturers1"
-            value={manufacturerFilter}
-            options={manufacturerData?.map((manufacturer) => ({
-              label: manufacturer.Name,
-              value: manufacturer.Name,
-            }))}
-            onChange={(value) => setManufacturerFilter(value)}
-          />
-          <FilterItem
-            minWidth="220px"
-            label="Lowest Orders"
-            name="LowestOrders"
-            value={highestOrders}
-            options={[
-              {
-                label: "Highest Orders",
-                value: true,
-              },
-              {
-                label: "Lowest Orders",
-                value: false,
-              },
-            ]}
-            onChange={(value) => setHighestOrders(value)}
-          />
-          {/* First Calender Filter-- start date */}
-          <div className="d-flex gap-3">
-            <button className="border px-2 py-1 leading-tight d-grid" onClick={resetFilter}>
-            <CloseButton crossFill={'#fff'} height={20} width={20} />
-            <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
+          <div className="d-flex justify-content-start gap-4 col-5">
+            {accountList?.length > 1 &&
+              <FilterItem
+                minWidth="220px"
+                label="All Store"
+                value={JSON.parse(accountIds).length == 1 ? JSON.parse(accountIds)[0] : null}
+
+                options={[...accountList.map((month, i) => ({
+                  label: month.Name,
+                  value: month.Id,
+                })), { label: 'All Accounts', value: null }]}
+                onChange={(value) => {
+                  if (value) {
+                    setAccountids(JSON.stringify([value]));
+                  } else {
+                    setAccountids(JSON.stringify([]));
+                  }
+                }}
+                name={"Account-menu"}
+              />}
+            <FilterItem
+              label="year"
+              name="Year"
+              value={yearFor}
+              options={yearList}
+              onChange={(value) => setYearFor(value)}
+            />
+            <button onClick={() => sendApiCall()} className="border px-2 py-1 leading-tight d-grid"> <SearchIcon fill="#fff" width={20} height={20} />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>search</small>
             </button>
           </div>
-          <button className="border px-2 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
-          <MdOutlineDownload size={16} className="m-auto" />
+          <div className="d-flex justify-content-end col-1"><hr className={Styles.breakHolder} /></div>
+          <div className="d-flex justify-content-end gap-4 col-6">
+            {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
+            <FilterItem
+              minWidth="220px"
+              label="All Manufacturers"
+              name="AllManufacturers1"
+              value={manufacturerFilter}
+              options={manufacturerData?.map((manufacturer) => ({
+                label: manufacturer.Name,
+                value: manufacturer.Name,
+              }))}
+              onChange={(value) => setManufacturerFilter(value)}
+            />
+            <FilterItem
+              minWidth="220px"
+              label="Lowest Orders"
+              name="LowestOrders"
+              value={highestOrders}
+              options={[
+                {
+                  label: "Highest Orders",
+                  value: true,
+                },
+                {
+                  label: "Lowest Orders",
+                  value: false,
+                },
+              ]}
+              onChange={(value) => setHighestOrders(value)}
+            />
+            {/* First Calender Filter-- start date */}
+            <div className="d-flex gap-3">
+              <button className="border px-2 py-1 leading-tight d-grid" onClick={resetFilter}>
+                <CloseButton crossFill={'#fff'} height={20} width={20} />
+                <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
+              </button>
+            </div>
+            <button className="border px-2 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
+              <MdOutlineDownload size={16} className="m-auto" />
               <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>EXPORT</small>
-          </button>
-        </div>
+            </button>
+          </div>
         </div>
       }
     >
@@ -349,7 +379,7 @@ const getSalesData = async (yearFor) => {
       <div className={Styles.inorderflex}>
         <div>
           <h2>
-          {/* ${(yearFor<2024)?("-"+yearFor):''} */}
+            {/* ${(yearFor<2024)?("-"+yearFor):''} */}
             {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Purchase Report` : `Your Purchase Report`}
             {manufacturerFilter && " for " + manufacturerFilter}
           </h2>

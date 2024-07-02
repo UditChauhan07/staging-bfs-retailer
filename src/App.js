@@ -33,6 +33,7 @@ import TargetReport from "./reports/targetReport";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
+import OrderInit from "./pages/OrderInit";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -49,8 +50,7 @@ function App() {
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
-            <Route path="/order" element={<MyRetailersPage />}></Route>
-            {/* <Route path="/order" element={<BrandsPage />}></Route> */}
+            <Route path="/order" element={<OrderInit />}></Route>
             <Route path="/orders" element={<Product />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>

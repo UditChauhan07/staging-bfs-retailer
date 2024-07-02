@@ -30,10 +30,13 @@ const TargetReport = () => {
   const [searchSaleBy, setSearchSaleBy] = useState("");
   const [salesRepList, setSalesRepList] = useState([]);
   const [exportToExcelState, setExportToExcelState] = useState(false);
+  const [accountList, setAccountList] = useState([]);
+  const [accountIds, setAccountIds] = useState(null);
 
   useEffect(() => {
     GetAuthData()
       .then((user) => {
+        setAccountList(user.data.accountList)
         getTargetReportAll({ user, year, preOrder })
           .then((targetRes) => {
             console.log({ targetRes });
@@ -104,7 +107,7 @@ const TargetReport = () => {
   const allOrdersEmpty = filteredTargetData.every((item) => item.Orders?.length <= 0);
   const exportToExcel2 = () => {
     setExportToExcelState(false);
-    
+
     const totalRow = {
       SalesRepName: "TOTAL",
       AccountName: "",
@@ -157,12 +160,12 @@ const TargetReport = () => {
       DecemberSale: 0,
       DecemberDiff: 0,
 
-      
+
       TotalTarget: 0,
       TotalSale: 0,
       TotalDiff: 0,
     };
-  
+
     filteredTargetData.forEach(element => {
       totalRow.JanuaryTarget += parseFloat(element.January.target);
       totalRow.JanuarySale += parseFloat(element.January.sale);
@@ -179,7 +182,7 @@ const TargetReport = () => {
       totalRow.AprilTarget += parseFloat(element.April.target);
       totalRow.AprilSale += parseFloat(element.April.sale);
       totalRow.AprilDiff += parseFloat(element.April.diff);
-      
+
       totalRow.MayTarget += parseFloat(element.May.target);
       totalRow.MaySale += parseFloat(element.May.sale);
       totalRow.MayDiff += parseFloat(element.May.diff);
@@ -187,7 +190,7 @@ const TargetReport = () => {
       totalRow.JuneTarget += parseFloat(element.June.target);
       totalRow.JuneSale += parseFloat(element.June.sale);
       totalRow.JuneDiff += parseFloat(element.June.diff);
-      
+
       totalRow.JulyTarget += parseFloat(element.July.target);
       totalRow.JulySale += parseFloat(element.July.sale);
       totalRow.JulyDiff += parseFloat(element.July.diff);
@@ -195,7 +198,7 @@ const TargetReport = () => {
       totalRow.AugustTarget += parseFloat(element.August.target);
       totalRow.AugustSale += parseFloat(element.August.sale);
       totalRow.AugustDiff += parseFloat(element.August.diff);
-      
+
       totalRow.SeptemberTarget += parseFloat(element.September.target);
       totalRow.SeptemberSale += parseFloat(element.September.sale);
       totalRow.SeptemberDiff += parseFloat(element.September.diff);
@@ -212,26 +215,26 @@ const TargetReport = () => {
       totalRow.DecemberSale += parseFloat(element.December.sale);
       totalRow.DecemberDiff += parseFloat(element.December.diff);
 
-    
+
       // Repeat the same for other months and total columns
       // ...
       totalRow.TotalTarget += parseFloat(element.Total.target);
       totalRow.TotalSale += parseFloat(element.Total.sale);
       totalRow.TotalDiff += parseFloat(element.Total.diff);
     });
-  
-   const dataWithTotalRow = [...csvData(), totalRow];
-  const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
-  const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-  const data = new Blob([excelBuffer], { type: fileType });
-  
+
+    const dataWithTotalRow = [...csvData(), totalRow];
+    const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+
     let title = target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : "Target Report";
     if (manufacturerFilter) {
       title += " for " + getManufactureName(manufacturerFilter);
     }
     title += ` ${new Date().toDateString()}`;
-  
+
     FileSaver.saveAs(data, title + fileExtension);
   };
 
@@ -397,7 +400,7 @@ const TargetReport = () => {
     setIsLoaded(false);
     GetAuthData()
       .then((user) => {
-        getTargetReportAll({ user, year, preOrder })
+        getTargetReportAll({ user, year, preOrder,accountIds })
           .then((targetRes) => {
             if (targetRes) {
               setIsLoaded(true);
@@ -429,14 +432,33 @@ const TargetReport = () => {
     { label: currentDate.getFullYear(), value: currentDate.getFullYear() },
     { label: currentDate.getFullYear() - 1, value: currentDate.getFullYear() - 1 },
   ];
-  const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
-    return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   return (
     <AppLayout
       filterNodes={
         <div className="d-flex justify-content-between m-auto" style={{ width: "99%" }}>
-          <div className="d-flex justify-content-start col-3 gap-4">
+          <div className="d-flex justify-content-start col-6 gap-4">
+            {accountList?.length > 1 &&
+              <FilterItem
+                minWidth="220px"
+                label="All Store"
+                value={(accountIds&&JSON.parse(accountIds)?.length == 1) ? JSON.parse(accountIds)[0] : null}
+
+                options={[...accountList.map((month, i) => ({
+                  label: month.Name,
+                  value: month.Id,
+                })), { label: 'All Accounts', value: null }]}
+                onChange={(value) => {
+                  if (value) {
+                    setAccountIds(JSON.stringify([value]))
+                  } else {
+                    setAccountIds()
+                  }
+                }}
+                name={"Account-menu"}
+              />}
             <FilterItem
               minWidth="200px"
               label="Status"
@@ -460,11 +482,10 @@ const TargetReport = () => {
               <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>search</small>
             </button>
           </div>
-          <div className="d-flex justify-content-around col-1"></div>
-          <div className="d-flex justify-content-around col-2">
+          <div className="d-flex justify-content-start col-1">
             <hr className={Styles.breakHolder} />
           </div>
-          <div className="d-flex justify-content-end col-6 gap-4">
+          <div className="d-flex justify-content-end col-5 gap-4">
             {target.ownerPermission && (
               <FilterItem
                 minWidth="220px"

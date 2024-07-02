@@ -54,13 +54,15 @@ const BrandsPage = () => {
     GetAuthData()
       .then((user) => {
         setUserData(user.data);
-        getRetailerBrands({ rawData: { accountId: user?.data?.accountId, key: user?.data?.x_access_token } })
+        if(user?.data?.accountIds.length==1){
+          getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } })
           .then((prodcut) => {
             setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
           })
           .catch((getProductError) => {
             console.log({ getProductError });
           });
+        }
       })
       .catch((err) => {
         console.log({ err });

@@ -565,19 +565,20 @@ function Dashboard({ dashboardData }) {
     <AppLayout
       filterNodes={
         <>
+        {accountList.length>1&&
           <FilterItem
             minWidth="220px"
-            label="All Account"
+            label="All Store"
             value={account}
             options={[...accountList.map((month,i) => ({
               label: month.Name,
               value: month.Id,
-            })),{label:'All Accounts',value:null}]}
+            })),{label:'All Store',value:null}]}
             onChange={(value) => {
               changeAccountHandler(value);
             }}
             name={"Account-menu"}
-          />
+          />}
           <FilterItem
             minWidth="220px"
             label="Month-Year"
