@@ -6,6 +6,7 @@ import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
+import { FilterItem } from "../components/FilterItem";
 
 let PageSize = 10;
 
@@ -15,6 +16,8 @@ const OrderListPage = () => {
   const [loaded, setLoaded] = useState(false);
   const [orders, setOrders] = useState([]);
   const [searchShipBy, setSearchShipBy] = useState();
+  const [accountList, setAccountList] = useState([]);
+  const [account, setAccount] = useState(null);
   const [filterValue, onFilterChange] = useState({
     month: "",
     manufacturer: null,
@@ -84,12 +87,23 @@ const OrderListPage = () => {
   }, [filterValue, orders, searchShipBy]);
 
   useEffect(() => {
+    orderListHandler()
+
+  }, [filterValue.month]);
+
+  useEffect(() => {
+    setShipByText(searchShipBy);
+  }, [searchShipBy]);
+
+  const orderListHandler = (accountIds=null) => {
+    setAccount(accountIds)
     setLoaded(false);
     GetAuthData()
       .then((response) => {
+        setAccountList(response.data.accountList)
         getAllAccountOrders({
           key: response.data.x_access_token,
-          accountIds: JSON.stringify(response.data.accountIds),
+          accountIds: JSON.stringify(accountIds||response.data.accountIds),
           month: filterValue.month,
         })
           .then((order) => {
@@ -105,27 +119,45 @@ const OrderListPage = () => {
       .catch((err) => {
         console.log({ err });
       });
-  }, [filterValue.month]);
-
-  useEffect(() => {
-    setShipByText(searchShipBy);
-  }, [searchShipBy]);
+  }
+  console.log({account});
 
   return (
     <AppLayout
       filterNodes={
-        <Filters
-          onChange={handleFilterChange}
-          value={filterValue}
-          resetFilter={() => {
-            onFilterChange({
-              manufacturer: null,
-              month: "",
-              search: "",
-            });
-            setSearchShipBy("");
-          }}
-        />
+        <>
+          {accountList.length > 1 &&
+            <FilterItem
+              minWidth="220px"
+              label="All Store"
+              value={account?account.length?account[0]:null:null}
+
+              options={[...accountList.map((month, i) => ({
+                label: month.Name,
+                value: month.Id,
+              })), { label: 'All Store', value: null }]}
+              onChange={(value) => {
+                if(value){
+                  orderListHandler([value]);
+                }else{
+                  orderListHandler();
+                }
+              }}
+              name={"Account-menu"}
+            />}
+          <Filters
+            onChange={handleFilterChange}
+            value={filterValue}
+            resetFilter={() => {
+              onFilterChange({
+                manufacturer: null,
+                month: "",
+                search: "",
+              });
+              setSearchShipBy("");
+            }}
+          />
+        </>
       }
     >
       {!loaded ? (

@@ -165,9 +165,9 @@ export function fetchBeg() {
 
 
 export async function DestoryAuth() {
-  // localStorage.clear();
-  // window.location.href = window.location.origin;
-  // return true;
+  localStorage.clear();
+  window.location.href = window.location.origin;
+  return true;
 }
 
 export async function GetAuthData() {
