@@ -31,6 +31,7 @@ const CustomerService = () => {
   const [sumitForm, setSubmitForm] = useState(false)
   const [dSalesRepId, setDSalesRep] = useState();
   const [confirm, setConfirm] = useState(false);
+  const [isDisabled,setIsDisabled]=useState(false)
   const reasons = [
     { name: "Charges", icon: '/assets/Charges.svg', desc: "extra amount paid for order?" },
     { name: "Product Missing", icon: '/assets/missing.svg', desc: "can't find product in Order?" },
@@ -83,7 +84,7 @@ const CustomerService = () => {
   }, []);
 
   const SubmitHandler = () => {
-    // setSubmitForm(true)
+    setIsDisabled(true)
     GetAuthData()
       .then((user) => {
         if (user) {
@@ -128,9 +129,9 @@ const CustomerService = () => {
             .then((response) => {
               if (response) {
                 if (response) {
-                  console.log({files});
                   if (files.length > 0) {
                     uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
+                      setIsDisabled(false)
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }
@@ -138,6 +139,7 @@ const CustomerService = () => {
                       console.log({ fileErr });
                     })
                   } else {
+                    setIsDisabled(false)
                     navigate("/CustomerSupportDetails?id=" + response);
                   }
                 }
@@ -164,7 +166,7 @@ const CustomerService = () => {
             Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
             </p>
             <div className="d-flex justify-content-around ">
-              <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { SubmitHandler() }}>
+              <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { SubmitHandler() }} disabled={isDisabled}>
                 Yes
               </button>
               <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setConfirm(false)}>

@@ -3,20 +3,21 @@ import Styles from "./style.module.css";
 import TrackingStatus from "./TrackingStatus/TrackingStatus";
 import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
-import { GetAuthData, supportShare } from "../../lib/store";
+import { GetAuthData, postSupport, supportShare } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
 import { BiExit, BiSave } from "react-icons/bi";
-function OrderListContent({ data,hideDetailedShow=false }) {
+function OrderListContent({ data, hideDetailedShow = false }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
   const [productDetailId, setProductDetailId] = useState(null)
   const [accountId, setAccountId] = useState();
   const [manufacturerId, setManufacturerId] = useState();
-  const [confirm,setConfirm]= useState({});
+  const [confirm, setConfirm] = useState({});
   const [modalType, setModalType] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false)
   const months = [
     "January",
     "February",
@@ -37,6 +38,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
   };
 
   const generateSuportHandler = ({ data, value }) => {
+    setIsDisabled(true)
     GetAuthData().then((user) => {
       if (user.status == 200) {
         let beg = {
@@ -54,14 +56,17 @@ function OrderListContent({ data,hideDetailedShow=false }) {
             priority: "Medium",
             sendEmail: true,
           },
+          key:user?.data?.x_access_token
         };
-        // console.log("beg", beg);
-        let statusOfSupport = supportShare(beg)
+        postSupport({ rawData: beg })
           .then((response) => {
-            if (response) navigate("/orderStatusForm");
+            setIsDisabled(false)
+            if (response) {
+              navigate("/CustomerSupportDetails?id=" + response);
+            }
           })
-          .catch((error) => {
-            console.error({ error });
+          .catch((err) => {
+            console.error({ err });
           });
       }
     }).catch((userErr) => {
@@ -85,28 +90,28 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
   return (
     <>
-     {modalType == 1 && <Orderstatus data={modalData} onClose={() => { setModalData({}); setModalType(false) }} />}
+      {modalType == 1 && <Orderstatus data={modalData} onClose={() => { setModalData({}); setModalType(false) }} />}
       {modalType == 3 && <TrackingStatus data={modalData} onClose={() => { setModalData({}); setModalType(false) }} />}
       <ModalPage
-        open={confirm.data&&confirm.value?true : false}
+        open={confirm.data && confirm.value ? true : false}
         content={<div className="d-flex flex-column gap-3">
           <h2>
-            Confirm  
+            Confirm
           </h2>
           <p className={Styles.modalContent}>
-            Are you sure you want to generate a ticket?<br/> This action cannot be undone.<br/> You will be redirected to the ticket page after the ticket is generated.
+            Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
           </p>
           <div className="d-flex justify-content-around">
-            <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => generateSuportHandler(confirm)}>
-            <BiSave/>&nbsp;generate
+            <button className={`${Styles.btn} d-flex align-items-center`} disabled={isDisabled} onClick={() => generateSuportHandler(confirm)}>
+              <BiSave />&nbsp;generate
             </button>
             <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => setConfirm(false)}>
-              <BiExit/> &nbsp;Cancel
+              <BiExit /> &nbsp;Cancel
             </button>
           </div>
         </div>}
-        onClose={()=>{setConfirm({})}}
-        />
+        onClose={() => { setConfirm({}) }}
+      />
       {data?.length ? (
         data?.map((item, index) => {
           let date = new Date(item.CreatedDate);
@@ -153,7 +158,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                             .map((ele, index) => {
                               return (
                                 <>
-                                  <li key={index} onClick={() => { setProductDetailId(ele.Product2Id); setAccountId(item.AccountId); setManufacturerId(item.ManufacturerId__c) }} style={{cursor:'pointer'}}>
+                                  <li key={index} onClick={() => { setProductDetailId(ele.Product2Id); setAccountId(item.AccountId); setManufacturerId(item.ManufacturerId__c) }} style={{ cursor: 'pointer' }}>
                                     {Viewmore
                                       ? ele.Name.split(item.AccountName)[1]
                                       : ele.Name.split(item.AccountName)
@@ -199,7 +204,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                       <h3>Total</h3>
                       <p>${Number(item.Amount).toFixed(2)}</p>
                     </div>
-                    <div className={Styles.TicketWidth} style={hideDetailedShow?{display:'none'}:null}>
+                    <div className={Styles.TicketWidth} style={hideDetailedShow ? { display: 'none' } : null}>
                       {/* <button className="me-4">View Ticket</button> */}
                       <Link to="/orderDetails">
                         <button title="View Order Information" onClick={() => MyBagId(item.Id)}>
@@ -212,7 +217,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
                 <div className={Styles.StatusOrder}>
                   <div className={Styles.Status1}>
-                  {!item.Order_Number__c ?
+                    {!item.Order_Number__c ?
                       <h3
                         title="Raise a Support Ticket for this Order on Status"
                         onClick={(e) =>
