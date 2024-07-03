@@ -8,7 +8,20 @@
 .TicketWidth button{
   width: 100%;
 }
-
+.btn {
+  padding: 0.5rem 2rem;
+  border: 1px solid #000;
+  background: #000;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+}
+.btn:hover {
+  background: #000;
+  color: #fff;
+}
 .inputDraw input {
   color: white;
   padding: 0 2px;
