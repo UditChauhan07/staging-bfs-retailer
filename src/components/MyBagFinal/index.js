@@ -25,6 +25,7 @@ function MyBagFinal() {
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
   const [confirm, setConfirm] = useState(false);
+  const [isDisabled,setIsDisabled]=useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
 
@@ -99,9 +100,11 @@ function MyBagFinal() {
   }
 
   const orderPlaceHandler = () => {
+
     if(localStorage.getItem("Sales_Rep__c")){
     let fetchBag = fetchBeg();
     setIsOrderPlaced(1);
+    setIsDisabled(true)
     GetAuthData()
       .then((user) => {
         // let bagValue = fetchBeg()
@@ -144,6 +147,7 @@ function MyBagFinal() {
               if (response) {
                 fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                 localStorage.removeItem("orders");
+                setIsDisabled(false)
                 navigate("/order-list");
                 setIsOrderPlaced(2);
               }
@@ -210,7 +214,7 @@ function MyBagFinal() {
                 Are you sure you want to generate a order?<br /> This action cannot be undone.
               </p>
               <div className="d-flex justify-content-around ">
-                <button className={Styles.btnHolder} onClick={orderPlaceHandler}>
+                <button className={Styles.btnHolder} onClick={orderPlaceHandler} disabled={isDisabled}>
                   Submit
                 </button>
                 <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>

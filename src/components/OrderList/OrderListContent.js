@@ -3,7 +3,7 @@ import Styles from "./style.module.css";
 import TrackingStatus from "./TrackingStatus/TrackingStatus";
 import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
-import { GetAuthData, supportShare } from "../../lib/store";
+import { GetAuthData, postSupport, supportShare } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
@@ -17,6 +17,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
   const [manufacturerId, setManufacturerId] = useState();
   const [confirm,setConfirm]= useState({});
   const [modalType, setModalType] = useState(false)
+  const [isDisabled,setIsDisabled]=useState(false)
   const months = [
     "January",
     "February",
@@ -37,6 +38,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
   };
 
   const generateSuportHandler = ({ data, value }) => {
+    setIsDisabled(true)
     GetAuthData().then((user) => {
       if (user.status == 200) {
         let beg = {
@@ -54,15 +56,18 @@ function OrderListContent({ data,hideDetailedShow=false }) {
             priority: "Medium",
             sendEmail: true,
           },
+          key:user?.data?.x_access_token
         };
-        // console.log("beg", beg);
-        let statusOfSupport = supportShare(beg)
-          .then((response) => {
-            if (response) navigate("/orderStatusForm");
-          })
-          .catch((error) => {
-            console.error({ error });
-          });
+        postSupport({ rawData: beg })
+        .then((response) => {
+          setIsDisabled(false)
+          if (response) {
+              navigate("/CustomerSupportDetails?id=" + response);
+          }
+        })
+        .catch((err) => {
+          console.error({ err });
+        });
       }
     }).catch((userErr) => {
       console.error({ userErr });
@@ -97,7 +102,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
             Are you sure you want to generate a ticket?<br/> This action cannot be undone.<br/> You will be redirected to the ticket page after the ticket is generated.
           </p>
           <div className="d-flex justify-content-around">
-            <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => generateSuportHandler(confirm)}>
+            <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => generateSuportHandler(confirm)} disabled={isDisabled}>
             <BiSave/>&nbsp;generate
             </button>
             <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => setConfirm(false)}>
