@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, getRetailerBrands, getTargetReportAll } from "../../lib/store";
+import { GetAuthData, getAllAccountBrand, getRetailerBrands, getTargetReportAll } from "../../lib/store";
 import Loading from "../../components/Loading";
 import { useManufacturer } from "../../api/useManufacturer";
 import { FilterItem } from "../../components/FilterItem";
@@ -57,8 +57,7 @@ const TargetReport = () => {
           .catch((targetErr) => {
             console.error({ targetErr });
           });
-        let rawData = { accountId: user.data.accountId, key: user.data.x_access_token };
-        getRetailerBrands({ rawData })
+          getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })
           .then((resManu) => {
             setManufacturerData(resManu);
           })

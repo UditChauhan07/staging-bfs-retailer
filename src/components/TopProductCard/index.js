@@ -10,6 +10,7 @@ import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { DeleteIcon } from "../../lib/svg";
 
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
+  console.log({accountDetails});
   const [productDetailId, setProductDetailId] = useState(null);
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });

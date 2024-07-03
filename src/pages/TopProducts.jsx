@@ -77,7 +77,6 @@ const TopProducts = () => {
 
       topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
         let result = [];
-        console.log({ products });
         if (products?.data?.length > 0) {
           result = products?.data?.sort(function (a, b) {
             return b.Sales - a.Sales;
