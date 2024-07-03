@@ -10,7 +10,10 @@ border-radius: 6px;
 background: #5B5B5B;
 
 }
-
+.linkHolder{
+    color: #000;
+    text-decoration: underline !important;
+}
 .ProtuctInnerBox1 span{
     margin: 0 0 0 15px;
     color: #000;
@@ -121,7 +124,7 @@ letter-spacing: 1.12px;
 
 .ProtuctInnerBoxInner p{
     display: flex;
-    gap: 20px;
+    gap: 10px;
     
 }
 
