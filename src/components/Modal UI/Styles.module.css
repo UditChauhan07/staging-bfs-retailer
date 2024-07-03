@@ -25,6 +25,7 @@
   /* transition: 250ms ease-in; */
   transition: height 5s ease;
   position: relative;
+  overflow-y: auto;
 }
 .modalTitle{
   font-family: "Montserrat";
