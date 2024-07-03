@@ -77,8 +77,8 @@ function OrderListContent({ data,hideDetailedShow=false }) {
     GetAuthData().then((user) => {
       invoices.forEach(file => {
         const link = document.createElement("a");
-        link.href = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
-        link.download = `${file.VersionDataUrl}?oauth_token=${user.data.access_token}`;
+        link.href = `${file.VersionDataUrl}?oauth_token=${user.data.x_access_token}`;
+        link.download = `${file.VersionDataUrl}?oauth_token=${user.data.x_access_token}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
