@@ -12,6 +12,7 @@ import ModalPage from "../Modal UI";
 const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepId, setSubmitForm }) => {
     const navigate = useNavigate();
     const [confirm, setConfirm] = useState(false);
+    const [isDisabled,setIsDisabled]=useState(false)
     const initialValues = {
         description: "",
         account: null
@@ -40,6 +41,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
     }
     const onSubmitHandler = (values) => {
         setSubmitForm(true)
+        setIsDisabled(true)
         let subject = `Customer Service for ${reason}`;
         GetAuthData()
             .then((user) => {
@@ -65,14 +67,18 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                                         uploadFileSupport({ key: user?.data?.x_access_token, supportId: response, files }).then((fileUploader) => {
                                             if (fileUploader) {
                                                 setSubmitForm(false)
+                                                setIsDisabled(false)
                                                 navigate("/CustomerSupportDetails?id=" + response);
                                             }
                                         }).catch((fileErr) => {
                                             setSubmitForm(false)
+                                            setIsDisabled(false)
+
                                             console.log({ fileErr });
                                         })
                                     } else {
-                                        setSubmitForm(false)
+                                                setIsDisabled(false)
+                                                setSubmitForm(false)
                                         navigate("/CustomerSupportDetails?id=" + response);
                                     }
                                 }
@@ -88,7 +94,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
             });
     }
     return (
-        <Formik initialValues={initialValues} validationSchema={AccountInfoValidation} onSubmit={onSubmitHandler}>
+        <Formik initialValues={initialValues} validationSchema={AccountInfoValidation} onSubmit={(value)=>{setConfirm(value)}}>
             {(formProps) => (
                 <div className={styles.container}>
                     <ModalPage
@@ -100,7 +106,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                                     Are you sure you want to save?
                                 </p>
                                 <div className="d-flex justify-content-around ">
-                                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { onSubmitHandler() }}>
+                                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { onSubmitHandler(confirm) }} disabled={isDisabled}>
                                         Yes
                                     </button>
                                     <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setConfirm(false)}>
