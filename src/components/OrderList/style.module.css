@@ -361,7 +361,20 @@ cursor: pointer;
 .Status2 h6 span {
   font-weight: 400;
 }
-
+.btn {
+  padding: 0.5rem 2rem;
+  border: 1px solid #000;
+  background: #000;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+}
+.btn:hover {
+  background: #000;
+  color: #fff;
+}
 .orderStatement {
   border-radius: 8px;
   border: 1px solid #d5d9d9;
