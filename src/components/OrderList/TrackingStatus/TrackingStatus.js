@@ -50,7 +50,7 @@ function TrackingStatus({ data,onClose=null}) {
                         <h3>Tracking Status :  <span>{data.Status__c?data.Status__c: 'Not Shipped'}</span></h3>
                         <div className={Styles.BtnGroup}>
                         {/* button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
-                            <button type="submit" donClick={onClose} >CANCEL</button>
+                            <button type="submit" onClick={onClose} >CANCEL</button>
                         </div>
 
                     </div>
