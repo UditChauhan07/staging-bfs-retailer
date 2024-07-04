@@ -134,6 +134,7 @@ const CustomerSupport = () => {
           <button
             className="border px-2.5 py-1 leading-tight d-grid"
             onClick={() => {
+              setStatus([statusList[0]])
               setManufacturerFilter(null);
               setRetailerFilter(null);
               setSearchBy("");
