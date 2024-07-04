@@ -102,7 +102,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                             <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
                                 <h2 >Please Confirm</h2>
                                 <p style={{ lineHeight: '22px' }}>
-                                    Are you sure you want to save?
+                                Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
                                 </p>
                                 <div className="d-flex justify-content-around ">
                                     <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { onSubmitHandler(confirm) }} disabled={isDisabled}>
