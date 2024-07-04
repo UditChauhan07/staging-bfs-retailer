@@ -18,6 +18,8 @@ const TopProducts = () => {
   const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
+  const [accountList, setAccountList] = useState([]);
+  const [selectAccount, setSelectAccount] = useState();
   useEffect(() => {
     btnHandler({ manufacturerId: null, month: monthIndex + 1 });
     let indexMonth = [];
@@ -52,7 +54,7 @@ const TopProducts = () => {
   //     // })
   //   );
   // }, [searchText, topProductList, selectedMonth]);
-  const SearchData = ({ selectedMonth, manufacturerFilter }) => {
+  const SearchData = ({ selectedMonth, manufacturerFilter, accountId = null }) => {
     let data = ShareDrive();
     if (!data) {
       data = {};
@@ -69,14 +71,18 @@ const TopProducts = () => {
       }
     }
     GetAuthData().then((user) => {
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      setSelectAccount(accountId || user.data.accountIds[0])
+      setAccountList(user.data.accountList);
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((resManu) => {
+        console.log({ resManu });
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
+      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((products) => {
         let result = [];
+        console.log({ products });
         if (products?.data?.length > 0) {
           result = products?.data?.sort(function (a, b) {
             return b.Sales - a.Sales;
@@ -87,13 +93,22 @@ const TopProducts = () => {
           localStorage.removeItem("manufacturer")
           localStorage.removeItem("address")
         }
-
-        localStorage.setItem("Account", user.data.accountName)
-        localStorage.setItem("AccountId__c", user.data.accountId)
+        user.data.accountList.map((account)=>{
+          if(accountId){
+            if(account.Id === accountId){
+              localStorage.setItem("Account", account.Name)
+            }
+          }else{
+            if(account.Id == user.data.accountIds[0]){
+              localStorage.setItem("Account", account.Name)
+            }
+          }
+        })
+        localStorage.setItem("AccountId__c", accountId || user.data.accountIds[0])
         localStorage.setItem("ManufacturerId__c", manufacturerFilter)
         let message = products?.message
-        if(result.length==0){
-          message="No Data Found";
+        if (result.length == 0) {
+          message = "No Data Found";
         }
         setTopProductList({ isLoaded: true, data: result, message, accountDetails: products?.accountDetails })
         if (result.length > 0) {
@@ -127,15 +142,30 @@ const TopProducts = () => {
       console.log({ error });
     })
   }
-  const btnHandler = ({ month, manufacturerId }) => {
+  const btnHandler = ({ month, manufacturerId, accountId = null }) => {
     setIsLoaded(false)
+    setManufacturerData([]);
     setTopProductList({ isLoaded: false, data: [], message: null })
     setManufacturerFilter(manufacturerId);
     setSelectedMonth(month);
-    SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId })
+    SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId, accountId })
   }
   return (
     <AppLayout filterNodes={<>
+      {accountList.length > 1 &&
+        <FilterItem
+          minWidth="220px"
+          label="All Store"
+          value={selectAccount}
+          options={[...accountList.map((month, i) => ({
+            label: month.Name,
+            value: month.Id,
+          }))]}
+          onChange={(value) => {
+            btnHandler({ manufacturerId: manufacturerFilter, month: selectedMonth, accountId: value });
+          }}
+          name={"Account-menu"}
+        />}
       <FilterItem
         minWidth="220px"
         label="Manufacturer"
