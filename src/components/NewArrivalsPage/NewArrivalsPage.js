@@ -8,6 +8,7 @@ import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
+import LoaderV2 from "../loader/v2";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
 
@@ -101,8 +102,11 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       setLoaded(false)
     }, 500);
   }, [month, selectBrand, productList, brand]);
-  // console.log(filterData,"isEmpty")
-  // ................
+
+  const [imageLoading, setImageLoading] = useState({});
+  const handleImageLoad = (imageId) => {
+    setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
+  };
   if (isLoaded) return <Loading height={'70vh'} />
   return (
     <>
@@ -154,9 +158,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
                             <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
-                                setProductDetailId(product.Id);
-                              }} />
+                              {imageLoading[product.Id] ? (
+                                <LoaderV2 width={100} height={100} />
+                              ) : (
+                                <img key={product.Id} src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} height={212} width={212} onClick={() => {
+                                  setProductDetailId(product.Id);
+                                }} onLoad={() => handleImageLoad(product.Id)} />
+                              )}
                             </div>
                           </div>
                           <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
