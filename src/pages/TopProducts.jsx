@@ -175,7 +175,7 @@ const TopProducts = () => {
           label: manufacturer.Name,
           value: manufacturer.Id,
         }))}
-        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth })}
+        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth,accountId:selectAccount })}
       />
       <FilterItem
         label="Month"
@@ -183,7 +183,7 @@ const TopProducts = () => {
         name="Month"
         value={selectedMonth}
         options={monthList}
-        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value })}
+        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value,accountId:selectAccount })}
       />
       {/* <FilterSearch
         onChange={(e) => setSearchText(e.target.value)}
