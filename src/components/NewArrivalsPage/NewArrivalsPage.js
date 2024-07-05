@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import ProductDetails from "../../pages/productDetails";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,6 +8,7 @@ import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
+import LoaderV2 from "../loader/v2";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
 
@@ -17,22 +18,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const [isEmpty, setIsEmpty] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [loadEffect, setEffect] = useState(0)
-  // useEffect(() => {
-  //   let temp = true;
-  //   products.map((month) => {
-  //     month.content.map((item) => {
-  //       if (!selectBrand || selectBrand == item.brand) {
-  //         temp = false;
-  //       }
-  //     });
-  //     setIsEmpty(temp);
-  //   });
-  // }, [selectBrand]);
-  // ...............
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
-  let PageSize = 10;
+  let PageSize = 5;
   const [pagination, setpagination] = useState([]);
 
   useEffect(() => {
@@ -103,6 +92,18 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   }, [month, selectBrand, productList, brand]);
   // console.log(filterData,"isEmpty")
   // ................
+  const [loading, setLoading] = useState(true);
+  const counter = useRef(0);
+  const imageLoaded = () => {
+    counter.current += 1;
+    if (counter.current >= 5) {
+      setLoading(false);
+    }
+  }
+  const [imageLoading, setImageLoading] = useState({});
+  const handleImageLoad = (imageId) => {
+    setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
+  };
   if (isLoaded) return <Loading height={'70vh'} />
   return (
     <>
@@ -136,9 +137,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
         <div>
           <div className={Styles.dGrid}>
             {!isEmpty ? (
-              pagination?.map((month, index) => {
+              pagination?.map((month, _i) => {
                 if (month.content?.length) {
-                  return month.content.map((product) => {
+                  return month.content.map((product,__i) => {
                     if (true) {
                       let listPrice = "$-- . --";
                       if (product?.usdRetail__c) {
@@ -154,9 +155,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
                             <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} height={212} width={212} onClick={() => {
+                              {imageLoading[product.id] ? (
+                                <LoaderV2 width={100} height={100}/>
+        ) : (
+                              <img key={product.Id} src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} height={212} width={212} onClick={() => {
                                 setProductDetailId(product.Id);
-                              }} />
+                              }} onLoad={() => handleImageLoad(product.id)} />
+                            )}
                             </div>
                           </div>
                           <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
