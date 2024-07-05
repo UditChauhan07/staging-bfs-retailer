@@ -228,6 +228,7 @@ const MarketingCalendar = () => {
             temp["Product Ship Date"] = item.Ship_Date__c;
             temp["Product OCD Date"] = item.Launch_Date__c;
             temp["Product Brand"] = item.ManufacturerName__c;
+            temp["Product Price"] = item.usdRetail__c;
             finalData.push(temp);
           })
         }
