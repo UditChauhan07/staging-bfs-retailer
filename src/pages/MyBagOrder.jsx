@@ -84,9 +84,20 @@ function MyBagOrder(props) {
     let poDetail = { "": "PO Number", " ": data.PO_Number__c }
     let orderNumberDetail = { "": "Order Number", " ": data.Order_Number__c }
     let trackingumberDetail = { "": "Tracking Number", " ": data.Tracking__c }
+    let totalQtyCount = 0;
+    if (data?.OpportunityLineItems?.length) {
+      data?.OpportunityLineItems?.map((ele) => {
+        totalQtyCount+=ele.Quantity;
+      })
+    }
+    let totalQty = { "": "Total Order Qty", " ": totalQtyCount }
+    let totalPrice = { "": "Total Product Price", " ": `$${Number(data.Amount).toFixed(2)}`}
     finalData.push(accountDetails)
     finalData.push(brandDetail)
     finalData.push(poDetail)
+    finalData.push(totalQty)
+    finalData.push(totalPrice)
+    finalData.push({"":""," ":""})
     if (data?.Order_Number__c) finalData.push(orderNumberDetail)
     if (data?.Tracking__c) finalData.push(trackingumberDetail)
     let productHeaderDetail = { "": "Product Name", " ": "Product Qty", "  ": "Product Price" }

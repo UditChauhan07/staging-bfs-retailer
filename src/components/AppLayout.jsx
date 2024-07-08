@@ -36,7 +36,7 @@ const AppLayout = ({ children, filterNodes }) => {
         </div>
         <main>{children}</main>
       </div>
-      <HelpSection />
+      {/* <HelpSection /> */}
       <Footer />
     </div>
   );

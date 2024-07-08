@@ -98,7 +98,6 @@ function MyBagFinal() {
       }
     })
   }
-
   const orderPlaceHandler = () => {
 
     if(localStorage.getItem("Sales_Rep__c")){
