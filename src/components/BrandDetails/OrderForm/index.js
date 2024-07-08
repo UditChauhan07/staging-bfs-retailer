@@ -36,7 +36,6 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       }
       return accumulator;
     }, 0);
-    console.log({errorCount});
     if (totalQty == data.length) {
       setErrorOnList(totalQty);
     } else {

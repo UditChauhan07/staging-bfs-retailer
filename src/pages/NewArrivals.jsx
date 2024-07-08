@@ -12,12 +12,9 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
-
-  let PageSize = 10;
-  const [currentPage, setCurrentPage] = useState(1);
   const [productList, setProductList] = useState([])
-
   const [month, setMonth] = useState("");
+
   let months = [
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
@@ -49,6 +46,7 @@ const NewArrivals = () => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
+          console.log({productRes});
           productRes.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';

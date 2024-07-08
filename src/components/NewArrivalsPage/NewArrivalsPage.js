@@ -94,7 +94,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const handleImageLoad = (imageId) => {
     setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
   };
-  if (isLoaded) return <Loading height={'70vh'} />
+  if (isLoaded) return <Loading height={"70vh"} />
   return (
     <>
       {modalShow ? (
@@ -125,7 +125,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       ) : null}
       <section id="newArrivalsSection">
         <div>
-          <div className={Styles.dGrid}>
+          <div className={!isEmpty?Styles.dGrid:null}>
             {!isEmpty ? (
               pagination?.map((month, _i) => {
                 if (month.content?.length) {
@@ -185,7 +185,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 }
               })
             ) : (
-              <div style={{ fontSize: "20px" }}>No data found</div>
+              <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+                <div className="col-4">
+                  <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
+                    No data found
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -10,7 +10,7 @@ import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
 import { useBag } from "../../context/BagContext";
-import { GetAuthData, ShareDrive, fetchBeg, getProductImageAll, getProductList } from "../../lib/store";
+import { GetAuthData, ShareDrive, fetchBeg, getProductImageAll, getProductList, sortArrayHandler } from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow, CloseButton } from "../../lib/svg";
 import AppLayout from "../AppLayout";
@@ -105,25 +105,32 @@ function Product() {
       newData = groupProductDataByCategory(filteredProductsArray);
       finalFilteredProducts = { ...newData };
     }
-    if (sortBy === "Price: Low To High") {
-      let newData = {};
-      Object.keys(finalFilteredProducts)?.forEach((key) => {
-        const value = finalFilteredProducts[key];
+    if (sortBy) {
+      if (sortBy === "Price: Low To High") {
+        let newData = {};
+        Object.keys(finalFilteredProducts)?.forEach((key) => {
+          const value = finalFilteredProducts[key];
 
-        value?.sort((a, b) => {
-          return +a?.usdRetail__c?.replace("$", "") - +b?.usdRetail__c?.replace("$", "");
+          value?.sort((a, b) => {
+            return +a?.usdRetail__c?.replace("$", "") - +b?.usdRetail__c?.replace("$", "");
+          });
         });
-      });
-    }else if(sortBy === "Price: High To Low") {
-      let newData = {};
+      } else if (sortBy === "Price: High To Low") {
+        let newData = {};
+        Object.keys(finalFilteredProducts)?.forEach((key) => {
+          const value = finalFilteredProducts[key];
+          value?.sort((a, b) => +b?.usdRetail__c?.replace("$", "") - +a?.usdRetail__c?.replace("$", ""));
+        });
+      } else {
+        Object.keys(finalFilteredProducts)?.forEach((key) => {
+          const value = finalFilteredProducts[key];
+          sortArrayHandler(value,g=>g.Name)
+        });
+      }
+    } else {
       Object.keys(finalFilteredProducts)?.forEach((key) => {
         const value = finalFilteredProducts[key];
-        value?.sort((a, b) => +b?.usdRetail__c?.replace("$", "") - +a?.usdRetail__c?.replace("$", ""));
-      });
-    }else{
-      Object.keys(finalFilteredProducts)?.forEach((key) => {
-        const value = finalFilteredProducts[key];
-        value?.sort((a, b) => b?.Name- a?.Name)
+        sortArrayHandler(value,g=>g.Name)
       });
     }
 

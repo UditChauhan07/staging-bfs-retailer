@@ -174,7 +174,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                       setBrand(product.ManufacturerId__c);
                       setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
                     }}
-                    src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
+                    src={product.ProductImage?product.ProductImage:productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
                   />
                   </div>
                   </div>
