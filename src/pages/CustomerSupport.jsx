@@ -3,10 +3,10 @@ import CustomerSupportPage from "../components/CustomerSupportPage/CustomerSuppo
 import { FilterItem, MultiFilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
 import { DestoryAuth, GetAuthData, getAllAccountBrand, getAllAccountSupport, getRetailerBrands, getSupportList } from "../lib/store";
-import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 
 
 let PageSize = 10;
@@ -148,7 +148,7 @@ const CustomerSupport = () => {
     >
       <>
         {!loaded ? (
-          <Loading height={'70vh'}/>
+          <LoaderV3 text={"Loading Support Please wait..."}/>
         ) : (
           <>
             <CustomerSupportPage

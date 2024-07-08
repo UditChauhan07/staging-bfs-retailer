@@ -9,6 +9,7 @@ import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCale
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -316,8 +317,8 @@ const MarketingCalendar = () => {
         </>
       }
     >
-       {isPDFLoaded ? <Loading  height={"70vh"} /> :
-        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <Loading  height={"70vh"} />}
+       {isPDFLoaded ? <LoaderV3  text={"Generating Pdf Please wait..."} /> :
+        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand??"All Brands"}`} />}
 
     </AppLayout>
   );

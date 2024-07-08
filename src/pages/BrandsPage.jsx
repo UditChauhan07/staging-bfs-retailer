@@ -10,6 +10,7 @@ import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
 import { CloseButton, EmailIcon } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -164,7 +165,7 @@ const BrandsPage = () => {
         }
       >
         {!manufacturers.isLoading ? (
-          <Loading height={"70vh"} />
+          <LoaderV3 text={"Loading Brands Details"} />
         ) : (
           <div>
             <div

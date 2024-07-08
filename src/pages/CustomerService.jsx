@@ -8,12 +8,14 @@ import CustomerSupportLayout from "../components/customerSupportLayout/index.js"
 import AccountInfo from "../components/IssuesHandler/AccountInfo.jsx";
 import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
+import LoaderV3 from "../components/loader/v3.js";
 
 const CustomerService = () => {
   const navigate = useNavigate();
   const [reason, setReason] = useState();
   const [accountList, setAccountList] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [isLoad,setIsLoad]= useState(false)
   const [orderId, setOrderId] = useState(null);
   const [orderConfirmed, setOrderConfirmed] = useState(false)
   const [sendEmail, setSendEmail] = useState(true)
@@ -57,6 +59,7 @@ const CustomerService = () => {
     setErrorList({})
   }
   useEffect(() => {
+    setIsLoad(false)
     GetAuthData()
       .then((response) => {
         setContactId(response.data.retailerId)
@@ -70,6 +73,7 @@ const CustomerService = () => {
             if (sorting.length) {
               setDSalesRep(sorting[0].OwnerId)
             }
+            setIsLoad(true)
             setOrders(sorting);
           })
           .catch((error) => {
@@ -152,7 +156,7 @@ const CustomerService = () => {
         console.log(error);
       });
   }
-  if (sumitForm) return <Loading height={'80vh'} />;
+  if (sumitForm) return <LoaderV3 text={"Generating You ticket. Please wait..."} />;
   return (<CustomerSupportLayout>
     <section>
       <ModalPage
@@ -178,7 +182,7 @@ const CustomerService = () => {
         }}
       />
       <BMAIHandler reasons={reasons} setReason={setReason} reason={reason} resetHandler={resetHandler} />
-      {reason != "Update Account Info" && <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} />}
+      {reason != "Update Account Info" && isLoad? <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} />:<LoaderV3 text={"Loading Order List..."}/>}
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
       {reason == "Update Account Info" && <AccountInfo reason={reason} Accounts={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}

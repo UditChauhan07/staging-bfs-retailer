@@ -7,12 +7,13 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { SearchIcon } from "../lib/svg";
 import { GetAuthData, getOrderDetailsPdf, originAPi } from "../lib/store";
+import LoaderV2 from "../components/loader/v2";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 function MyBagOrder(props) {
   const [orderDetail, setOrderDetail] = useState([]);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
-  const [pdfLoadingText, setPdfLoadingText] = useState(".");
   const generatePdf = () => {
     const element = document.getElementById('orderDetailerContainer'); // The HTML element you want to convert
     // element.style.padding = "10px"
@@ -31,7 +32,6 @@ function MyBagOrder(props) {
   const generatePdfServerSide = () => {
     if (orderDetail?.Id) {
       setPDFIsloaed(true);
-      LoadingEffect()
       GetAuthData().then((user) => {
         getOrderDetailsPdf({ key: user.data.x_access_token, opportunity_id: orderDetail?.Id }).then((file) => {
           if (file) {
@@ -55,26 +55,6 @@ function MyBagOrder(props) {
         console.log({ userErr });
       })
     }
-  }
-
-  const LoadingEffect = ()=>{
-    const intervalId = setInterval(() => {
-      if (pdfLoadingText.length > 6) {
-        setPdfLoadingText('.');
-      } else {
-        setPdfLoadingText(prev => prev + '.');
-      }
-      if (pdfLoadingText.length > 12) {
-        setPdfLoadingText('');
-      }
-    }, 1000);
-    const timeoutId = setTimeout(() => {
-      clearInterval(intervalId);
-    }, 10000);
-    return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-    };
   }
 
   const csvData = ({ data }) => {
@@ -115,12 +95,14 @@ function MyBagOrder(props) {
   };
 
   const generateXLSX = (orderDetail) => {
+    setPDFIsloaed(true);
     const ws = XLSX.utils.json_to_sheet(csvData({ data: orderDetail }));
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
     let filename = `Order Detail `;
     FileSaver.saveAs(data, `${filename} ${new Date()}` + fileExtension);
+    setPDFIsloaed(false);
   };
   return (
     <AppLayout filterNodes={
@@ -148,7 +130,7 @@ function MyBagOrder(props) {
       </div>
     }>
       <div className="col-12">
-      {isPDFLoaded ? <div className="d-flex" style={{ height: '50vh' }}><p className="m-auto">Generating Pdf..<span>{pdfLoadingText}</span></p></div> :
+      {isPDFLoaded ? <LoaderV3 text={"Generating Pdf. Please wait..."} /> :
         <MyBagFinal setOrderDetail={setOrderDetail} />}
       </div>
     </AppLayout>

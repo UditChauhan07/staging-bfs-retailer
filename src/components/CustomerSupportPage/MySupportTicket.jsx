@@ -40,7 +40,7 @@ function MySupportTicket({ data, PageSize, currentPage }) {
 
 
                                         <div className={Styles.ShopNameBrand}>
-                                            <p className={Styles.ShopNameLocation}>
+                                            <p style={{width:'max-content'}} className={Styles.ShopNameLocation}>
                                                 <UserChecked />&nbsp;{item.Account.Name}
                                             </p>
                                             <p className={Styles.Para2}>{item.ManufacturerName__c && <>For&nbsp;<span className={Styles.BrandMName}>{item.ManufacturerName__c}</span></>}</p>

@@ -18,6 +18,7 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import SpreadsheetUploader from "./OrderForm";
 import { CSVLink } from "react-csv";
+import LoaderV3 from "../loader/v3";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
@@ -451,7 +452,7 @@ function Product() {
             }
           >
             {!productList.isLoading ? (
-              <Loading height={"70vh"} />
+              <LoaderV3 text={"Loading all active products, Please wait..."} />
             ) : (
               <div>
                 <section className="pt-[34px]">

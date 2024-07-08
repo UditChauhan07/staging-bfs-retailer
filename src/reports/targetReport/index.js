@@ -13,6 +13,7 @@ import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { useLocation } from "react-router-dom";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import LoaderV3 from "../../components/loader/v3";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -547,7 +548,7 @@ const TargetReport = () => {
         />
       )}
       {!isLoaded ? (
-        <Loading />
+        <LoaderV3 text={"Loading Target Report, Please wait..."} />
       ) : (
         <section>
           {true && (

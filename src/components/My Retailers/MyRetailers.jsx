@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import MyRetailerCard from "./MyRetailerCard";
 import Loading from "../Loading";
+import LoaderV3 from "../loader/v3";
 
 const MyRetailers = ({ pageData, filterBy, sortBy, searchBy, isLoading }) => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const MyRetailers = ({ pageData, filterBy, sortBy, searchBy, isLoading }) => {
           </section>
         ) : null}
         {!filteredPageData?.length && !isLoading && <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>}
-        {isLoading ? <Loading height={"70vh"} /> : null}
+        {isLoading ? <LoaderV3 text={"Loading Store Details..."} /> : null}
       </div>
     </>
   );

@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 import { FilterItem } from "../components/FilterItem";
+import LoaderV3 from "../components/loader/v3";
 
 let PageSize = 10;
 
@@ -161,7 +162,7 @@ const OrderListPage = () => {
       }
     >
       {!loaded ? (
-        <Loading />
+        <LoaderV3 text={"Loading Order List, Please wait..."} />
       ) : (
         <div>
           <section>

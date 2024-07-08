@@ -8,6 +8,7 @@ import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrand
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -221,7 +222,7 @@ const NewArrivals = () => {
       {isLoaded ? (
         <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
       ) : (
-        <Loading height={"70vh"} />
+        <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}
 
     </AppLayout>

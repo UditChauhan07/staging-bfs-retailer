@@ -6,6 +6,7 @@ import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
+import LoaderV3 from "../components/loader/v3";
 
 let PageSize = 5;
 
@@ -130,7 +131,7 @@ const OrderStatusIssues = ()=>{
         }
       >
         {!loaded ? (
-          <Loading />
+          <LoaderV3 text={"Loading Order List"} />
         ) : (
           <div>
             <section>

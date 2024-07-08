@@ -12,6 +12,7 @@ import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 import { IoMdEye } from "react-icons/io";
 import { TbEyeClosed } from "react-icons/tb";
 import { RxEyeOpen } from "react-icons/rx";
+import LoaderV3 from "../../loader/v3";
 
 function MyBagFinal({ setOrderDetail }) {
   const [OrderData, setOrderData] = useState([]);
@@ -145,7 +146,7 @@ function MyBagFinal({ setOrderDetail }) {
     })
   }
 
-  if (!isLoading) return <Loading />;
+  if (!isLoading) return <LoaderV3 text={"Loading Order details"}/>;
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };

@@ -13,6 +13,7 @@ import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { GetAuthData, getAllAccountBrand} from "../../lib/store";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import LoaderV3 from "../../components/loader/v3";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -389,7 +390,7 @@ const SalesReport = () => {
       ) : salesReportData.length && !isLoading ? (
         <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
       ) : (
-        <Loading height={"70vh"} />
+        <LoaderV3 text={"Loading Purchase Report, Please wait..."} />
       )}
     </AppLayout>
   );
