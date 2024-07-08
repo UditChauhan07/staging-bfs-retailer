@@ -122,7 +122,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
           {data.map((product) => {
             let listPrice = Number(product?.usdRetail__c?.replace("$", "").replace(",", ""));
             let salesPrice = 0;
-            let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin;
+            let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0;
             let inputPrice = Object.values(orders)?.find(
               (order) =>
                 order.product.Id === product?.Id &&
@@ -131,12 +131,12 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             )?.product?.salesPrice;
             if (product?.Category__c === "TESTER") {
               discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin;
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin||0) / 100) * +listPrice).toFixed(2);
             } else if (product?.Category__c === "Samples") {
               discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample;
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample||0) / 100) * +listPrice).toFixed(2);
             } else {
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0) / 100) * +listPrice).toFixed(2);
             }
             return (
               <div className={Styles.cardElement}>
@@ -194,7 +194,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                 <p className={Styles.priceHolder}>
-                  <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;
+                  
+                {salesPrice!=listPrice&&<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>}
                   {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
                 </p>
                 {orders[product?.Id] ? (
