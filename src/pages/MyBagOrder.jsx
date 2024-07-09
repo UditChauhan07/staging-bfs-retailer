@@ -7,7 +7,6 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { SearchIcon } from "../lib/svg";
 import { GetAuthData, getOrderDetailsPdf, originAPi } from "../lib/store";
-import LoaderV2 from "../components/loader/v2";
 import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";

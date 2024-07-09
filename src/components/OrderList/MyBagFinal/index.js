@@ -150,6 +150,7 @@ function MyBagFinal({ setOrderDetail }) {
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };
+  console.log({OrderData});
   return (
     <div>
       <style>
@@ -214,6 +215,7 @@ function MyBagFinal({ setOrderDetail }) {
                                     <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
                                       {
                                         !productImage.isLoaded ? <LoaderV2 /> :
+                                        item?.ProductImage?<img src={item.ProductImage} className="zoomInEffect 1111" alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />:
                                           productImage.images?.[item.ProductCode] ?
                                             productImage.images[item.ProductCode]?.ContentDownloadUrl ?
                                               <img src={productImage.images[item.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
