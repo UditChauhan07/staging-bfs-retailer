@@ -61,7 +61,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase());
+              return item.date.toLowerCase().includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -125,10 +125,16 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       ) : null}
       <section id="newArrivalsSection">
         <div>
-          <div className={!isEmpty?Styles.dGrid:null}>
+          <div className={!isEmpty ? Styles.dGrid : null} id="dGridHolder">
             {!isEmpty ? (
               pagination?.map((month, _i) => {
                 if (month.content?.length) {
+                  if(month.content.length<5){
+                    let div = document.getElementById("dGridHolder");
+                    if(div){
+                      div.style.gridTemplateColumns = `repeat(auto-fill, ${(100/month.content.length)-1}`
+                    }
+                  }
                   return month.content.map((product, __i) => {
                     if (true) {
                       let listPrice = "$-- . --";

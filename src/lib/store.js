@@ -959,7 +959,12 @@ export const hexabrandText = {
 };
 
 
-export function DateConvert(dateString) {
+export function DateConvert(dateString, timeStamp = false) {
+  if (timeStamp) {
+    const options = { year: "numeric", month: "long", day: "numeric" }
+    dateString = new Date(dateString).toLocaleDateString(undefined, options)
+    return dateString
+  }
   if (dateString) {
     const [year, month, day] = dateString.split(/[-/]/);
     if (day && month && year) {
