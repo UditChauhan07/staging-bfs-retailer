@@ -30,7 +30,7 @@ const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
         options={[
           {
             label: "Last 6 Months",
-            value: "last-6-months",
+            value: null,
           },
           {
             label: "Current Year",
