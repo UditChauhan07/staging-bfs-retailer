@@ -3,6 +3,7 @@ import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import Slider from "../../utilities/Slider";
 import { useState } from "react";
+import { DateConvert } from "../../lib/store";
 const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuantityChange = null, isAddtoCart, AccountId }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState();
   if (!product) {
@@ -194,14 +195,16 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
         <b style={{ color: "black" }}>Product Season: </b>
         {product?.data?.Season__c},
       </p>
+      {product?.data?.Launch_Date__c&&
       <p style={{ textAlign: "start", color: "#898989" }}>
-        <b style={{ color: "black" }}>Product Create Date:</b> {new Date(product?.data?.CreatedDate).toDateString()}
-      </p>
+        <b style={{ color: "black" }}> Product Launch Date:</b> {DateConvert(product?.data?.Launch_Date__c)}
+      </p>}
+      {product?.data?.Ship_Date__c&&
       <p style={{ textAlign: "start", color: "#898989" }}>
-        <b style={{ color: "black" }}> Product Launch Date:</b> {product?.data?.Launch_Date__c}
-      </p>
+        <b style={{ color: "black" }}>Product Ship Date:</b> {DateConvert(product?.data?.Ship_Date__c)}
+      </p>}
       <p style={{ textAlign: "start", color: "#898989" }}>
-        <b style={{ color: "black" }}>Product Ship Date:</b> {product?.data?.Ship_Date__c}
+        <b style={{ color: "black" }}>Product Create Date:</b> {DateConvert(product?.data?.CreatedDate,true)}
       </p>
       {/* <p style={{ textAlign: 'start' }}>Product Edit Date: {new Date(product?.data?.LastModifiedDate).toDateString()},</p> */}
       {(product.data?.Point_of_difference_1__c || product.data?.Point_of_difference_2__c || product.data?.Point_of_difference_3__c) && (
