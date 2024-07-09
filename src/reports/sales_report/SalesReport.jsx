@@ -184,7 +184,7 @@ const SalesReport = () => {
   const resetFilter = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
-    getSalesData(yearFor);
+    getSalesData(yearFor,accountIds);
     setYearFor(2024);
     setSearchBy("");
     setSearchBySalesRep("");
