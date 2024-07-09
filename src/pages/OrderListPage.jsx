@@ -87,7 +87,7 @@ const OrderListPage = () => {
   }, [filterValue, orders, searchShipBy]);
 
   useEffect(() => {
-    orderListHandler()
+    orderListHandler(account)
 
   }, [filterValue.month]);
 
@@ -120,7 +120,6 @@ const OrderListPage = () => {
         console.log({ err });
       });
   }
-  console.log({account});
 
   return (
     <AppLayout
@@ -154,6 +153,7 @@ const OrderListPage = () => {
                 month: "",
                 search: "",
               });
+              setAccount();
               setSearchShipBy("");
             }}
           />
