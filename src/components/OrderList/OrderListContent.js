@@ -115,6 +115,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
       {data?.length ? (
         data?.map((item, index) => {
+          let [year,month,day] = item.CreatedDate.split(/[T]/)[0].split(/[-/]/);
           return (
             <div className={` ${Styles.orderStatement}`} key={index}>
               <div>
@@ -280,7 +281,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
                   <div className={Styles.Status2}>
                     <h6>
-                      Order Placed <span>: {DateConvert(item.CreatedDate,true)}</span>
+                      Order Placed <span>: {months[parseInt(month)-1]} {day}, {year}</span>
                     </h6>
                   </div>
                 </div>
