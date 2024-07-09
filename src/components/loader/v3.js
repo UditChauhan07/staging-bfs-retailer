@@ -1,8 +1,8 @@
 import LoaderV2 from "./v2"
-
+import styles from "./style3.module.css";
 const LoaderV3 = ({text}) => {
     if(text){
-        return (<div className="d-grid place-content-center" style={{ height: '40vh' }}><img height={280} width={160} src="/assets/loader.gif" /><br /><p className="m-auto">Please wait while we are geting details...</p></div>)
+        return (<div className="d-grid place-content-center" style={{ height: '40vh' }}><div className={styles.loader}></div> <br /><p className={styles.textHolder}>Please wait, we're getting data...</p></div>)
     } return null;
 }
 export default LoaderV3
