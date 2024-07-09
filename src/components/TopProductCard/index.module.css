@@ -109,6 +109,7 @@
   padding: 2px;
   width: 44px;
   height: 40px;
+  z-index: 1;
 }
 @keyframes rotate {
   from {
