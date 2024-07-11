@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Styles from "./Dashboard.module.css";
 import Chart from "react-apexcharts";
-import Loading from "../Loading";
 import img1 from "./Images/Active-1.png";
 import img2 from "./Images/Vector.png";
 import img3 from "./Images/Group.png";

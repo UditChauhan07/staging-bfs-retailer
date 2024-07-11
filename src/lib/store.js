@@ -489,14 +489,31 @@ export async function getDashboardata({ user }) {
       "Access-Control-Allow-Origin": "*",
     };
   }
-  console.log({ aaaaaaa: headersList });
   let response = await fetch(url2 + "38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data;
+  }
+}
+
+export async function getRollOver({ key,accountIds=null }) {
+  let headersList = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    };
+  let response = await fetch(url2 + "ujlyvJcLHjRtIbd", {
+    method: "POST",
+    headers: headersList,
+    body: JSON.stringify({key,accountIds}),
+  });
+  let data = JSON.parse(await response.text());
   if (data.status == 300) {
     DestoryAuth();
   } else {
