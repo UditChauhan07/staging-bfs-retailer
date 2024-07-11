@@ -15,7 +15,7 @@ const ComparisonReportTable = ({ comparisonData }) => {
                 <thead>
                   <tr>
                   <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
-                     Account Name
+                     Store Name
                     </th>
                     <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
                      Brand
@@ -24,8 +24,14 @@ const ComparisonReportTable = ({ comparisonData }) => {
                       Estee Lauder Number
                     </th>
                     <th className={`${styles.th} ${styles.stickyMonth}`}> Sales Rep</th>
-                    <th className={`${styles.th} ${styles.stickyMonth} `}>Retail Revenue</th>
-                    <th className={`${styles.th} ${styles.stickyMonth} `}>Wholesale Amount</th>
+                    <th className={`${styles.th} ${styles.stickyMonth} `}>
+                      {/* Wholesale Amount */}
+                      Purchase
+                      </th>
+                    <th className={`${styles.th} ${styles.stickyMonth} `}>
+                      {/* Retail Revenue */}
+                      Sale
+                      </th>
                     <th className={`${styles.th} `}></th>
                   </tr>
                 </thead>
@@ -40,8 +46,8 @@ const ComparisonReportTable = ({ comparisonData }) => {
                               <td className={`${styles.td}`}>{ele.ManufacturerName__c}</td>
                               <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c??'NA'} </td>
                               <td className={`${styles.td}`}>{ele.Sales_Rep__c}</td>
-                              <td className={`${styles.td}`}>{ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>
                               <td className={`${styles.td}`}>${formentAcmount(Number(ele.Whole_Sales_Amount).toFixed(2))}</td>
+                              <td className={`${styles.td}`}>{ele.retail_revenue__c?"$"+formentAcmount(Number(ele.retail_revenue__c).toFixed(2)):'NA'}</td>
                             </tr>
                           </>
                         );
