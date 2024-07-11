@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, getAllAccountBrand, getRetailerBrands, getTargetReportAll } from "../../lib/store";
-import Loading from "../../components/Loading";
-import { useManufacturer } from "../../api/useManufacturer";
+import { GetAuthData, getAllAccountBrand, getTargetReportAll } from "../../lib/store";
 import { FilterItem } from "../../components/FilterItem";
-import FilterSearch from "../../components/FilterSearch";
 import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
