@@ -34,12 +34,12 @@ const ComparisonReport = () => {
   if (apiData?.data?.length) {
     apiData?.data?.map((ele) => {
       return csvData.push({
-        "Account Name": ele.Retail_Store_Name__c,
+        "Store Name": ele.Retail_Store_Name__c,
         Brand: ele.ManufacturerName__c,
         "Estee Lauder Number": ele.Estee_Lauder_Number__c,
         "Sales Rep": ele.Sales_Rep__c,
-        "Retail Revenue": `$${Number(ele.retail_revenue__c).toFixed(2)}`,
-        "Wholesale Amount": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
+        "Purchase": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
+        "Sale": `$${Number(ele.retail_revenue__c).toFixed(2)}`,
       });
     });
   }

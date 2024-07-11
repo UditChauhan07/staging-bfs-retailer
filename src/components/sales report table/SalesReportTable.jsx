@@ -41,7 +41,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                     className={`${styles.th} ${styles.stickyFirstColumnHeading}`}
                     style={{ minWidth: "150px" }}
                   >
-                    Account
+                    Store
                   </th>
                   <th
                     className={`${styles.th} ${styles.stickySecondColumnHeading} `}
