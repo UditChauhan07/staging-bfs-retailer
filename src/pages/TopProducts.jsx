@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
-import Loading from "../components/Loading";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";

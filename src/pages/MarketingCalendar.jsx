@@ -3,7 +3,6 @@ import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import Loading from "../components/Loading";
 import { MdOutlineDownload } from "react-icons/md";
 import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, getRetailerBrands, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";

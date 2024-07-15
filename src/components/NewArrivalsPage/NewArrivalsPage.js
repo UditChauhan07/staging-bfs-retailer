@@ -8,7 +8,9 @@ import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
 import LoaderV2 from "../loader/v2";
+import { useNavigate } from "react-router-dom";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
+  const navigate = useNavigate();
 
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
@@ -160,7 +162,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               )}
                             </div>
                           </div>
-                          <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                          <p onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)} className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
                           <p
                             className={Styles.titleHolder}
                             onClick={() => {

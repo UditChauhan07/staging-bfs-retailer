@@ -35,6 +35,8 @@ import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
 import OrderInit from "./pages/OrderInit";
 import TargetRollOver from "./reports/targetRollOver";
+import StoreDetails from "./pages/StoreDetails";
+import BrandDetails from "./pages/BrandDetails";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -72,11 +74,13 @@ function App() {
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
-            <Route path="/Target-Report" element={<TargetReport />}></Route>
+            {/* <Route path="/Target-Report" element={<TargetReport />}></Route> */}
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
-            <Route path="/Target-Rollover" element={<TargetRollOver />}></Route>
+            <Route path="/Target-Report" element={<TargetRollOver />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
+            <Route path="/store/:id" element={<StoreDetails/>}/>
+            <Route path="/Brand/:id" element={<BrandDetails/>}/>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>

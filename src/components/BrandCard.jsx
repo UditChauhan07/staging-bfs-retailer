@@ -2,14 +2,14 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Page from "../pages/page.module.css";
 import { ArrowRightInBrands } from "../lib/svg";
+
 const BrandCard = ({ brand, image, userData }) => {
-  console.log({brand,userData});
   const navigate = useNavigate();
   return (
     <div className={`w-full last:mb-0 mb-4 ${Page.HoverArrow} `}>
       <div className={`border-b-[0.5px] border-[#D0CFCF] flex flex-col  gap-4 h-full  ${Page.ImgHover1}`}>
         {image ? (
-          <div className={`border-[0.5px]  relative  border-[#D0CFCF] ${Page.ImgHover}`}>
+          <div className={`border-[0.5px]  relative  border-[#D0CFCF] ${Page.ImgHover}`} onClick={()=>navigate('/Brand/'+brand.Id)}>
             <img src={`/assets/images/${image}`} className={`${Page.objectscaledown } max-h-[200px] h-full w-full" `} alt="img" />
           </div>
         ) : null}

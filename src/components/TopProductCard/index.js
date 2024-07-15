@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Styles from "./index.module.css";
-import { ShareDrive, getProductImageAll } from "../../lib/store";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
@@ -8,8 +7,10 @@ import { useBag } from "../../context/BagContext";
 import ModalPage from "../Modal UI";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { DeleteIcon } from "../../lib/svg";
+import { useNavigate } from "react-router-dom";
 
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
+  const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -181,7 +182,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 ) : (
                   <LoaderV2 />
                 )}
-                <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                <p className={Styles.brandHolder} onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>{product?.ManufacturerName__c}</p>
                 <p
                   className={Styles.titleHolder}
                   onClick={() => {

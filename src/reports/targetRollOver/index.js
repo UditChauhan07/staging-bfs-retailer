@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, formatNumber, getAllAccountBrand, getRollOver } from "../../lib/store";
+import { GetAuthData, getAllAccountBrand, getRollOver } from "../../lib/store";
 import { FilterItem } from "../../components/FilterItem";
 import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
@@ -35,7 +35,7 @@ const TargetRollOver = () => {
         GetAuthData()
             .then((user) => {
                 setAccountList(user.data.accountList)
-                getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify( user.data.accountIds) })
+                getRollOver({ key: user.data.x_access_token, accountIds1: JSON.stringify( user.data.accountIds) })
                     .then((targetRes) => {
                         console.log({ targetRes });
                         if (targetRes) {
@@ -501,7 +501,7 @@ const TargetRollOver = () => {
                         <>
                             <div style={{ maxWidth: "370px" }}>
                                 <h1 className={`fs-5 ${styles.ModalHeader}`}>Warning</h1>
-                                <p className={` ${styles.ModalContent}`}>Do you want to download Target Rollover?</p>
+                                <p className={` ${styles.ModalContent}`}>Do you want to download Target Report?</p>
                                 <div className="d-flex justify-content-center gap-3 ">
                                     <button className={`${styles.modalButton}`} onClick={exportToExcel2}>
                                         OK
@@ -519,14 +519,14 @@ const TargetRollOver = () => {
                 />
             )}
             {!isLoaded ? (
-                <LoaderV3 text={"Loading Target Rollover, Please wait..."} />
+                <LoaderV3 text={"Loading Target Report, Please wait..."} />
             ) : (
                 <section>
                     {true && (
                         <div className={Styles.inorderflex}>
                             <div>
                                 <h2>
-                                    {target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Rollover` : "Your Target Rollover"}
+                                    {target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : "Your Target Report"}
                                     {manufacturerFilter && " for " + getManufactureName(manufacturerFilter)}
                                 </h2>
                             </div>
@@ -730,80 +730,79 @@ const TargetRollOver = () => {
                                                     <td className={`${Styles.td} ${Styles.stickySecondColumn}`}>{element?.AccountName}</td>
                                                     <td className={`${Styles.td} ${Styles.stickyThirdColumn}`}>{element.ManufacturerName ?? '---'}</td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.January.monthTarget)}
-                                                        {element.January.totalRoll ? (element.January.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.January.totalRoll)}</small>+{formentAcmount(element.January.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.January.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.January.totalRoll)}</small></p></>) : null}
+                                                        {element.January.totalRoll ? (element.January.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.January.totalRoll)}</small>+{formentAcmount(element.January.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.January.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.January.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.January.sales)}
                                                     </td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.January.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.January.diff>=0?formentAcmount(element.January.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.January.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.February.monthTarget)}
-                                                        {element.February.totalRoll ? (element.February.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.February.totalRoll)}</small>+{formentAcmount(element.February.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.February.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.February.totalRoll)}</small></p></>) : null}
+                                                        {element.February.totalRoll ? (element.February.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.February.totalRoll)}</small>+{formentAcmount(element.February.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.February.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.February.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.February.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.February.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.February.diff>=0?formentAcmount(element.February.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.February.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.March.monthTarget)}
-                                                        {element.March.totalRoll ? (element.March.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.March.totalRoll)}</small>+{formentAcmount(element.March.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.March.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.March.totalRoll)}</small></p></>) : null}
+                                                        {element.March.totalRoll ? (element.March.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.March.totalRoll)}</small>+{formentAcmount(element.March.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.March.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.March.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.March.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.March.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.March.diff>=0?formentAcmount(element.March.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.March.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.April.monthTarget)}
-                                                        {element.April.totalRoll ? (element.April.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.April.totalRoll)}</small>+{formentAcmount(element.April.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.April.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.April.totalRoll)}</small></p></>) : null}
+                                                        {element.April.totalRoll ? (element.April.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.April.totalRoll)}</small>+{formentAcmount(element.April.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.April.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.April.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.April.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.April.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.April.diff>=0?formentAcmount(element.April.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.April.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.May.monthTarget)}
-                                                        {element.May.totalRoll ? (element.May.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.May.totalRoll)}</small>+{formentAcmount(element.May.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.May.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.May.totalRoll)}</small></p></>) : null}
+                                                        {element.May.totalRoll ? (element.May.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.May.totalRoll)}</small>+{formentAcmount(element.May.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.May.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.May.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.May.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.May.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.May.diff>=0?formentAcmount(element.May.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.May.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.June.monthTarget)}
-                                                        {element.June.totalRoll ? (element.June.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.June.totalRoll)}</small>+{formentAcmount(element.June.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.June.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.June.totalRoll)}</small></p></>) : null}
+                                                        {element.June.totalRoll ? (element.June.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.June.totalRoll)}</small>+{formentAcmount(element.June.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.June.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.June.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.June.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.June.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.June.diff>=0?formentAcmount(element.June.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.June.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.July.monthTarget)}
-                                                        {element.July.totalRoll ? (element.July.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.July.totalRoll)}</small>+{formentAcmount(element.July.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.July.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.July.totalRoll)}</small></p></>) : null}
+                                                        {element.July.totalRoll ? (element.July.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.July.totalRoll)}</small>+{formentAcmount(element.July.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.July.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.July.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.July.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.July.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.July.diff>=0?formentAcmount(element.July.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.July.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.August.monthTarget)}
-                                                        {element.August.totalRoll ? (element.August.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.August.totalRoll)}</small>+{formentAcmount(element.August.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.August.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.August.totalRoll)}</small></p></>) : null}
+                                                        {element.August.totalRoll ? (element.August.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.August.totalRoll)}</small>+{formentAcmount(element.August.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.August.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.August.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.August.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.August.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.August.diff>=0?formentAcmount(element.August.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.August.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.September.monthTarget)}
-                                                        {element.September.totalRoll ? (element.September.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.September.totalRoll)}</small>+{formentAcmount(element.September.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.September.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.September.totalRoll)}</small></p></>) : null}
+                                                        {element.September.totalRoll ? (element.September.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.September.totalRoll)}</small>+{formentAcmount(element.September.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.September.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.September.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.September.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.September.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.September.diff>=0?formentAcmount(element.September.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.September.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.October.monthTarget)}
-                                                        {element.October.totalRoll ? (element.October.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.October.totalRoll)}</small>+{formentAcmount(element.October.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.October.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.October.totalRoll)}</small></p></>) : null}
+                                                        {element.October.totalRoll ? (element.October.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.October.totalRoll)}</small>+{formentAcmount(element.October.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.October.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.October.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.October.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.October.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.October.diff>=0?formentAcmount(element.October.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.October.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.November.monthTarget)}
-                                                        {element.November.totalRoll ? (element.November.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.November.totalRoll)}</small>+{formentAcmount(element.November.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.November.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.November.totalRoll)}</small></p></>) : null}
+                                                        {element.November.totalRoll ? (element.November.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.November.totalRoll)}</small>+{formentAcmount(element.November.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.November.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.November.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.November.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.November.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.November.diff>=0?formentAcmount(element.November.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.November.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.December.monthTarget)}
-                                                        {element.December.totalRoll ? (element.December.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.December.totalRoll)}</small>+{formentAcmount(element.December.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.December.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.December.totalRoll)}</small></p></>) : null}
+                                                        {element.December.totalRoll ? (element.December.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.December.totalRoll)}</small>+{formentAcmount(element.December.staticTarget)}</p></> : false?<><br /><p className={Styles.calHolder}>{formentAcmount(element.December.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.December.totalRoll)}</small></p></>:null) : null}
                                                     </td>
                                                     <td className={`${Styles.td}`}>${formentAcmount(element.December.sales)}</td>
-                                                    <td className={`${Styles.td}`}>${formentAcmount(element.December.diff)}</td>
+                                                    <td className={`${Styles.td}`}>${element.December.diff>=0?formentAcmount(element.December.diff):<b style={{ color: 'green' }}>{formentAcmount(Math.abs(element.December.diff))}</b>}</td>
 
                                                     <td className={`${Styles.td} ${Styles.stickyThirdLastColumn}`}>${formentAcmount(element.Total.monthTarget)}
-                                                        {element.Total.totalRoll ? (element.Total.totalRoll > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formentAcmount(element.Total.totalRoll)}</small>+{formentAcmount(element.Total.staticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formentAcmount(element.Total.staticTarget)}-<small style={{ color: 'green' }}>{formentAcmount(-element.Total.totalRoll)}</small></p></>) : null}
                                                     </td>
                                                     <td className={`${Styles.td} ${Styles.stickySecondLastColumn}`}>${formentAcmount(element.Total.sales)}</td>
                                                     <td className={`${Styles.td} ${Styles.stickyLastColumn}`}>${formentAcmount(element.Total.diff)}</td>
