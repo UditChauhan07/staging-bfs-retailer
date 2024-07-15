@@ -3,7 +3,6 @@ import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import Loading from "../components/Loading";
 import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";

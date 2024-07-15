@@ -1,12 +1,10 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import TextError from "../../validation schema/TextError";
-import Select from "react-select";
 import styles from "../OrderStatusFormSection/style.module.css";
 import { AccountInfoValidation } from "../../validation schema/AccountInfoValidation";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { uploadFileSupport } from "../../lib/store";
-import Loading from "../Loading";
 import { BiUpload } from "react-icons/bi";
 import ModalPage from "../Modal UI";
 const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepId, setSubmitForm }) => {

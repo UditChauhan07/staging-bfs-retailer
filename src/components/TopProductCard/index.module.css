@@ -135,6 +135,7 @@
   line-height: 25px;
   text-transform: uppercase;
   text-align: center;
+  cursor: pointer;
 }
 .titleHolder {
   font-family: Arial;

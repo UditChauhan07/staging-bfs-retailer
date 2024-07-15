@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import ErrorProductCard from "./ErrorProductCard";
 import { BiCheck, BiLeftArrow, BiLock, BiRightArrow } from "react-icons/bi";
-import Select from "react-select";
 import ModalPage from "../Modal UI";
 import { RxEyeOpen } from "react-icons/rx";
 

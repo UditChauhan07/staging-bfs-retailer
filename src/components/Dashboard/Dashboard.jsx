@@ -12,6 +12,7 @@ import ContentLoader from "react-content-loader";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
 import { UserIcon } from "../../lib/svg";
+import { useNavigate } from "react-router-dom";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -65,6 +66,7 @@ const monthList = [
 ];
 
 function Dashboard({ dashboardData }) {
+  const navigate = useNavigate();
   const [dataa, setDataa] = useState({
     series: [
       {
@@ -226,7 +228,6 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             setAccountList(user.data.accountList)
             setGoalList(dashboard.goalByMonth ?? [])
-            console.log({ dashboard });
             let totalOrder = 0;
             let totalPrice = 0;
             let totalTarget = 0;
@@ -255,10 +256,12 @@ function Dashboard({ dashboardData }) {
               let yearlyDataKey = Object.keys(dashboard?.yearlyManufacturerData)
               activeBrand = yearlyDataKey.length;
               // let temp = [];
+
+              //patch
               yearlyDataKey.map((id) => {
-                // temp.push(dashboard.yearlyManufacturerData[id])
-                yearlyPrice += dashboard.yearlyManufacturerData[id]?.total?.sale
-                yearlyTarget += dashboard.yearlyManufacturerData[id]?.total?.target
+                // temp.push(dashboard.yearlyManufacturerData[id])'
+                yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.sale
+                yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.target
               })
             }
             let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
@@ -706,17 +709,17 @@ function Dashboard({ dashboardData }) {
                 </div>
               </div>
               <div className="col-lg-6">
-                <p className={Styles.Tabletext}>Retail Performance</p>
+                <p className={Styles.Tabletext}>Sales Performance</p>
                 <div className={Styles.donuttop1}>
                   {!isLoading ? (
                     <ContentLoader />
                   ) : (
                     <div>
                       <p className={`text-end ${Styles.Tabletxt}`} style={{ marginRight: '10px' }}>
-                        Retail Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
+                        Sales Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
                       </p>
                       <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
-                        Retail Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
+                        Sales Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
                         <PieChart width={300} height={300}>
@@ -742,10 +745,10 @@ function Dashboard({ dashboardData }) {
                       <thead>
                         <tr className={Styles.tablerow}>
                           <th scope="col" className="ps-3">
-                            Opportunity Owner
+                          Brand Name
                           </th>
-                          <th scope="col">Sale Target</th>
-                          <th scope="col">Sale Amount</th>
+                          <th scope="col">Purchase Target</th>
+                          <th scope="col">Purchase Amount</th>
                           <th scope="col">Diff.</th>
                         </tr>
                       </thead>
@@ -753,14 +756,13 @@ function Dashboard({ dashboardData }) {
                         goalList ? (
                           <tbody>
                             {goalList?.map((e) => {
-                              // console.log("e.....", e);
                               goalTarget += Number(e?.MonthlyTarget || 0);
                               goalSale += Number(e.MonthlySale || 0);
                               goalDiff += Number(e?.Difference || 0);
                               let targetDiff = e.TargetRollover
                               return (
                                 <tr key={e}>
-                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }} onClick={()=>navigate("/Brand/"+e.ManufacturerId)}>
                                     <UserIcon /> {e.ManufacturerName}
                                   </td>
                                   <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>

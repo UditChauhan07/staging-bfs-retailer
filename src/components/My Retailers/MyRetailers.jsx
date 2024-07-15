@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import MyRetailerCard from "./MyRetailerCard";
-import Loading from "../Loading";
 import LoaderV3 from "../loader/v3";
 
 const MyRetailers = ({ pageData, filterBy, sortBy, searchBy, isLoading }) => {

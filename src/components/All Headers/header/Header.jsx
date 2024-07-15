@@ -56,7 +56,7 @@ const Header = () => {
                   comparison Report
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/Target-Report"
                   className="dropdown-item  text-start"
@@ -66,16 +66,16 @@ const Header = () => {
                 >
                   Target Report
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
-                  to="/Target-Rollover"
+                  to="/Target-Report"
                   className="dropdown-item  text-start"
                   onClick={() => {
-                    navigate("/Target-Rollover");
+                    navigate("/Target-Report");
                   }}
                 >
-                  Target Rollover
+                  Target Report
                 </Link>
               </li>
             </ul>

@@ -127,12 +127,12 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
                   <div className={Styles.poNumb1}>
                     <h3>Brand</h3>
-                    <p>{item.ManufacturerName__c}</p>
+                    <p onClick={()=>navigate("/Brand/"+item.ManufacturerId__c)}>{item.ManufacturerName__c}</p>
                   </div>
 
                   <div className={Styles.PoOrderLast}>
-                    <h3>Ship To </h3>
-                    <p>{item.AccountName}</p>
+                    <h3>Ship To</h3>
+                    <p style={{cursor:'pointer'}} onClick={()=>navigate("/store/"+item.AccountId)}>{item.AccountName}</p>
                   </div>
                 </div>
 
