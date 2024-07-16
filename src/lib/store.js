@@ -1,4 +1,4 @@
-export const originAPi = "http://3.223.209.6:6194"
+export const originAPi = "https://b2b.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:6194"
 
