@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, topProduct } from "../../lib/store";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
+import ContentLoader from "react-content-loader";
 
 const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
@@ -87,65 +88,75 @@ const BrandDetailCard = ({ brandId }) => {
             },
         },
     };
-    console.log({brand});
     return (
         <section>
             <div className="container">
                 <div className="mt-5 mb-5"></div>
-                {brand.tagLine&& brand.desc?
-                <div className="row">
-                    <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-auto">
-                        <div className={`${Styles.BnadLogo} w-100`}>
-                            <img className="img-fluid" src={brand?.img?.src || "/assets/images/dummy.png"} />
-                        </div>
-                    </div>
-                    <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
-                        <div className="row">
-                            <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand.tagLine?Styles.borderRight:null}`}>
-                                <img className="img-fluid" src={`http://3.223.209.6:6194/brandImage/${brandId}.png`} />
+                    <div className="row">
+                        <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-auto">
+                            <div className={`${Styles.BnadLogo} w-100`}>
+                                <img className="img-fluid" src={brand?.img?.src || "/assets/images/dummy.png"} />
                             </div>
-                            {brand.tagLine?
-                            <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
-                                <h1 className={Styles.titleWithLogo}>
-                                    {brand.tagLine}
-                                </h1>
-                            </div>:null}
                         </div>
-                        <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{__html:brand.desc}} />
+                        <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
+                            <div className="row">
+                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand.tagLine ? Styles.borderRight : null}`}>
+                                    <img className="img-fluid" src={`http://3.223.209.6:6194/brandImage/${brandId}.png`} />
+                                </div>
+                                {brand.tagLine ?
+                                    <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
+                                        <h1 className={Styles.titleWithLogo}>
+                                            {brand.tagLine}
+                                        </h1>
+                                    </div> : null}
+                            </div>
+                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand.desc ??'NA'}} />
+                        </div>
                     </div>
-                </div>:null}
 
-                {topProducts.isLoaded ?
-                    <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
-                        <h3 className="mt-5">TOP PRODUCTS</h3>
-                        <OwlCarousel className="owl-theme" {...options}>
-                            {topProducts.data.map((item) => {
+                <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
+                    <h3 className="mt-5">TOP PRODUCTS</h3>
+                    <OwlCarousel className="owl-theme" {...options}>
+                        {topProducts.isLoaded ?
+                            topProducts.data.map((item) => {
 
                                 return (<div class="item">
                                     <div>
                                         <div className={Styles.ArriavalsInnerContent}>
                                             <h4>{item.Name}</h4>
-                                            <p>{item.Description}</p>
+                                            <p>{item.Description??'NA'}</p>
 
                                             <Link to={'/order'}>
                                                 Shop The Collection
                                             </Link>
                                             <div className="fitContent">
                                                 {productImages?.isLoaded ? (
-                                                    <img
+                                                    <img className="zoomInEffect"
                                                         style={{ maxHeight: '320px', width: 'auto', margin: '10px auto' }}
                                                         src={item.ProductImage ? item.ProductImage : productImages?.images?.[item.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
                                                     />
                                                 ) : (
-                                                    <LoaderV2 />
+                                                    <div className="d-grid place-content-center" style={{height:'300px',margin:'auto'}}>
+                                                        <LoaderV2 mods={{height:'150px',width:'150px'}}/>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
                                 </div>)
-                            })}
-                        </OwlCarousel>
-                    </div> : null}
+                            }) : <>
+                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px'}}>
+                                    <ContentLoader />
+                                </div>
+                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px'}}>
+                                    <ContentLoader />
+                                </div>
+                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px',margin:'0 10px'}}>
+                                    <ContentLoader />
+                                </div>
+                            </>}
+                    </OwlCarousel>
+                </div>
             </div>
         </section>
     );

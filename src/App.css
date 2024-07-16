@@ -25,6 +25,13 @@ p.seti {
   margin-top: 25px;
   margin-bottom: 1rem;
 }
+.zoomInEffect {
+  transition: all 0.2s ease;
+  mix-blend-mode: multiply;
+}
+.zoomInEffect:hover {
+  transform: scale(1.1);
+}
 .onHoverCursor {
   cursor: pointer;
 }
