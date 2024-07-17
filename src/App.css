@@ -25,6 +25,10 @@ p.seti {
   margin-top: 25px;
   margin-bottom: 1rem;
 }
+.carousel .thumb img {
+  max-height: 100px!important;
+  width: auto!important;
+}
 .zoomInEffect {
   transition: all 0.2s ease;
   mix-blend-mode: multiply;

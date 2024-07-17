@@ -45,7 +45,7 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
           </h2>
           {product?.discount ? (
             <p className={Styles.priceHolder}>
-              ${salesPrice}&nbsp;<span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>
+              ${parseFloat(salesPrice).toFixed(2)}&nbsp;<span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>
             </p>
           ) : (
             <p className={Styles.priceHolder}>
@@ -118,15 +118,15 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                 </div>
               ) : (
                 <div className="d-flex align-items-center gap-4 h-[5rem] ">
-                <button
-                  className={`${Styles.button}`}
-                  onClick={() =>
-                    onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount)
-                  }
+                  <button
+                    className={`${Styles.button}`}
+                    onClick={() =>
+                      onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount)
+                    }
                   >
-                  Add to cart
-                </button>
-                  </div>
+                    Add to cart
+                  </button>
+                </div>
               )}
             </>
           )}
