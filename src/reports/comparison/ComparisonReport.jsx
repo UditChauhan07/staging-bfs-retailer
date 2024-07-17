@@ -32,16 +32,25 @@ const ComparisonReport = () => {
   //csv Data
   let csvData = [];
   if (apiData?.data?.length) {
+    let totalRetail = 0;
+    let totalWhole = 0
     apiData?.data?.map((ele) => {
+      totalRetail += ele.retail_revenue__c
+      totalWhole += ele.Whole_Sales_Amount
       return csvData.push({
         "Store Name": ele.Retail_Store_Name__c,
         Brand: ele.ManufacturerName__c,
-        "Estee Lauder Number": ele.Estee_Lauder_Number__c,
+        "Estee Lauder Number": ele.Estee_Lauder_Number__c ?? "NA",
         "Sales Rep": ele.Sales_Rep__c,
         "Purchase": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
-        "Sale": `$${Number(ele.retail_revenue__c).toFixed(2)}`,
+        "Sale": ele.retail_revenue__c ? `$${Number(ele.retail_revenue__c).toFixed(2)}` : 'NA',
       });
     });
+    csvData.push({
+      "Store Name": "Total",
+      "Sale": totalRetail?`$${Number(totalRetail).toFixed(2)}`:'NA',
+      "Purchase": `$${Number(totalWhole).toFixed(2)}`,
+    })
   }
   useEffect(() => {
     GetAuthData().then((user) => {
