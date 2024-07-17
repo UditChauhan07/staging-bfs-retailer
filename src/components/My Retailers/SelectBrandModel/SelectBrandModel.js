@@ -31,12 +31,12 @@ const SelectBrandModel = ({ brands, onClose }) => {
                     onChange={() => {
                       // setSelectedBrandAccountId(brand.AccountId__c);
                       console.log({brand});
-                      setSelectedBrandManufacturer(true);
                       localStorage.setItem("manufacturer", brand.ManufacturerName__c|| brand.Name);
                       localStorage.setItem("ManufacturerId__c", brand.ManufacturerId__c||  brand.Id);
                       localStorage.setItem("Sales_Rep__c", brand.Sales_Rep__c);
                       localStorage.setItem("shippingMethod", JSON.stringify({number:brand.Shipping_Account_Number__c,method:brand.Shipping_Method__c}));
                       // if (selectedBrandManufacturer) {
+                        onClose();
                         navigate(`/orders`);
                       // } 
                     }}

@@ -40,7 +40,12 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
     if (num < 1000000000) return `${(num / 1000000).toFixed(2)} MB`;
     return `${(num / 1000000000).toFixed(2)} GB`;
   };
-  
+  // onMouseEnter={(e)=>{setOnHoverDiv(brand.ManufacturerId__c);
+  //   e.target.style.padding = `3px ${brand.ManufacturerName__c.length*2.15}px`;
+  // }} onMouseLeave={(e)=>{setOnHoverDiv();
+  //   e.target.style.padding = '3px 5px';
+  // }}
+  //onClick={navigate(()=>"/store/"+accountId)}
   return (
     <>
       <ModalPage open={modalOpen} onClose={() => setModalOpen(false)} content={<SelectBrandModel brands={brands} onClose={() => setModalOpen(false)} />} />
@@ -50,7 +55,7 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
         <div className={`${Styles.mainRetailer} flex flex-col justify-between`}>
           <h2 className="leading-normal" onClick={()=>navigate("/store/"+accountId)}>{title}</h2>
           <div>
-            <div onClick={navigate(()=>"/store/"+accountId)}>
+            <div>
               <div className={Styles.RetailerImg}>
                 {/* <img
                   className="position-absolute w-100"
@@ -70,6 +75,7 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
                       fontSize: "14px",
                       color: "black",
                     }}
+                    
                   >
                     {placeName || "No Location"}
                   </p>
@@ -86,11 +92,7 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
                       localStorage.setItem("Account", title);
                       localStorage.setItem("AccountId__c", accountId);
                       localStorage.setItem("address", JSON.stringify(address));
-                    }} className={`${Styles.btnFillLTR} ${Styles.btn} ${Styles.btnColor} ${Styles[bgColor[r]]}`} onMouseEnter={(e)=>{setOnHoverDiv(brand.ManufacturerId__c);
-                      e.target.style.padding = `3px ${brand.ManufacturerName__c.length*2.15}px`;
-                    }} onMouseLeave={(e)=>{setOnHoverDiv();
-                      e.target.style.padding = '3px 5px';
-                    }} style={{ height: "fit-content" }} key={index}>
+                    }} className={`${Styles.btnFillLTR} ${Styles.btn} ${Styles.btnColor} ${Styles[bgColor[r]]}`} style={{ height: "fit-content" }} key={index}>
                       {onHoverDiv!=brand.ManufacturerId__c?brand.ManufacturerName__c:
                       <>
                       Order now
