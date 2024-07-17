@@ -1,11 +1,10 @@
-import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, originAPi } from "../../lib/store";
+import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, originAPi, sortArrayHandler } from "../../lib/store";
 import Styles from "../OrderList/style.module.css"
 import Styles1 from "./OrderCardHandler.module.css"
 import { useEffect, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import ErrorProductCard from "./ErrorProductCard";
 import { BiCheck, BiLeftArrow, BiLock, BiRightArrow } from "react-icons/bi";
-import Select from "react-select";
 import ModalPage from "../Modal UI";
 import { RxEyeOpen } from "react-icons/rx";
 
@@ -113,6 +112,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                     }
                                 })
                                 // setProductList(temp)
+                                sortArrayHandler(temp, g => g.Name)
                                 setProductAllList(temp)
                                 let data = ShareDrive();
                                 if (!data) {
@@ -400,15 +400,14 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                                                     return (<ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler} readOnly={orderConfirmed} />)
                                                                                 }
                                                                             })}
-                                                                        {reason == "Product Overage" && !showProductList ? productList.length ?
+                                                                        {reason == "Product Overage" &&
                                                                             productList.map((ele, index) => {
                                                                                 return (
                                                                                     <ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler}
-                                                                                        readOnly={orderConfirmed}  style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} />
+                                                                                        readOnly={orderConfirmed} style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} />
                                                                                 )
                                                                             }
-                                                                            ) : <p className={Styles1.listHolder} style={{ display: 'none' }} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; Product List</p>
-                                                                            : null}
+                                                                            )}
 
                                                                     </tbody>
                                                                 </table>
@@ -526,13 +525,13 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                             <button className={Styles1.btnHolder} title="Click here to Continue" onClick={() => orderConfirmationHandler()}>I'M Done<BiCheck /></button>
                                                         </div>}
                                                         {(orderId == item.Id && orderConfirmed) && <div className={Styles1.Margitotal}>
-                                                            <button className={Styles1.btnHolder} title="Click here to Change in Products" onClick={() => { setOrderConfirmed(false); }}>Wanna Change?</button>
+                                                            <button className={Styles1.btnHolder} title="Click here to Change in Products" onClick={() => { setOrderConfirmed(false); }}>Click to edit</button>
                                                         </div>}
                                                     </>}
                                                 </div>
                                             </div>
                                         </div>
-                                        {orderId && <b aria-label="Click Here" title="Click here" onClick={() => { resetForm() }} style={{ cursor: 'pointer', marginLeft: '15px', textDecoration: 'underline' }}>Wrong Order. Want to Change Order?</b>}
+                                        {orderId && <p aria-label="Click Here" title="Click here" onClick={() => { resetForm() }} style={{ cursor: 'pointer', marginLeft: '15px', textDecoration: 'underline' }}><b>Wrong order?</b> Click here to change selection</p>}
                                     </div>
                                 )
                             }

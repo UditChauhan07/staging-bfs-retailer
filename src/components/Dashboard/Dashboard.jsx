@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Styles from "./Dashboard.module.css";
 import Chart from "react-apexcharts";
-import Loading from "../Loading";
 import img1 from "./Images/Active-1.png";
 import img2 from "./Images/Vector.png";
 import img3 from "./Images/Group.png";
@@ -13,6 +12,7 @@ import ContentLoader from "react-content-loader";
 import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
 import { UserIcon } from "../../lib/svg";
+import { useNavigate } from "react-router-dom";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -66,6 +66,7 @@ const monthList = [
 ];
 
 function Dashboard({ dashboardData }) {
+  const navigate = useNavigate();
   const [dataa, setDataa] = useState({
     series: [
       {
@@ -147,6 +148,8 @@ function Dashboard({ dashboardData }) {
   const [achievedSales, setAchievedSales] = useState();
   const [needle_data, setNeedle_data] = useState([]);
   const [needle_data2, setNeedle_data2] = useState([]);
+  const [accountList, setAccountList] = useState([]);
+  const [account, setAccount] = useState()
 
 
   //dashboard varibale used
@@ -215,12 +218,16 @@ function Dashboard({ dashboardData }) {
       .then((user) => {
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
+          headers.key = user.data.x_access_token
           user.headers = headers;
+          if (!headers.accountIds) {
+            user.headers = { ...user.headers, accountIds: JSON.stringify(user.data.accountIds) }
+          }
         }
         getDashboardata({ user })
           .then((dashboard) => {
+            setAccountList(user.data.accountList)
             setGoalList(dashboard.goalByMonth ?? [])
-            console.log({ dashboard });
             let totalOrder = 0;
             let totalPrice = 0;
             let totalTarget = 0;
@@ -249,10 +256,12 @@ function Dashboard({ dashboardData }) {
               let yearlyDataKey = Object.keys(dashboard?.yearlyManufacturerData)
               activeBrand = yearlyDataKey.length;
               // let temp = [];
+
+              //patch
               yearlyDataKey.map((id) => {
-                // temp.push(dashboard.yearlyManufacturerData[id])
-                yearlyPrice += dashboard.yearlyManufacturerData[id]?.total?.sale
-                yearlyTarget += dashboard.yearlyManufacturerData[id]?.total?.target
+                // temp.push(dashboard.yearlyManufacturerData[id])'
+                yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.sale
+                yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.target
               })
             }
             let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
@@ -268,7 +277,7 @@ function Dashboard({ dashboardData }) {
               { name: "B", value: parseInt(tempValue2 > 0 ? 100 - tempValue2 : 100), color: "rgb(171 195 203)" },
             ])
             setTargetValue(formatNumber(yearlyTarget || 0));
-            setRetailerTarget(formatNumber((yearlyTarget*2) || 0))
+            setRetailerTarget(formatNumber((yearlyTarget * 2) || 0))
             setAchievedSales(formatNumber(yearlyPrice || 0));
             setRetailerNum(formatNumber(dashboard.retailerNumberValue || 0))
 
@@ -442,7 +451,26 @@ function Dashboard({ dashboardData }) {
     let year = valuePlit[0] || null;
     setPurchaseYear(year)
     setPurchaseMonth(month)
-    getDataHandler({ month, year });
+    let accountIds = null;
+    if (account) {
+      accountIds = [account]
+      getDataHandler({ month, year, accountIds: JSON.stringify(accountIds) });
+    } else {
+      getDataHandler({ month, year });
+    }
+  };
+  const changeAccountHandler = (value) => {
+    setIsLoading(false);
+    setAccount(value)
+    setManufacturerSalesYaer([]);
+    setBox({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
+    let accountIds = null;
+    if (value) {
+      accountIds = [value]
+      getDataHandler({ month:PurchaseMonth, year:PurchaseYear, accountIds: JSON.stringify(accountIds) });
+    } else {
+      getDataHandler({ month:PurchaseMonth, year:PurchaseYear });
+    }
   };
   const RADIAN = Math.PI / 180;
   const cx = 150;
@@ -480,7 +508,7 @@ function Dashboard({ dashboardData }) {
     //   total += v.value;
     // });
     let ang = 180 - ((value / 100) * 180);
-    console.log({value});
+    console.log({ value });
     // if (value == 0) {
     //   ang = 180;
     // }
@@ -539,6 +567,20 @@ function Dashboard({ dashboardData }) {
     <AppLayout
       filterNodes={
         <>
+        {accountList.length>1&&
+          <FilterItem
+            minWidth="220px"
+            label="All Store"
+            value={account}
+            options={[...accountList.map((month,i) => ({
+              label: month.Name,
+              value: month.Id,
+            })),{label:'All Store',value:null}]}
+            onChange={(value) => {
+              changeAccountHandler(value);
+            }}
+            name={"Account-menu"}
+          />}
           <FilterItem
             minWidth="220px"
             label="Month-Year"
@@ -624,7 +666,7 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-6">
-            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth] + '-' + PurchaseYear}</p>
+            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth-1] + '-' + PurchaseYear}</p>
             <div className={Styles.donuttop} style={{ height: '635px' }}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
               <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
@@ -646,10 +688,10 @@ function Dashboard({ dashboardData }) {
                     <ContentLoader />
                   ) : (
                     <div>
-                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{ marginRight: '10px' }}>
                         Your Target: <span className={Styles.Tabletext_head}>{targetValue || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
                         Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
@@ -667,17 +709,17 @@ function Dashboard({ dashboardData }) {
                 </div>
               </div>
               <div className="col-lg-6">
-                <p className={Styles.Tabletext}>Retail Performance</p>
+                <p className={Styles.Tabletext}>Sales Performance</p>
                 <div className={Styles.donuttop1}>
                   {!isLoading ? (
                     <ContentLoader />
                   ) : (
                     <div>
-                      <p className={`text-end ${Styles.Tabletxt}`} style={{marginRight:'10px'}}>
-                        Retail Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
+                      <p className={`text-end ${Styles.Tabletxt}`} style={{ marginRight: '10px' }}>
+                        Sales Target: <span className={Styles.Tabletext_head}>{retailerTarget || 0}</span>
                       </p>
-                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0,marginRight:'10px' }}>
-                        Retail Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
+                      <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
+                        Sales Number: <span className={Styles.Tabletext_head}>{retailerNum || 0}</span>
                       </p>
                       <div className={Styles.donutbox}>
                         <PieChart width={300} height={300}>
@@ -703,10 +745,10 @@ function Dashboard({ dashboardData }) {
                       <thead>
                         <tr className={Styles.tablerow}>
                           <th scope="col" className="ps-3">
-                            Opportunity Owner
+                          Brand Name
                           </th>
-                          <th scope="col">Sale Target</th>
-                          <th scope="col">Sale Amount</th>
+                          <th scope="col">Purchase Target</th>
+                          <th scope="col">Purchase Amount</th>
                           <th scope="col">Diff.</th>
                         </tr>
                       </thead>
@@ -714,18 +756,17 @@ function Dashboard({ dashboardData }) {
                         goalList ? (
                           <tbody>
                             {goalList?.map((e) => {
-                              // console.log("e.....", e);
                               goalTarget += Number(e?.MonthlyTarget || 0);
                               goalSale += Number(e.MonthlySale || 0);
                               goalDiff += Number(e?.Difference || 0);
                               let targetDiff = e.TargetRollover
                               return (
                                 <tr key={e}>
-                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }}>
+                                  <td className={`${Styles.tabletd} ps-3 d-flex justify-content-start align-items-center gap-2`} style={{ cursor: 'pointer' }} onClick={()=>navigate("/Brand/"+e.ManufacturerId)}>
                                     <UserIcon /> {e.ManufacturerName}
                                   </td>
                                   <td className={Styles.tabletd}>${formatNumber(e?.MonthlyTarget || 0)} {targetDiff ? (targetDiff > 0 ? <><br /><p className={Styles.calHolder}><small style={{ color: 'red' }}>{formatNumber(targetDiff)}</small>+{formatNumber(e.StaticTarget)}</p></> : <><br /><p className={Styles.calHolder}>{formatNumber(e.StaticTarget)}-<small style={{ color: 'green' }}>{formatNumber(-targetDiff)}</small></p></>) : null}</td>
-                                  <td className={Styles.tabletd}>${e.MonthlySale? e.MonthlySale<1000? e.MonthlySale:formatNumber(e.MonthlySale):0}</td>
+                                  <td className={Styles.tabletd}>${e.MonthlySale ? e.MonthlySale < 1000 ? e.MonthlySale : formatNumber(e.MonthlySale) : 0}</td>
                                   {/* <td className={Styles.tabletd}>${formatNumber(e?.diff || 0)}</td> */}
                                   <td className={`${Styles.tabletd} ${Styles.flex}`}><span style={{ lineHeight: '20px' }}>${formatNumber(e.Difference || 0)}</span><span className={e.Difference <= 0 ? Styles.matchHolder : Styles.shortHolder}>{e.Difference <= 0 ? 'MATCH' : 'SHORT'}</span></td>
                                 </tr>

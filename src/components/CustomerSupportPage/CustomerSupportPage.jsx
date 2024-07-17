@@ -20,7 +20,7 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
 
                     <div className={Styles.supportLeftContent}>
                       <h2>Order Status</h2>
-                      <p>Track Your Orders with Ease.</p>
+                      <p>View or Request Invoices and Tracking</p>
                     </div>
                   </div>
                 </Link>
@@ -37,7 +37,7 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
                   </div>
                   <div className={Styles.supportLeftContent}>
                     <h2>Customer Services </h2>
-                    <p>Resolving Concerns Serving Solutions</p>
+                    <p>Report order issues or update account</p>
                   </div>
                 </div>
                 </Link>
@@ -49,7 +49,7 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
 
                     <div className={Styles.supportLeftContent}>
                       <h2>Displays Issues </h2>
-                      <p>Empowering Solutions for Effective Management</p>
+                      <p>Request updates</p>
                     </div>
                   </div>
                 </div>

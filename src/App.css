@@ -16,11 +16,36 @@
   position: relative;
   padding-bottom: 4px;
 }
+p.seti {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 1.12px;
+  line-height: 40px;
+  margin-top: 25px;
+  margin-bottom: 1rem;
+}
+.carousel .thumb img {
+  max-height: 100px!important;
+  width: auto!important;
+}
+.zoomInEffect {
+  transition: all 0.2s ease;
+  mix-blend-mode: multiply;
+}
+.zoomInEffect:hover {
+  transform: scale(1.1);
+}
 .onHoverCursor {
   cursor: pointer;
 }
 .sticky-top {
   z-index: 99 !important;
+}
+.owl-nav{
+  margin-top: 2rem!important;
+  display: flex!important;
+  justify-content: end!important;
 }
 
 a {

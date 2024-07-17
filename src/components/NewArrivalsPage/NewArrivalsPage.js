@@ -1,15 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
-// import Pagination from "../components/Pagination/Pagination";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+import LoaderV2 from "../loader/v2";
+import { useNavigate } from "react-router-dom";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
+  const navigate = useNavigate();
 
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
@@ -17,18 +18,6 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const [isEmpty, setIsEmpty] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [loadEffect, setEffect] = useState(0)
-  // useEffect(() => {
-  //   let temp = true;
-  //   products.map((month) => {
-  //     month.content.map((item) => {
-  //       if (!selectBrand || selectBrand == item.brand) {
-  //         temp = false;
-  //       }
-  //     });
-  //     setIsEmpty(temp);
-  //   });
-  // }, [selectBrand]);
-  // ...............
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
@@ -74,7 +63,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase());
+              return item.date.toLowerCase().includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -103,7 +92,11 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   }, [month, selectBrand, productList, brand]);
   // console.log(filterData,"isEmpty")
   // ................
-  if (isLoaded) return <Loading height={'70vh'} />
+  const [imageLoading, setImageLoading] = useState({});
+  const handleImageLoad = (imageId) => {
+    setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
+  };
+  if (isLoaded) return <Loading height={"70vh"} />
   return (
     <>
       {modalShow ? (
@@ -134,11 +127,17 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       ) : null}
       <section id="newArrivalsSection">
         <div>
-          <div className={Styles.dGrid}>
+          <div className={!isEmpty ? Styles.dGrid : null} id="dGridHolder">
             {!isEmpty ? (
-              pagination?.map((month, index) => {
+              pagination?.map((month, _i) => {
                 if (month.content?.length) {
-                  return month.content.map((product) => {
+                  if(month.content.length<5){
+                    let div = document.getElementById("dGridHolder");
+                    if(div){
+                      div.style.gridTemplateColumns = `repeat(auto-fill, ${(100/month.content.length)-1}`
+                    }
+                  }
+                  return month.content.map((product, __i) => {
                     if (true) {
                       let listPrice = "$-- . --";
                       if (product?.usdRetail__c) {
@@ -154,12 +153,16 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           {/* {isLoaded ? <img className={Styles.imgHolder} onClick={() => { setProductDetailId(product.Id) }} src={product?.[product.ProductCode]?.ContentDownloadUrl ?? product.image} /> : <LoaderV2 />} */}
                           <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
                             <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                              <img src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
-                                setProductDetailId(product.Id);
-                              }} />
+                              {imageLoading[product.Id] ? (
+                                <LoaderV2 width={100} height={100} />
+                              ) : (
+                                <img key={product.Id} src={product.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} height={212} width={212} onClick={() => {
+                                  setProductDetailId(product.Id);
+                                }} onLoad={() => handleImageLoad(product.Id)} />
+                              )}
                             </div>
                           </div>
-                          <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                          <p onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)} className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
                           <p
                             className={Styles.titleHolder}
                             onClick={() => {
@@ -190,7 +193,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 }
               })
             ) : (
-              <div style={{ fontSize: "20px" }}>No data found</div>
+              <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+                <div className="col-4">
+                  <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
+                    No data found
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>

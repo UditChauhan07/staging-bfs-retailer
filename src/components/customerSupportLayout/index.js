@@ -54,7 +54,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
 
                                             <div className={Styles.supportLeftContent}>
                                                 <h2>Order Status</h2>
-                                                <p>Track Your Orders with Ease.</p>
+                                                <p>View or Request Invoices and Tracking</p>
                                             </div>
                                         </div>
                                     </Link>
@@ -70,7 +70,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             </div>
                                             <div className={Styles.supportLeftContent}>
                                                 <h2>Customer Services </h2>
-                                                <p>Resolving Concerns Serving Solutions</p>
+                                                <p>Report order issues or update account</p>
                                             </div>
                                         </div>
                                     </Link>
@@ -93,7 +93,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
 
                                             <div className={Styles.supportLeftContent}>
                                                 <h2>Displays Issues </h2>
-                                                <p>Empowering Solutions for Effective Management</p>
+                                                <p>Request updates</p>
                                             </div>
                                         </div>
                                     </div>

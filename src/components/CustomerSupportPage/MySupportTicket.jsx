@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import Styles from './Style.module.css'
 import { CustomerServiceIcon, DefaultSupportIcon, MarketingSupportIcon, OrderStatusIcon, SupportStatusGreen, SupportStatusRed, SupportStatusYellow, UserChecked } from '../../lib/svg'
 import { Link } from 'react-router-dom';
+import { DateConvert } from '../../lib/store';
 const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
@@ -39,7 +40,7 @@ function MySupportTicket({ data, PageSize, currentPage }) {
 
 
                                         <div className={Styles.ShopNameBrand}>
-                                            <p className={Styles.ShopNameLocation}>
+                                            <p style={{width:'max-content'}} className={Styles.ShopNameLocation}>
                                                 <UserChecked />&nbsp;{item.Account.Name}
                                             </p>
                                             <p className={Styles.Para2}>{item.ManufacturerName__c && <>For&nbsp;<span className={Styles.BrandMName}>{item.ManufacturerName__c}</span></>}</p>
@@ -48,7 +49,7 @@ function MySupportTicket({ data, PageSize, currentPage }) {
 
                                         <div className={Styles.CostomerStatusVisit}>
                                             <p className={Styles.StatusColor}>{item.Status}</p>
-                                            <h6>{`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`}</h6>
+                                            <h6>{DateConvert(item.Date_Opened__c,true)}</h6>
                                         </div>
 
                                         {/* <div className={Styles.CustomerCloneColor}>

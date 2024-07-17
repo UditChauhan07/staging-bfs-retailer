@@ -1,7 +1,7 @@
 import styles from "./stylev2.module.css";
-const LoaderV2 = () => {
+const LoaderV2 = ({height=null,width=null,style={}}) => {
     return (
-        <div className={styles.gearbox}>
+        <div className={styles.gearbox} style={{width:`${width}px`,height:`${height}px`,...style}}>
             <div className={styles.overlay}></div>
             <div className={`${styles.gear} ${styles.one}`}>
                 <div className={styles.gearInner}>

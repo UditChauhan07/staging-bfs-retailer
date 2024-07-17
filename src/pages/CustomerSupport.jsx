@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import CustomerSupportPage from "../components/CustomerSupportPage/CustomerSupportPage";
 import { FilterItem, MultiFilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { DestoryAuth, GetAuthData, getRetailerBrands, getSupportList } from "../lib/store";
-import Loading from "../components/Loading";
+import { DestoryAuth, GetAuthData, getAllAccountBrand, getAllAccountSupport, getRetailerBrands, getSupportList } from "../lib/store";
 import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 
 
 let PageSize = 10;
@@ -18,16 +18,24 @@ const CustomerSupport = () => {
   const [manufacturerFilter, setManufacturerFilter] = useState(null);
   const [retailerFilter, setRetailerFilter] = useState(null);
   const [manufacturerData, setManufacturerData] = useState([]);
+  const [accountList, setAccountList] = useState([]);
+  const [account, setAccount] = useState(null);
   let statusList = ["New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
   const [status, setStatus] = useState(["New"]);
   useEffect(() => {
+    getSupportListHandler()
+  }, []);
+  const getSupportListHandler = (accountIds = null) => {
+    setLoaded(false)
+    setAccount(accountIds)
     GetAuthData()
       .then((user) => {
         if (user) {
-          let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-          getRetailerBrands({ rawData }).then((resManu) => {
+          setAccountList(user.data.accountList)
+          getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) }).then((resManu) => {
+            console.log({resManu});
             setManufacturerData(resManu);
-            getSupportList({ user })
+            getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })
               .then((supports) => {
                 console.log({ supports });
                 if (supports) {
@@ -54,11 +62,10 @@ const CustomerSupport = () => {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }
   const filteredData = useMemo(() => {
     let newValues = supportList;
     if (status.length > 0) {
-      console.log({ status });
       newValues = newValues.filter((item) => status.includes(item.Status));
     }
     if (manufacturerFilter) {
@@ -76,6 +83,25 @@ const CustomerSupport = () => {
     <AppLayout
       filterNodes={
         <>
+          {accountList?.length > 1 &&
+            <FilterItem
+              minWidth="220px"
+              label="All Store"
+              value={account ? account?.length ? account[0] : null : null}
+
+              options={[...accountList.map((month, i) => ({
+                label: month.Name,
+                value: month.Id,
+              })), { label: 'All Store', value: null }]}
+              onChange={(value) => {
+                if(value){
+                  getSupportListHandler([value]);
+                }else{
+                  getSupportListHandler(null);
+                }
+              }}
+              name={"Account-menu"}
+            />}
           <FilterItem
             minWidth="220px"
             label="Manufacturer"
@@ -108,6 +134,7 @@ const CustomerSupport = () => {
           <button
             className="border px-2.5 py-1 leading-tight d-grid"
             onClick={() => {
+              setStatus([statusList[0]])
               setManufacturerFilter(null);
               setRetailerFilter(null);
               setSearchBy("");
@@ -121,24 +148,26 @@ const CustomerSupport = () => {
     >
       <>
         {!loaded ? (
-          <Loading />
+          <LoaderV3 text={"Loading Support Please wait..."}/>
         ) : (
-          <CustomerSupportPage
-            data={filteredData}
-            currentPage={currentPage}
-            PageSize={PageSize}
-            manufacturerFilter={manufacturerFilter}
-            searchBy={searchBy}
-            retailerFilter={retailerFilter}
-          />
+          <>
+            <CustomerSupportPage
+              data={filteredData}
+              currentPage={currentPage}
+              PageSize={PageSize}
+              manufacturerFilter={manufacturerFilter}
+              searchBy={searchBy}
+              retailerFilter={retailerFilter}
+            />
+            <Pagination
+              className="pagination-bar"
+              currentPage={currentPage}
+              totalCount={filteredData?.length}
+              pageSize={PageSize}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </>
         )}
-        <Pagination
-          className="pagination-bar"
-          currentPage={currentPage}
-          totalCount={filteredData?.length}
-          pageSize={PageSize}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
         {/* <OrderStatusFormSection /> */}
       </>
     </AppLayout>

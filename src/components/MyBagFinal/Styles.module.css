@@ -299,14 +299,20 @@
   background-color: transparent;
   /* text-transform: uppercase; */
 }
-
+.warning{
+  text-decoration: underline;
+}
 
 .ShipBut {
   width: 100%;
 }
-
-.ShipBut button {
+.ShipBut button{
   width: 100%;
+}
+.btnHolder{
+  width: 100px;
+}
+.ShipBut button,.btnHolder {
   color: #fff;
   text-align: center;
   font-family: "Montserrat";

@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import MyRetailers from "../components/My Retailers/MyRetailers";
 import { FilterItem } from "../components/FilterItem";
-import { useManufacturer } from "../api/useManufacturer";
-import { useRetailersData } from "../api/useRetailersData";
 import FilterSearch from "../components/FilterSearch";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import Layout from "../components/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
+import { GetAuthData, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
 
-const MyRetailersPage = () => {
-  const { data: manufacturers } = useManufacturer();
-  const [searchParams] = useSearchParams();
-  const manufacturerId = searchParams.get("manufacturerId");
-  const { data, isLoading } = useRetailersData();
+const MyRetailersPage = ({manufacturerId}) => {
+
+
   const [manufacturerFilter, setManufacturerFilter] = useState(manufacturerId);
   const [sortBy, setSortBy] = useState();
   const [searchBy, setSearchBy] = useState("");
+  const [storeList, setStoreList] = useState({ isLoading: true, data: [] });
+  const [manufacturerList,setManufacturerList] = useState([])
   useEffect(() => {
     if (!manufacturerId) {
       setManufacturerFilter(null);
@@ -29,8 +27,26 @@ const MyRetailersPage = () => {
     if (!userData) {
       navigate("/");
     }
+    getAccountsHandler()
   }, []);
 
+  const getAccountsHandler = () => {
+    GetAuthData().then((user) => {
+      getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
+        setStoreList({ isLoading: false, data: accounts });
+        getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands)=>{
+          setManufacturerList(brands);
+        }).catch((brandErr)=>{
+          console.log({brandErr});
+        })
+      }).catch((actErr) => {
+        console.log({ actErr });
+      })
+    }).catch((err) => {
+      console.log({ err });
+    })
+  }
+  const { isLoading, data } = storeList
   return (
     <AppLayout
       filterNodes={
@@ -58,7 +74,7 @@ const MyRetailersPage = () => {
             label="Manufacturer"
             name="Manufacturer1"
             value={manufacturerFilter}
-            options={manufacturers?.data?.map((manufacturer) => ({
+            options={manufacturerList.map((manufacturer) => ({
               label: manufacturer.Name,
               value: manufacturer.Id,
             }))}
@@ -84,15 +100,15 @@ const MyRetailersPage = () => {
       }
     >
       <MyRetailers
-        pageData={data?.status ==200?data?.data:[]}
+        pageData={data}
         sortBy={sortBy}
         searchBy={searchBy}
         isLoading={isLoading}
         filterBy={
           manufacturerFilter
-            ? manufacturers?.data?.find(
-                (manufacturer) => manufacturer.Id === manufacturerFilter
-              )
+            ? manufacturerList?.find(
+              (manufacturer) => manufacturer.Id === manufacturerFilter
+            )
             : null
         }
       />

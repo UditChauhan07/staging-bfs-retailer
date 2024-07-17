@@ -19,7 +19,7 @@
   width: 2px;
   height: 100%;
   background: #fff;
-  margin: auto;
+  margin: auto 0;
 }
 
 .month {
@@ -138,7 +138,7 @@
 }
 .stickyThirdLastColumn{
     position: sticky;
-    right: 260px;
+    right: 325px;
     z-index: 2;
 }
 .stickySecondLastColumnHeading {
@@ -146,11 +146,11 @@
   right: 125px;
   top: 0%;
   z-index: 5;
-  min-width: 150px !important;
+  min-width: 200px !important;
 }
 .stickyThirdLastColumnHeading {
   position: sticky;
-  right: 260px;
+  right: 325px;
   top: 0%;
   z-index: 5;
   min-width: 150px !important;

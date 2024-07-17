@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import Filters from "../components/OrderList/Filters";
 import Styles from "../components/OrderList/style.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getOrderList } from "../lib/store";
-import Loading from "../components/Loading";
+import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
+import { FilterItem } from "../components/FilterItem";
+import LoaderV3 from "../components/loader/v3";
 
 let PageSize = 10;
 
@@ -15,6 +16,8 @@ const OrderListPage = () => {
   const [loaded, setLoaded] = useState(false);
   const [orders, setOrders] = useState([]);
   const [searchShipBy, setSearchShipBy] = useState();
+  const [accountList, setAccountList] = useState([]);
+  const [account, setAccount] = useState(null);
   const [filterValue, onFilterChange] = useState({
     month: "",
     manufacturer: null,
@@ -84,18 +87,27 @@ const OrderListPage = () => {
   }, [filterValue, orders, searchShipBy]);
 
   useEffect(() => {
+    orderListHandler(account)
+
+  }, [filterValue.month]);
+
+  useEffect(() => {
+    setShipByText(searchShipBy);
+  }, [searchShipBy]);
+
+  const orderListHandler = (accountIds=null) => {
+    setAccount(accountIds)
     setLoaded(false);
     GetAuthData()
       .then((response) => {
-        getOrderList({
-          user: {
-            key: response.data.x_access_token,
-            accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
-          },
+        setAccountList(response.data.accountList)
+        getAllAccountOrders({
+          key: response.data.x_access_token,
+          accountIds: JSON.stringify(accountIds||response.data.accountIds),
           month: filterValue.month,
         })
           .then((order) => {
-            console.log({order});
+            console.log({ order });
             let sorting = sortingList(order);
             setOrders(sorting);
             setLoaded(true);
@@ -107,31 +119,49 @@ const OrderListPage = () => {
       .catch((err) => {
         console.log({ err });
       });
-  }, [filterValue.month]);
-
-  useEffect(() => {
-    setShipByText(searchShipBy);
-  }, [searchShipBy]);
+  }
 
   return (
     <AppLayout
       filterNodes={
-        <Filters
-          onChange={handleFilterChange}
-          value={filterValue}
-          resetFilter={() => {
-            onFilterChange({
-              manufacturer: null,
-              month: "",
-              search: "",
-            });
-            setSearchShipBy("");
-          }}
-        />
+        <>
+          {accountList.length > 1 &&
+            <FilterItem
+              minWidth="220px"
+              label="All Store"
+              value={account?account.length?account[0]:null:null}
+
+              options={[...accountList.map((month, i) => ({
+                label: month.Name,
+                value: month.Id,
+              })), { label: 'All Store', value: null }]}
+              onChange={(value) => {
+                if(value){
+                  orderListHandler([value]);
+                }else{
+                  orderListHandler();
+                }
+              }}
+              name={"Account-menu"}
+            />}
+          <Filters
+            onChange={handleFilterChange}
+            value={filterValue}
+            resetFilter={() => {
+              onFilterChange({
+                manufacturer: null,
+                month: "",
+                search: "",
+              });
+              setAccount();
+              setSearchShipBy("");
+            }}
+          />
+        </>
       }
     >
       {!loaded ? (
-        <Loading />
+        <LoaderV3 text={"Loading Order List, Please wait..."} />
       ) : (
         <div>
           <section>

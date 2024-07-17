@@ -1,7 +1,6 @@
 /* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from "react";
 import Styles from "./Styles.module.css";
-import Img1 from "./Images/Eye1.png";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { useNavigate } from "react-router-dom";
 import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, fetchBeg, getProductImageAll } from "../../lib/store";
@@ -13,6 +12,7 @@ import LoaderV2 from "../loader/v2";
 import ProductDetails from "../../pages/productDetails";
 
 function MyBagFinal() {
+  let Img1 = "/assets/images/dummy.png";
   const navigate = useNavigate();
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState(POGenerator());
@@ -24,6 +24,8 @@ function MyBagFinal() {
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim,setClearConfim] = useState(false)
   const [ productDetailId, setProductDetailId] = useState(null)
+  const [confirm, setConfirm] = useState(false);
+  const [isDisabled,setIsDisabled]=useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
 
@@ -96,11 +98,12 @@ function MyBagFinal() {
       }
     })
   }
-
   const orderPlaceHandler = () => {
+
     if(localStorage.getItem("Sales_Rep__c")){
     let fetchBag = fetchBeg();
     setIsOrderPlaced(1);
+    setIsDisabled(true)
     GetAuthData()
       .then((user) => {
         // let bagValue = fetchBeg()
@@ -143,6 +146,7 @@ function MyBagFinal() {
               if (response) {
                 fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                 localStorage.removeItem("orders");
+                setIsDisabled(false)
                 navigate("/order-list");
                 setIsOrderPlaced(2);
               }
@@ -198,6 +202,30 @@ function MyBagFinal() {
   return (
     <div className="mt-4">
       <section>
+      <ModalPage
+          open={confirm || false}
+          content={
+            <div className="d-flex flex-column gap-3">
+              <h2 style={{textDecoration:'underline'}}>
+                Confirm
+              </h2>
+              <p>
+                Are you sure you want to generate a order?<br /> This action cannot be undone.
+              </p>
+              <div className="d-flex justify-content-around ">
+                <button className={Styles.btnHolder} onClick={orderPlaceHandler} disabled={isDisabled}>
+                  Submit
+                </button>
+                <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+          onClose={() => {
+            setConfirm(false);
+          }}
+        />
       {clearConfim ? (
         <ModalPage
           open
@@ -286,7 +314,7 @@ function MyBagFinal() {
                                 <div className={Styles.Mainbox1M}>
                                   <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
                                   {
-                                      !productImage.isLoaded ? <LoaderV2 /> :
+                                      ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} />:!productImage.isLoaded ? <LoaderV2 /> :
                                         productImage.images?.[ele.product?.ProductCode] ?
                                           productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl ?
                                             <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(ele?.product?.Id)}}/>
@@ -408,7 +436,7 @@ function MyBagFinal() {
                         onClick={() => {
                           if (Object.keys(orders).length) {
                             if (PONumber.length) {
-                              orderPlaceHandler();
+                              setConfirm(true)
                             } else {
                               setPONumberFilled(false);
                             }

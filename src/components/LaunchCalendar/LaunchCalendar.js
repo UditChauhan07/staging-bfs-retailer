@@ -3,8 +3,10 @@ import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProductDetails from "../../pages/productDetails";
 import { hexabrand, hexabrandText } from "../../lib/store";
+import { useNavigate } from "react-router-dom";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function LaunchCalendar({ productList, selectBrand, brand, month }) {
+  const navigate = useNavigate();
   const [isEmpty, setIsEmpty] = useState(false);
   // useEffect(() => {
   //   let temp = true;
@@ -95,15 +97,23 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                         <span className={`timelineHolder0${(index % 3) + 1}`} id={month.month}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
                           if (!selectBrand || selectBrand == product.ManufacturerName__c) {
+                            let listPrice = "$-- . --";
+                            if (product?.usdRetail__c) {
+                              if (Number(product?.usdRetail__c?.replace("$", ""))) {
+                                listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                              } else {
+                                listPrice = product?.usdRetail__c
+                              }
+                            }
                             return (
                               <>
                                 <div className="timeline-content" key={productIndex}>
                                   <div className="ProductInfo">
                                     <div className="BothDateTopFlex">
                                       <div className="ShipDate">
-                                        <span style={{textTransform:'uppercase'}}>Ship Date</span>
+                                        <span style={{ textTransform: 'uppercase' }}>Ship Date</span>
                                         {/* style={{ backgroundColor: hexabrand[product.ManufacturerId__c], color: hexabrandText[product.ManufacturerId__c] }} */}
-                                        <div className={`DateCurrent0${(index % 3) + 1}`} style={{color:'#000'}}>{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
+                                        <div className={`DateCurrent0${(index % 3) + 1}`} style={{ color: '#000' }}>{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
                                       </div>
                                       <div className="ShipDate EDate">
                                         <span>OCD</span>
@@ -121,13 +131,16 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                           setProductDetailId(product.Id);
                                         }} style={{ cursor: 'pointer' }}>{product.Name}</h3>
                                         <div className="size">
-                                          Size <span className="ProductQty">{product.Size_Volume_Weight__c}</span>
+                                          <p>
+                                            Size <span className="ProductQty">{product.Size_Volume_Weight__c}</span>
+                                          </p>
+                                          <p style={{ marginRight: '10px' }}>Price <span className="ProductQty">{listPrice}</span></p>
                                         </div>
                                         <p>{product.Description}</p>
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="launchBrand">
+                                  <div className="launchBrand" onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>
                                     <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} />
                                   </div>
                                 </div>
@@ -162,7 +175,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
           </div>
         </div>
       </div>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} />
     </div>
   );
 }

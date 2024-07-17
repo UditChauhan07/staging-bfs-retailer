@@ -3,21 +3,18 @@ import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import Loading from "../components/Loading";
-import { GetAuthData, getMarketingCalendar, getRetailerBrands } from "../lib/store";
+import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
-
-  let PageSize = 10;
-  const [currentPage, setCurrentPage] = useState(1);
   const [productList, setProductList] = useState([])
-
   const [month, setMonth] = useState("");
+
   let months = [
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
@@ -46,15 +43,15 @@ const NewArrivals = () => {
   }, [])
   useEffect(() => {
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
           productRes.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
               element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
-              return element
+              return element;
+
             })
             return month;
           })
@@ -224,7 +221,7 @@ const NewArrivals = () => {
       {isLoaded ? (
         <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
       ) : (
-        <Loading height={"70vh"} />
+        <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}
 
     </AppLayout>

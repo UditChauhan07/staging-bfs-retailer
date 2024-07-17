@@ -3,12 +3,12 @@ import AppLayout from "../components/AppLayout";
 import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import Loading from "../components/Loading";
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, getRetailerBrands, originAPi, } from "../lib/store";
+import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, getRetailerBrands, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -44,8 +44,7 @@ const MarketingCalendar = () => {
 
   useEffect(() => {
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
           setProductList(productRes)
@@ -97,7 +96,7 @@ const MarketingCalendar = () => {
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
       if(version == 1){
-        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -115,7 +114,7 @@ const MarketingCalendar = () => {
           console.log({ pdfErr });
         })
       }else if(version == 2){
-        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -228,6 +227,7 @@ const MarketingCalendar = () => {
             temp["Product Ship Date"] = item.Ship_Date__c;
             temp["Product OCD Date"] = item.Launch_Date__c;
             temp["Product Brand"] = item.ManufacturerName__c;
+            temp["Product Price"] = item.usdRetail__c;
             finalData.push(temp);
           })
         }
@@ -316,8 +316,8 @@ const MarketingCalendar = () => {
         </>
       }
     >
-       {isPDFLoaded ? <Loading  height={"70vh"} /> :
-        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <Loading  height={"70vh"} />}
+       {isPDFLoaded ? <LoaderV3  text={"Generating Pdf Please wait..."} /> :
+        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand??"All Brands"}`} />}
 
     </AppLayout>
   );

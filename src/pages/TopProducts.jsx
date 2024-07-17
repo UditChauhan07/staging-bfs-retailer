@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, ShareDrive, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
-import Loading from "../components/Loading";
+import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const TopProducts = () => {
@@ -18,6 +18,8 @@ const TopProducts = () => {
   const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
+  const [accountList, setAccountList] = useState([]);
+  const [selectAccount, setSelectAccount] = useState();
   useEffect(() => {
     btnHandler({ manufacturerId: null, month: monthIndex + 1 });
     let indexMonth = [];
@@ -52,7 +54,7 @@ const TopProducts = () => {
   //     // })
   //   );
   // }, [searchText, topProductList, selectedMonth]);
-  const SearchData = ({ selectedMonth, manufacturerFilter }) => {
+  const SearchData = ({ selectedMonth, manufacturerFilter, accountId = null }) => {
     let data = ShareDrive();
     if (!data) {
       data = {};
@@ -69,14 +71,16 @@ const TopProducts = () => {
       }
     }
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      setSelectAccount(accountId || user.data.accountIds[0])
+      setAccountList(user.data.accountList);
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((resManu) => {
+        console.log({ resManu });
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountId: user.data.accountId }).then((products) => {
+      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((products) => {
         let result = [];
         console.log({ products });
         if (products?.data?.length > 0) {
@@ -89,11 +93,24 @@ const TopProducts = () => {
           localStorage.removeItem("manufacturer")
           localStorage.removeItem("address")
         }
-
-        localStorage.setItem("Account", user.data.accountName)
-        localStorage.setItem("AccountId__c", user.data.accountId)
+        user.data.accountList.map((account)=>{
+          if(accountId){
+            if(account.Id === accountId){
+              localStorage.setItem("Account", account.Name)
+            }
+          }else{
+            if(account.Id == user.data.accountIds[0]){
+              localStorage.setItem("Account", account.Name)
+            }
+          }
+        })
+        localStorage.setItem("AccountId__c", accountId || user.data.accountIds[0])
         localStorage.setItem("ManufacturerId__c", manufacturerFilter)
-        setTopProductList({ isLoaded: true, data: result, message: products?.message, accountDetails: products?.accountDetails })
+        let message = products?.message
+        if (result.length == 0) {
+          message = "No Data Found";
+        }
+        setTopProductList({ isLoaded: true, data: result, message, accountDetails: products?.accountDetails })
         if (result.length > 0) {
           let productCode = "";
           result?.map((product, index) => {
@@ -125,15 +142,30 @@ const TopProducts = () => {
       console.log({ error });
     })
   }
-  const btnHandler = ({ month, manufacturerId }) => {
+  const btnHandler = ({ month, manufacturerId, accountId = null }) => {
     setIsLoaded(false)
+    setManufacturerData([]);
     setTopProductList({ isLoaded: false, data: [], message: null })
     setManufacturerFilter(manufacturerId);
     setSelectedMonth(month);
-    SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId })
+    SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId, accountId })
   }
   return (
     <AppLayout filterNodes={<>
+      {accountList.length > 1 &&
+        <FilterItem
+          minWidth="220px"
+          label="All Store"
+          value={selectAccount}
+          options={[...accountList.map((month, i) => ({
+            label: month.Name,
+            value: month.Id,
+          }))]}
+          onChange={(value) => {
+            btnHandler({ manufacturerId: manufacturerFilter, month: selectedMonth, accountId: value });
+          }}
+          name={"Account-menu"}
+        />}
       <FilterItem
         minWidth="220px"
         label="Manufacturer"
@@ -143,7 +175,7 @@ const TopProducts = () => {
           label: manufacturer.Name,
           value: manufacturer.Id,
         }))}
-        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth })}
+        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth,accountId:selectAccount })}
       />
       <FilterItem
         label="Month"
@@ -151,7 +183,7 @@ const TopProducts = () => {
         name="Month"
         value={selectedMonth}
         options={monthList}
-        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value })}
+        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value,accountId:selectAccount })}
       />
       {/* <FilterSearch
         onChange={(e) => setSearchText(e.target.value)}
@@ -168,10 +200,10 @@ const TopProducts = () => {
       </button>
     </>
     }>
-      {!topProductList.isLoaded ? <Loading /> : (topProductList.data.length == 0 && topProductList.message) ?
-        <div className="row d-flex flex-column justify-content-around align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+      {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth-1]} ${((selectedMonth-1) <= monthIndex)?2024:2023}`}/> : (topProductList.data.length == 0 && topProductList.message) ?
+        <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
-            <p className="m-0 fs-2 font-[Montserrat-400] text-[14px] tracking-[2.20px]">
+            <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
               {topProductList.message}
             </p>
           </div>
