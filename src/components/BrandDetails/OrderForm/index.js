@@ -311,7 +311,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               </div>
             ) : null}
             <div className="d-flex justify-content-center">
-              <button className={btnClassName} onClick={() => { !isLimitPass ? submitForm() : setLimitCheck(true) }}>>
+              <button className={btnClassName} onClick={() => { !isLimitPass ? submitForm() : setLimitCheck(true) }}>
                 Submit
               </button>
               <button
