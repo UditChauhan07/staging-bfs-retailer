@@ -126,7 +126,7 @@ const BrandDetailCard = ({ brandId }) => {
                                             <h4>{item.Name}</h4>
                                             <p>{item.Description??'NA'}</p>
 
-                                            <Link to={'/order'}>
+                                            <Link to={'/order?manufacturerId='+brandId}>
                                                 Shop The Collection
                                             </Link>
                                             <div className="fitContent">

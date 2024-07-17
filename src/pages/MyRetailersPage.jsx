@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import MyRetailers from "../components/My Retailers/MyRetailers";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
 
-const MyRetailersPage = () => {
-  const [searchParams] = useSearchParams();
-  const manufacturerId = searchParams.get("manufacturerId");
+const MyRetailersPage = ({manufacturerId}) => {
+
+
   const [manufacturerFilter, setManufacturerFilter] = useState(manufacturerId);
   const [sortBy, setSortBy] = useState();
   const [searchBy, setSearchBy] = useState("");
