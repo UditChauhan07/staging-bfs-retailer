@@ -43,3 +43,43 @@
   max-width: 100px;
   padding: 1px 5px;
 }
+.descHolder {
+  color: #787878!important;
+  font-family: "Arial-500"!important;
+  font-size: 18px!important;
+  font-style: normal!important;
+  font-weight: 400!important;
+  line-height: 25px!important;
+  letter-spacing: 1.12px!important;
+  text-align: start!important;
+}
+.descHolder span{
+  color: #000!important;
+  font-weight: 500!important;
+}
+
+.priceHolder{
+  font-family: "Montserrat-400"!important;
+  font-size: 28px!important;
+  /* font-weight: 300!important; */
+  line-height: 32px!important;
+  letter-spacing: 1.12px!important;
+  text-align: start!important;
+}
+.brandHolder{
+  color: #000;
+  font-family: "Arial-500"!important;
+  font-size: 18px!important;
+  font-weight: 400!important;
+  line-height: 25px!important;
+  letter-spacing: 2px!important;
+  text-align: start!important;
+}
+.nameHolder{
+  font-family: "Montserrat-600"!important;
+  font-size: 28px!important;
+  /* font-weight: 300!important; */
+  line-height: 32px!important;
+  letter-spacing: 1.12px!important;
+  text-align: start!important;
+}
