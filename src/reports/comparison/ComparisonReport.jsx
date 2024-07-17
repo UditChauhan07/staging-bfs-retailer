@@ -10,6 +10,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import Styles from "./index.module.css";
 import { GetAuthData, getRetailerBrands, sortArrayHandler } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -48,7 +49,7 @@ const ComparisonReport = () => {
     });
     csvData.push({
       "Store Name": "Total",
-      "Sale": totalRetail?`$${Number(totalRetail).toFixed(2)}`:'NA',
+      "Sale": totalRetail ? `$${Number(totalRetail).toFixed(2)}` : 'NA',
       "Purchase": `$${Number(totalWhole).toFixed(2)}`,
     })
   }
@@ -90,7 +91,7 @@ const ComparisonReport = () => {
     setApiData(result);
     setIsLoading(false);
   };
-  const {accountIds} = filter
+  const { accountIds } = filter
   return (
     <AppLayout
       filterNodes={
@@ -107,7 +108,7 @@ const ComparisonReport = () => {
               })), { label: 'All Accounts', value: null }]}
               onChange={(value) => {
                 if (value) {
-                  setFilter({...filter,accountIds:JSON.stringify([value])})
+                  setFilter({ ...filter, accountIds: JSON.stringify([value]) })
                 } else {
                   resetFilter();
                 }
@@ -177,6 +178,14 @@ const ComparisonReport = () => {
           }}
         />
       )}
+      <div className={Styles.inorderflex}>
+        <div>
+          <h2>
+            Comparison Report
+          </h2>
+        </div>
+        <div></div>
+      </div>
       {!isLoading ? <ComparisonReportTable comparisonData={apiData} /> : <Loading height={"70vh"} />}
     </AppLayout>
   );
