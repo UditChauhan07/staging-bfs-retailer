@@ -7,7 +7,7 @@ import ModalPage from "../components/Modal UI";
 import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
-const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null,SalesRepId=null }) => {
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null, SalesRepId = null }) => {
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -85,13 +85,21 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
                 open
                 content={
                     <div className="d-flex flex-column gap-3" style={{ width: '75vw' }}>
-                        <div className="d-flex align-items-center justify-content-between" style={{ minWidth: '75vw' }}>
-                            <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">Product Details</h1>
-                            <button type="button" onClick={() => { setIsModalOpen(false); setProductDetailId(null) }}>
-                                <CloseButton />
-                            </button>
+                        <div style={{
+                            position: 'sticky',
+                            top: '-20px',
+                            background: '#fff',
+                            zIndex: 1,
+                            padding: '15px 0 0 0'
+                        }}>
+                            <div className="d-flex align-items-center justify-content-between" style={{ minWidth: '75vw' }}>
+                                <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">Product Details</h1>
+                                <button type="button" onClick={() => { setIsModalOpen(false); setProductDetailId(null) }}>
+                                    <CloseButton />
+                                </button>
+                            </div>
+                            <hr />
                         </div>
-                        <hr />
                         {replaceCartModalOpen ? (
                             <ModalPage
                                 open
@@ -123,7 +131,7 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
                                     <div className="d-flex flex-column gap-3">
                                         <h2>Warning</h2>
                                         <p>
-                                        You can not order from this brand.<br/> Kindly contact your Sales Rep
+                                            You can not order from this brand.<br /> Kindly contact your Sales Rep
                                         </p>
                                         <div className="d-flex justify-content-around ">
                                             <button style={styles.btn} onClick={() => setIsModalNoRepOpen(false)}>
