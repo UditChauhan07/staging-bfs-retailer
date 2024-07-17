@@ -17,6 +17,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
   const [orderType, setorderType] = useState("wholesale")
+  const [limitCheck, setLimitCheck] = useState(false)
+  const [isLimitPass, setIsLimitPass] = useState(false)
   let orderTypeList = [
     { value: "wholesale", label: "Whole Sales" },
     { value: "preorder", label: "Pre-Order" },
@@ -24,18 +26,28 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
 
   const CheckError = (data) => {
     let totalQty = 0;
+    let checkLimit = 0;
     let errorCount = data.reduce((accumulator, item) => {
       let productDetails = getProductData(item["Product Code"] || item["ProductCode"] || null);
 
       if (item?.Quantity) {
         let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name ||(productDetails.Min_Order_QTY__c>0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
         orderType == "preorder" ? (error == false) ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = productDetails?.Category__c?.toLowerCase() == "preorder" : error = error
+
+        (orderType == "wholesale" && productDetails?.Category__c?.toLowerCase() =="preorder") ? error = true:error=error
+        checkLimit++;
         return accumulator + (error ? 1 : 0);
       } else {
         totalQty += 1;
       }
       return accumulator;
     }, 0);
+    if (checkLimit > 500) {
+      setLimitCheck(true)
+      setIsLimitPass(true)
+    }else{
+      setLimitCheck(false)
+    }
     if (totalQty == data.length) {
       setErrorOnList(totalQty);
     } else {
@@ -159,11 +171,29 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (errorOnlist > 0) {
       setOpenModal(true);
     }
+    CheckError(data);
   }, [errorOnlist,orderType]);
   if (!showTable) {
     return (
       <div>
         {/* <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleFileChange} /> */}
+        <ModalPage
+          open={limitCheck || false}
+          content={
+            <>
+              <div style={{ maxWidth: "309px" }}>
+                <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
+                <p className={` ${Styles.ModalContent}`}>Please upload file with less than 500 products</p>
+                <div className="d-flex justify-content-center">
+                  <button className={`${Styles.modalButton}`} onClick={() => setLimitCheck(false)}>
+                    OK
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => setLimitCheck(false)}
+        />
         <form className="d-flex justify-content-between">
           <div className="d-flex">
             <div className="d-flex flex-column">
@@ -281,7 +311,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               </div>
             ) : null}
             <div className="d-flex justify-content-center">
-              <button className={btnClassName} onClick={submitForm}>
+              <button className={btnClassName} onClick={() => { !isLimitPass ? submitForm() : setLimitCheck(true) }}>>
                 Submit
               </button>
               <button
