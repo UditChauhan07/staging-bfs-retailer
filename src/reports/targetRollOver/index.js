@@ -35,7 +35,7 @@ const TargetRollOver = () => {
         GetAuthData()
             .then((user) => {
                 setAccountList(user.data.accountList)
-                getRollOver({ key: user.data.x_access_token, accountIds1: JSON.stringify( user.data.accountIds) })
+                getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify( user.data.accountIds) })
                     .then((targetRes) => {
                         console.log({ targetRes });
                         if (targetRes) {
