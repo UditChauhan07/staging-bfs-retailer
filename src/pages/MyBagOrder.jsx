@@ -63,6 +63,7 @@ function MyBagOrder(props) {
     let poDetail = { "": "PO Number", " ": data.PO_Number__c }
     let orderNumberDetail = { "": "Order Number", " ": data.Order_Number__c }
     let trackingumberDetail = { "": "Tracking Number", " ": data.Tracking__c }
+    let orderdateDetails = { "": "Order Date", " ": data.CreatedDate }
     let totalQtyCount = 0;
     if (data?.OpportunityLineItems?.length) {
       data?.OpportunityLineItems?.map((ele) => {
@@ -74,6 +75,7 @@ function MyBagOrder(props) {
     finalData.push(accountDetails)
     finalData.push(brandDetail)
     finalData.push(poDetail)
+    finalData.push(orderdateDetails)
     finalData.push(totalQty)
     finalData.push(totalPrice)
     finalData.push({"":""," ":""})
@@ -84,7 +86,7 @@ function MyBagOrder(props) {
     if (data?.OpportunityLineItems?.length) {
       data?.OpportunityLineItems?.map((ele) => {
         let temp = {};
-        temp[""] = ele.Name;
+        temp[""] = ele.Name.split(data.Name);
         temp[" "] = ele.Quantity;
         temp["  "] = ele.UnitPrice;
         finalData.push(temp);
