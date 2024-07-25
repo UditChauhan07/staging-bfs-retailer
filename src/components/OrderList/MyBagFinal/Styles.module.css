@@ -313,7 +313,47 @@
   background-color: transparent;
   /* text-transform: uppercase; */
 }
-
+.SupportHolder p{
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 1.12px;
+  border: 0;
+  padding: 0;
+  margin: 0 auto 0 1.5rem;
+}
+.btnHolder {
+  width: 100px;
+}
+.ShipBut button,
+.btnHolder {
+  color: #fff;
+  text-align: center;
+  font-family: "Montserrat";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px; /* 213.333% */
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background-color: #000;
+  margin: 0 0 28px 0;
+}
+.SupportHolder p .supportLinkHolder{
+  margin-left: 10px;
+  color: #000;
+  text-decoration: underline !important;
+}
+.dFlex{
+  display: flex;
+  flex-wrap: wrap;
+}
+.dFlex > div{
+  width: 50%;
+}
 .ShippControl h2 {
   color: #000;
   font-family: "Montserrat";
@@ -343,7 +383,12 @@
   background-color: #000;
   margin: 0 0 28px 0;
 }
-
+@media (max-width: 1300px) {
+  .ShipBut button,
+  .btnHolder {
+    font-size: 13px;
+  }
+}
 @media (max-width: 1199px) {
   .MainInner {
     padding: 17px 5px;
@@ -351,8 +396,16 @@
   .scrollP {
     padding: 10px 5px;
   }
-
+  .ShipBut button,
+  .btnHolder {
+    font-size: 11px;
+  }
   .Mainbox1M {
     gap: 15px;
+  }
+}
+@media (max-width: 1025px) {
+  .dFlex > div{
+    width: 100%;
   }
 }

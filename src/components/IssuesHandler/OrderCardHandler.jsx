@@ -8,7 +8,7 @@ import { BiCheck, BiLeftArrow, BiLock, BiRightArrow } from "react-icons/bi";
 import ModalPage from "../Modal UI";
 import { RxEyeOpen } from "react-icons/rx";
 
-const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj, setSubject, Actual_Amount__cObj, contactName, setSalesRepId }) => {
+const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj, setSubject, Actual_Amount__cObj, contactName, setSalesRepId,autoSelect=null }) => {
     const { setOrderConfirmed, orderConfirmed } = orderConfirmedStatus || null;
     const { accountId, setAccountId } = accountIdObj || null;
     const { manufacturerId, setManufacturerId } = manufacturerIdObj || null;
@@ -64,12 +64,17 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             }
         };
     }
-    const orderSelectHandler = (e) => {
-        setOrderId(e.target.value)
+    useEffect(() => {
+        if (autoSelect) {
+            autoSelectOrderHandler(autoSelect);
+        }
+    }, [autoSelect])
+    const autoSelectOrderHandler = (value) => {
+        setOrderId(value)
         {
             let accountItemID = null;
             orders.map((item) => {
-                if (e.target.value == item.Id) {
+                if (value == item.Id) {
                     if (reason == "Product Overage") {
                         let opcs = []
                         item.OpportunityLineItems?.records?.map((e) => {
@@ -347,7 +352,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 return (
                                     <div className={` ${Styles.orderStatement} cardHover ${orderId == item.Id ? Styles1.selOrder : ''}`} style={{ paddingBottom: '15px' }} key={index}>
                                         <div style={{ position: 'relative' }} className={(index % 2 == 0) ? Styles1.cardEnterRight : Styles1.cardEnterLeft}>
-                                            <input type="radio" id={`order${item.Id}`} value={item.Id} onClick={(e) => { orderSelectHandler(e) }} name="order" className={Styles1.inputHolder} checked={item.Id == orderId} />
+                                            <input type="radio" id={`order${item.Id}`} value={item.Id} onClick={(e) => { autoSelectOrderHandler(e.target.value) }} name="order" className={Styles1.inputHolder} checked={item.Id == orderId} />
                                             <label title={!orderId ? "click to select" : null} for={`order${item.Id}`} className={Styles.poNumber} style={item.Id == orderId ? { width: '100%', background: 'linear-gradient(90deg, #FFFFFF 0%,#000000 100%)' } : { width: '100%' }}>
                                                 <div className={Styles1.dFlex}>
                                                     <div className={Styles.poNumb1}>
