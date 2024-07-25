@@ -35,11 +35,11 @@ const CustomerService = () => {
   const [confirm, setConfirm] = useState(false);
   const [isDisabled,setIsDisabled]=useState(false)
   const reasons = [
-    { name: "Charges", icon: '/assets/Charges.svg', desc: "extra amount paid for order?" },
-    { name: "Product Missing", icon: '/assets/missing.svg', desc: "can't find product in Order?" },
+    { name: "Charges", icon: '/assets/Charges.svg', desc: "Extra amount paid for order?" },
+    { name: "Product Missing", icon: '/assets/missing.svg', desc: "Can't find product in Order?" },
     { name: "Product Overage", icon: '/assets/overage.svg', desc: "Receive something you did not order?" },
-    { name: "Product Damage", icon: '/assets/damage.svg', desc: "got damaged product in order?" },
-    { name: "Update Account Info", icon: '/assets/account.svg', desc: "change shipping or billing details" }
+    { name: "Product Damage", icon: '/assets/damage.svg', desc: "Got damaged product in order?" },
+    { name: "Update Account Info", icon: '/assets/account.svg', desc: "Change shipping or billing details" }
   ];
 
   function sortingList(data) {
