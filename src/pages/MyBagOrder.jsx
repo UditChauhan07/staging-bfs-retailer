@@ -63,6 +63,7 @@ function MyBagOrder(props) {
     let poDetail = { "": "PO Number", " ": data.PO_Number__c }
     let orderNumberDetail = { "": "Order Number", " ": data.Order_Number__c }
     let trackingumberDetail = { "": "Tracking Number", " ": data.Tracking__c }
+    let orderdateDetails = { "": "Order Date", " ": data.CreatedDate }
     let totalQtyCount = 0;
     if (data?.OpportunityLineItems?.length) {
       data?.OpportunityLineItems?.map((ele) => {
@@ -74,6 +75,7 @@ function MyBagOrder(props) {
     finalData.push(accountDetails)
     finalData.push(brandDetail)
     finalData.push(poDetail)
+    finalData.push(orderdateDetails)
     finalData.push(totalQty)
     finalData.push(totalPrice)
     finalData.push({"":""," ":""})
@@ -84,7 +86,7 @@ function MyBagOrder(props) {
     if (data?.OpportunityLineItems?.length) {
       data?.OpportunityLineItems?.map((ele) => {
         let temp = {};
-        temp[""] = ele.Name;
+        temp[""] = ele.Name.split(data.Name);
         temp[" "] = ele.Quantity;
         temp["  "] = ele.UnitPrice;
         finalData.push(temp);
@@ -104,7 +106,7 @@ function MyBagOrder(props) {
     setPDFIsloaed(false);
   };
   return (
-    <AppLayout filterNodes={
+    <AppLayout filterNodes1={
       orderDetail?.Id &&
       <div className="d-flex justify-content-end mr-2">
         <div className="dropdown dropdown-toggle border px-2.5 py-1 leading-tight d-flex" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -130,7 +132,7 @@ function MyBagOrder(props) {
     }>
       <div className="col-12">
       {isPDFLoaded ? <LoaderV3 text={"Generating Pdf. Please wait..."} /> :
-        <MyBagFinal setOrderDetail={setOrderDetail} />}
+        <MyBagFinal setOrderDetail={setOrderDetail} generatePdfServerSide={generatePdfServerSide} generateXLSX={generateXLSX}/>}
       </div>
     </AppLayout>
   );
