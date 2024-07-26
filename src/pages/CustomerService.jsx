@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
-import { GetAuthData, getAllAccount, getAllAccountOrders, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
+import { GetAuthData, getAllAccount, getAllAccountLocation, getAllAccountOrders, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
 import OrderCardHandler from "../components/IssuesHandler/OrderCardHandler.jsx";
 import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -96,6 +96,11 @@ const CustomerService = () => {
           .catch((error) => {
             console.log({ error });
           });
+          getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) }).then((accounts) => {
+            setAccountList(accounts)
+        }).catch((storeErr) => {
+            console.log({ storeErr });
+        })
       })
       .catch((err) => {
         console.log({ err });
@@ -202,7 +207,7 @@ const CustomerService = () => {
       {reason != "Update Account Info" ? isLoad ? <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} autoSelect={OrderId}/> : <LoaderV3 text={"Loading Order List..."} /> : null}
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
-      {reason == "Update Account Info" && <AccountInfo reason={reason} Accounts={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
+      {reason == "Update Account Info" && <AccountInfo reason={reason} accountList={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
     </section>
   </CustomerSupportLayout>)
 }
