@@ -37,6 +37,7 @@ import OrderInit from "./pages/OrderInit";
 import TargetRollOver from "./reports/targetRollOver";
 import StoreDetails from "./pages/StoreDetails";
 import BrandDetails from "./pages/BrandDetails";
+import HelpSection from "./pages/HelpSection";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -78,6 +79,7 @@ function App() {
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/Target-Report" element={<TargetRollOver />}></Route>
+            <Route path="/Help-Section" element={<HelpSection/>}></Route>
             <Route path="/logout" element={<Logout />}></Route>
             <Route path="/store/:id" element={<StoreDetails/>}/>
             <Route path="/Brand/:id" element={<BrandDetails/>}/>

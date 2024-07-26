@@ -20,7 +20,7 @@ const Modal = ({ isOpen, onClose, children, title = false }) => {
     </>
   );
 };
-const ModalPage = ({ open, content, onClose, title = false }) => {
+const ModalPage = ({ open, content,Link, onClose, title = false }) => {
   const [isOpen, setIsOpen] = useState(open);
 
   useEffect(() => {
@@ -42,7 +42,9 @@ const ModalPage = ({ open, content, onClose, title = false }) => {
     <Modal isOpen={isOpen} onClose={onModalClose} title={title}>
       <div className={Styles.ModalControl}>
         {content}
+        {Link}
       </div>
+      
     </Modal>
   ) : null;
 };
