@@ -694,7 +694,7 @@ function Dashboard({ dashboardData }) {
                       <p className={`text-end ${Styles.Tabletxt1}`} style={{ marginBottom: 0, marginRight: '10px' }}>
                         Achieved Purchase: <span className={Styles.Tabletext_head}>{achievedSales || 0}</span>
                       </p>
-                      <div className={Styles.donutbox}>
+                      <div className={Styles.donutbox} >
                         <PieChart width={300} height={300}>
                           <Pie dataKey="value" startAngle={180} endAngle={0} data={needle_data} cx={cx} cy={cy} innerRadius={iR} outerRadius={oR} fill="#8884d8" stroke="none">
                             {needle_data.map((entry, index) => (
