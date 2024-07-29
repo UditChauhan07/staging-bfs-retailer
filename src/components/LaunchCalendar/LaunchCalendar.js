@@ -141,7 +141,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                     </div>
                                   </div>
                                   <div className="launchBrand" onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>
-                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} />
+                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} style={{cursor:'pointer'}}/>
                                   </div>
                                 </div>
                               </>

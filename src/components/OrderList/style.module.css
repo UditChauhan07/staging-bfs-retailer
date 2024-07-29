@@ -8,6 +8,10 @@
 .TicketWidth button{
   width: 100%;
 }
+.LinkHolder{
+  color: #000;
+  text-decoration: underline!important;
+}
 .btn {
   padding: 0.5rem 2rem;
   border: 1px solid #000;

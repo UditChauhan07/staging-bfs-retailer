@@ -8,16 +8,16 @@ import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
 import { BiExit, BiSave } from "react-icons/bi";
-function OrderListContent({ data,hideDetailedShow=false }) {
+function OrderListContent({ data, hideDetailedShow = false }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
   const [productDetailId, setProductDetailId] = useState(null)
   const [accountId, setAccountId] = useState();
   const [manufacturerId, setManufacturerId] = useState();
-  const [confirm,setConfirm]= useState({});
+  const [confirm, setConfirm] = useState({});
   const [modalType, setModalType] = useState(false)
-  const [isDisabled,setIsDisabled]=useState(false)
+  const [isDisabled, setIsDisabled] = useState(false)
   const months = [
     "January",
     "February",
@@ -56,18 +56,18 @@ function OrderListContent({ data,hideDetailedShow=false }) {
             priority: "Medium",
             sendEmail: true,
           },
-          key:user?.data?.x_access_token
+          key: user?.data?.x_access_token
         };
         postSupport({ rawData: beg })
-        .then((response) => {
-          setIsDisabled(false)
-          if (response) {
+          .then((response) => {
+            setIsDisabled(false)
+            if (response) {
               navigate("/CustomerSupportDetails?id=" + response);
-          }
-        })
-        .catch((err) => {
-          console.error({ err });
-        });
+            }
+          })
+          .catch((err) => {
+            console.error({ err });
+          });
       }
     }).catch((userErr) => {
       console.error({ userErr });
@@ -93,29 +93,29 @@ function OrderListContent({ data,hideDetailedShow=false }) {
       {modalType == 1 && <Orderstatus data={modalData} onClose={() => { setModalData({}); setModalType(false) }} />}
       {modalType == 3 && <TrackingStatus data={modalData} onClose={() => { setModalData({}); setModalType(false) }} />}
       <ModalPage
-        open={confirm.data&&confirm.value?true : false}
+        open={confirm.data && confirm.value ? true : false}
         content={<div className="d-flex flex-column gap-3">
           <h2>
-            Confirm  
+            Confirm
           </h2>
           <p className={Styles.modalContent}>
-            Are you sure you want to generate a ticket?<br/> This action cannot be undone.<br/> You will be redirected to the ticket page after the ticket is generated.
+            Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
           </p>
           <div className="d-flex justify-content-around">
             <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => generateSuportHandler(confirm)} disabled={isDisabled}>
-            <BiSave/>&nbsp;generate
+              <BiSave />&nbsp;generate
             </button>
             <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => setConfirm(false)}>
-              <BiExit/> &nbsp;Cancel
+              <BiExit /> &nbsp;Cancel
             </button>
           </div>
         </div>}
-        onClose={()=>{setConfirm({})}}
-        />
+        onClose={() => { setConfirm({}) }}
+      />
 
       {data?.length ? (
         data?.map((item, index) => {
-          let [year,month,day] = item.CreatedDate.split(/[T]/)[0].split(/[-/]/);
+          let [year, month, day] = item.CreatedDate.split(/[T]/)[0].split(/[-/]/);
           return (
             <div className={` ${Styles.orderStatement}`} key={index}>
               <div>
@@ -125,14 +125,14 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                     <p>{item.PO_Number__c}</p>
                   </div>
 
-                  <div className={Styles.poNumb1}>
+                  <div className={`${Styles.poNumb1}`}>
                     <h3>Brand</h3>
-                    <p onClick={()=>navigate("/Brand/"+item.ManufacturerId__c)}>{item.ManufacturerName__c}</p>
+                    <p className={Styles.LinkHolder} onClick={() => navigate("/Brand/" + item.ManufacturerId__c)}>{item.ManufacturerName__c}</p>
                   </div>
-
                   <div className={Styles.PoOrderLast}>
                     <h3>Ship To</h3>
-                    <p style={{cursor:'pointer'}} onClick={()=>navigate("/store/"+item.AccountId)}>{item.AccountName}</p>
+                    {/* onClick={()=>navigate("/store/"+item.AccountId)} */}
+                    <p style={{ cursor: 'pointer' }} >{item.AccountName}</p>
                   </div>
                 </div>
 
@@ -156,7 +156,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                             .map((ele, index) => {
                               return (
                                 <>
-                                  <li key={index} onClick={() => { setProductDetailId(ele.Product2Id); setAccountId(item.AccountId); setManufacturerId(item.ManufacturerId__c) }} style={{cursor:'pointer'}}>
+                                  <li key={index} onClick={() => { setProductDetailId(ele.Product2Id); setAccountId(item.AccountId); setManufacturerId(item.ManufacturerId__c) }} style={{ cursor: 'pointer' }}>
                                     {Viewmore
                                       ? ele.Name.split(item.AccountName)[1]
                                       : ele.Name.split(item.AccountName)
@@ -202,7 +202,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                       <h3>Total</h3>
                       <p>${Number(item.Amount).toFixed(2)}</p>
                     </div>
-                    <div className={Styles.TicketWidth} style={hideDetailedShow?{display:'none'}:null}>
+                    <div className={Styles.TicketWidth} style={hideDetailedShow ? { display: 'none' } : null}>
                       {/* <button className="me-4">View Ticket</button> */}
                       <Link to="/orderDetails">
                         <button title="View Order Information" onClick={() => MyBagId(item.Id)}>
@@ -215,7 +215,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
                 <div className={Styles.StatusOrder}>
                   <div className={Styles.Status1}>
-                  {!item.Order_Number__c ?
+                    {!item.Order_Number__c ?
                       <h3
                         title="Raise a Support Ticket for this Order on Status"
                         onClick={(e) =>
@@ -281,7 +281,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
 
                   <div className={Styles.Status2}>
                     <h6>
-                      Order Placed <span>: {months[parseInt(month)-1]} {day}, {year}</span>
+                      Order Placed <span>: {months[parseInt(month) - 1]} {day}, {year}</span>
                     </h6>
                   </div>
                 </div>

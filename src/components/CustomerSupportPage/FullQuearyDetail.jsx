@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Detail from './Detail.module.css'
-import { SupportStatusGreen, SupportStatusRed, SupportStatusYellow, UserChecked } from '../../lib/svg'
+import { UserChecked } from '../../lib/svg'
 import { DateConvert, GetAuthData, getStrCode, postSupportComment } from '../../lib/store'
 import { Link } from 'react-router-dom';
 import Loading from '../Loading';
@@ -168,7 +168,7 @@ function FullQuearyDetail({ data, setRest }) {
 
                             {data.ManufacturerName__c && <div className={Detail.ManufactureID}>
                                 <h3>Manufacture ID</h3>
-                                <p>{data.ManufacturerName__c}</p>
+                                <p>{data.ManufacturerId__c? <Link to={'/Brand/'+data.ManufacturerId__c} className={Detail.LinkHolder}>{data.ManufacturerName__c}</Link>:data.ManufacturerName__c}</p>
                             </div>}
 
                             <div className={Detail.CaseNumber}>
@@ -179,29 +179,18 @@ function FullQuearyDetail({ data, setRest }) {
                             {data.Associated_PO_Number__c && <div className={Detail.PONumber}>
                                 <h3>PO Number</h3>
                                 {console.log({ data })}
-                                <p>#{data.Associated_PO_Number__c}</p>
+                                <p>#
+                                    {data.Opportunity__c ? <Link to="/orderDetails" className={Detail.LinkHolder}><span onClick={()=>localStorage.setItem("OpportunityId", JSON.stringify(data.Opportunity__c))}>{data.Associated_PO_Number__c}</span></Link> :
+                                    data.Associated_PO_Number__c}</p>
                             </div>}
-
                             <div className={Detail.RecordType}>
                                 <h3>Record Type</h3>
                                 <p>{data.RecordType.Name}</p>
                             </div>
-
-
-
                         </div>
-
                     </div>
-
-
-
-
                 </div>
-
-
             </div>
-
-
         </div>
     )
 }

@@ -71,6 +71,14 @@ p.seti {
   margin-top: 25px;
   margin-bottom: 1rem;
 }
+.brandTitleHolder{
+  color: #000;
+  font-family: Montserrat;
+  line-height: 32px;
+  font-size: 32px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
 .ArriavalsInnerContent h4,
 .NewArriavalsList h3 {
   color: #000;
