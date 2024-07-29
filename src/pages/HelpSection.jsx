@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./page.module.css";
 import AppLayout from "../components/AppLayout";
@@ -10,12 +9,15 @@ import ReactPlayer from 'react-player';
 import FilterSearch from "../components/FilterSearch";
 import Loading from "../components/Loading";
 import { MdSlideshow } from "react-icons/md";
+// import { ClipLoader } from "react-spinners"; // Import the spinner component
+
 const HelpSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentLink, setCurrentLink] = useState('');
   const [currentType, setCurrentType] = useState('');
   const [currentFileName, setCurrentFileName] = useState('');
   const [isDownloadConfirmOpen, setIsDownloadConfirmOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false); // State for spinner
   const [searchTerm, setSearchTerm] = useState("");
 
   const modalRef = useRef(null);
@@ -45,6 +47,7 @@ const HelpSection = () => {
   };
 
   const handleDownload = async () => {
+    setIsDownloading(true); // Start the spinner
     try {
       const response = await fetch(currentLink);
       const blob = await response.blob();
@@ -55,8 +58,11 @@ const HelpSection = () => {
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
+      setIsDownloading(false); // Stop the spinner
+      closeDownloadConfirm(); // Close the download confirmation modal
     } catch (error) {
       console.error('Download failed:', error);
+      setIsDownloading(false); // Stop the spinner even if there's an error
     }
   };
 
@@ -110,23 +116,23 @@ const HelpSection = () => {
                 padding: '15px',
                 borderBottom: '1px solid #ddd',
               }}>
-                <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop:"-30px",marginLeft:'-20px' }}>
-                <div className="d-flex justify-content-end mt-2 gap-3">
-                  <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0" style={{ fontSize:'18px' }}>
-                  {currentFileName} 
-                  </h1>
-                 
+                <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop: "-30px", marginLeft: '-20px' }}>
+                  <div className="d-flex justify-content-end mt-2 gap-3">
+                    <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0" style={{ fontSize: '18px' }}>
+                      {currentFileName}
+                    </h1>
+
                     <button
                       className={styles.downloadButton}
                       onClick={openDownloadConfirm}
                     >
-                       <div className="d-flex align-items-center justify-content-between gap-1" >
-                       <MdOutlineDownload size={16} />Download
-                       </div>
+                      <div className="d-flex align-items-center justify-content-between gap-1" >
+                        <MdOutlineDownload size={16} />Download
+                      </div>
                     </button>
                   </div>
 
-                  <button type="button" onClick={closeModal} style={{marginLeft:"50px"}} >
+                  <button type="button" onClick={closeModal} style={{ marginLeft: "50px" }} >
                     <CloseButton />
                   </button>
                 </div>
@@ -137,23 +143,28 @@ const HelpSection = () => {
                   width="104%"
                   height="400px"
                   overflow="hidden"
-                  style={{marginLeft:"-20px"}}
-              
+                  style={{ marginLeft: "-20px" }}
+
                   controls
-                  ></ReactPlayer>
+                ></ReactPlayer>
               ) : (
                 <iframe
                   src={currentLink}
-                 style={{ width:"104%", height:"400px" ,marginLeft:"-20px",  overflow:"hidden"}}></iframe>
+                  style={{ width: "104%", height: "400px", marginLeft: "-20px", overflow: "hidden" }}></iframe>
               )}
               {isDownloadConfirmOpen &&
                 <div className={styles.modalOverlay}>
                   <div className={styles.modalContent}>
-                    <p style={{marginTop:'20px'}}>Are you sure you want to download. ? </p>
+                    <p style={{ marginTop: '20px' }}>Are you sure you want to download. ? </p>
                     <div className={styles.modalActions}>
                       <button onClick={handleDownload} className={styles.confirmButton}>YES</button>
                       <button onClick={closeDownloadConfirm} className={styles.cancelButton}>NO</button>
                     </div>
+                    {isDownloading && (
+                      <div className={styles.spinnerOverlay}>
+                        <Loading color={" #fff"} loading={true} size={50} />
+                      </div>
+                    )} 
                   </div>
                 </div>
               }
@@ -161,7 +172,6 @@ const HelpSection = () => {
           }
         />
       }
-
       <div className="container-fluid">
         <div className="row p-0 m-0 d-flex flex-column justify-content-around align-items-center col-12">
           <div className="row d-flex flex-column justify-content-around align-items-center">
@@ -223,4 +233,3 @@ const HelpSection = () => {
 };
 
 export default HelpSection;
-
