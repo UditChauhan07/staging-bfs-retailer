@@ -178,8 +178,9 @@ const CustomerService = () => {
         console.log(error);
       });
   }
-  if (sumitForm) return <LoaderV3 text={"Generating You ticket. Please wait..."} />;
+  if (sumitForm) return ;
   return (<CustomerSupportLayout>
+    {sumitForm ? <LoaderV3 text={"Generating You ticket. Please wait..."} />:
     <section>
       <ModalPage
         open={confirm}
@@ -208,7 +209,7 @@ const CustomerService = () => {
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
       {reason == "Update Account Info" && <AccountInfo reason={reason} accountList={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
-    </section>
+    </section>}
   </CustomerSupportLayout>)
 }
 export default CustomerService
