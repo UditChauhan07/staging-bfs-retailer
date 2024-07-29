@@ -168,7 +168,7 @@ function FullQuearyDetail({ data, setRest }) {
 
                             {data.ManufacturerName__c && <div className={Detail.ManufactureID}>
                                 <h3>Manufacture ID</h3>
-                                <p>{data.ManufacturerName__c}</p>
+                                <p>{data.ManufacturerId__c? <Link to={'/Brand/'+data.ManufacturerId__c} className={Detail.LinkHolder}>{data.ManufacturerName__c}</Link>:data.ManufacturerName__c}</p>
                             </div>}
 
                             <div className={Detail.CaseNumber}>
