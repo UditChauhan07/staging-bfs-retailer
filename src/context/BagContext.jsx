@@ -6,13 +6,27 @@ const BagContext = createContext();
 const BagProvider = ({ children }) => {
   const [orders, setOrders] = useState({});
   const [orderQuantity, setOrderQuantity] = useState(0);
+  const [orderTotal, setOrderTotal] = useState(0);
 
   useEffect(() => {
     // Manually calculates the order quantity from order state
     let orderQuantity = 0;
+    let orderTotal = 0;
     Object.values(orders)?.forEach((order) => {
+      console.log({order});
+      let listPrice = Number(order.product.usdRetail__c.replace('$','').replace(',',''));
+      let salesPrice= 0;
+      if (order.product.Category__c === "TESTER") {
+          salesPrice = (+listPrice - (order?.discount?.testerMargin / 100) * +listPrice).toFixed(2)
+      } else if (order.product.Category__c === "Samples") {
+          salesPrice = (+listPrice - (order?.discount?.sample / 100) * +listPrice).toFixed(2)
+      } else {
+          salesPrice = (+listPrice - (order?.discount?.margin / 100) * +listPrice).toFixed(2)
+      }
+      orderTotal+= parseFloat(salesPrice)
       orderQuantity += order.quantity;
     });
+    setOrderTotal(orderTotal)
     setOrderQuantity(orderQuantity);
   }, [orders]);
 
@@ -107,7 +121,8 @@ const BagProvider = ({ children }) => {
         orderQuantity,
         setOrderQuantity,
         addOrder,
-        deleteOrder
+        deleteOrder,
+        orderTotal
       }}
     >
       {children}
