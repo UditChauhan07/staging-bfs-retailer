@@ -184,7 +184,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                                 Store Name
                                 <Field name="account" className="account" options={accountList.map((account) => ({ label: account.Name, value: account.Id }))} component={SearchableSelect} />
                             </label>
-                        <ErrorMessage component={TextError} name="account" />
+                            <ErrorMessage component={TextError} name="account" />
                         </>}
                         <label className={styles.labelHolder}>
                             Brand Name
