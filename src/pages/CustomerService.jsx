@@ -9,6 +9,7 @@ import AccountInfo from "../components/IssuesHandler/AccountInfo.jsx";
 import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
+import AppLayout from "../components/AppLayout.jsx";
 
 const CustomerService = () => {
   const { state } = useLocation();
@@ -178,9 +179,8 @@ const CustomerService = () => {
         console.log(error);
       });
   }
-  if (sumitForm) return ;
+  if (sumitForm) return <AppLayout><LoaderV3 text={"Generating You ticket. Please wait..."} /></AppLayout>;
   return (<CustomerSupportLayout>
-    {sumitForm ? <LoaderV3 text={"Generating You ticket. Please wait..."} />:
     <section>
       <ModalPage
         open={confirm}
@@ -209,7 +209,7 @@ const CustomerService = () => {
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
       {reason == "Update Account Info" && <AccountInfo reason={reason} accountList={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
-    </section>}
+    </section>
   </CustomerSupportLayout>)
 }
 export default CustomerService
