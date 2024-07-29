@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./page.module.css";
 import AppLayout from "../components/AppLayout";
@@ -10,12 +9,15 @@ import ReactPlayer from 'react-player';
 import FilterSearch from "../components/FilterSearch";
 import Loading from "../components/Loading";
 import { MdSlideshow } from "react-icons/md";
+// import { ClipLoader } from "react-spinners"; // Import the spinner component
+
 const HelpSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentLink, setCurrentLink] = useState('');
   const [currentType, setCurrentType] = useState('');
   const [currentFileName, setCurrentFileName] = useState('');
   const [isDownloadConfirmOpen, setIsDownloadConfirmOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false); // State for spinner
   const [searchTerm, setSearchTerm] = useState("");
 
   const modalRef = useRef(null);
@@ -45,6 +47,7 @@ const HelpSection = () => {
   };
 
   const handleDownload = async () => {
+    setIsDownloading(true); // Start the spinner
     try {
       const response = await fetch(currentLink);
       const blob = await response.blob();
@@ -55,8 +58,11 @@ const HelpSection = () => {
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
+      setIsDownloading(false); // Stop the spinner
+      closeDownloadConfirm(); // Close the download confirmation modal
     } catch (error) {
       console.error('Download failed:', error);
+      setIsDownloading(false); // Stop the spinner even if there's an error
     }
   };
 
@@ -154,6 +160,11 @@ const HelpSection = () => {
                       <button onClick={handleDownload} className={styles.confirmButton}>YES</button>
                       <button onClick={closeDownloadConfirm} className={styles.cancelButton}>NO</button>
                     </div>
+                    {isDownloading && (
+                      <div className={styles.spinnerOverlay}>
+                        <Loading color={" #fff"} loading={true} size={50} />
+                      </div>
+                    )} 
                   </div>
                 </div>
               }
@@ -161,7 +172,6 @@ const HelpSection = () => {
           }
         />
       }
-
       <div className="container-fluid">
         <div className="row p-0 m-0 d-flex flex-column justify-content-around align-items-center col-12">
           <div className="row d-flex flex-column justify-content-around align-items-center">
@@ -223,4 +233,3 @@ const HelpSection = () => {
 };
 
 export default HelpSection;
-
