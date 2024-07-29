@@ -32,9 +32,19 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
 
       if (item?.Quantity) {
         let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name ||(productDetails.Min_Order_QTY__c>0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
-        orderType == "preorder" ? (error == false) ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = productDetails?.Category__c?.toLowerCase() == "preorder" : error = error
+        if (orderType === "preorder") {
+          if (error === false) {
+              error = productDetails?.Category__c?.toLowerCase() !== orderType.toLowerCase();
+          }
+      } else {
+          if (error === false) {
+              error = productDetails?.Category__c?.toLowerCase() === "preorder";
+          }
+      }
 
-        (orderType == "wholesale" && productDetails?.Category__c?.toLowerCase() =="preorder") ? error = true:error=error
+      if (orderType === "wholesale" && productDetails?.Category__c?.toLowerCase() === "preorder") {
+        error = true;
+    }
         checkLimit++;
         return accumulator + (error ? 1 : 0);
       } else {
