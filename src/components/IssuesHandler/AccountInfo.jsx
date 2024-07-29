@@ -47,7 +47,6 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
         if (accountList.length == 1) {
             setAccountId(accountList[0].Id)
             setBrandList(accountList[0].data)
-        } else {
             setAutoSelect(true)
         }
     }, [])
@@ -153,7 +152,7 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
         );
     };
     return (
-        <Formik initialValues={initialValues} validationSchema={autoSelect ? UpdateInfoWithStoreValidation : AccountInfoValidation} onSubmit={(value) => { setConfirm(value) }}>
+        <Formik initialValues={initialValues} validationSchema={!autoSelect ? UpdateInfoWithStoreValidation : AccountInfoValidation} onSubmit={(value) => { setConfirm(value) }}>
             {(formProps) => (
                 <div className={styles.container}>
                     <ModalPage
@@ -180,13 +179,13 @@ const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepI
                     />
                     <Form className={styles.formContainer}>
                         <b className={styles.containerTitle}>Customer Service : {reason}</b>
-                        {autoSelect && <>
+                        {!autoSelect && <>
                             <label className={styles.labelHolder}>
                                 Store Name
                                 <Field name="account" className="account" options={accountList.map((account) => ({ label: account.Name, value: account.Id }))} component={SearchableSelect} />
                             </label>
-                        </>}
                         <ErrorMessage component={TextError} name="account" />
+                        </>}
                         <label className={styles.labelHolder}>
                             Brand Name
                             <Field name="brand" className="brand" options={brandList?.map((brand) => ({ label: brand.ManufacturerName__c, value: brand.ManufacturerId__c }))} component={SearchableSelect1} />
