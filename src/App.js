@@ -8,7 +8,6 @@ import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
 import { UserProvider } from "./context/UserContext";
-import MyRetailersPage from "./pages/MyRetailersPage";
 import WholesaleInquiry from "./pages/WholesaleInquiry"
 import CustomerCare from "./pages/CustomerCare";
 import AboutUs from "./pages/AboutUs";
@@ -29,7 +28,6 @@ import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
-import TargetReport from "./reports/targetReport";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
