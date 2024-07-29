@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Filters from "../components/OrderList/Filters";
 import Styles from "../components/OrderList/style.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
+import { GetAuthData, getAllAccountOrders } from "../lib/store";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 import { FilterItem } from "../components/FilterItem";
