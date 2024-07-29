@@ -425,7 +425,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                           <button className="py-1 d-flex justify-content-center" onClick={() => downloadFiles(invoices)}>
                             <span style={{ margin: 'auto 0' }}><MdOutlineDownload size={16} /></span>&nbsp;Download INVOICE
                           </button>
-                        ) : <button className="py-1 d-flex justify-content-center" onClick={() => setConfirm("Invoice")}>
+                        ) : <button className="py-1 d-flex justify-content-center" onClick={() => { oldSupport?.["0123b0000007zc8AAA"]?.["Invoice"]?.Id ? setRestrict("Invoice") : setConfirm("Invoice") }}>
                           <span style={{ margin: 'auto 0' }}><VscGitPullRequestNewChanges size={16} /></span>&nbsp;Request Invoice
                         </button>}
                       </div>
@@ -436,7 +436,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                           <button className="py-1 d-flex justify-content-center" onClick={() => setShowTracking(!showTracking)}>
                             <span style={{ margin: 'auto 0' }} >{showTracking ? <RxEyeOpen size={16} style={{ transition: 'all 500s linear' }} /> : <TbEyeClosed size={16} style={{ transition: 'all 250s linear' }} />}</span>&nbsp;Tracking Status
                           </button>
-                        ) : <button className="py-1 d-flex justify-content-center" onClick={() => setConfirm("Tracking Status")}>
+                        ) : <button className="py-1 d-flex justify-content-center" onClick={() => { oldSupport?.["0123b0000007zc8AAA"]?.["Tracking Status"]?.Id ? setRestrict("Tracking Status") : setConfirm("Tracking Status") }}>
                           <span style={{ margin: 'auto 0' }}><VscGitPullRequestNewChanges size={16} /></span>&nbsp;Request Tracking
                         </button>}
                       </div>
@@ -471,7 +471,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                         {helpId == "0123b0000007zc8AAA" &&
                           <div className={Styles.SupportHolder}>
                             <ReasonCardHandler label={"Request Status Updates"} reasonType={"Status of Order"} haveValue={OrderData.Order_Number__c} />
-                            <ReasonCardHandler label={"Request Invoice"} reasonType="Invoice" haveValue={invoices?.length != 0} />
+                            <ReasonCardHandler label={"Request Invoice"} reasonType="Invoice" haveValue={invoices ? invoices?.length != 0 : false} />
                             <ReasonCardHandler label={"Request Tracking number"} reasonType="Tracking Status" haveValue={OrderData.Tracking__c} />
                           </div>}
 
