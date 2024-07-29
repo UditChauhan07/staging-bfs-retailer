@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import Styles from "./style.module.css";
 import TrackingStatus from "./TrackingStatus/TrackingStatus";
 import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
-import { DateConvert, GetAuthData, postSupport, supportShare } from "../../lib/store";
+import { GetAuthData, postSupport } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
@@ -259,7 +259,7 @@ function OrderListContent({ data,hideDetailedShow=false }) {
                       >
                         Request invoice
                       </h4>}
-                    {!item?.Tracking_URL__c ?
+                    {!item?.Tracking__c ?
                       <h4
                         title="Get Help with Tracking Status"
                         onClick={(e) =>
