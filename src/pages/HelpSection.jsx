@@ -46,11 +46,53 @@ const HelpSection = () => {
     setIsDownloadConfirmOpen(false);
   };
 
+  // const handleDownload = async () => {
+  //   setIsDownloading(true); // Start the spinner
+  //   try {
+  //     const response = await fetch(currentLink);
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', `${currentType === 'Video' ? 'video.mp4' : 'document.pdf'}`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.parentNode.removeChild(link);
+  //     setIsDownloading(false); // Stop the spinner
+  //     closeDownloadConfirm(); // Close the download confirmation modal
+  //   } catch (error) {
+  //     console.error('Download failed:', error);
+  //     setIsDownloading(false); // Stop the spinner even if there's an error
+  //   }
+  // };
   const handleDownload = async () => {
     setIsDownloading(true); // Start the spinner
     try {
       const response = await fetch(currentLink);
-      const blob = await response.blob();
+      const reader = response.body.getReader();
+      const contentLength = +response.headers.get('Content-Length');
+
+      let receivedLength = 0; // received that many bytes at the moment
+      let chunks = []; // array of received binary chunks (comprises the body)
+      const downloadProgress = document.getElementById('downloadProgress');
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        chunks.push(value);
+        receivedLength += value.length;
+
+        // Update the progress bar
+        if (downloadProgress) {
+          downloadProgress.style.width = `${(receivedLength / contentLength) * 100}%`;
+        }
+      }
+
+      const blob = new Blob(chunks);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -58,6 +100,7 @@ const HelpSection = () => {
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
+
       setIsDownloading(false); // Stop the spinner
       closeDownloadConfirm(); // Close the download confirmation modal
     } catch (error) {
@@ -122,7 +165,9 @@ const HelpSection = () => {
                       {currentFileName}
                     </h1>
 
-                    <button
+                   
+                  </div>
+                  <button
                       className={styles.downloadButton}
                       onClick={openDownloadConfirm}
                     >
@@ -130,7 +175,6 @@ const HelpSection = () => {
                         <MdOutlineDownload size={16} />Download
                       </div>
                     </button>
-                  </div>
 
                   <button type="button" onClick={closeModal} style={{ marginLeft: "50px" }} >
                     <CloseButton />
@@ -160,11 +204,19 @@ const HelpSection = () => {
                       <button onClick={handleDownload} className={styles.confirmButton}>YES</button>
                       <button onClick={closeDownloadConfirm} className={styles.cancelButton}>NO</button>
                     </div>
-                    {isDownloading && (
+                    {/* {isDownloading && (
                       <div className={styles.spinnerOverlay}>
                         <Loading color={" #fff"} loading={true} size={50} />
                       </div>
-                    )} 
+                    )}  */}
+                    {isDownloading && (
+                      <div className={styles.spinnerOverlay}>
+                        <Loading color={" #fff"} loading={true} size={50} />
+                        <div className={styles.progressBarContainer}>
+                          <div id="downloadProgress" className={styles.progressBar}></div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               }
@@ -175,24 +227,24 @@ const HelpSection = () => {
       <div className="container-fluid">
         <div className="row p-0 m-0 d-flex flex-column justify-content-around align-items-center col-12">
           <div className="row d-flex flex-column justify-content-around align-items-center">
-          <h1 className={styles.TOPName}>Help Center</h1>
+            <h1 className={styles.TOPName}>Help Center</h1>
             <div className={`d-flex p-3 ${styles.tableBoundary} mb-5 mt-3`}>
               {guides.length ? (
                 <>
-             
-                  <div style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto", width: '100%',  }}>
-                    
-                    <table id="productGuidesTable" className="table table-responsive" style={{ minHeight: "150px" , width:'100%'}}>
+
+                  <div style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto", width: '100%', }}>
+
+                    <table id="productGuidesTable" className="table table-responsive" style={{ minHeight: "150px", width: '100%' }}>
                       <thead>
                         <tr>
                           <th className={`${styles.month} ${styles.stickyFirstColumnHeading}`} style={{ minWidth: "150px" }}>
-                          Category Name
+                            Category Name
                           </th>
                           <th className={`${styles.month} ${styles.stickyFirstColumnHeading}`} style={{ minWidth: "150px" }}>
                             File Name
                           </th>
                           <th className={`${styles.month} ${styles.stickyFirstColumnHeading}`} style={{ minWidth: "150px" }}>
-                        Show View
+                            Show View
                           </th>
                         </tr>
                       </thead>
@@ -210,9 +262,9 @@ const HelpSection = () => {
                                 className={styles.btn}
                                 onClick={() => openModal(guide.Link, guide.Type, guide.filename)}
                               >
-                          <div className="d-flex align-items-center justify-content-between gap-1" >
-                                <MdSlideshow  size={16}/> Show View
-                       </div>
+                                <div className="d-flex align-items-center justify-content-between gap-1" >
+                                  <MdSlideshow size={16} /> View
+                                </div>
                               </button>
                             </td>
                           </tr>
