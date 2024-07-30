@@ -3,7 +3,7 @@ import styles from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { productGuides } from "../lib/store";
 import ModalPage from "../components/Modal UI";
-import { CloseButton } from "../lib/svg";
+import { IoIosCloseCircleOutline } from "react-icons/io"
 import { MdOutlineDownload } from "react-icons/md";
 import ReactPlayer from 'react-player';
 import FilterSearch from "../components/FilterSearch";
@@ -65,6 +65,49 @@ const HelpSection = () => {
       setIsDownloading(false); // Stop the spinner even if there's an error
     }
   };
+  // const handleDownload = async () => {
+  //   setIsDownloading(true); // Start the spinner
+  //   try {
+  //     const response = await fetch(currentLink);
+  //     const reader = response.body.getReader();
+  //     const contentLength = +response.headers.get('Content-Length');
+
+  //     let receivedLength = 0; // received that many bytes at the moment
+  //     let chunks = []; // array of received binary chunks (comprises the body)
+  //     const downloadProgress = document.getElementById('downloadProgress');
+
+  //     while (true) {
+  //       const { done, value } = await reader.read();
+
+  //       if (done) {
+  //         break;
+  //       }
+
+  //       chunks.push(value);
+  //       receivedLength += value.length;
+
+  //       // Update the progress bar
+  //       if (downloadProgress) {
+  //         downloadProgress.style.width = `${(receivedLength / contentLength) * 100}%`;
+  //       }
+  //     }
+
+  //     const blob = new Blob(chunks);
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', `${currentType === 'Video' ? 'video.mp4' : 'document.pdf'}`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.parentNode.removeChild(link);
+
+  //     setIsDownloading(false); // Stop the spinner
+  //     closeDownloadConfirm(); // Close the download confirmation modal
+  //   } catch (error) {
+  //     console.error('Download failed:', error);
+  //     setIsDownloading(false); // Stop the spinner even if there's an error
+  //   }
+  // };
 
   const filteredGuides = guides.filter((guide) =>
     guide.Categoryname.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,16 +156,18 @@ const HelpSection = () => {
                 top: '0',
                 background: '#fff',
                 zIndex: 1,
-                padding: '15px',
+                padding: "9px 8px 9px 10px",
                 borderBottom: '1px solid #ddd',
               }}>
-                <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop: "-30px", marginLeft: '-20px' }}>
+                <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop: "-49px", marginLeft: '-20px' }}>
                   <div className="d-flex justify-content-end mt-2 gap-3">
                     <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0" style={{ fontSize: '18px' }}>
                       {currentFileName}
                     </h1>
 
-                    <button
+                   
+                  </div>
+                  <button
                       className={styles.downloadButton}
                       onClick={openDownloadConfirm}
                     >
@@ -130,10 +175,9 @@ const HelpSection = () => {
                         <MdOutlineDownload size={16} />Download
                       </div>
                     </button>
-                  </div>
 
-                  <button type="button" onClick={closeModal} style={{ marginLeft: "50px" }} >
-                    <CloseButton />
+                  <button type="button" onClick={closeModal} style={{ marginLeft: "50px",marginTop:"-1%", width: "15px", height:"20px"}} >
+                  <IoIosCloseCircleOutline  size={40}/>
                   </button>
                 </div>
               </div>
@@ -143,14 +187,14 @@ const HelpSection = () => {
                   width="104%"
                   height="400px"
                   overflow="hidden"
-                  style={{ marginLeft: "-20px" }}
+                  style={{ marginLeft: "-20px", }}
 
                   controls
                 ></ReactPlayer>
               ) : (
                 <iframe
                   src={currentLink}
-                  style={{ width: "104%", height: "400px", marginLeft: "-20px", overflow: "hidden" }}></iframe>
+                  style={{ width: "104%", height: "400px", marginLeft: "-20px",overflow: "hidden" }}></iframe>
               )}
               {isDownloadConfirmOpen &&
                 <div className={styles.modalOverlay}>
@@ -160,11 +204,19 @@ const HelpSection = () => {
                       <button onClick={handleDownload} className={styles.confirmButton}>YES</button>
                       <button onClick={closeDownloadConfirm} className={styles.cancelButton}>NO</button>
                     </div>
-                    {isDownloading && (
+                    {/* {isDownloading && (
                       <div className={styles.spinnerOverlay}>
                         <Loading color={" #fff"} loading={true} size={50} />
                       </div>
-                    )} 
+                    )}  */}
+                    {isDownloading && (
+                      <div className={styles.spinnerOverlay}>
+                        <Loading color={" #fff"} loading={true} size={50} />
+                        <div className={styles.progressBarContainer}>
+                          <div id="downloadProgress" className={styles.progressBar}></div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               }
