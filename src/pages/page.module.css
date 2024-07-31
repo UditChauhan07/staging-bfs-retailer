@@ -113,6 +113,7 @@ margin-left: -30px;
   padding: 3px 10px 3px 10px ;
   font-family: Montserrat-400;
   font-size: 13px;
+  max-width: 105px;
 }
 .cancelButton {
   border: 2px solid black;
