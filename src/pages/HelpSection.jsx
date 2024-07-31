@@ -3,7 +3,7 @@ import styles from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { originAPi, productGuides } from "../lib/store";
 import ModalPage from "../components/Modal UI";
-import { IoIosCloseCircleOutline } from "react-icons/io"
+import { IoIosCloseCircleOutline, IoMdDocument } from "react-icons/io"
 import { MdOutlineDownload } from "react-icons/md";
 import ReactPlayer from 'react-player';
 import FilterSearch from "../components/FilterSearch";
@@ -145,7 +145,7 @@ const HelpSection = () => {
               {isDownloadConfirmOpen &&
                 <div className={styles.modalOverlay}>
                   <div className={styles.modalContent}>
-                    <p style={{ marginTop: '20px' }}>Are you sure you want to download. ? </p>
+                    <p style={{ marginTop: '20px' }}>Are you sure you want to download?</p>
                     <div className={styles.modalActions}>
                       <button onClick={() => handleDownload()} className={styles.confirmButton}>YES</button>
                       <button onClick={closeDownloadConfirm} className={styles.cancelButton}>NO</button>
@@ -209,7 +209,7 @@ const HelpSection = () => {
                                 onClick={() => openModal(guide.Link, guide.Type, guide.filename)}
                               >
                                 <div className="d-flex align-items-center justify-content-between gap-1" >
-                                  <MdSlideshow size={16} /> View
+                                {guide.Type=="Video"?<MdSlideshow size={16} />:<IoMdDocument/>}View
                                 </div>
                               </button>
                             </td>
