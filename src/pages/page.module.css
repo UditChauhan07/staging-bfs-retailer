@@ -4,7 +4,7 @@ background: #FFF;
 } */
 .tableBoundary {
   border: 1px dashed #000;
- 
+
   /* overflow: auto; */
 }
 .stickyFirstColumnHeading {
@@ -22,9 +22,10 @@ background: #FFF;
   position: sticky;
   left: 0%;
   z-index: 2;
-}.spinnerOverlay {
+}
+.spinnerOverlay {
   position: absolute;
-  top:0%;
+  top: 0%;
   left: 0%;
   right: 0%;
   bottom: 0%;
@@ -47,18 +48,18 @@ background: #FFF;
   letter-spacing: 1.12px;
   padding-left: 20px !important;
 }
-.TOPName{
+.TOPName {
   color: #000;
   font-family: Montserrat-400;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
- 
+
   line-height: 22px; /* 150% */
   letter-spacing: 1.6px;
 
-padding-top: 17px;
-margin-left: -30px;
+  padding-top: 17px;
+  margin-left: -30px;
 }
 .td {
   color: #000;
@@ -119,11 +120,10 @@ margin-left: -30px;
   background-color: #080808; /* Darker green on hover */
 }
 
-.downloadButton{
- background-color: #000;
- color: white;
-  width: 18%;
-  padding: 3px 10px 3px 10px ;
+.downloadButton {
+  background-color: #000;
+  color: white;
+  padding: 3px 10px 3px 10px;
   font-family: Montserrat-400;
   font-size: 13px;
   max-width: 105px;
@@ -143,7 +143,6 @@ margin-left: -30px;
   background-color: #faf8f8; /* Darker red on hover */
   border: 2px solid rgb(7, 7, 7);
 }
-
 
 /* .......................... */
 .widthGivenBrandDetailPage {
