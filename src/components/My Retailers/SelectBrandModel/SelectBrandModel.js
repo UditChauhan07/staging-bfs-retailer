@@ -30,7 +30,6 @@ const SelectBrandModel = ({ brands, onClose }) => {
                     // checked={selectedBrandAccountId === brand.AccountId__c}
                     onChange={() => {
                       // setSelectedBrandAccountId(brand.AccountId__c);
-                      console.log({brand});
                       localStorage.setItem("manufacturer", brand.ManufacturerName__c|| brand.Name);
                       localStorage.setItem("ManufacturerId__c", brand.ManufacturerId__c||  brand.Id);
                       localStorage.setItem("Sales_Rep__c", brand.Sales_Rep__c);
