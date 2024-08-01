@@ -96,7 +96,7 @@ const HelpSection = () => {
         <ModalPage
           open
           content={
-            <div ref={modalRef} className="d-flex flex-column gap-3" style={{ width: '75vw' }}>
+            <div ref={modalRef} className="d-flex flex-column gap-3" style={{ width: '75vw',maxWidth:'800px' }}>
               <div style={{
                 position: 'sticky',
                 top: '0',
@@ -105,7 +105,7 @@ const HelpSection = () => {
                 padding: "9px 8px 9px 10px",
                 borderBottom: '1px solid #ddd',
               }}>
-                <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop: "-30px", marginLeft: '-20px' }}>
+                <div className="d-flex align-items-center justify-content-between " style={{ marginTop: "-40px", marginLeft: '-20px' }}>
                   <div className="d-flex justify-content-end mt-2 gap-3">
                     <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0 text-start" style={{ fontSize: '18px' }}>
                       {currentFileName}
@@ -122,7 +122,7 @@ const HelpSection = () => {
                     </div>
                   </button>
 
-                  <button type="button" onClick={closeModal} style={{ marginLeft: "50px", marginTop: "-3px", width: "15px", height: "20px" }} >
+                  <button type="button" onClick={closeModal} style={{ marginTop: "-3px", width: "15px", height: "20px" }} >
                     <IoIosCloseCircleOutline size={35} />
                   </button>
                 </div>

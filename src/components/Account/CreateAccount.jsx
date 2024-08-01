@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./accountStyle.module.css";
 import Styles from "../Modal UI/Styles.module.css";
-
 import { COntactName, ChooseBrand, QuestionMark, Picture, StoreName, Describe, Gmail } from "./svgIcon";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import TextError from "../../validation schema/TextError";
@@ -11,7 +10,7 @@ import { useNavigate } from "react-router";
 import ModalPage from "../Modal UI";
 import Loading from "../Loading";
 import { usePublicManufacturers } from "../../api/usePublicManufacturers";
-import { async } from "q";
+
 function CreateAccountForm() {
   const navigate = useNavigate();
   const initialValues = {
@@ -29,6 +28,7 @@ function CreateAccountForm() {
   const [tryAgain, setTryAgain] = useState(false);
   const [loading, setLoading] = useState(false);
   const [manufacturers, setManufacturers] = useState([]);
+  let [files, setFile] = useState([])
   const api = useSignUp();
   const ApiManufacturers = usePublicManufacturers();
   const manufacturersCall = async () => {
@@ -57,7 +57,27 @@ function CreateAccountForm() {
       action.resetForm();
     }
   };
-
+  function handleChange(e) {
+    let tempFile = [...files];
+    let reqfiles = e.target.files;
+    if (reqfiles) {
+      if (reqfiles.length > 0) {
+        Object.keys(reqfiles).map((index) => {
+          let url = URL.createObjectURL(reqfiles[index])
+          if (url) {
+            tempFile.push({ preview: url, file: reqfiles[index] });
+          }
+          // this thoughing me Failed to execute 'createObjectURL' on 'URL': Overload resolution failed?
+        })
+      }
+    }
+    setFile(tempFile);
+  }
+  const fileRemoveHandler = (index) => {
+    let tempFile = [...files];
+    tempFile.splice(index, 1)
+    setFile(tempFile);
+  }
   return (
     <>
       {redirect ? (
@@ -68,7 +88,7 @@ function CreateAccountForm() {
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${Styles.ModalHeader}`}>Congratulations</h1>
                 <p className={` ${Styles.ModalContent}`}>
-                Your wholesale account request with BFG has been added successfully.
+                  Your wholesale account application with <b>BFSG</b> has been submitted successfully! We will review your application and notify you of the status shortly. Thank you for choosing <b>BFSG</b>.
                   <br />
                 </p>
                 <p>Redirecting to Login page...</p>
@@ -206,14 +226,24 @@ function CreateAccountForm() {
                         <div className={style.labelIN}>
                           <label htmlFor="name">Picture (Multiple)</label>
                           <br />
-                          <input className="w-95" type="file" name="images" id="images" multiple />
+                          <input className="w-95" type="file" name="images" id="images" onChange={handleChange} accept="image/*" multiple />
+                          <div className={style.imgHolder}>
+                            {files.map((file, index) => (
+                              <div style={{ position: 'relative' }}>
+                                <span style={{ position: 'absolute', right: '5px', top: '-5px', color: '#000', zIndex: 1, cursor: 'pointer', fontSize: '18px' }} onClick={() => { fileRemoveHandler(index) }}>x</span>
+                                <a href={file?.preview} target="_blank" title="Click to Download">
+                                  <img src={file?.preview} key={index} alt={file?.preview} />
+                                </a>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     {/* How do you sell to your customers? */}
                     <div className={style.innerInformationRadio}>
-                      <div className={`${style.SvgLogo} ${style.SvgLogo1}`} style={{marginTop:"-1%"}}>
+                      <div className={`${style.SvgLogo} ${style.SvgLogo1}`} style={{ marginTop: "-1%" }}>
                         <QuestionMark />
                       </div>
 
@@ -283,7 +313,7 @@ function CreateAccountForm() {
                     </div>
                     {/* Choose Brands to Apply */}
                     <div className={style.innerInformationRadio}>
-                      <div className={`${style.SvgLogo} ${style.SvgLogo2}`} style={{marginTop:"-1%"}}>
+                      <div className={`${style.SvgLogo} ${style.SvgLogo2}`} style={{ marginTop: "-1%" }}>
                         <ChooseBrand />
                       </div>
 
@@ -317,7 +347,7 @@ function CreateAccountForm() {
 
                             <div className={style.BySigning}>
                               <p>
-                                <input type="checkbox"  />
+                                <input type="checkbox" />
                                 By signing in or clicking "Apply for an Account", you agree to our Terms of Service. Please also read our Privacy Policy.
                               </p>
 

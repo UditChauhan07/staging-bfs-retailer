@@ -74,7 +74,7 @@ const VideoPlayer = ({ src }) => {
                         style={{ width: `${progress}%` }}
                     />
                 </div>
-                <span className="time">{formatTime(currentTime)}</span>
+                <span className="time">{formatTime(currentTime)}</span>/
                 <span className="time">{formatTime(duration)}</span>
             </div>
         </div>
