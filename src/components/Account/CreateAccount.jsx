@@ -28,7 +28,7 @@ function CreateAccountForm() {
   const [tryAgain, setTryAgain] = useState(false);
   const [loading, setLoading] = useState(false);
   const [manufacturers, setManufacturers] = useState([]);
-  let [files, setFile] = useState([])
+  const [files, setFile] = useState([])
   const api = useSignUp();
   const ApiManufacturers = usePublicManufacturers();
   const manufacturersCall = async () => {
@@ -58,7 +58,8 @@ function CreateAccountForm() {
     }
   };
   function handleChange(e) {
-    let tempFile = [...files];
+    // let tempFile = [...files];
+    let tempFile = [];
     let reqfiles = e.target.files;
     if (reqfiles) {
       if (reqfiles.length > 0) {
