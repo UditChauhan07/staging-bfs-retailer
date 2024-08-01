@@ -107,7 +107,7 @@ const HelpSection = () => {
               }}>
                 <div className="d-flex align-items-center justify-content-between " style={{ minWidth: '75vw', marginTop: "-30px", marginLeft: '-20px' }}>
                   <div className="d-flex justify-content-end mt-2 gap-3">
-                    <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0" style={{ fontSize: '18px' }}>
+                    <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0 text-start" style={{ fontSize: '18px' }}>
                       {currentFileName}
                     </h1>
 
