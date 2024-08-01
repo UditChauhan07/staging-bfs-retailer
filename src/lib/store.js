@@ -153,9 +153,8 @@ export function fetchBeg() {
     if (orderList.length > 0) {
       let address = {}
       if (orderList?.[0]?.account?.address) {
-        if (orderList?.[0]?.account?.address == "undefined") {
-        } else {
-          JSON.parse(orderList?.[0]?.account?.address)
+        if (orderList?.[0]?.account?.address != "undefined") {
+          address=JSON.parse(orderList?.[0]?.account?.address)
         }
       }
       orderDetails.Account.id = orderList?.[0].account.id;

@@ -32,6 +32,7 @@ const MyRetailersPage = ({manufacturerId}) => {
 
   const getAccountsHandler = () => {
     GetAuthData().then((user) => {
+      // ["0011400001bsBxdAAE"]||
       getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
         setStoreList({ isLoading: false, data: accounts });
         getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands)=>{
