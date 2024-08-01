@@ -5,10 +5,10 @@ import { originAPi, productGuides } from "../lib/store";
 import ModalPage from "../components/Modal UI";
 import { IoIosCloseCircleOutline, IoMdDocument } from "react-icons/io"
 import { MdOutlineDownload } from "react-icons/md";
-import ReactPlayer from 'react-player';
 import FilterSearch from "../components/FilterSearch";
 import Loading from "../components/Loading";
 import { MdSlideshow } from "react-icons/md";
+import VideoPlayer from "../components/VideoPlayer";
 // import { ClipLoader } from "react-spinners"; // Import the spinner component
 
 const HelpSection = () => {
@@ -128,15 +128,7 @@ const HelpSection = () => {
                 </div>
               </div>
               {currentType === 'Video' ? (
-                <ReactPlayer
-                  url={`${originAPi}/${currentLink}`}
-                  width="104%"
-                  height="400px"
-                  overflow="hidden"
-                  style={{ marginLeft: "-20px", }}
-
-                  controls
-                ></ReactPlayer>
+                <VideoPlayer src={`${originAPi}/${currentLink}`}/>
               ) : (
                 <iframe
                   src={`${originAPi}/${currentLink}`}
