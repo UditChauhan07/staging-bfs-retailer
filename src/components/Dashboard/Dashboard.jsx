@@ -228,8 +228,8 @@ function Dashboard({ dashboardData }) {
           .then((dashboard) => {
             setAccountList(user.data.accountList)
             setGoalList(dashboard.goalByMonth ?? [])
-            let totalOrder = 0;
-            let totalPrice = 0;
+            let totalOrder = dashboard?.totalOrder||0;
+            let totalPrice = dashboard.totalPrice||0;
             let totalTarget = 0;
             let activeBrand = 0;
             if (dashboard?.monthlyManufactureData) {
@@ -239,8 +239,8 @@ function Dashboard({ dashboardData }) {
               // let temp = [];
               monthlyDataKey.map((id) => {
                 // temp.push(dashboard.monthlyManufactureData[id])
-                totalPrice += dashboard.monthlyManufactureData[id]?.sale
-                totalOrder += dashboard.monthlyManufactureData[id]?.own
+                // totalPrice += dashboard.monthlyManufactureData[id]?.sale
+                // totalOrder += dashboard.monthlyManufactureData[id]?.own
                 totalTarget += dashboard.monthlyManufactureData[id]?.target
               })
               // setBrandData({ isLoaded: true, data: temp })
