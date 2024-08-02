@@ -1,12 +1,14 @@
-import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, originAPi, sortArrayHandler } from "../../lib/store";
+import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, sortArrayHandler } from "../../lib/store";
 import Styles from "../OrderList/style.module.css"
 import Styles1 from "./OrderCardHandler.module.css"
 import { useEffect, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import ErrorProductCard from "./ErrorProductCard";
-import { BiCheck, BiLeftArrow, BiLock, BiRightArrow } from "react-icons/bi";
+import { BiCheck, BiLock } from "react-icons/bi";
 import ModalPage from "../Modal UI";
 import { RxEyeOpen } from "react-icons/rx";
+import Loading from "../Loading";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj, setSubject, Actual_Amount__cObj, contactName, setSalesRepId,autoSelect=null }) => {
     const { setOrderConfirmed, orderConfirmed } = orderConfirmedStatus || null;
@@ -25,6 +27,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
     const [productDetailId, setProductDetailId] = useState(null)
     const [errorProductCount, setErrorProductCount] = useState(0)
     const [showProductList, setShowProductList] = useState(false)
+    const [allProductSold, setAllProductSales] = useState(false);
+    const [productLoading, setProductLoading] = useState(false);
+
     const getOrderDetails = ({ order }) => {
         if (order) {
             let data = ShareDrive();
@@ -70,6 +75,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
         }
     }, [autoSelect])
     const autoSelectOrderHandler = (value) => {
+        setProductLoading(true)
+        setProductList([])
+        setShowProductList(false)
         setOrderId(value)
         {
             let accountItemID = null;
@@ -87,12 +95,12 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 Manufacturer: item.ManufacturerId__c,
                                 AccountId__c: item.AccountId,
                             }
-                            setProductList([])
-                            setShowProductList(false)
                             getProductList({ rawData }).then((productRes) => {
                                 let productCode = "";
                                 let temp = []
-                                console.log({ productRes });
+                                if (opcs.length == productRes?.data?.records.length) {
+                                    setAllProductSales(true)
+                                }
                                 productRes?.data?.records?.map((product, index) => {
                                     productCode += `'${product?.ProductCode}'`
                                     if (productRes?.data?.records?.length - 1 != index) productCode += ', ';
@@ -119,6 +127,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 // setProductList(temp)
                                 sortArrayHandler(temp, g => g.Name)
                                 setProductAllList(temp)
+                                setProductLoading(false)
                                 let data = ShareDrive();
                                 if (!data) {
                                     data = {};
@@ -289,10 +298,13 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             open={showProductList ?? false}
             content={
                 <div className="d-flex flex-column gap-3">
-                    <h2 className={`${Styles.warning} `}>Select other product of the Brand</h2>
+                    <h2 className={`${Styles.warning} `}>Select other product of the Brand <button type="button" style={{ float:'right',marginRight:'10px', width: "15px", height: "20px" }} onClick={() => setShowProductList(false)} >
+                    <IoIosCloseCircleOutline size={35} />
+                  </button></h2>
                     <div>
-                        <div><input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '150px', marginBottom: '10px' }} /></div>
+                    {(productAllList.length && !allProductSold) ? <div><input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '150px', marginBottom: '10px' }} /></div>: null}
                         <div style={{ maxHeight: '500px', overflow: 'scroll', width: '900px' }}>
+                        {!productLoading ? productAllList.length ?
                             <table style={{ width: '100%' }}>
                                 <thead>
                                     <tr>
@@ -316,16 +328,10 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                     })
                                     }
                                 </tbody>
-                            </table>
+                            </table>: allProductSold ? <p style={{ display: 'grid', placeContent: 'center', height: '100px' }} colSpan={4}>Brand's all product are in your order.
+                                </p> : null : <Loading height={'100px'} />
+                            }
                         </div>
-                    </div>
-                    <div className="d-flex justify-content-around ">
-                        <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '250px' }} onClick={() => setShowProductList(false)}>
-                            Add to Support Ticket
-                        </button>
-                        <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setShowProductList(false)}>
-                            Cancel
-                        </button>
                     </div>
                 </div>
             }

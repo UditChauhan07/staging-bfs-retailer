@@ -401,7 +401,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                     {showTracking && OrderData.Tracking__c && <>
                       <h2>Tracking Number</h2>
                       <div className={Styles.ShipAdress} style={{ transition: 'all 250s linear' }}>
-                        {OrderData.Tracking_URL__c ? <button role="link"
+                        {OrderData.Tracking_URL__c ? <button role="link" style={{textDecoration:'underline'}}
                           onClick={() => openInNewTab(OrderData.Tracking_URL__c)}>{OrderData.Tracking__c}</button> :
                           <p>
                             {OrderData.Tracking__c}
