@@ -3,7 +3,7 @@
 .goaltable {
   width: 100%;
   border: 1px black dashed;
-  /* padding-bottom: 5px; */
+  
   padding: 10px;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .Tabletext1 {
-  /* margin-left: 3%; */
+
   color: #000;
   font-family: Arial;
   font-size: 20px;
@@ -83,12 +83,11 @@
 }
 
 .top_perform1 {
-  /* border-right: 1px rgb(32, 32, 32) dashed; */
-  /* position: relative; */
+ 
 }
 
 .topPerform2 {
-  /* border-right: 1px rgb(32, 32, 32) dashed; */
+ 
   position: relative;
 }
 
@@ -138,7 +137,7 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
-  line-height: 32px; /* 160% */
+  line-height: 32px; 
   letter-spacing: 1.12px;
   margin: 5px 9px;
   vertical-align: middle;
@@ -158,7 +157,7 @@
 }
 
 .table_scroll {
-  /* margin-top: 15px; */
+  
   gap: 10px;
   display: flex;
   flex-wrap: wrap;
@@ -260,7 +259,7 @@
 .donuttop {
   width: 98%;
   padding: 20px;
-  /* height: 500px; */
+ 
   border: 1px black dashed;
 }
 
@@ -314,7 +313,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
-  /* 160% */
+  
   letter-spacing: 1.12px;
 }
 
@@ -333,7 +332,7 @@
 .active {
   width: 47px;
   height: 44px;
-  /* border: 2px solid #C7C7C7; */
+  
   border-radius: 10px;
   background-color: black;
   display: flex;
@@ -348,7 +347,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 22px;
-  /* letter-spacing: .5px; */
+
   text-transform: uppercase;
 }
 
@@ -414,7 +413,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
-  /* 200% */
+ 
   letter-spacing: 1.6px;
 }
 
@@ -424,13 +423,14 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 32px; /* 200% */
+  line-height: 32px; 
+
   letter-spacing: 1.6px;
 }
 
 .drpp {
   color: #000;
-  /* width: 160px; */
+
   border: none;
   float: right;
   font-family: "Montserrat";
@@ -465,7 +465,7 @@
   width: 99%;
 }
 
-@media (max-width: 1570px) {
+@media (max-width: 1570px) and (min-width: 1025px) {
   .top_accounttext {
     font-size: 15px;
   }
@@ -475,7 +475,7 @@
   }
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1024px  ) and (min-width:769px) {
   .top_accounttext {
     font-size: 14px;
   }
@@ -485,11 +485,24 @@
   .tabletd {
     font-size: 14px;
   }
+  .donutbox {
+    margin-top: -28%;
+    margin-left: -23%;
+
 }
-@media (max-width: 1450px) {
+.Tabletext {
+  font-size: 13px;
+}
+}
+@media (max-width: 768px) {
   .activetext{
     font-size: 13px;
   }
+  .donutbox {
+    margin-top: -28%;
+    margin-left: -4%;
+
+}
 }
 
 @media (max-width: 1299px) {
@@ -525,7 +538,7 @@
   .top_accnew {
     height: 35px;
 
-    /* margin: 0; */
+   
   }
 
   .top_perform1 {
@@ -550,3 +563,154 @@
     border-right: 0px dashed rgb(32, 32, 32);
   }
 }
+
+
+
+
+
+
+/* @media (max-width: 768px) {
+  .activetext1 {
+    font-size: 35px;
+  }
+
+  .main_heading {
+    font-size: 15px;
+  }
+
+  .Tabletextt {
+    font-size: 16px;
+  }
+
+  .Tabletext {
+    font-size: 15px;
+  }
+
+  .top_accounttext {
+    font-size: 12px;
+  }
+
+  .tablerow {
+    font-size: 12px;
+  }
+
+  .tabletd {
+    font-size: 12px;
+  }
+  .donutbox {
+    margin-top: -28%;
+    margin-left: -6%;
+
+  }
+}
+
+@media (max-width: 991px) {
+  .top_account {
+    height: 35px;
+  }
+
+  .top_accnew {
+    height: 35px;
+  }
+
+  .top_perform1 {
+    border-right: 0px rgb(32, 32, 32) dashed;
+  }
+
+  .activetext1 {
+    font-size: 25px;
+  }
+
+  .tablerow {
+    font-size: 10px;
+  }
+
+  .tabletd {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .head_topp {
+    display: none;
+  }
+
+  .topPerform2::before {
+    width: 0px;
+    border-right: 0px dashed rgb(32, 32, 32);
+  }
+
+  .top_accounttext {
+    font-size: 10px;
+  }
+
+  .activetext1 {
+    font-size: 20px;
+  }
+
+  .tablerow {
+    font-size: 8px;
+  }
+
+  .tabletd {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .top_perform,
+  .top_perform2 {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .Tabletext,
+  .Tabletext_head,
+  .Tabletext1,
+  .Tabletextt,
+  .main_heading {
+    font-size: 12px;
+  }
+
+  .activetext1 {
+    font-size: 15px;
+  }
+
+  .top_accounttext {
+    font-size: 8px;
+  }
+
+  .tablerow {
+    font-size: 6px;
+  }
+
+  .tabletd {
+    font-size: 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .Tabletext,
+  .Tabletext_head,
+  .Tabletext1,
+  .Tabletextt,
+  .main_heading {
+    font-size: 10px;
+  }
+
+  .activetext1 {
+    font-size: 12px;
+  }
+
+  .top_accounttext {
+    font-size: 6px;
+  }
+
+  .tablerow {
+    font-size: 5px;
+  }
+
+  .tabletd {
+    font-size: 5px;
+  }
+} */

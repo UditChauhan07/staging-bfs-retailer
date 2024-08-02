@@ -35,7 +35,7 @@ const TargetRollOver = () => {
         GetAuthData()
             .then((user) => {
                 setAccountList(user.data.accountList)
-                getRollOver({ key: user.data.x_access_token, accountIds1: JSON.stringify( user.data.accountIds) })
+                getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify( user.data.accountIds) })
                     .then((targetRes) => {
                         console.log({ targetRes });
                         if (targetRes) {
@@ -164,62 +164,61 @@ const TargetRollOver = () => {
         };
 
         filteredTargetData.forEach(element => {
-            totalRow.JanuaryTarget += parseFloat(element.January.target);
-            totalRow.JanuarySale += parseFloat(element.January.sale);
+            totalRow.JanuaryTarget += parseFloat(element.January.monthTarget);
+            totalRow.JanuarySale += parseFloat(element.January.sales);
             totalRow.JanuaryDiff += parseFloat(element.January.diff);
 
-            totalRow.FebruaryTarget += parseFloat(element.February.target);
-            totalRow.FebruarySale += parseFloat(element.February.sale);
+            totalRow.FebruaryTarget += parseFloat(element.February.monthTarget);
+            totalRow.FebruarySale += parseFloat(element.February.sales);
             totalRow.FebruaryDiff += parseFloat(element.February.diff);
 
-            totalRow.MarchTarget += parseFloat(element.March.target);
-            totalRow.MarchSale += parseFloat(element.March.sale);
+            totalRow.MarchTarget += parseFloat(element.March.monthTarget);
+            totalRow.MarchSale += parseFloat(element.March.sales);
             totalRow.MarchDiff += parseFloat(element.March.diff);
 
-            totalRow.AprilTarget += parseFloat(element.April.target);
-            totalRow.AprilSale += parseFloat(element.April.sale);
+            totalRow.AprilTarget += parseFloat(element.April.monthTarget);
+            totalRow.AprilSale += parseFloat(element.April.sales);
             totalRow.AprilDiff += parseFloat(element.April.diff);
 
-            totalRow.MayTarget += parseFloat(element.May.target);
-            totalRow.MaySale += parseFloat(element.May.sale);
+            totalRow.MayTarget += parseFloat(element.May.monthTarget);
+            totalRow.MaySale += parseFloat(element.May.sales);
             totalRow.MayDiff += parseFloat(element.May.diff);
 
-            totalRow.JuneTarget += parseFloat(element.June.target);
-            totalRow.JuneSale += parseFloat(element.June.sale);
+            totalRow.JuneTarget += parseFloat(element.June.monthTarget);
+            totalRow.JuneSale += parseFloat(element.June.sales);
             totalRow.JuneDiff += parseFloat(element.June.diff);
 
-            totalRow.JulyTarget += parseFloat(element.July.target);
-            totalRow.JulySale += parseFloat(element.July.sale);
+            totalRow.JulyTarget += parseFloat(element.July.monthTarget);
+            totalRow.JulySale += parseFloat(element.July.sales);
             totalRow.JulyDiff += parseFloat(element.July.diff);
 
-            totalRow.AugustTarget += parseFloat(element.August.target);
-            totalRow.AugustSale += parseFloat(element.August.sale);
+            totalRow.AugustTarget += parseFloat(element.August.monthTarget);
+            totalRow.AugustSale += parseFloat(element.August.sales);
             totalRow.AugustDiff += parseFloat(element.August.diff);
 
-            totalRow.SeptemberTarget += parseFloat(element.September.target);
-            totalRow.SeptemberSale += parseFloat(element.September.sale);
+            totalRow.SeptemberTarget += parseFloat(element.September.monthTarget);
+            totalRow.SeptemberSale += parseFloat(element.September.sales);
             totalRow.SeptemberDiff += parseFloat(element.September.diff);
 
-            totalRow.OctoberTarget += parseFloat(element.October.target);
-            totalRow.OctoberSale += parseFloat(element.October.sale);
+            totalRow.OctoberTarget += parseFloat(element.October.monthTarget);
+            totalRow.OctoberSale += parseFloat(element.October.sales);
             totalRow.OctoberDiff += parseFloat(element.October.diff);
 
-            totalRow.NovemberTarget += parseFloat(element.November.target);
-            totalRow.NovemberSale += parseFloat(element.November.sale);
+            totalRow.NovemberTarget += parseFloat(element.November.monthTarget);
+            totalRow.NovemberSale += parseFloat(element.November.sales);
             totalRow.NovemberDiff += parseFloat(element.November.diff);
 
-            totalRow.DecemberTarget += parseFloat(element.December.target);
-            totalRow.DecemberSale += parseFloat(element.December.sale);
+            totalRow.DecemberTarget += parseFloat(element.December.monthTarget);
+            totalRow.DecemberSale += parseFloat(element.December.sales);
             totalRow.DecemberDiff += parseFloat(element.December.diff);
 
 
             // Repeat the same for other months and total columns
             // ...
-            totalRow.TotalTarget += parseFloat(element.Total.target);
-            totalRow.TotalSale += parseFloat(element.Total.sale);
+            totalRow.TotalTarget += parseFloat(element.Total.monthTarget);
+            totalRow.TotalSale += parseFloat(element.Total.sales);
             totalRow.TotalDiff += parseFloat(element.Total.diff);
         });
-
         const dataWithTotalRow = [...csvData(), totalRow];
         const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
         const wb = { Sheets: { data: ws }, SheetNames: ["data"] };

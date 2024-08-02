@@ -7,6 +7,7 @@ import ModalPage from "../components/Modal UI";
 import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
+
 const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null, SalesRepId = null }) => {
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -81,7 +82,8 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
     }
     return (
         <>
-            {isModalOpen && <ModalPage
+            {isModalOpen && 
+            <ModalPage
                 open
                 content={
                     <div className="d-flex flex-column gap-3" style={{ width: '75vw' }}>

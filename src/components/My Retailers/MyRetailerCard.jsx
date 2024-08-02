@@ -40,11 +40,6 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
     if (num < 1000000000) return `${(num / 1000000).toFixed(2)} MB`;
     return `${(num / 1000000000).toFixed(2)} GB`;
   };
-  // onMouseEnter={(e)=>{setOnHoverDiv(brand.ManufacturerId__c);
-  //   e.target.style.padding = `3px ${brand.ManufacturerName__c.length*2.15}px`;
-  // }} onMouseLeave={(e)=>{setOnHoverDiv();
-  //   e.target.style.padding = '3px 5px';
-  // }}
   //onClick={navigate(()=>"/store/"+accountId)}
   return (
     <>
@@ -92,7 +87,11 @@ const MyRetailerCard = ({ placeName, title, brands, accountId, address }) => {
                       localStorage.setItem("Account", title);
                       localStorage.setItem("AccountId__c", accountId);
                       localStorage.setItem("address", JSON.stringify(address));
-                    }} className={`${Styles.btnFillLTR} ${Styles.btn} ${Styles.btnColor} ${Styles[bgColor[r]]}`} style={{ height: "fit-content" }} key={index}>
+                    }} className={`${Styles.btnFillLTR} ${Styles.btn} ${Styles.btnColor} ${Styles[bgColor[brand.ManufacturerName__c]]}`} style={{ height: "fit-content" }} key={index}   onMouseEnter={(e)=>{setOnHoverDiv(brand.ManufacturerId__c);
+                      // e.target.style.padding = `3px ${brand.ManufacturerName__c.length*2.15}px`;
+                    }} onMouseLeave={(e)=>{setOnHoverDiv();
+                      // e.target.style.padding = '3px 5px';
+                    }}>
                       {onHoverDiv!=brand.ManufacturerId__c?brand.ManufacturerName__c:
                       <>
                       Order now

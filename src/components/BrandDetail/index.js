@@ -4,7 +4,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
-import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, topProduct } from "../../lib/store";
+import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, originAPi, topProduct } from "../../lib/store";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ContentLoader from "react-content-loader";
@@ -13,6 +13,7 @@ const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
     const [topProducts, setTopProduct] = useState({ isLoaded: false, data: [] })
     const [productImages, setProductImages] = useState({});
+    const [errorImage, setErrorImg] = useState(false);
     const d = new Date();
     let monthIndex = d.getMonth();
     useEffect(() => {
@@ -32,7 +33,6 @@ const BrandDetailCard = ({ brandId }) => {
         }
         GetAuthData().then((user) => {
             topProduct({ manufacturerId: brandId, accountIds: JSON.stringify([user.data.accountIds[0]]), month: monthIndex + 1 }).then((products) => {
-                console.log({ products });
                 setTopProduct({ isLoaded: true, data: products.data })
                 let productCode = "";
                 products.data?.map((product, index) => {
@@ -101,7 +101,8 @@ const BrandDetailCard = ({ brandId }) => {
                         <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
                             <div className="row">
                                 <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand.tagLine ? Styles.borderRight : null}`}>
-                                    <img className="img-fluid" src={`http://3.223.209.6:6194/brandImage/${brandId}.png`} />
+                                    {errorImage?<p className={Styles.brandTitleHolder}>{topProducts.isLoaded?topProducts.data[0].ManufacturerName__c:null}</p>:
+                                    <img className="img-fluid" src={`${originAPi}/brandImage/${brandId}.png`}  onError={()=>setErrorImg(true)}/>}
                                 </div>
                                 {brand.tagLine ?
                                     <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">

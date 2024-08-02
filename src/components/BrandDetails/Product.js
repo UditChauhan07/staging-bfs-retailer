@@ -5,7 +5,6 @@ import FilterPage from "./Accordion/FilterPage";
 import { MdOutlineDownload, MdOutlineUpload } from "react-icons/md";
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import Loading from "../Loading";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
@@ -30,7 +29,7 @@ const groupBy = function (xs, key) {
 
 function Product() {
   const [emptyBag, setEmptyBag] = useState(false);
-  const { orderQuantity } = useBag();
+  const { orderQuantity, orderTotal } = useBag();
   const { user } = useAuth();
   const [categoryFilters, setCategoryFilters] = useState([]);
   const [productTypeFilter, setProductTypeFilter] = useState("Wholesale");
@@ -125,13 +124,13 @@ function Product() {
       } else {
         Object.keys(finalFilteredProducts)?.forEach((key) => {
           const value = finalFilteredProducts[key];
-          sortArrayHandler(value,g=>g.Name)
+          sortArrayHandler(value, g => g.Name)
         });
       }
     } else {
       Object.keys(finalFilteredProducts)?.forEach((key) => {
         const value = finalFilteredProducts[key];
-        sortArrayHandler(value,g=>g.Name)
+        sortArrayHandler(value, g => g.Name)
       });
     }
 
@@ -271,7 +270,9 @@ function Product() {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, `Order Form ${new Date()}` + fileExtension);
   };
-
+  const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  }
   return (
     <>
       {redirect ? (
@@ -304,6 +305,7 @@ function Product() {
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
                     <p className={` ${Styles.ModalContent}`}>Please Select Products of Minimum Order Amount</p>
+                    {/* <p className={` ${Styles.ModalContent}`}><b>Current Order Total:</b> ${formentAcmount(orderTotal)}</p> */}
                     <div className="d-flex justify-content-center">
                       <button className={`${Styles.modalButton}`} onClick={() => setAlert(0)}>
                         OK
@@ -500,6 +502,7 @@ function Product() {
                         </div>
                         <div className={`${styles.TotalSide} `}>
                           <h4>Total Number of Products : {orderQuantity}</h4>
+                          {/* <h4>Total Price : ${formentAcmount(orderTotal)}</h4> */}
                           <button
                             onClick={() => {
                               generateOrderHandler();

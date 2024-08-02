@@ -8,6 +8,10 @@
 .TicketWidth button{
   width: 100%;
 }
+.LinkHolder{
+  color: #000;
+  text-decoration: underline!important;
+}
 .btn {
   padding: 0.5rem 2rem;
   border: 1px solid #000;
@@ -238,7 +242,7 @@ ul.dropdown-menu.show {
 .Boxwhite h1 {
   color: #000;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 50px;
+  font-size: 37px;
   font-style: normal;
   font-weight: 900;
   line-height: normal;

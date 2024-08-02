@@ -8,7 +8,6 @@ import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
 import { UserProvider } from "./context/UserContext";
-import MyRetailersPage from "./pages/MyRetailersPage";
 import WholesaleInquiry from "./pages/WholesaleInquiry"
 import CustomerCare from "./pages/CustomerCare";
 import AboutUs from "./pages/AboutUs";
@@ -29,7 +28,6 @@ import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
-import TargetReport from "./reports/targetReport";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
@@ -37,6 +35,7 @@ import OrderInit from "./pages/OrderInit";
 import TargetRollOver from "./reports/targetRollOver";
 import StoreDetails from "./pages/StoreDetails";
 import BrandDetails from "./pages/BrandDetails";
+import HelpSection from "./pages/HelpSection";
 
 function App() {
   return (
@@ -75,8 +74,9 @@ function App() {
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/Target-Report" element={<TargetRollOver />}></Route>
+            <Route path="/Help-Section" element={<HelpSection/>}></Route>
             <Route path="/logout" element={<Logout />}></Route>
-            <Route path="/store/:id" element={<StoreDetails/>}/>
+            {/* <Route path="/store/:id" element={<StoreDetails/>}/> */}
             <Route path="/Brand/:id" element={<BrandDetails/>}/>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>

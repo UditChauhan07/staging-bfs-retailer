@@ -153,9 +153,8 @@ export function fetchBeg() {
     if (orderList.length > 0) {
       let address = {}
       if (orderList?.[0]?.account?.address) {
-        if (orderList?.[0]?.account?.address == "undefined") {
-        } else {
-          JSON.parse(orderList?.[0]?.account?.address)
+        if (orderList?.[0]?.account?.address != "undefined") {
+          address=JSON.parse(orderList?.[0]?.account?.address)
         }
       }
       orderDetails.Account.id = orderList?.[0].account.id;
@@ -1088,6 +1087,155 @@ export const brandDetails =
     desc: null
   }
 }
+
+export const productGuides = {
+  productKey1: {
+    Categoryname: "Access",
+    filename: "How to Access BFSG Retailer Portal Video.mp4",
+    OriginalFileName: "how-to-access-bfsg-retailer-portal-video",
+    Link: "help/how-to-access-bfsg-retailer-portal-video.mp4",
+    Type: "Video",
+  },
+  productKey2: {
+
+    Categoryname: "Access",
+    filename: "How To Access BFSG Retailer Portal.pdf",
+    OriginalFileName: "how-to-access-bfsg-retailer-portal",
+    Link: "help/how-to-access-bfsg-retailer-portal.pdf",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+  productKey3: {
+    Categoryname: "Customer Service",
+
+    Link: "help/how-to-report-incorrect-charges.pdf",
+    filename: "How To Report Incorrect Charges.pdf",
+    OriginalFileName: "how-to-report-incorrect-charges",
+    Type: "Pdf",
+
+    // Direct link to the video file
+  },
+  productKey4: {
+    Categoryname: "Customer Service",
+    Link: "help/how-to-report-product-damages-video.mp4",
+    filename: "How to Report Product Damages Video.mp4",
+    OriginalFileName: "how-to-report-product-damages-video",
+    Type: "Video",
+  },
+  productKey5: {
+    Categoryname: "Customer Service",
+    Link: "help/how-to-report-product-damages.pdf",
+    filename: "How To Report Product Damages.pdf",
+    OriginalFileName: "how-to-report-product-damages",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+  productKey6: {
+    Categoryname: "Customer Service",
+    Link: "help/how-to-report-product-shortage.pdf",
+    filename: "How To Report Product Shortage.pdf",
+    OriginalFileName: "how-to-report-product-shortage",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+  productKey7: {
+    Categoryname: "Customer Service",
+    Link: "help/how-to-report-product-shortages-video.mp4",
+    filename: "How to Report Product Shortages Video.mp4",
+    OriginalFileName: "how-to-report-product-shortages-video",
+    Type: "Video",
+
+    // Direct link to the video file
+  },
+  productKey8: {
+    Categoryname: "Customer Service",
+    Link: "help/how-to-request-invoice-tracking-number-order-status.pdf",
+    filename: "How To Request Invoice Tracking Number Order Status.pdf",
+    OriginalFileName: "	how-to-request-invoice-tracking-number-order-status",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+  productKey9: {
+    Categoryname: "Marketing Calender",
+    Link: "help/how-to-marketing-calendar-video.mp4",
+    filename: "How To Marketing Calendar Video.mp4",
+    OriginalFileName: "how-to-marketing-calendar-video",
+    Type: "Video",
+
+    // Direct link to the video file
+  },
+  productKey10: {
+    Categoryname: "Marketing Calender",
+    Link: "help/how-to-marketing-calendar.pdf",
+    filename: "How To Marketing Calendar.pdf",
+    OriginalFileName: "how-to-marketing-calendar",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+  productKey11: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-an-event-order-for-elc-brand.pdf",
+    filename: "How To Place an Event order for ELC brand.pdf",
+    OriginalFileName: "how-to-place-an-event-order-for-elc-brand",
+    Type: "pdf",
+
+    // Direct link to the video file
+  },
+
+  productKey12: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-an-event-order-video.mp4",
+    filename: "How to Place an Event Order Video.mp4",
+    OriginalFileName: "how-to-place-an-event-order-video",
+    Type: "Video",
+
+    // Direct link to the video file
+  },
+  productKey13: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-an-order-video.mp4",
+    filename: "How To Place an Order Video.mp4",
+    OriginalFileName: "how-to-place-an-order-video",
+    Type: "Video",
+
+    // Direct link to the video file
+  },
+  productKey14: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-an-order.pdf",
+    filename: "How To Place an Order.pdf",
+    OriginalFileName: "how-to-place-an-order",
+    Type: "pfd",
+
+    // Direct link to the video file
+  },
+  productKey15: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-preorders-video.mp4",
+    filename: "How To Place Preorders Video.mp4",
+    OriginalFileName: "how-to-place-preorders-video",
+    Type: "Video",
+
+    // Direct link to the video file
+  },
+  productKey16: {
+    Categoryname: "Orders",
+    Link: "help/how-to-place-preorders.pdf",
+    filename: "How to Place Preorders.pdf",
+    OriginalFileName: "how-to-place-preorders",
+    Type: "pdf",
+
+
+    // Direct link to the video file
+  },
+
+
+};
 
 
 export function DateConvert(dateString, timeStamp = false) {
