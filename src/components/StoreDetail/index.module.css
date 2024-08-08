@@ -13,6 +13,10 @@
   display: flex;
   flex-wrap: wrap;
 }
+.brandContainer{
+  position: absolute;
+  width: 100%;
+}
 .dGrid {
   display: grid;
   place-content: center;
