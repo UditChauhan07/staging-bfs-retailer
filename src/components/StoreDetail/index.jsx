@@ -42,14 +42,15 @@ const StoreDetailCard = ({ account }) => {
         },
         series: [
             {
-                name: 'Target',
-                data: account.Brands.map((value) => {
-                    return parseFloat(value?.Sales?.Target || 0).toFixed(2);
-                })
-            }, {
-                name: 'Achieved',
+                name: 'Purchase',
                 data: account.Brands.map((value) => {
                     return parseFloat(value?.Sales?.Amount || 0).toFixed(2);
+                })
+            },
+            {
+                name: 'Sales',
+                data: account.Brands.map((value) => {
+                    return parseFloat(value?.Sales?.Retail || 0).toFixed(2);
                 })
             }],
     }
