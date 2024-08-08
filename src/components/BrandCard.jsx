@@ -4,6 +4,7 @@ import Page from "../pages/page.module.css";
 import { ArrowRightInBrands } from "../lib/svg";
 
 const BrandCard = ({ brand, image, userData }) => {
+  console.log({userData});
   const navigate = useNavigate();
   return (
     <div className={`w-full last:mb-0 mb-4 ${Page.HoverArrow} `}>
@@ -21,7 +22,7 @@ const BrandCard = ({ brand, image, userData }) => {
             localStorage.setItem("Account", userData.accountList[0]?.Name);
             localStorage.setItem("Sales_Rep__c", brand.Sales_Rep__c);
             localStorage.setItem("AccountId__c", userData.accountList[0]?.Id);
-            localStorage.setItem("address", JSON.stringify(userData.accountList[0]?.shippingAddress));
+            localStorage.setItem("address", JSON.stringify(userData.accountList[0]?.ShippingAddress));
             localStorage.setItem("shippingMethod", JSON.stringify({number:brand.Shipping_Account_Number__c,method:brand.Shipping_Method__c}));
             if (brand?.Sales_Rep__c) navigate(`/orders`, { state: { salesRepName: brand.Name, salesRepId: brand.Sales_Rep__c, manufacturerId: brand.Id } });
           }}
