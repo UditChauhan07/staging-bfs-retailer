@@ -25,6 +25,7 @@ const StoreDetails = ()=>{
             navigate("/");
         }
     },[id])
+
     const {isLoaded,data} = account;
     return(<AppLayout>
         {isLoaded?<StoreDetailCard account={data}/>:<LoaderV3 text={"Please wait..."}/>}

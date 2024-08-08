@@ -131,8 +131,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
                   </div>
                   <div className={Styles.PoOrderLast}>
                     <h3>Ship To</h3>
-                    {/* onClick={()=>navigate("/store/"+item.AccountId)} */}
-                    <p style={{ cursor: 'pointer' }} >{item.AccountName}</p>
+                    <p style={{ cursor: 'pointer' }} onClick={()=>navigate("/store/"+item.AccountId)}>{item.AccountName}</p>
                   </div>
                 </div>
 
