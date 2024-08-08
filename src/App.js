@@ -79,7 +79,7 @@ function App() {
             <Route path="/Target-Report" element={<TargetRollOver />}></Route>
             <Route path="/Help-Section" element={<HelpSection/>}></Route>
             <Route path="/logout" element={<Logout />}></Route>
-            {/* <Route path="/store/:id" element={<StoreDetails/>}/> */}
+            <Route path="/store/:id" element={<StoreDetails/>}/>
             <Route path="/Brand/:id" element={<BrandDetails/>}/>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>

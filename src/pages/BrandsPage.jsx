@@ -54,7 +54,6 @@ const BrandsPage = () => {
         if (user?.data?.accountIds.length == 1) {
           getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } })
             .then((prodcut) => {
-              console.log({ prodcut });
               setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
             })
             .catch((getProductError) => {
