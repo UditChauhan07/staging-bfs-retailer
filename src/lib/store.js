@@ -938,7 +938,7 @@ export async function getStoreDetails({ key, Id }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "/OuE4gYJIz2ZUEP6", {
+  let response = await fetch(url2 + "/Ne1oMmMZP2GGFUv", {
     method: "POST",
     body: JSON.stringify({ key, Id }),
     headers: headersList,

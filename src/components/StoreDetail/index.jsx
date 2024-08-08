@@ -76,8 +76,8 @@ const StoreDetailCard = ({ account }) => {
         nav: true,
         dots: false,
         navText: [
-            '<svg width="46" style="position: absolute; left: -3px; top: -25%;" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_341)"><circle cx="23" cy="21" r="19" fill="white"/><circle cx="23" cy="21" r="18.75" stroke="#E1E1E1" stroke-width="0.5"/></g><path d="M26.454 27.9102L19.5449 21.0011L26.454 14.092" stroke="black"/><defs><filter id="filter0_d_3824_341" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="2"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_341"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_341" result="shape"/></filter></defs></svg>',
-            '<svg width="46" style="position: absolute; right: -3px; top: -25%;" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_342)"><circle cx="23" cy="21" r="19" transform="rotate(-180 23 21)" fill="white"/><circle cx="23" cy="21" r="18.75" transform="rotate(-180 23 21)" stroke="#E1E1E1" stroke-width="0.5"/></g><path d="M19.546 14.0898L26.4551 20.9989L19.546 27.908" stroke="black"/><defs><filter id="filter0_d_3824_342" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="2"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_342"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_342" result="shape"/></filter></defs></svg>',
+            '<svg width="46" style="position: absolute; left: -6%; top: -25%;" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_341)"><circle cx="23" cy="21" r="19" fill="white"/><circle cx="23" cy="21" r="18.75" stroke="#E1E1E1" stroke-width="0.5"/></g><path d="M26.454 27.9102L19.5449 21.0011L26.454 14.092" stroke="black"/><defs><filter id="filter0_d_3824_341" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="2"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_341"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_341" result="shape"/></filter></defs></svg>',
+            '<svg width="46" style="position: absolute; right: -6%; top: -25%;" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_342)"><circle cx="23" cy="21" r="19" transform="rotate(-180 23 21)" fill="white"/><circle cx="23" cy="21" r="18.75" transform="rotate(-180 23 21)" stroke="#E1E1E1" stroke-width="0.5"/></g><path d="M19.546 14.0898L26.4551 20.9989L19.546 27.908" stroke="black"/><defs><filter id="filter0_d_3824_342" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="2"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_342"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_342" result="shape"/></filter></defs></svg>',
         ],
         responsive: {
             0: {
@@ -91,6 +91,7 @@ const StoreDetailCard = ({ account }) => {
             },
         },
     };
+    console.log({account});
     return (<section className={Styles.container}>
         {fileDownload ? <Loading /> :
             <div>
@@ -128,8 +129,8 @@ const StoreDetailCard = ({ account }) => {
                             <div className={`${Styles.BrandInfoHolder} d-flex flex-column`}>
                                 <p className={Styles.accountLabel}>All Brands</p>
 
-                                <div className="d-flex justify-between">
-                                    <OwlCarousel {...options} style={{ position: 'absolute', top: '45px' }}>
+                                <div className={`${Styles.brandContainer} d-flex justify-between`}>
+                                    <OwlCarousel {...options} style={{ position: 'absolute', top: '45px',left:'5%',width:'90%' }}>
                                         {account.Brands.map((element, index) => (
                                             <p className={Styles.webLinkHolder}  style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline',cursor:'pointer' }} key={index}>{element.ManufacturerName__c}</p>
                                         ))}
