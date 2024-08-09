@@ -225,7 +225,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           ) : (
                             // onClick={() => setAccountSelectCheck(true)} 
                             <div className={Styles.linkHolder}>
-                              <p className={Styles.btnHolder}>
+                              <p className={Styles.btnHolder} onClick={() => setModalShow(true)}>
                                 add to Cart <small className={Styles.soonHolder}>coming soon</small>
                               </p>
                             </div>
