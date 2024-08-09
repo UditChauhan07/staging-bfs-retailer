@@ -11,11 +11,24 @@ import MapGenerator from "../Map";
 import Chart from "react-apexcharts";
 
 const StoreDetailCard = ({ account }) => {
+    const totalCategories = account.Brands.map((value) => {
+        return value?.ManufacturerName__c || "NA";
+    })
+
+    const totalSalesData = account.Brands.map((value) => {
+        return parseFloat(value?.Sales?.Amount || 0).toFixed(2);
+    })
+    const totalPurcjaseData = account.Brands.map((value) => {
+        return parseFloat(value?.Sales?.Retail || 0).toFixed(2);
+    });
+
+    const [startIndex, setStartIndex] = useState(0);
+    const [maxVisibleCategories,setMaxVisibleCategories] = useState(4)
     let graph = {
         options: {
             chart: {
                 type: 'bar',
-                height: 350,
+                height: 400,
                 stacked: false
             },
             plotOptions: {
@@ -42,15 +55,13 @@ const StoreDetailCard = ({ account }) => {
                 data: [20, 60, 70, 80]
             }],
             xaxis: {
-                categories: account.Brands.map((value) => {
-                    return value?.ManufacturerName__c || "NA";
-                }),
+                categories: totalCategories.slice(startIndex, startIndex + maxVisibleCategories),
                 labels: {
-                    rotate: -27, // Slight rotation for better fit
+                    // rotate: -27, // Slight rotation for better fit
                     style: {
                         fontSize: '10px', // Adjusted font size
                     },
-                    trim: true, // Ensure no labels are trimmed
+                    // trim: true, // Ensure no labels are trimmed
                 },
                 tickPlacement: 'on',
             },
@@ -90,15 +101,11 @@ const StoreDetailCard = ({ account }) => {
         series: [
             {
                 name: 'Purchase',
-                data: account.Brands.map((value) => {
-                    return parseFloat(value?.Sales?.Amount || 0).toFixed(2);
-                })
+                data: totalPurcjaseData.slice(startIndex, startIndex + maxVisibleCategories)
             },
             {
                 name: 'Sales',
-                data: account.Brands.map((value) => {
-                    return parseFloat(value?.Sales?.Retail || 0).toFixed(2);
-                })
+                data: totalSalesData.slice(startIndex, startIndex + maxVisibleCategories)
             }],
     }
     let [fileDownload, setLoader] = useState(false)
@@ -260,6 +267,10 @@ const StoreDetailCard = ({ account }) => {
                         <h3 className={`${Styles.detailTitleHolder} ml-4`}>Chart</h3>
                         <div>
                             <Chart options={graph.options} series={graph.series} type="bar" width={'100%'} height={320} />
+                            <div className="d-flex gap-2 justify-end">
+                                {startIndex != 0 ? <svg onClick={() => { setStartIndex(startIndex - 1) }} width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_341)"><circle cx="23" cy="21" r="19" fill="white" /><circle cx="23" cy="21" r="18.75" stroke="#E1E1E1" stroke-width="0.5" /></g><path d="M26.454 27.9102L19.5449 21.0011L26.454 14.092" stroke="black" /><defs><filter id="filter0_d_3824_341" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix" /><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" /><feOffset dy="2" /><feGaussianBlur stdDeviation="2" /><feComposite in2="hardAlpha" operator="out" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" /><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_341" /><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_341" result="shape" /></filter></defs></svg> : <div style={{ width: '46px', height: '46px' }} />}
+                                {startIndex != totalCategories.length - 4 ? <svg onClick={() => { setStartIndex(startIndex + 1) }} width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_342)"><circle cx="23" cy="21" r="19" transform="rotate(-180 23 21)" fill="white" /><circle cx="23" cy="21" r="18.75" transform="rotate(-180 23 21)" stroke="#E1E1E1" stroke-width="0.5" /></g><path d="M19.546 14.0898L26.4551 20.9989L19.546 27.908" stroke="black" /><defs><filter id="filter0_d_3824_342" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix" /><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" /><feOffset dy="2" /><feGaussianBlur stdDeviation="2" /><feComposite in2="hardAlpha" operator="out" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" /><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_342" /><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_342" result="shape" /></filter></defs></svg> : <div style={{ width: '46px', height: '46px' }} />}
+                            </div>
                         </div>
                     </div>
                 </div>
