@@ -9,6 +9,8 @@ import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
 import LoaderV2 from "../loader/v2";
 import { useNavigate } from "react-router-dom";
+import { GetAuthData } from "../../lib/store";
+import Select from "react-select";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
   const navigate = useNavigate();
 
@@ -17,7 +19,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
 
   const [isEmpty, setIsEmpty] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [loadEffect, setEffect] = useState(0)
+  const [loadEffect, setEffect] = useState(0);
+  const [AccountId,setAccount]=useState();
+  const [accountList,setAccountList] = useState([]);
+  const [accountSelectCheck,setAccountSelectCheck] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
@@ -39,6 +44,18 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
     setpagination([{ content: newValues }]);
 
   }, [filterData, PageSize, currentPage]);
+
+  useEffect(()=>{
+    GetAuthData().then((user)=>{
+      setAccountList(user.data.accountList)
+      if(user.data.accountIds.length==1){
+        setAccount(user.data.accountIds[0])
+      }
+    }).catch((userErr)=>{
+      console.log({userErr});
+    })
+  },[])
+
   // .................
   useEffect(() => {
     if (loadEffect) setLoaded(true)
@@ -96,9 +113,36 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const handleImageLoad = (imageId) => {
     setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
   };
+
+
   if (isLoaded) return <Loading height={"70vh"} />
   return (
     <>
+    <ModalPage
+          open={accountSelectCheck??false}
+          content={
+            <>
+              <div style={{ maxWidth: "309px" }}>
+                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
+                <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
+                <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))}/>
+                <div className="d-flex justify-content-center">
+                  <button
+                    className={`${Styles.modalButton}`}
+                    onClick={() => {
+                      setAccountSelectCheck(false);
+                    }}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => {
+            setAccountSelectCheck(false);
+          }}
+        />
       {modalShow ? (
         <ModalPage
           open
@@ -179,8 +223,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               </p>
                             </Link>
                           ) : (
-                            <div onClick={() => setModalShow(true)} className={Styles.linkHolder}>
-                              <p className={Styles.btnHolder}>
+                            // onClick={() => setAccountSelectCheck(true)} 
+                            <div className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder} onClick={() => setModalShow(true)}>
                                 add to Cart <small className={Styles.soonHolder}>coming soon</small>
                               </p>
                             </div>
@@ -203,6 +248,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             )}
           </div>
         </div>
+        {/*  AccountId={AccountId} */}
         <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
       </section>
       <Pagination

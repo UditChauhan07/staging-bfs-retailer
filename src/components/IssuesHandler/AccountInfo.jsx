@@ -5,7 +5,7 @@ import { AccountInfoValidation, UpdateInfoWithStoreValidation } from "../../vali
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import { getAllAccountLocation, uploadFileSupport } from "../../lib/store";
+import { uploadFileSupport } from "../../lib/store";
 import { BiUpload } from "react-icons/bi";
 import ModalPage from "../Modal UI";
 const AccountInfo = ({ reason, Accounts, postSupportAny, GetAuthData, dSalesRepId, setSubmitForm, accountList }) => {
