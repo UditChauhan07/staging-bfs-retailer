@@ -65,13 +65,7 @@ const NewArrivals = () => {
       console.log({ error });
     })
   }, [selectBrand, month, isLoaded])
-  // const[forceUpdate,setForceUpdate]=useState(false)
-  // const handleBrandFilter = (v) => onChange("brands", v);
-  //  const handleclick=()=>{
-  //   setSelectBrand(null)
-  //   setMonth(null)
-  //  }
-  // ...............................
+ 
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();
     setMonth(months[currentMonthIndex].value);
@@ -79,57 +73,37 @@ const NewArrivals = () => {
     setIsEmpty(false)
   }
 
-  
-
-  const generatePdf = () => {
-    const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
-    // element.style.padding = "10px"
-    let filename = `Marketing Calender `;
-    if (brand) {
-      filename = brand + " "
-    }
-    filename += new Date();
-    const opt = {
-      margin: 1,
-      filename: filename + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-  };
-
-  const generateXLSX = () => {
-    const newValues = productList?.map((months) => {
-      const filterData = months.content?.filter((item) => {
-        // let match = item.OCDDate.split("/")
-        // console.log(match)
-        if (month) {
-          if (brand) {
-            if (brand == item.brand) {
-              return item.date.toLowerCase().includes(month.toLowerCase())
-            }
-          } else {
-            return item.date.toLowerCase().includes(month.toLowerCase())
-          }
-          // return match.includes(month.toUpperCase() )
-        } else {
-          if (brand) {
-            if (brand == item.brand) {
-              return true;
-            }
-          } else {
-            return true;
-          }
-          // If month is not provided, return all items
-        }
-      });
-      // Create a new object with filtered content
-      return { ...months, content: filterData };
-    });
-    let fileData = exportToExcel({ list: newValues });
-  }
+  //
+  // const generateXLSX = () => {
+  //   const newValues = productList?.map((months) => {
+  //     const filterData = months.content?.filter((item) => {
+  //       // let match = item.OCDDate.split("/")
+  //       // console.log(match)
+  //       if (month) {
+  //         if (brand) {
+  //           if (brand == item.brand) {
+  //             return item.date.toLowerCase().includes(month.toLowerCase())
+  //           }
+  //         } else {
+  //           return item.date.toLowerCase().includes(month.toLowerCase())
+  //         }
+  //         // return match.includes(month.toUpperCase() )
+  //       } else {
+  //         if (brand) {
+  //           if (brand == item.brand) {
+  //             return true;
+  //           }
+  //         } else {
+  //           return true;
+  //         }
+  //         // If month is not provided, return all items
+  //       }
+  //     });
+  //     // Create a new object with filtered content
+  //     return { ...months, content: filterData };
+  //   });
+  //   let fileData = exportToExcel({ list: newValues });
+  // }
 
   const csvData = ({ data }) => {
     let finalData = [];

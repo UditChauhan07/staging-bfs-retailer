@@ -81,7 +81,6 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
     }
 
   }, [month, selectBrand, productList, brand]);
-
   return (
     <div id="Calendar">
       <div className="container">
