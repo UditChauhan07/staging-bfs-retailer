@@ -83,14 +83,17 @@ function MyBagOrder(props) {
     if (data?.Tracking__c) finalData.push(trackingumberDetail)
     let productHeaderDetail = { "": "Product Name", " ": "Product Qty", "  ": "Product Price" }
     if (data?.OpportunityLineItems?.length > 0) finalData.push(productHeaderDetail)
-    if (data?.OpportunityLineItems?.length) {
-      data?.OpportunityLineItems?.map((ele) => {
-        let temp = {};
-        temp[""] = ele.Name.split(data.Name);
+      if (data?.OpportunityLineItems?.length) {
+        data?.OpportunityLineItems?.map((ele) => {
+          
+          let temp = {};
+        temp[""] = ele.Name.split(data.Name)[1];
         temp[" "] = ele.Quantity;
         temp["  "] = ele.UnitPrice;
         finalData.push(temp);
       });
+      console.log({finalData});
+      
     }
     return finalData;
   };
