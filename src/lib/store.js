@@ -1,6 +1,6 @@
 export const originAPi = process.env.REACT_APP_OA_URL || "https://temp.beautyfashionsales.com/"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:6194"
+// export const originAPi = "http://localhost:2611"
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
@@ -488,7 +488,7 @@ export async function getDashboardata({ user }) {
       "Access-Control-Allow-Origin": "*",
     };
   }
-  let response = await fetch(url2 + "38Akka0hdLL8Kyo", {
+  let response = await fetch(originAPi + "/95zWpMEFtbAr8lqn/38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
     headers: headersList,
@@ -507,7 +507,7 @@ export async function getRollOver({ key, accountIds = null }) {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
   };
-  let response = await fetch(url2 + "ujlyvJcLHjRtIbd", {
+  let response = await fetch(originAPi + "/95zWpMEFtbAr8lqn/ujlyvJcLHjRtIbd", {
     method: "POST",
     headers: headersList,
     body: JSON.stringify({ key, accountIds }),

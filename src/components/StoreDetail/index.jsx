@@ -11,26 +11,84 @@ import MapGenerator from "../Map";
 import Chart from "react-apexcharts";
 
 const StoreDetailCard = ({ account }) => {
+    const totalCategories = account.Brands.map((value) => {
+        return value?.ManufacturerName__c || "NA";
+    })
+
+    const totalSalesData = account.Brands.map((value) => {
+        return parseFloat(value?.Sales?.Amount || 0).toFixed(2);
+    })
+    const totalPurcjaseData = account.Brands.map((value) => {
+        return parseFloat(value?.Sales?.Retail || 0).toFixed(2);
+    });
+
+    const [startIndex, setStartIndex] = useState(0);
+    const [maxVisibleCategories,setMaxVisibleCategories] = useState(4)
     let graph = {
         options: {
             chart: {
-                id: 'brand-Sales'
+                type: 'bar',
+                height: 400,
+                stacked: false
             },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '50%',
+                    endingShape: 'rounded',
+                },
+            },
+            colors: ['#1E90FF', '#28A745'], // Blue and Green
             dataLabels: {
-                enabled: false // disable data labels
+                enabled: false,
             },
+            stroke: {
+                show: true,
+                width: 4,
+                colors: ['transparent'],
+            },
+            series: [{
+                name: 'Target',
+                data: [35, 70, 60, 90]
+            }, {
+                name: 'Achieved',
+                data: [20, 60, 70, 80]
+            }],
             xaxis: {
-                categories: account.Brands.map((value) => {
-                    return value?.ManufacturerName__c || 0;
-                })
+                categories: totalCategories.slice(startIndex, startIndex + maxVisibleCategories),
+                labels: {
+                    // rotate: -27, // Slight rotation for better fit
+                    style: {
+                        fontSize: '10px', // Adjusted font size
+                    },
+                    // trim: true, // Ensure no labels are trimmed
+                },
+                tickPlacement: 'on',
             },
-            colors: ["#3296ed", "#16bc4e"],
+            fill: {
+                opacity: 1
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+            },
+            title: {
+                text: 'MTD Revenue by Brand',
+                align: 'left',
+                style: {
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    fontFamily: 'Montserrat-400',
+                    lineHeight: '18.94px',
+                    letterSpacing: '0.1em'
+                }
+            },
             tooltip: {
                 enabled: true,
                 custom: function ({ series, seriesIndex, dataPointIndex, w }) {
                     return (
                         `<div style="background: #333; color: #fff; padding: 10px; border-radius: 8px;">
-                      <strong>${w.globals.labels[dataPointIndex]}</strong>
+                      <strong>${w.globals.categoryLabels[dataPointIndex]}</strong>
                       <br />
                       <span style="color: ${w.globals.colors[seriesIndex]};">
                         ${w.globals.seriesNames[seriesIndex]}: <span style="color: #fff;">$${series[seriesIndex][dataPointIndex].toFixed(2)}</span>
@@ -43,15 +101,11 @@ const StoreDetailCard = ({ account }) => {
         series: [
             {
                 name: 'Purchase',
-                data: account.Brands.map((value) => {
-                    return parseFloat(value?.Sales?.Amount || 0).toFixed(2);
-                })
+                data: totalPurcjaseData.slice(startIndex, startIndex + maxVisibleCategories)
             },
             {
                 name: 'Sales',
-                data: account.Brands.map((value) => {
-                    return parseFloat(value?.Sales?.Retail || 0).toFixed(2);
-                })
+                data: totalSalesData.slice(startIndex, startIndex + maxVisibleCategories)
             }],
     }
     let [fileDownload, setLoader] = useState(false)
@@ -91,7 +145,8 @@ const StoreDetailCard = ({ account }) => {
             },
         },
     };
-    console.log({account});
+
+    console.log({ account });
     return (<section className={Styles.container}>
         {fileDownload ? <Loading /> :
             <div>
@@ -115,8 +170,8 @@ const StoreDetailCard = ({ account }) => {
                                     <span className={Styles.addCard}>{account.Phone}</span></div> : null}
                             </div>
                             <div>
-                                <p className={Styles.totalRevenueLinkHolder}>Total Revenue</p>
-                                <p className={Styles.totalRevenueHolder}>${formatNumber(account.TotalSales||0)}</p>
+                                <p className={Styles.totalRevenueLinkHolder}>Total Purchase</p>
+                                <p className={Styles.totalRevenueHolder}>${formatNumber(account.TotalSales || 0)}</p>
                             </div>
                         </div>
                     </div>
@@ -130,9 +185,9 @@ const StoreDetailCard = ({ account }) => {
                                 <p className={Styles.accountLabel}>All Brands</p>
 
                                 <div className={`${Styles.brandContainer} d-flex justify-between`}>
-                                    <OwlCarousel {...options} style={{ position: 'absolute', top: '45px',left:'5%',width:'90%' }}>
+                                    <OwlCarousel {...options} style={{ position: 'absolute', top: '45px', left: '5%', width: '90%' }}>
                                         {account.Brands.map((element, index) => (
-                                            <p className={Styles.webLinkHolder}  style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline',cursor:'pointer' }} key={index}>{element.ManufacturerName__c}</p>
+                                            <p className={Styles.webLinkHolder} style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline', cursor: 'pointer' }} key={index}>{element.ManufacturerName__c}</p>
                                         ))}
                                     </OwlCarousel>
                                 </div>
@@ -148,7 +203,7 @@ const StoreDetailCard = ({ account }) => {
 
                                     <div className="m-auto d-flex">
                                         {account.Brands.map((element, index) => (
-                                            <p className={Styles.webLinkHolder} style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline',marginRight:'2rem' }} key={index}>{element.ManufacturerName__c}</p>
+                                            <p className={Styles.webLinkHolder} style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline', marginRight: '2rem' }} key={index}>{element.ManufacturerName__c}</p>
                                         ))}
                                     </div>
                                 </div>
@@ -159,7 +214,7 @@ const StoreDetailCard = ({ account }) => {
                     <h3 className={Styles.detailTitleHolder}>Details</h3>
                     <div className="d-flex mt-4">
                         <div className={`${Styles.accountNumberHolder}`}>
-                            <span className={`${Styles.buttonHolder} ${Styles.activeHolder}`}>Status: Active</span>
+                            <span className={`${Styles.buttonHolder} ${account.Active_Closed__c == "Active Account" ? Styles.activeHolder : Styles.closeHolder}`}>Status: {account.Active_Closed__c == "Active Account" ? "Active" : "In-Active"}</span>
                             <h4 className={Styles.accountNumber}>{account.Estee_Lauder_Account_Number__c}</h4>
                             <p className={Styles.accountNumberTinyText}>Estee Launder Account Name</p>
                         </div>
@@ -178,11 +233,11 @@ const StoreDetailCard = ({ account }) => {
                             </div>
                             <div className={Styles.detailBox}>
                                 <p className={Styles.labelHolder}>Number of Order Placed:</p>
-                                <p className={Styles.valueHolder} style={{marginTop:'20px'}}>{account.TotalSaleCount}</p>
+                                <p className={Styles.valueHolder} style={{ marginTop: '20px' }}>{account.TotalSaleCount ?? 0}</p>
                             </div>
                             <div className={Styles.detailBox}>
                                 <p className={Styles.labelHolder}>Date Account Est. with BFSG:</p>
-                                <p className={Styles.valueHolder} style={{marginTop:'20px'}}>{DateConvert(account.Date_account_established_with_BFSG__c || null, true) ?? 'NA'}</p>
+                                <p className={Styles.valueHolder} style={{ marginTop: '20px' }}>{DateConvert(account.Date_account_established_with_BFSG__c || null, true) ?? 'NA'}</p>
                             </div>
                             <div className={Styles.detailBox}>
                                 <p className={Styles.labelHolder}>Address:</p>
@@ -193,17 +248,17 @@ const StoreDetailCard = ({ account }) => {
                 </div>
                 <div className={`${Styles.detailsContainer} d-flex`}>
                     <div className={`${Styles.mapContainer} w-[50%]`}>
-                        <h3 className={Styles.detailTitleHolder}>Store Addressed</h3>
+                        <h3 className={Styles.detailTitleHolder}>Store Address</h3>
                         <div className={`${Styles.mapHolder} mt-4`}>
                             <MapGenerator focusOn={{ lat: account.ShippingLatitude, lng: account.ShippingLongitude }} MarkLocations={[{ lat: account.ShippingLatitude, lng: account.ShippingLongitude }]} zoom={12} icon={false} />
                             <div className="d-flex mt-3">
                                 <div className="w-[50%]">
                                     <p className={Styles.subTitleHolder}>Shipping Address</p>
-                                    <p className={Styles.addressLabelHolder} style={{ color: '#3296ED' }}>{account.ShippingAddress?.street},{account.ShippingAddress.city},<br />{account.ShippingAddress.state},{account.ShippingAddress.postalCode}<br /> {account.ShippingAddress.country}</p>
+                                    <p className={Styles.addressLabelHolder} style={{ color: '#3296ED' }}>{account.ShippingAddress?.street}{account.ShippingAddress?.street ? ',' : ""}{account.ShippingAddress.city}{account.ShippingAddress?.city ? <>,<br /></> : ""}{account.ShippingAddress.state},{account.ShippingAddress.postalCode}<br /> {account.ShippingAddress.country}</p>
                                 </div>
                                 <div className="w-[50%]">
                                     <p className={Styles.subTitleHolder}>Billing Address</p>
-                                    <p className={Styles.addressLabelHolder} style={{ color: '#3296ED' }}>{account.BillingAddress?.street},{account.BillingAddress.city},<br />{account.BillingAddress.state},{account.BillingAddress.postalCode}<br /> {account.BillingAddress.country}</p>
+                                    <p className={Styles.addressLabelHolder} style={{ color: '#3296ED' }}>{account.BillingAddress?.street},<br />{account.BillingAddress.city},<br />{account.BillingAddress.state},{account.BillingAddress.postalCode}<br /> {account.BillingAddress.country}</p>
                                 </div>
                             </div>
                         </div>
@@ -212,6 +267,10 @@ const StoreDetailCard = ({ account }) => {
                         <h3 className={`${Styles.detailTitleHolder} ml-4`}>Chart</h3>
                         <div>
                             <Chart options={graph.options} series={graph.series} type="bar" width={'100%'} height={320} />
+                            <div className="d-flex gap-2 justify-end">
+                                {startIndex != 0 ? <svg onClick={() => { setStartIndex(startIndex - 1) }} width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_341)"><circle cx="23" cy="21" r="19" fill="white" /><circle cx="23" cy="21" r="18.75" stroke="#E1E1E1" stroke-width="0.5" /></g><path d="M26.454 27.9102L19.5449 21.0011L26.454 14.092" stroke="black" /><defs><filter id="filter0_d_3824_341" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix" /><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" /><feOffset dy="2" /><feGaussianBlur stdDeviation="2" /><feComposite in2="hardAlpha" operator="out" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" /><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_341" /><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_341" result="shape" /></filter></defs></svg> : <div style={{ width: '46px', height: '46px' }} />}
+                                {startIndex != totalCategories.length - 4 ? <svg onClick={() => { setStartIndex(startIndex + 1) }} width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_3824_342)"><circle cx="23" cy="21" r="19" transform="rotate(-180 23 21)" fill="white" /><circle cx="23" cy="21" r="18.75" transform="rotate(-180 23 21)" stroke="#E1E1E1" stroke-width="0.5" /></g><path d="M19.546 14.0898L26.4551 20.9989L19.546 27.908" stroke="black" /><defs><filter id="filter0_d_3824_342" x="0" y="0" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix" /><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" /><feOffset dy="2" /><feGaussianBlur stdDeviation="2" /><feComposite in2="hardAlpha" operator="out" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" /><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3824_342" /><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3824_342" result="shape" /></filter></defs></svg> : <div style={{ width: '46px', height: '46px' }} />}
+                            </div>
                         </div>
                     </div>
                 </div>

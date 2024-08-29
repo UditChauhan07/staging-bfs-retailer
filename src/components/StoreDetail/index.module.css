@@ -141,6 +141,14 @@
   text-align: left;
   text-transform: uppercase;
 }
+.detailTitleSubHolder {
+  font-family: Montserrat-400;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 18.94px;
+  letter-spacing: 0.1em;
+  text-align: left;
+}
 .detailsContainer .buttonHolder {
   font-family: Montserrat-400;
   font-size: 13px;

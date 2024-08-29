@@ -22,7 +22,6 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
             GetAuthData().then((user) => {
                 let rawData = { productId: productId, key: user?.data?.x_access_token, salesRepId: SalesRepId, accountId: user.data.accountId }
                 getProductDetails({ rawData }).then((productRes) => {
-                    console.log({});
                     setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount })
                 }).catch((proErr) => {
                     console.log({ proErr });
@@ -39,28 +38,32 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
         addOrder(element, quantity, product.discount);
     };
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
-        if (SalesRepId) {
-            setIsModalNoRepOpen(false)
-            element.salesPrice = salesPrice;
-            if (Object.values(orders)?.length) {
-                if (
-                    Object.values(orders)[0]?.manufacturer?.id === ManufacturerId &&
-                    Object.values(orders)[0].account.id === AccountId &&
-                    Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
-                ) {
-                    console.log({ aa: Object.values(orders) });
-                    orderSetting(element, quantity);
-                    setReplaceCartModalOpen(false);
+        // if (AccountId && SalesRepId) {
+            if (SalesRepId) {
+                setIsModalNoRepOpen(false)
+                element.salesPrice = salesPrice;
+                if (Object.values(orders)?.length) {
+                    if (
+                        Object.values(orders)[0]?.manufacturer?.id === ManufacturerId &&
+                        Object.values(orders)[0].account.id === AccountId &&
+                        Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
+                    ) {
+                        console.log({ aa: Object.values(orders) });
+                        orderSetting(element, quantity);
+                        setReplaceCartModalOpen(false);
+                    } else {
+                        setReplaceCartModalOpen(true);
+                        setReplaceCartProduct({ product: element, quantity });
+                    }
                 } else {
-                    setReplaceCartModalOpen(true);
-                    setReplaceCartProduct({ product: element, quantity });
+                    orderSetting(element, quantity);
                 }
             } else {
-                orderSetting(element, quantity);
+                setIsModalNoRepOpen(true)
             }
-        } else {
-            setIsModalNoRepOpen(true)
-        }
+        // }else{
+            
+        // }
     };
 
     const onPriceChangeHander = (element, price = '0') => {
@@ -82,79 +85,79 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
     }
     return (
         <>
-            {isModalOpen && 
-            <ModalPage
-                open
-                content={
-                    <div className="d-flex flex-column gap-3" style={{ width: '75vw' }}>
-                        <div style={{
-                            position: 'sticky',
-                            top: '-20px',
-                            background: '#fff',
-                            zIndex: 1,
-                            padding: '15px 0 0 0'
-                        }}>
-                            <div className="d-flex align-items-center justify-content-between" style={{ minWidth: '75vw' }}>
-                                <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">Product Details</h1>
-                                <button type="button" onClick={() => { setIsModalOpen(false); setProductDetailId(null) }}>
-                                    <CloseButton />
-                                </button>
+            {isModalOpen &&
+                <ModalPage
+                    open
+                    content={
+                        <div className="d-flex flex-column gap-3" style={{ width: '75vw' }}>
+                            <div style={{
+                                position: 'sticky',
+                                top: '-20px',
+                                background: '#fff',
+                                zIndex: 1,
+                                padding: '15px 0 0 0'
+                            }}>
+                                <div className="d-flex align-items-center justify-content-between" style={{ minWidth: '75vw' }}>
+                                    <h1 className="font-[Montserrat-500] text-[22px] tracking-[2.20px] m-0 p-0">Product Details</h1>
+                                    <button type="button" onClick={() => { setIsModalOpen(false); setProductDetailId(null) }}>
+                                        <CloseButton />
+                                    </button>
+                                </div>
+                                <hr />
                             </div>
-                            <hr />
+                            {replaceCartModalOpen ? (
+                                <ModalPage
+                                    open
+                                    content={
+                                        <div className="d-flex flex-column gap-3">
+                                            <h2>Warning</h2>
+                                            <p>
+                                                Adding this item will replace <br></br> your current cart
+                                            </p>
+                                            <div className="d-flex justify-content-around ">
+                                                <button style={styles.btn} onClick={replaceCart}>
+                                                    OK
+                                                </button>
+                                                <button style={styles.btn} onClick={() => setReplaceCartModalOpen(false)}>
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                    onClose={() => {
+                                        setReplaceCartModalOpen(false);
+                                    }}
+                                />
+                            ) : null}
+                            {isModalNoRepOpen ? (
+                                <ModalPage
+                                    open
+                                    content={
+                                        <div className="d-flex flex-column gap-3">
+                                            <h2>Warning</h2>
+                                            <p>
+                                                You can not order from this brand.<br /> Kindly contact your Sales Rep
+                                            </p>
+                                            <div className="d-flex justify-content-around ">
+                                                <button style={styles.btn} onClick={() => setIsModalNoRepOpen(false)}>
+                                                    Ok
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                    onClose={() => {
+                                        setIsModalNoRepOpen(false);
+                                    }}
+                                />
+                            ) : null}
+                            {!product?.isLoaded ? <Loading /> :
+                                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} />}
                         </div>
-                        {replaceCartModalOpen ? (
-                            <ModalPage
-                                open
-                                content={
-                                    <div className="d-flex flex-column gap-3">
-                                        <h2>Warning</h2>
-                                        <p>
-                                            Adding this item will replace <br></br> your current cart
-                                        </p>
-                                        <div className="d-flex justify-content-around ">
-                                            <button style={styles.btn} onClick={replaceCart}>
-                                                OK
-                                            </button>
-                                            <button style={styles.btn} onClick={() => setReplaceCartModalOpen(false)}>
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-                                onClose={() => {
-                                    setReplaceCartModalOpen(false);
-                                }}
-                            />
-                        ) : null}
-                        {isModalNoRepOpen ? (
-                            <ModalPage
-                                open
-                                content={
-                                    <div className="d-flex flex-column gap-3">
-                                        <h2>Warning</h2>
-                                        <p>
-                                            You can not order from this brand.<br /> Kindly contact your Sales Rep
-                                        </p>
-                                        <div className="d-flex justify-content-around ">
-                                            <button style={styles.btn} onClick={() => setIsModalNoRepOpen(false)}>
-                                                Ok
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-                                onClose={() => {
-                                    setIsModalNoRepOpen(false);
-                                }}
-                            />
-                        ) : null}
-                        {!product?.isLoaded ? <Loading /> :
-                            <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} />}
-                    </div>
-                }
-                onClose={() => {
-                    setIsModalOpen(false); setProductDetailId(null);
-                }}
-            />}
+                    }
+                    onClose={() => {
+                        setIsModalOpen(false); setProductDetailId(null);
+                    }}
+                />}
         </>
     );
 };

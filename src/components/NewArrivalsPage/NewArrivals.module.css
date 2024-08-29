@@ -19,6 +19,7 @@
   /* border-radius: 8px; */
   background: #000;
   height: 34px;
+  width: max-content;
   padding: 0px 8px;
   border: none;
   margin-top: -3px;

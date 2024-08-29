@@ -13,6 +13,7 @@ const StoreDetails = ()=>{
     useEffect(()=>{
         if(id){
             GetAuthData().then((user)=>{
+                console.log({user});
                 getStoreDetails({key: user.data.x_access_token,Id:id}).then((actDetails)=>{
                     setAccount({isLoaded:true,data:actDetails})
                 }).catch((actErr)=>{
