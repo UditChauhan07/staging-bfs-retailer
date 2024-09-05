@@ -22,6 +22,9 @@ function TrackingStatus({ data,onClose=null}) {
                                 <div className={Styles.Boxwhite}>
                                     <h1>{data?.ProductCount} <span>Products</span></h1>
                                 </div>
+                            </div>
+                        </div>
+
 
                         <div className={Styles.ProtuctInnerBoxPara}>
                             <div className={Styles.ProtuctInnerBoxInner}>
@@ -39,21 +42,20 @@ function TrackingStatus({ data,onClose=null}) {
 
                             </div>
 
-                            <div className={Styles.ShippedBar}>
-                                <h3>Tracking Status :  <span>{data.Status__c ? data.Status__c : 'Not Shipped'}</span></h3>
-                                <div className={Styles.BtnGroup}>
-                                    {/* button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
-                                    <button type="submit" donClick={onClose} >CANCEL</button>
-                                </div>
+                        </div>
 
-                            </div>
+                    </div>
 
                     <div className={Styles.ShippedBar}>
                         <h3>Tracking Status :  <span>{data.Status__c?data.Status__c: 'Not Shipped'}</span></h3>
                         <div className={Styles.BtnGroup}>
                         {/* button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
+                            <button type="submit" onClick={onClose} >CANCEL</button>
                         </div>
-                    </section>
+
+                    </div>
+
+
                 </div>
             </section>
         </div>
