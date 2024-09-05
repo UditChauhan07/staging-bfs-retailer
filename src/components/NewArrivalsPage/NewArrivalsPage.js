@@ -107,15 +107,13 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       setLoaded(false)
     }, 500);
   }, [month, selectBrand, productList, brand]);
-  // console.log(filterData,"isEmpty")
-  // ................
   const [imageLoading, setImageLoading] = useState({});
   const handleImageLoad = (imageId) => {
     setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
   };
 
-
   if (isLoaded) return <Loading height={"70vh"} />
+
   return (
     <>
     <ModalPage

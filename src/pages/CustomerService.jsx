@@ -157,6 +157,7 @@ const CustomerService = () => {
                   if (files.length > 0) {
                     setIsDisabled(false);
                     uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
+                      setIsDisabled(false)
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }
