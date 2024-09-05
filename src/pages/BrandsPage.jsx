@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BrandCard from "../components/BrandCard";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { useManufacturer } from "../api/useManufacturer";
-import Loading from "../components/Loading";
 import { useNavigate } from "react-router";
-import Layout from "../components/Layout/Layout";
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getOrderProduct, getRetailerBrands } from "../lib/store";
-import { CloseButton, EmailIcon } from "../lib/svg";
+import { GetAuthData, getRetailerBrands } from "../lib/store";
+import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -38,7 +36,6 @@ const defaultImage = "dummy.png";
 
 const BrandsPage = () => {
   const [manufacturers, setManufacturers] = useState({ isLoading: false, data: [] });
-  // const [highestRetailers, setHighestRetailers] = useState(true);
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [userData, setUserData] = useState({});
@@ -54,13 +51,15 @@ const BrandsPage = () => {
     GetAuthData()
       .then((user) => {
         setUserData(user.data);
-        getRetailerBrands({ rawData: { accountId: user?.data?.accountId, key: user?.data?.x_access_token } })
-          .then((prodcut) => {
-            setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
-          })
-          .catch((getProductError) => {
-            console.log({ getProductError });
-          });
+        if (user?.data?.accountIds.length == 1) {
+          getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } })
+            .then((prodcut) => {
+              setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
+            })
+            .catch((getProductError) => {
+              console.log({ getProductError });
+            });
+        }
       })
       .catch((err) => {
         console.log({ err });
@@ -109,9 +108,8 @@ const BrandsPage = () => {
     // ..............
     setFilteredPageData(newValues);
   }, [searchBy, manufacturers, sortBy]);
-  console.log({ filteredPageData });
 
-  
+
   return (
     <>
       <AppLayout
@@ -141,7 +139,7 @@ const BrandsPage = () => {
               ]}
               onChange={(value) => {
                 setSortBy(value);
-               
+
               }}
             />
 
@@ -155,14 +153,14 @@ const BrandsPage = () => {
                 setLabel("sortBy")
               }}
             >
-                            <CloseButton crossFill={'#fff'} height={20} width={20} />
-              <small style={{ fontSize: '6px',letterSpacing: '0.5px',textTransform:'uppercase'}}>clear</small>
+              <CloseButton crossFill={'#fff'} height={20} width={20} />
+              <small style={{ fontSize: '6px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>clear</small>
             </button>
           </>
         }
       >
         {!manufacturers.isLoading ? (
-          <Loading height={"70vh"} />
+          <LoaderV3 text={"Loading Brands Details"} />
         ) : (
           <div>
             <div

@@ -3,8 +3,10 @@ import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProductDetails from "../../pages/productDetails";
 import { hexabrand, hexabrandText } from "../../lib/store";
+import { useNavigate } from "react-router-dom";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function LaunchCalendar({ productList, selectBrand, brand, month }) {
+  const navigate = useNavigate();
   const [isEmpty, setIsEmpty] = useState(false);
   // useEffect(() => {
   //   let temp = true;
@@ -79,7 +81,6 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
     }
 
   }, [month, selectBrand, productList, brand]);
-
   return (
     <div id="Calendar">
       <div className="container">
@@ -138,8 +139,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="launchBrand">
-                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} />
+                                  <div className="launchBrand" onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>
+                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} style={{cursor:'pointer'}}/>
                                   </div>
                                 </div>
                               </>

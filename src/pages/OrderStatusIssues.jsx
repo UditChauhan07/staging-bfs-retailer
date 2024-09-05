@@ -2,10 +2,11 @@ import CustomerSupportLayout from "../components/customerSupportLayout"
 import React, { useEffect, useMemo, useState } from "react";
 import Filters from "../components/OrderList/Filters";
 import Styles from "../components/OrderList/style.module.css";
-import { GetAuthData, getOrderList } from "../lib/store";
+import { GetAuthData, getAllAccountOrders, getOrderList } from "../lib/store";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
+import LoaderV3 from "../components/loader/v3";
 
 let PageSize = 5;
 
@@ -87,12 +88,9 @@ const OrderStatusIssues = ()=>{
       setLoaded(false);
       GetAuthData()
         .then((response) => {
-          getOrderList({
-            user: {
-              key: response.data.x_access_token,
-              accountId: false ? "00530000005AdvsAAC" : response.data.accountId,
-            },
-            month: filterValue.month,
+          getAllAccountOrders({
+            key: response.data.x_access_token,
+            accountIds: JSON.stringify(response.data.accountIds)
           })
             .then((order) => {
               console.log({order});
@@ -133,7 +131,7 @@ const OrderStatusIssues = ()=>{
         }
       >
         {!loaded ? (
-          <Loading />
+          <LoaderV3 text={"Loading Order List"} />
         ) : (
           <div>
             <section>

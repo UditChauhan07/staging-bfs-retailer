@@ -3,21 +3,18 @@ import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
-import Loading from "../components/Loading";
-import { GetAuthData, getMarketingCalendar, getRetailerBrands } from "../lib/store";
+import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
+import LoaderV3 from "../components/loader/v3";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
-
-  let PageSize = 10;
-  const [currentPage, setCurrentPage] = useState(1);
   const [productList, setProductList] = useState([])
-
   const [month, setMonth] = useState("");
+
   let months = [
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
@@ -46,15 +43,15 @@ const NewArrivals = () => {
   }, [])
   useEffect(() => {
     GetAuthData().then((user) => {
-      let rawData = { accountId: user.data.accountId, key: user.data.x_access_token }
-      getRetailerBrands({ rawData }).then((resManu) => {
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
           productRes.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
               element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
-              return element
+              return element;
+
             })
             return month;
           })
@@ -68,13 +65,7 @@ const NewArrivals = () => {
       console.log({ error });
     })
   }, [selectBrand, month, isLoaded])
-  // const[forceUpdate,setForceUpdate]=useState(false)
-  // const handleBrandFilter = (v) => onChange("brands", v);
-  //  const handleclick=()=>{
-  //   setSelectBrand(null)
-  //   setMonth(null)
-  //  }
-  // ...............................
+ 
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();
     setMonth(months[currentMonthIndex].value);
@@ -82,57 +73,37 @@ const NewArrivals = () => {
     setIsEmpty(false)
   }
 
-  
-
-  const generatePdf = () => {
-    const element = document.getElementById('CalenerContainer'); // The HTML element you want to convert
-    // element.style.padding = "10px"
-    let filename = `Marketing Calender `;
-    if (brand) {
-      filename = brand + " "
-    }
-    filename += new Date();
-    const opt = {
-      margin: 1,
-      filename: filename + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-  };
-
-  const generateXLSX = () => {
-    const newValues = productList?.map((months) => {
-      const filterData = months.content?.filter((item) => {
-        // let match = item.OCDDate.split("/")
-        // console.log(match)
-        if (month) {
-          if (brand) {
-            if (brand == item.brand) {
-              return item.date.toLowerCase().includes(month.toLowerCase())
-            }
-          } else {
-            return item.date.toLowerCase().includes(month.toLowerCase())
-          }
-          // return match.includes(month.toUpperCase() )
-        } else {
-          if (brand) {
-            if (brand == item.brand) {
-              return true;
-            }
-          } else {
-            return true;
-          }
-          // If month is not provided, return all items
-        }
-      });
-      // Create a new object with filtered content
-      return { ...months, content: filterData };
-    });
-    let fileData = exportToExcel({ list: newValues });
-  }
+  //
+  // const generateXLSX = () => {
+  //   const newValues = productList?.map((months) => {
+  //     const filterData = months.content?.filter((item) => {
+  //       // let match = item.OCDDate.split("/")
+  //       // console.log(match)
+  //       if (month) {
+  //         if (brand) {
+  //           if (brand == item.brand) {
+  //             return item.date.toLowerCase().includes(month.toLowerCase())
+  //           }
+  //         } else {
+  //           return item.date.toLowerCase().includes(month.toLowerCase())
+  //         }
+  //         // return match.includes(month.toUpperCase() )
+  //       } else {
+  //         if (brand) {
+  //           if (brand == item.brand) {
+  //             return true;
+  //           }
+  //         } else {
+  //           return true;
+  //         }
+  //         // If month is not provided, return all items
+  //       }
+  //     });
+  //     // Create a new object with filtered content
+  //     return { ...months, content: filterData };
+  //   });
+  //   let fileData = exportToExcel({ list: newValues });
+  // }
 
   const csvData = ({ data }) => {
     let finalData = [];
@@ -224,7 +195,7 @@ const NewArrivals = () => {
       {isLoaded ? (
         <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
       ) : (
-        <Loading height={"70vh"} />
+        <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}
 
     </AppLayout>

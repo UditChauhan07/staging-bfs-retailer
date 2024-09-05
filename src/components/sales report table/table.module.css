@@ -54,13 +54,13 @@
 }
 .stickySecondColumn {
   position: sticky;
-  left: 170px;
+  left: 150px;
   z-index: 2;
   max-width: 170px !important;
 }
 .stickySecondColumnHeading {
   position: sticky;
-  left: 170px;
+  left: 150px;
   top: 0%;
   z-index: 5;
 }

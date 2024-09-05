@@ -10,6 +10,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import Styles from "./index.module.css";
 import { GetAuthData, getRetailerBrands, sortArrayHandler } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -20,32 +21,46 @@ const ComparisonReport = () => {
   const initialValues = {
     month: date.getMonth() + 1,
     year: date.getFullYear(),
-    AccountId__c: null
+    accountIds: null
   };
   const [filter, setFilter] = useState(initialValues);
   const originalApiData = useComparisonReport();
   const [apiData, setApiData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [userData,setUserData] = useState({});
-  sortArrayHandler(apiData?.data||[],g=>g.ManufacturerName__c)
+  const [userData, setUserData] = useState({});
+  const [accountList, setAccountList] = useState([]);
+  sortArrayHandler(apiData?.data || [], g => g.ManufacturerName__c)
   //csv Data
   let csvData = [];
   if (apiData?.data?.length) {
+    let totalRetail = 0;
+    let totalWhole = 0
     apiData?.data?.map((ele) => {
+      totalRetail += ele.retail_revenue__c
+      totalWhole += ele.Whole_Sales_Amount
       return csvData.push({
+        "Store Name": ele.Retail_Store_Name__c,
         Brand: ele.ManufacturerName__c,
-        "Estee Lauder Number": ele.Estee_Lauder_Number__c,
+        "Estee Lauder Number": ele.Estee_Lauder_Number__c ?? "NA",
         "Sales Rep": ele.Sales_Rep__c,
-        "Retail Revenue": `$${Number(ele.retail_revenue__c).toFixed(2)}`,
-        "Wholesale Amount": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
+        "Purchase": `$${Number(ele.Whole_Sales_Amount).toFixed(2)}`,
+        "Sale": ele.retail_revenue__c ? `$${Number(ele.retail_revenue__c).toFixed(2)}` : 'NA',
       });
     });
+    csvData.push({
+      "Store Name": "Total",
+      "Sale": totalRetail ? `$${Number(totalRetail).toFixed(2)}` : 'NA',
+      "Purchase": `$${Number(totalWhole).toFixed(2)}`,
+    })
   }
   useEffect(() => {
     GetAuthData().then((user) => {
       setUserData(user)
-      filter.AccountId__c = user.data.accountId
-      sendApiCall();
+      setAccountList(user.data.accountList)
+      filter.accountIds = JSON.stringify(user?.data?.accountIds)
+      if (filter.accountIds) {
+        sendApiCall();
+      }
     }).catch((userErr) => {
       console.log({ userErr });
     })
@@ -64,10 +79,10 @@ const ComparisonReport = () => {
   };
   const resetFilter = async () => {
     setIsLoading(true);
-      initialValues.AccountId__c = userData?.data?.accountId
-      const result = await originalApiData.fetchComparisonReportAPI(initialValues);
-    setApiData(result);
     setFilter(() => initialValues);
+    initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
+    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+    setApiData(result);
     setIsLoading(false);
   };
   const sendApiCall = async () => {
@@ -76,21 +91,30 @@ const ComparisonReport = () => {
     setApiData(result);
     setIsLoading(false);
   };
+  const { accountIds } = filter
   return (
     <AppLayout
       filterNodes={
         <>
-          {/* <FilterItem
-            minWidth="220px"
-            label="All Manufacturers"
-            name="All-Manufacturers"
-            value={filter.ManufacturerId__c}
-            options={manufacturers?.map((manufacturer) => ({
-              label: manufacturer.Name,
-              value: manufacturer.Id,
-            }))}
-            onChange={(value) => setFilter((prev) => ({ ...prev, ManufacturerId__c: value }))}
-          /> */}
+          {accountList?.length > 1 &&
+            <FilterItem
+              minWidth="220px"
+              label="All Store"
+              value={JSON.parse(accountIds)?.length == 1 ? JSON.parse(accountIds)[0] : null}
+
+              options={[...accountList.map((month, i) => ({
+                label: month.Name,
+                value: month.Id,
+              })), { label: 'All Accounts', value: null }]}
+              onChange={(value) => {
+                if (value) {
+                  setFilter({ ...filter, accountIds: JSON.stringify([value]) })
+                } else {
+                  resetFilter();
+                }
+              }}
+              name={"Account-menu"}
+            />}
           <FilterItem
             minWidth="220px"
             label="Months"
@@ -154,6 +178,14 @@ const ComparisonReport = () => {
           }}
         />
       )}
+      <div className={Styles.inorderflex}>
+        <div>
+          <h2>
+            Comparison Report
+          </h2>
+        </div>
+        <div></div>
+      </div>
       {!isLoading ? <ComparisonReportTable comparisonData={apiData} /> : <Loading height={"70vh"} />}
     </AppLayout>
   );

@@ -5,12 +5,12 @@ import { useAuth } from "../context/UserContext";
 const useSalesReport = () => {
   const { user, isUserLoading } = useAuth();
   return {
-    salesReportData: async ({ yearFor }) => {
-      let reportUrl = originAPi+"/uBUAQkaqEISRPAv/R11RNaniUMbA3qn";
+    salesReportData: async ({ yearFor,accountIds }) => {
+      let reportUrl = originAPi+"/retailerv2/R11RNaniUMbA3qn";
       const response = await axios.post(
         reportUrl,
         {
-          accountId:user?.data?.accountId,
+          accountIds,
           key:user?.data?.x_access_token,
           yearFor: yearFor
         }
