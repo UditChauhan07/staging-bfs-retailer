@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Styles from "./index.module.css";
-import { ShareDrive, getProductImageAll } from "../../lib/store";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
@@ -8,8 +7,10 @@ import { useBag } from "../../context/BagContext";
 import ModalPage from "../Modal UI";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { DeleteIcon } from "../../lib/svg";
+import { useNavigate } from "react-router-dom";
 
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
+  const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -122,7 +123,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
           {data.map((product) => {
             let listPrice = Number(product?.usdRetail__c?.replace("$", "").replace(",", ""));
             let salesPrice = 0;
-            let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin;
+            let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0;
             let inputPrice = Object.values(orders)?.find(
               (order) =>
                 order.product.Id === product?.Id &&
@@ -131,12 +132,12 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             )?.product?.salesPrice;
             if (product?.Category__c === "TESTER") {
               discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin;
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin||0) / 100) * +listPrice).toFixed(2);
             } else if (product?.Category__c === "Samples") {
               discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample;
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample||0) / 100) * +listPrice).toFixed(2);
             } else {
-              salesPrice = (+listPrice - (accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin / 100) * +listPrice).toFixed(2);
+              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0) / 100) * +listPrice).toFixed(2);
             }
             return (
               <div className={Styles.cardElement}>
@@ -174,14 +175,14 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                       setBrand(product.ManufacturerId__c);
                       setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
                     }}
-                    src={productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "/assets/images/dummy.png"}
+                    src={product.ProductImage?product.ProductImage:productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
                   />
                   </div>
                   </div>
                 ) : (
                   <LoaderV2 />
                 )}
-                <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                <p className={Styles.brandHolder} onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>{product?.ManufacturerName__c}</p>
                 <p
                   className={Styles.titleHolder}
                   onClick={() => {
@@ -194,7 +195,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                 <p className={Styles.priceHolder}>
-                  <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>&nbsp;
+                  
+                {salesPrice!=listPrice&&<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>}
                   {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
                 </p>
                 {orders[product?.Id] ? (

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { GetAuthData, getSupportDetails } from "../lib/store";
 import Loading from "../components/Loading";
 import AppLayout from "../components/AppLayout";
+import LoaderV3 from "../components/loader/v3";
 
 const CustomerSupportDetails = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const CustomerSupportDetails = () => {
       });
   }, [deatilsId,reset]);
   if (!deatilsId || deatilsId == "") return navigate("/customer-support");
-  if (!isLoaded) return <Loading height={'80vh'}/>;
+  if (!isLoaded) return <AppLayout><LoaderV3 text={"Loading Support Details"}/></AppLayout>;
   return (
     <AppLayout>
       <FullQuearyDetail data={detailsData} setRest={setRest}/>

@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, getRetailerBrands, getTargetReportAll } from "../../lib/store";
-import Loading from "../../components/Loading";
-import { useManufacturer } from "../../api/useManufacturer";
+import { GetAuthData, getAllAccountBrand, getTargetReportAll } from "../../lib/store";
 import { FilterItem } from "../../components/FilterItem";
-import FilterSearch from "../../components/FilterSearch";
 import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -13,6 +10,7 @@ import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { useLocation } from "react-router-dom";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import LoaderV3 from "../../components/loader/v3";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -30,10 +28,13 @@ const TargetReport = () => {
   const [searchSaleBy, setSearchSaleBy] = useState("");
   const [salesRepList, setSalesRepList] = useState([]);
   const [exportToExcelState, setExportToExcelState] = useState(false);
+  const [accountList, setAccountList] = useState([]);
+  const [accountIds, setAccountIds] = useState(null);
 
   useEffect(() => {
     GetAuthData()
       .then((user) => {
+        setAccountList(user.data.accountList)
         getTargetReportAll({ user, year, preOrder })
           .then((targetRes) => {
             console.log({ targetRes });
@@ -54,8 +55,7 @@ const TargetReport = () => {
           .catch((targetErr) => {
             console.error({ targetErr });
           });
-        let rawData = { accountId: user.data.accountId, key: user.data.x_access_token };
-        getRetailerBrands({ rawData })
+          getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })
           .then((resManu) => {
             setManufacturerData(resManu);
           })
@@ -104,7 +104,7 @@ const TargetReport = () => {
   const allOrdersEmpty = filteredTargetData.every((item) => item.Orders?.length <= 0);
   const exportToExcel2 = () => {
     setExportToExcelState(false);
-    
+
     const totalRow = {
       SalesRepName: "TOTAL",
       AccountName: "",
@@ -157,12 +157,12 @@ const TargetReport = () => {
       DecemberSale: 0,
       DecemberDiff: 0,
 
-      
+
       TotalTarget: 0,
       TotalSale: 0,
       TotalDiff: 0,
     };
-  
+
     filteredTargetData.forEach(element => {
       totalRow.JanuaryTarget += parseFloat(element.January.target);
       totalRow.JanuarySale += parseFloat(element.January.sale);
@@ -179,7 +179,7 @@ const TargetReport = () => {
       totalRow.AprilTarget += parseFloat(element.April.target);
       totalRow.AprilSale += parseFloat(element.April.sale);
       totalRow.AprilDiff += parseFloat(element.April.diff);
-      
+
       totalRow.MayTarget += parseFloat(element.May.target);
       totalRow.MaySale += parseFloat(element.May.sale);
       totalRow.MayDiff += parseFloat(element.May.diff);
@@ -187,7 +187,7 @@ const TargetReport = () => {
       totalRow.JuneTarget += parseFloat(element.June.target);
       totalRow.JuneSale += parseFloat(element.June.sale);
       totalRow.JuneDiff += parseFloat(element.June.diff);
-      
+
       totalRow.JulyTarget += parseFloat(element.July.target);
       totalRow.JulySale += parseFloat(element.July.sale);
       totalRow.JulyDiff += parseFloat(element.July.diff);
@@ -195,7 +195,7 @@ const TargetReport = () => {
       totalRow.AugustTarget += parseFloat(element.August.target);
       totalRow.AugustSale += parseFloat(element.August.sale);
       totalRow.AugustDiff += parseFloat(element.August.diff);
-      
+
       totalRow.SeptemberTarget += parseFloat(element.September.target);
       totalRow.SeptemberSale += parseFloat(element.September.sale);
       totalRow.SeptemberDiff += parseFloat(element.September.diff);
@@ -212,26 +212,26 @@ const TargetReport = () => {
       totalRow.DecemberSale += parseFloat(element.December.sale);
       totalRow.DecemberDiff += parseFloat(element.December.diff);
 
-    
+
       // Repeat the same for other months and total columns
       // ...
       totalRow.TotalTarget += parseFloat(element.Total.target);
       totalRow.TotalSale += parseFloat(element.Total.sale);
       totalRow.TotalDiff += parseFloat(element.Total.diff);
     });
-  
-   const dataWithTotalRow = [...csvData(), totalRow];
-  const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
-  const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-  const data = new Blob([excelBuffer], { type: fileType });
-  
+
+    const dataWithTotalRow = [...csvData(), totalRow];
+    const ws = XLSX.utils.json_to_sheet(dataWithTotalRow);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+
     let title = target.ownerPermission ? `${searchSaleBy ? searchSaleBy + "`s" : "All"} Target Report` : "Target Report";
     if (manufacturerFilter) {
       title += " for " + getManufactureName(manufacturerFilter);
     }
     title += ` ${new Date().toDateString()}`;
-  
+
     FileSaver.saveAs(data, title + fileExtension);
   };
 
@@ -241,58 +241,58 @@ const TargetReport = () => {
       filteredTargetData.map((target) => {
         let temp = {
           SalesRepName: target.SalesRepName,
-          AccountName: target.AccountName,
+          Store: target.AccountName,
           ManufacturerName: target.ManufacturerName,
           JanuaryTarget: target.January.target,
-          JanuarySale: target.January.sale,
+          JanuaryPurchase: target.January.sale,
           JanuaryDiff: target.January.diff,
 
           FebruaryTarget: target.February.target,
-          FebruarySale: target.February.sale,
+          FebruaryPurchase: target.February.sale,
           FebruaryDiff: target.February.diff,
 
           MarchTarget: target.March.target,
-          MarchSale: target.March.sale,
+          MarchPurchase: target.March.sale,
           MarchDiff: target.March.diff,
 
           AprilTarget: target.April.target,
-          AprilSale: target.April.sale,
+          AprilPurchase: target.April.sale,
           AprilDiff: target.April.diff,
 
           MayTarget: target.May.target,
-          MaySale: target.May.sale,
+          MayPurchase: target.May.sale,
           MayDiff: target.May.diff,
 
           JuneTarget: target.June.target,
-          JuneSale: target.June.sale,
+          JunePurchase: target.June.sale,
           JuneDiff: target.June.diff,
 
           JulyTarget: target.July.target,
-          JulySale: target.July.sale,
+          JulyPurchase: target.July.sale,
           JulyDiff: target.July.diff,
 
           AugustTarget: target.August.target,
-          AugustSale: target.August.sale,
+          AugustPurchase: target.August.sale,
           AugustDiff: target.August.diff,
 
           SeptemberTarget: target.September.target,
-          SeptemberSale: target.September.sale,
+          SeptemberPurchase: target.September.sale,
           SeptemberDiff: target.September.diff,
 
           OctoberTarget: target.October.target,
-          OctoberSale: target.October.sale,
+          OctoberPurchase: target.October.sale,
           OctoberDiff: target.October.diff,
 
           NovemberTarget: target.November.target,
-          NovemberSale: target.November.sale,
+          NovemberPurchase: target.November.sale,
           NovemberDiff: target.November.diff,
 
           DecemberTarget: target.December.target,
-          DecemberSale: target.December.sale,
+          DecemberPurchase: target.December.sale,
           DecemberDiff: target.December.diff,
 
           TotalTarget: target.Total.target,
-          TotalSale: target.Total.sale,
+          TotalPurchase: target.Total.sale,
           TotalDiff: target.Total.diff,
         };
         finalData.push(temp);
@@ -397,7 +397,7 @@ const TargetReport = () => {
     setIsLoaded(false);
     GetAuthData()
       .then((user) => {
-        getTargetReportAll({ user, year, preOrder })
+        getTargetReportAll({ user, year, preOrder,accountIds })
           .then((targetRes) => {
             if (targetRes) {
               setIsLoaded(true);
@@ -429,14 +429,33 @@ const TargetReport = () => {
     { label: currentDate.getFullYear(), value: currentDate.getFullYear() },
     { label: currentDate.getFullYear() - 1, value: currentDate.getFullYear() - 1 },
   ];
-  const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
-    return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   return (
     <AppLayout
       filterNodes={
         <div className="d-flex justify-content-between m-auto" style={{ width: "99%" }}>
-          <div className="d-flex justify-content-start col-3 gap-4">
+          <div className="d-flex justify-content-start col-6 gap-4">
+            {accountList?.length > 1 &&
+              <FilterItem
+                minWidth="220px"
+                label="All Store"
+                value={(accountIds&&JSON.parse(accountIds)?.length == 1) ? JSON.parse(accountIds)[0] : null}
+
+                options={[...accountList.map((month, i) => ({
+                  label: month.Name,
+                  value: month.Id,
+                })), { label: 'All Accounts', value: null }]}
+                onChange={(value) => {
+                  if (value) {
+                    setAccountIds(JSON.stringify([value]))
+                  } else {
+                    setAccountIds()
+                  }
+                }}
+                name={"Account-menu"}
+              />}
             <FilterItem
               minWidth="200px"
               label="Status"
@@ -460,11 +479,10 @@ const TargetReport = () => {
               <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>search</small>
             </button>
           </div>
-          <div className="d-flex justify-content-around col-1"></div>
-          <div className="d-flex justify-content-around col-2">
+          <div className="d-flex justify-content-start col-1">
             <hr className={Styles.breakHolder} />
           </div>
-          <div className="d-flex justify-content-end col-6 gap-4">
+          <div className="d-flex justify-content-end col-5 gap-4">
             {target.ownerPermission && (
               <FilterItem
                 minWidth="220px"
@@ -527,7 +545,7 @@ const TargetReport = () => {
         />
       )}
       {!isLoaded ? (
-        <Loading />
+        <LoaderV3 text={"Loading Target Report, Please wait..."} />
       ) : (
         <section>
           {true && (
@@ -550,7 +568,7 @@ const TargetReport = () => {
                       Sales Rep
                     </th>
                     <th className={`${Styles.th} ${Styles.stickySecondColumnHeading}`} style={{ minWidth: "150px" }}>
-                      Account
+                      Store
                     </th>
                     <th className={`${Styles.th} ${Styles.stickyThirdColumnHeading}`} style={{ minWidth: "200px" }}>
                       Manufacturer
@@ -558,8 +576,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jan Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Jan Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Jan Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jan Diff
@@ -568,8 +586,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Feb Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Feb Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Feb Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Feb Diff
@@ -578,8 +596,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Mar Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Mar Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Mar Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Mar Diff
@@ -588,8 +606,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Apr Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Apr Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Apr Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Apr Diff
@@ -598,8 +616,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       May Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      May Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "155px" }}>
+                      May Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       May Diff
@@ -608,8 +626,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jun Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Jun Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Jun Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jun Diff
@@ -618,8 +636,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jul Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Jul Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Jul Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Jul Diff
@@ -628,8 +646,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Aug Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Aug Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Aug Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Aug Diff
@@ -638,8 +656,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Sep Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Sep Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Sep Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Sep Diff
@@ -648,8 +666,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Oct Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Oct Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Oct Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Oct Diff
@@ -658,8 +676,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Nov Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Nov Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Nov Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Nov Diff
@@ -668,8 +686,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Dec Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
-                      Dec Sales
+                    <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "150px" }}>
+                      Dec Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyMonth}`} style={{ minWidth: "125px" }}>
                       Dec Diff
@@ -678,8 +696,8 @@ const TargetReport = () => {
                     <th className={`${Styles.month} ${Styles.stickyThirdLastColumnHeading}`} style={{ minWidth: "150px" }}>
                       Yearly Target
                     </th>
-                    <th className={`${Styles.month} ${Styles.stickySecondLastColumnHeading}`} style={{ minWidth: "150px" }}>
-                      Yearly Sales
+                    <th className={`${Styles.month} ${Styles.stickySecondLastColumnHeading}`} style={{ minWidth: "200px" }}>
+                      Yearly Purchase
                     </th>
                     <th className={`${Styles.month} ${Styles.stickyLastColumnHeading}`} style={{ minWidth: "150px" }}>
                       Yearly Diff

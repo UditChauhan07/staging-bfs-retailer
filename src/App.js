@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SalesReport from "./reports/sales_report/SalesReport";
-import NewnessReport from "./reports/newness/NewnessReport";
 import ComparisonReport from "./reports/comparison/ComparisonReport";
 import "../node_modules/bootstrap/dist/js/bootstrap";
 import Login from "./pages/Login";
@@ -9,7 +8,6 @@ import Testing from "./components/Testing";
 import TopProducts from "./pages/TopProducts";
 import Logout from "./components/Logout";
 import { UserProvider } from "./context/UserContext";
-import BrandsPage from "./pages/BrandsPage";
 import WholesaleInquiry from "./pages/WholesaleInquiry"
 import CustomerCare from "./pages/CustomerCare";
 import AboutUs from "./pages/AboutUs";
@@ -30,10 +28,14 @@ import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
-import TargetReport from "./reports/targetReport";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
+import OrderInit from "./pages/OrderInit";
+import TargetRollOver from "./reports/targetRollOver";
+import StoreDetails from "./pages/StoreDetails";
+import BrandDetails from "./pages/BrandDetails";
+import HelpSection from "./pages/HelpSection";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -50,7 +52,7 @@ function App() {
             <Route path="/testing" element={<Testing />}></Route>
             <Route path="/top-products" element={<TopProducts />}></Route>
             <Route path="/my-bag" element={<MyBag />}></Route>
-            <Route path="/order" element={<BrandsPage />}></Route>
+            <Route path="/order" element={<OrderInit />}></Route>
             <Route path="/orders" element={<Product />}></Route>
             <Route path="/order-list" element={<OrderListPage />}></Route>
             <Route path="/orderDetails" element={<MyBagOrder />}></Route>
@@ -71,10 +73,14 @@ function App() {
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
-            <Route path="/Target-Report" element={<TargetReport />}></Route>
+            {/* <Route path="/Target-Report" element={<TargetReport />}></Route> */}
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
+            <Route path="/Target-Report" element={<TargetRollOver />}></Route>
+            <Route path="/Help-Section" element={<HelpSection/>}></Route>
             <Route path="/logout" element={<Logout />}></Route>
+            <Route path="/store/:id" element={<StoreDetails/>}/>
+            <Route path="/Brand/:id" element={<BrandDetails/>}/>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>

@@ -17,21 +17,22 @@ function MyBagFinal() {
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState(POGenerator());
   const [buttonActive, setButtonActive] = useState(false);
-  const { addOrder, orderQuantity, deleteOrder, orders, setOrders,setOrderProductPrice } = useBag();
+  const { addOrder, orderQuantity, deleteOrder, orders, setOrders, setOrderProductPrice } = useBag();
   const [bagValue, setBagValue] = useState(fetchBeg());
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
   const [isPOEditable, setIsPOEditable] = useState(false);
   const [PONumberFilled, setPONumberFilled] = useState(true);
-  const [clearConfim,setClearConfim] = useState(false)
-  const [ productDetailId, setProductDetailId] = useState(null)
+  const [clearConfim, setClearConfim] = useState(false)
+  const [productDetailId, setProductDetailId] = useState(null)
   const [confirm, setConfirm] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
 
   const handleNameChange = (event) => {
-      const limit = 20;
-      setLimitInput(event.target.value.slice(0, limit));
-    };
+    const limit = 20;
+    setLimitInput(event.target.value.slice(0, limit));
+  };
   useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
@@ -67,7 +68,7 @@ function MyBagFinal() {
           })
           getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
             if (res) {
-              console.log({res});
+              console.log({ res });
               if (data[bagValue.Manufacturer.id]) {
                 data[bagValue.Manufacturer.id] = { ...data[bagValue.Manufacturer.id], ...res }
               } else {
@@ -89,74 +90,76 @@ function MyBagFinal() {
     }
   }, [total, bagValue]);
 
-  const onPriceChangeHander = (product,price='0')=>{
-    if(price == '') price = 0;
-    setOrderProductPrice(product,price).then((res)=>{
-      if(res){
+  const onPriceChangeHander = (product, price = '0') => {
+    if (price == '') price = 0;
+    setOrderProductPrice(product, price).then((res) => {
+      if (res) {
         setBagValue(fetchDataFromBag());
       }
     })
   }
-
   const orderPlaceHandler = () => {
-    if(localStorage.getItem("Sales_Rep__c")){
-    let fetchBag = fetchBeg();
-    setIsOrderPlaced(1);
-    GetAuthData()
-      .then((user) => {
-        // let bagValue = fetchBeg()
-        if (fetchBag) {
-          // setButtonActive(true)
-          let list = [];
-          let orderType = "Wholesale Numbers";
-          let productLists = Object.values(fetchBag.orderList);
-          if (productLists.length) {
-            productLists.map((product) => {
-              if (product.product.Category__c == "PREORDER") orderType = "Pre Order";
-              let temp = {
-                ProductCode: product.product.ProductCode,
-                qty: product.quantity,
-                price: product.product?.salesPrice,
-                discount: product.product?.discount,
-              };
-              list.push(temp);
-            });
+
+    if (localStorage.getItem("Sales_Rep__c")) {
+      let fetchBag = fetchBeg();
+      setIsOrderPlaced(1);
+      setIsDisabled(true)
+      GetAuthData()
+        .then((user) => {
+          // let bagValue = fetchBeg()
+          if (fetchBag) {
+            // setButtonActive(true)
+            let list = [];
+            let orderType = "Wholesale Numbers";
+            let productLists = Object.values(fetchBag.orderList);
+            if (productLists.length) {
+              productLists.map((product) => {
+                if (product.product.Category__c == "PREORDER") orderType = "Pre Order";
+                let temp = {
+                  ProductCode: product.product.ProductCode,
+                  qty: product.quantity,
+                  price: product.product?.salesPrice,
+                  discount: product.product?.discount,
+                };
+                list.push(temp);
+              });
+            }
+            let begToOrder = {
+              AccountId: fetchBag?.Account?.id,
+              Name: fetchBag?.Account?.name,
+              ManufacturerId__c: fetchBag?.Manufacturer?.id,
+              PONumber: PONumber,
+              desc: orderDesc,
+              SalesRepId: localStorage.getItem("Sales_Rep__c"),
+              Type: orderType,
+              ShippingCity: fetchBag?.Account?.address?.city,
+              ShippingStreet: fetchBag?.Account?.address?.street,
+              ShippingState: fetchBag?.Account?.address?.state,
+              ShippingCountry: fetchBag?.Account?.address?.country,
+              ShippingZip: fetchBag?.Account?.address?.postalCode,
+              list,
+              key: user.data.x_access_token,
+              shippingMethod: fetchBag.Account.shippingMethod
+            };
+            OrderPlaced({ order: begToOrder })
+              .then((response) => {
+                if (response) {
+                  fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
+                  localStorage.removeItem("orders");
+                  setIsDisabled(false)
+                  navigate("/order-list");
+                  setIsOrderPlaced(2);
+                }
+              })
+              .catch((err) => {
+                console.error({ err });
+              });
           }
-          let begToOrder = {
-            AccountId: fetchBag?.Account?.id,
-            Name: fetchBag?.Account?.name,
-            ManufacturerId__c: fetchBag?.Manufacturer?.id,
-            PONumber: PONumber,
-            desc: orderDesc,
-            SalesRepId: localStorage.getItem("Sales_Rep__c"),
-            Type: orderType,
-            ShippingCity:fetchBag?.Account?.address?.city,
-            ShippingStreet:fetchBag?.Account?.address?.street,
-            ShippingState:fetchBag?.Account?.address?.state,
-            ShippingCountry:fetchBag?.Account?.address?.country,
-            ShippingZip:fetchBag?.Account?.address?.postalCode,
-            list,
-            key: user.data.x_access_token,
-            shippingMethod:fetchBag.Account.shippingMethod
-          };
-          OrderPlaced({ order: begToOrder })
-            .then((response) => {
-              if (response) {
-                fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
-                localStorage.removeItem("orders");
-                navigate("/order-list");
-                setIsOrderPlaced(2);
-              }
-            })
-            .catch((err) => {
-              console.error({ err });
-            });
-        }
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
-    }else{
+        })
+        .catch((error) => {
+          console.error({ error });
+        });
+    } else {
       alert("no sales rep.")
     }
   };
@@ -164,7 +167,7 @@ function MyBagFinal() {
     addOrder(ele.product, 0, ele.discount);
   };
 
-  const fetchDataFromBag = ()=>{
+  const fetchDataFromBag = () => {
     let orderStr = localStorage.getItem("orders");
     let orderDetails = {
       orderList: [],
@@ -191,7 +194,7 @@ function MyBagFinal() {
     }
     return orderDetails;
   }
-  const deleteBag= ()=>{
+  const deleteBag = () => {
     localStorage.removeItem("orders")
     window.location.reload();
   }
@@ -199,18 +202,18 @@ function MyBagFinal() {
   return (
     <div className="mt-4">
       <section>
-      <ModalPage
+        <ModalPage
           open={confirm || false}
           content={
             <div className="d-flex flex-column gap-3">
-              <h2 style={{textDecoration:'underline'}}>
+              <h2 style={{ textDecoration: 'underline' }}>
                 Confirm
               </h2>
               <p>
-                Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
+                Are you sure you want to generate a order?<br /> This action cannot be undone.
               </p>
               <div className="d-flex justify-content-around ">
-                <button className={Styles.btnHolder} onClick={orderPlaceHandler}>
+                <button className={Styles.btnHolder} onClick={orderPlaceHandler} disabled={isDisabled}>
                   Submit
                 </button>
                 <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>
@@ -223,30 +226,30 @@ function MyBagFinal() {
             setConfirm(false);
           }}
         />
-      {clearConfim ? (
-        <ModalPage
-          open
-          content={
-            <div className="d-flex flex-column gap-3">
-              <h2 className={`${Styles.warning} `}>Warning</h2>
-              <p className={`${Styles.warningContent} `}>
-                Are you Sure you want to clear bag?
-              </p>
-              <div className="d-flex justify-content-around ">
-                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={deleteBag}>
-                  Yes
-                </button>
-                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setClearConfim(false)}>
-                  Cancel
-                </button>
+        {clearConfim ? (
+          <ModalPage
+            open
+            content={
+              <div className="d-flex flex-column gap-3">
+                <h2 className={`${Styles.warning} `}>Warning</h2>
+                <p className={`${Styles.warningContent} `}>
+                  Are you Sure you want to clear bag?
+                </p>
+                <div className="d-flex justify-content-around ">
+                  <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={deleteBag}>
+                    Yes
+                  </button>
+                  <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setClearConfim(false)}>
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          }
-          onClose={() => {
-            setClearConfim(false);
-          }}
-        />
-      ) : null}
+            }
+            onClose={() => {
+              setClearConfim(false);
+            }}
+          />
+        ) : null}
         <div className="">
           <div>
             <div className={Styles.MyBagFinalTop}>
@@ -276,11 +279,11 @@ function MyBagFinal() {
                   {!isPOEditable ? (
                     <b> {buttonActive ? PONumber : "---"}</b>
                   ) : (
-                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }} 
-                    id="limit_input"
-                    name="limit_input"
-                    value={limitInput}
-                    onChange={handleNameChange}
+                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }}
+                      id="limit_input"
+                      name="limit_input"
+                      value={limitInput}
+                      onChange={handleNameChange}
                     />
                   )}
                 </h5>
@@ -305,28 +308,28 @@ function MyBagFinal() {
                         {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders")))?.length > 0 ? (
                           Object.values(JSON.parse(localStorage.getItem("orders")))?.map((ele) => {
                             // console.log(ele);
-                            total +=parseFloat(ele.product?.salesPrice*ele.quantity)
+                            total += parseFloat(ele.product?.salesPrice * ele.quantity)
                             return (
                               <div className={Styles.Mainbox}>
                                 <div className={Styles.Mainbox1M}>
-                                  <div className={Styles.Mainbox2} style={{cursor:'pointer'}}>
-                                  {
-                                      ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} />:!productImage.isLoaded ? <LoaderV2 /> :
+                                  <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
+                                    {
+                                      ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
                                         productImage.images?.[ele.product?.ProductCode] ?
                                           productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl ?
-                                            <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={()=>{setProductDetailId(ele?.product?.Id)}}/>
-                                            : <img src={productImage.images[ele.product?.ProductCode]} alt="img" width={25} onClick={()=>{setProductDetailId(ele?.product?.Id)}}/>
-                                          : <img src={Img1} alt="img" onClick={()=>{setProductDetailId(ele?.product?.Id)}}/>
+                                            <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
+                                            : <img src={productImage.images[ele.product?.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
+                                          : <img src={Img1} alt="img" onClick={() => { setProductDetailId(ele?.product?.Id) }} />
                                     }
                                   </div>
                                   <div className={Styles.Mainbox3}>
-                                    <h2 onClick={()=>{setProductDetailId(ele?.product?.Id)}} style={{cursor:'pointer'}}>{ele.product?.Name}</h2>
+                                    <h2 onClick={() => { setProductDetailId(ele?.product?.Id) }} style={{ cursor: 'pointer' }}>{ele.product?.Name}</h2>
                                     <p>
                                       <span className={Styles.Span1}>
                                         {ele.product?.usdRetail__c.includes("$") ? `$${(+ele.product?.usdRetail__c.substring(1)).toFixed(2)}` : `$${Number(ele.product?.usdRetail__c).toFixed(2)}`}
                                       </span>
                                       <span className={Styles.Span2}>${Number(ele.product?.salesPrice).toFixed(2)}</span>
-                                      {false &&<span className={Styles.Span2}><input type="number" onKeyUp={(e)=>onPriceChangeHander(ele.product, e.target.value)}/></span>}
+                                      {false && <span className={Styles.Span2}><input type="number" onKeyUp={(e) => onPriceChangeHander(ele.product, e.target.value)} /></span>}
                                     </p>
                                   </div>
                                 </div>
@@ -443,16 +446,19 @@ function MyBagFinal() {
                       >
                         ${Number(total).toFixed(2)} PLACE ORDER
                       </button>
-                      <p className={`${Styles.ClearBag}`} style={{textAlign:'center',cursor:'pointer'}} 
-                      onClick={()=>{if(Object.keys(orders).length){
-                        if(clearConfim.length){
-                          orderPlaceHandler();
-                        }else{
-                          setClearConfim(true)}}
+                      <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
+                        onClick={() => {
+                          if (Object.keys(orders).length) {
+                            if (clearConfim.length) {
+                              orderPlaceHandler();
+                            } else {
+                              setClearConfim(true)
+                            }
+                          }
                         }
-                      }
-                      disabled={!buttonActive}
-                       >Clear Bag</p>
+                        }
+                        disabled={!buttonActive}
+                      >Clear Bag</p>
                       {/* {Number(total) ? null : window.location.reload()} */}
                     </div>
                   </div>
@@ -462,7 +468,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")}/>
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")} />
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>
   );

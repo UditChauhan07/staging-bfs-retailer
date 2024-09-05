@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import Styles from "./style.module.css";
 import TrackingStatus from "./TrackingStatus/TrackingStatus";
 import Orderstatus from "./OrderStatus/Orderstatus";
 import { Link } from "react-router-dom";
-import { GetAuthData, postSupport, supportShare } from "../../lib/store";
+import { GetAuthData, postSupport } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
@@ -56,8 +56,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
             priority: "Medium",
             sendEmail: true,
           },
-          key:user?.data?.x_access_token
-        };
+          key: user?.data?.x_access_token
         postSupport({ rawData: beg })
           .then((response) => {
             setIsDisabled(false)
@@ -102,7 +101,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
             Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
           </p>
           <div className="d-flex justify-content-around">
-            <button className={`${Styles.btn} d-flex align-items-center`} disabled={isDisabled} onClick={() => generateSuportHandler(confirm)}>
+            <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => generateSuportHandler(confirm)} disabled={isDisabled}>
               <BiSave />&nbsp;generate
             </button>
             <button className={`${Styles.btn} d-flex align-items-center`} onClick={() => setConfirm(false)}>
@@ -112,12 +111,10 @@ function OrderListContent({ data, hideDetailedShow = false }) {
         </div>}
         onClose={() => { setConfirm({}) }}
       />
+
       {data?.length ? (
         data?.map((item, index) => {
-          let date = new Date(item.CreatedDate);
-          let cdate = `${date.getDate()} ${months[date.getMonth()]
-            } ${date.getFullYear()}`;
-
+          let [year, month, day] = item.CreatedDate.split(/[T]/)[0].split(/[-/]/);
           return (
             <div className={` ${Styles.orderStatement}`} key={index}>
               <div>
@@ -127,14 +124,13 @@ function OrderListContent({ data, hideDetailedShow = false }) {
                     <p>{item.PO_Number__c}</p>
                   </div>
 
-                  <div className={Styles.poNumb1}>
+                  <div className={`${Styles.poNumb1}`}>
                     <h3>Brand</h3>
-                    <p>{item.ManufacturerName__c}</p>
+                    <p className={Styles.LinkHolder} onClick={() => navigate("/Brand/" + item.ManufacturerId__c)}>{item.ManufacturerName__c}</p>
                   </div>
-
                   <div className={Styles.PoOrderLast}>
-                    <h3>Ship To </h3>
-                    <p>{item.AccountName}</p>
+                    <h3>Ship To</h3>
+                    <p style={{ cursor: 'pointer' }} onClick={()=>navigate("/store/"+item.AccountId)}>{item.AccountName}</p>
                   </div>
                 </div>
 
@@ -261,7 +257,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
                       >
                         Request invoice
                       </h4>}
-                    {!item.Tracking_URL__c ?
+                    {!item?.Tracking__c ?
                       <h4
                         title="Get Help with Tracking Status"
                         onClick={(e) =>
@@ -283,7 +279,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
 
                   <div className={Styles.Status2}>
                     <h6>
-                      Order Placed <span>: {cdate}</span>
+                      Order Placed <span>: {months[parseInt(month) - 1]} {day}, {year}</span>
                     </h6>
                   </div>
                 </div>

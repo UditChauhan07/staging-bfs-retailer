@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Detail from './Detail.module.css'
-import { SupportStatusGreen, SupportStatusRed, SupportStatusYellow, UserChecked } from '../../lib/svg'
+import { UserChecked } from '../../lib/svg'
 import { DateConvert, GetAuthData, getStrCode, postSupportComment } from '../../lib/store'
 import { Link } from 'react-router-dom';
 import Loading from '../Loading';
@@ -77,7 +77,7 @@ function FullQuearyDetail({ data, setRest }) {
                                     <span>{data.Account.Name}</span>&nbsp; raised this on {DateConvert(data.Date_Opened__c)} </p>
 
                             </div>
-                            <p style={{ marginTop: "1rem" }}>{data.Description?.split("User Desc:").length == 2 ? <>{data.Description.split("User Desc:")[1].split("Issue Desc:")[1]}<br/><b>User Description:</b> {data.Description.split("User Desc:")[1].split("Issue Desc:")[0]}</>:data.Description}</p>
+                            <p style={{ marginTop: "1rem" }}>{data.Description?.split("User Desc:").length == 2 ? <>{data.Description.split("User Desc:")[1].split("Issue Desc:")[1]}<br /><b>User Description:</b> {data.Description.split("User Desc:")[1].split("Issue Desc:")[0]}</> : data.Description}</p>
 
                             <h6>Activity</h6>
                             <div className={Detail.HeightGiven}>
@@ -168,7 +168,7 @@ function FullQuearyDetail({ data, setRest }) {
 
                             {data.ManufacturerName__c && <div className={Detail.ManufactureID}>
                                 <h3>Manufacture ID</h3>
-                                <p>{data.ManufacturerName__c}</p>
+                                <p>{data.ManufacturerId__c? <Link to={'/Brand/'+data.ManufacturerId__c} className={Detail.LinkHolder}>{data.ManufacturerName__c}</Link>:data.ManufacturerName__c}</p>
                             </div>}
 
                             <div className={Detail.CaseNumber}>
@@ -178,29 +178,19 @@ function FullQuearyDetail({ data, setRest }) {
 
                             {data.Associated_PO_Number__c && <div className={Detail.PONumber}>
                                 <h3>PO Number</h3>
-                                <p>#{data.Associated_PO_Number__c}</p>
+                                {console.log({ data })}
+                                <p>#
+                                    {data.Opportunity__c ? <Link to="/orderDetails" className={Detail.LinkHolder}><span onClick={()=>localStorage.setItem("OpportunityId", JSON.stringify(data.Opportunity__c))}>{data.Associated_PO_Number__c}</span></Link> :
+                                    data.Associated_PO_Number__c}</p>
                             </div>}
-
                             <div className={Detail.RecordType}>
                                 <h3>Record Type</h3>
                                 <p>{data.RecordType.Name}</p>
                             </div>
-
-
-
                         </div>
-
                     </div>
-
-
-
-
                 </div>
-
-
             </div>
-
-
         </div>
     )
 }

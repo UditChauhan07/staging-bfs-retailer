@@ -38,16 +38,16 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
               <thead>
                 <tr>
                   <th
-                    className={`${styles.th} ${styles.stickyFirstColumnHeading} `}
+                    className={`${styles.th} ${styles.stickyFirstColumnHeading}`}
+                    style={{ minWidth: "150px" }}
+                  >
+                    Store
+                  </th>
+                  <th
+                    className={`${styles.th} ${styles.stickySecondColumnHeading} `}
                     style={{ minWidth: "170px" }}
                   >
                     Manufacturer
-                  </th>
-                  <th
-                    className={`${styles.th} ${styles.stickySecondColumnHeading}`}
-                    style={{ minWidth: "150px" }}
-                  >
-                    Account
                   </th>
                   {(currentYear == year) ? month >= 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
@@ -152,12 +152,12 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                         <td
                           className={`${styles.td} ${styles.stickyFirstColumn}`}
                         >
-                          {ele?.ManufacturerName__c}
+                          {item?.AccountName==item?.Name?item?.Name:item?.AccountName||item.Name}
                         </td>
                         <td
                           className={`${styles.td} ${styles.stickySecondColumn}`}
                         >
-                          {item?.AccountName==item?.Name?item?.Name:item?.AccountName||item.Name}
+                          {ele?.ManufacturerName__c}
                         </td>
                         {(currentYear == year) ? month >= 0 && <td className={`${styles.td}`}>
                           ${formentAcmount(item.Jan.amount)}

@@ -13,6 +13,7 @@ import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
+import LoaderV3 from "../../components/loader/v3";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const NewnessReport = () => {
@@ -204,7 +205,7 @@ const NewnessReport = () => {
           }}
         />
       )}
-      {loading ? <Loading height={"70vh"} /> : <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />}
+      {loading ? <LoaderV3 text={"Loading Newness Report, Please wait..."} /> : <NewnessReportTable newnessData={newnessData} dataDisplay={filter.dataDisplay} />}
     </AppLayout>
   );
 };

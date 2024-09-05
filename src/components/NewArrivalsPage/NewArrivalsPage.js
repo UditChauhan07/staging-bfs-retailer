@@ -1,35 +1,28 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import Styles from "./NewArrivals.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
-// import Pagination from "../components/Pagination/Pagination";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
 import LoaderV2 from "../loader/v2";
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+import { useNavigate } from "react-router-dom";
+import { GetAuthData } from "../../lib/store";
+import Select from "react-select";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
+  const navigate = useNavigate();
 
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
 
   const [isEmpty, setIsEmpty] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [loadEffect, setEffect] = useState(0)
-  // useEffect(() => {
-  //   let temp = true;
-  //   products.map((month) => {
-  //     month.content.map((item) => {
-  //       if (!selectBrand || selectBrand == item.brand) {
-  //         temp = false;
-  //       }
-  //     });
-  //     setIsEmpty(temp);
-  //   });
-  // }, [selectBrand]);
-  // ...............
+  const [loadEffect, setEffect] = useState(0);
+  const [AccountId,setAccount]=useState();
+  const [accountList,setAccountList] = useState([]);
+  const [accountSelectCheck,setAccountSelectCheck] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
@@ -51,6 +44,18 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
     setpagination([{ content: newValues }]);
 
   }, [filterData, PageSize, currentPage]);
+
+  useEffect(()=>{
+    GetAuthData().then((user)=>{
+      setAccountList(user.data.accountList)
+      if(user.data.accountIds.length==1){
+        setAccount(user.data.accountIds[0])
+      }
+    }).catch((userErr)=>{
+      console.log({userErr});
+    })
+  },[])
+
   // .................
   useEffect(() => {
     if (loadEffect) setLoaded(true)
@@ -75,7 +80,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase());
+              return item.date.toLowerCase().includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -102,14 +107,40 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       setLoaded(false)
     }, 500);
   }, [month, selectBrand, productList, brand]);
-
   const [imageLoading, setImageLoading] = useState({});
   const handleImageLoad = (imageId) => {
     setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
   };
-  if (isLoaded) return <Loading height={'70vh'} />
+
+  if (isLoaded) return <Loading height={"70vh"} />
+
   return (
     <>
+    <ModalPage
+          open={accountSelectCheck??false}
+          content={
+            <>
+              <div style={{ maxWidth: "309px" }}>
+                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
+                <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
+                <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))}/>
+                <div className="d-flex justify-content-center">
+                  <button
+                    className={`${Styles.modalButton}`}
+                    onClick={() => {
+                      setAccountSelectCheck(false);
+                    }}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </>
+          }
+          onClose={() => {
+            setAccountSelectCheck(false);
+          }}
+        />
       {modalShow ? (
         <ModalPage
           open
@@ -138,11 +169,17 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
       ) : null}
       <section id="newArrivalsSection">
         <div>
-          <div className={Styles.dGrid}>
+          <div className={!isEmpty ? Styles.dGrid : null} id="dGridHolder">
             {!isEmpty ? (
-              pagination?.map((month, index) => {
+              pagination?.map((month, _i) => {
                 if (month.content?.length) {
-                  return month.content.map((product) => {
+                  if(month.content.length<5){
+                    let div = document.getElementById("dGridHolder");
+                    if(div){
+                      div.style.gridTemplateColumns = `repeat(auto-fill, ${(100/month.content.length)-1}`
+                    }
+                  }
+                  return month.content.map((product, __i) => {
                     if (true) {
                       let listPrice = "$-- . --";
                       if (product?.usdRetail__c) {
@@ -167,7 +204,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               )}
                             </div>
                           </div>
-                          <p className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                          <p onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)} className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
                           <p
                             className={Styles.titleHolder}
                             onClick={() => {
@@ -184,8 +221,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               </p>
                             </Link>
                           ) : (
-                            <div onClick={() => setModalShow(true)} className={Styles.linkHolder}>
-                              <p className={Styles.btnHolder}>
+                            // onClick={() => setAccountSelectCheck(true)} 
+                            <div className={Styles.linkHolder}>
+                              <p className={Styles.btnHolder} onClick={() => setModalShow(true)}>
                                 add to Cart <small className={Styles.soonHolder}>coming soon</small>
                               </p>
                             </div>
@@ -198,10 +236,17 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                 }
               })
             ) : (
-              <div style={{ fontSize: "20px" }}>No data found</div>
+              <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+                <div className="col-4">
+                  <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
+                    No data found
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
+        {/*  AccountId={AccountId} */}
         <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
       </section>
       <Pagination

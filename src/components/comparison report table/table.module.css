@@ -110,6 +110,11 @@
   letter-spacing: 1.6px;
   padding-left: 20px !important;
 }
+.stickyBottom {
+  position: sticky;
+  bottom: 0%;
+  z-index: 2;
+}
 .lastRowMonth{
   background-color: #eeeeee !important;
   color: #000;

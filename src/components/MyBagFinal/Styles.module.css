@@ -188,12 +188,12 @@
   height: 26px;
   border: 0.5px solid #000;
   background: #f8fafb;
-  width: 22px;
+  min-width: 22px;
   color: #000;
   font-size: 16px;
   /* text-align: ce; */
   font-weight: 400;
-  /* padding: 0; */
+  padding: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
