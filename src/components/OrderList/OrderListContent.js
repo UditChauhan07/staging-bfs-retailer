@@ -55,7 +55,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
             desc: null,
             opportunityId: data.Id,
             priority: "Medium",
-            sendEmail: true,
+            sendEmail: true
           },
           key: user?.data?.x_access_token
         };
