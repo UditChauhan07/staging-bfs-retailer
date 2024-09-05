@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Styles from "./style.module.css";
 import TrackingStatus from "./TrackingStatus/TrackingStatus";
@@ -57,6 +58,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
             sendEmail: true,
           },
           key: user?.data?.x_access_token
+        };
         postSupport({ rawData: beg })
           .then((response) => {
             setIsDisabled(false)
