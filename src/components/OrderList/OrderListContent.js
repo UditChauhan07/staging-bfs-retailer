@@ -57,7 +57,6 @@ function OrderListContent({ data, hideDetailedShow = false }) {
             sendEmail: true,
           },
           key: user?.data?.x_access_token
-        };
         postSupport({ rawData: beg })
           .then((response) => {
             setIsDisabled(false)
