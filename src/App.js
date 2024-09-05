@@ -38,9 +38,6 @@ import BrandDetails from "./pages/BrandDetails";
 import HelpSection from "./pages/HelpSection";
 
 function App() {
-  // const Redirect = ({ href }) => {
-  //   window.location.href = href;
-  // };
   return (
     <UserProvider>
       <BagProvider>
