@@ -11,7 +11,7 @@ import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import Styles from "./index.module.css";
-import { GetAuthData, getRetailerBrands, sortArrayHandler } from "../../lib/store";
+import { GetAuthData, sortArrayHandler } from "../../lib/store";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
