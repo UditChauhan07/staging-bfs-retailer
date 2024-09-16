@@ -213,6 +213,7 @@ function Dashboard({ dashboardData }) {
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
+    
     // setIsLoaded(true);
     GetAuthData()
       .then((user) => {
@@ -224,8 +225,10 @@ function Dashboard({ dashboardData }) {
             user.headers = { ...user.headers, accountIds: JSON.stringify(user.data.accountIds) }
           }
         }
+        
         getDashboardata({ user })
           .then((dashboard) => {
+            
             setAccountList(user.data.accountList)
             setGoalList(dashboard.goalByMonth ?? [])
             let totalOrder = dashboard?.totalOrder||0;
@@ -260,10 +263,12 @@ function Dashboard({ dashboardData }) {
               //patch
               yearlyDataKey.map((id) => {
                 // temp.push(dashboard.yearlyManufacturerData[id])'
-                yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.sale
-                yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[PurchaseMonth-1]]?.target
+                yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[parseInt(headers?.month??PurchaseMonth)-1]]?.sale
+                yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[parseInt(headers?.month??PurchaseMonth)-1]]?.target
               })
             }
+            
+            
             let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
             setValue(tempValue)
             setNeedle_data([
@@ -448,8 +453,10 @@ function Dashboard({ dashboardData }) {
     setSelMonth(value);
     const valuePlit = value.split("|");
     let month = valuePlit[1] || null;
+    
     let year = valuePlit[0] || null;
     setPurchaseYear(year)
+    
     setPurchaseMonth(month)
     let accountIds = null;
     if (account) {
@@ -666,7 +673,7 @@ function Dashboard({ dashboardData }) {
         </div>
         <div className="row my-3">
           <div className="col-lg-6">
-            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[PurchaseMonth-1] + '-' + PurchaseYear}</p>
+            <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[parseInt(PurchaseMonth)-1] + '-' + PurchaseYear}</p>
             <div className={Styles.donuttop} style={{ height: '635px' }}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
               <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>

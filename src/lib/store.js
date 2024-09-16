@@ -488,6 +488,7 @@ export async function getDashboardata({ user }) {
       "Access-Control-Allow-Origin": "*",
     };
   }
+  
   let response = await fetch(originAPi + "/95zWpMEFtbAr8lqn/38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
