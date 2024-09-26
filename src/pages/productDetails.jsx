@@ -46,7 +46,16 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
                     if (
                         Object.values(orders)[0]?.manufacturer?.id === ManufacturerId &&
                         Object.values(orders)[0].account.id === AccountId &&
-                        Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
+                        Object.values(orders)[0].productType === 
+                (element.Category__c === "PREORDER" 
+                  ? "pre-order" 
+                  : element.Category__c === "TESTER" 
+                    ? "tester" 
+                    : element?.Category__c?.toUpperCase().match("EVENT") 
+                      ? "event" 
+                      :  element?.Category__c?.toUpperCase() === "SAMPLES" 
+                      ? "samples" 
+                      : "wholesale")
                     ) {
                         console.log({ aa: Object.values(orders) });
                         orderSetting(element, quantity);
