@@ -20,8 +20,8 @@ const CustomerSupport = () => {
   const [manufacturerData, setManufacturerData] = useState([]);
   const [accountList, setAccountList] = useState([]);
   const [account, setAccount] = useState(null);
-  let statusList = ["New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
-  const [status, setStatus] = useState(["New"]);
+  let statusList = ["Open","New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
+  const [status, setStatus] = useState(["Open"]);
   useEffect(() => {
     getSupportListHandler()
   }, []);
