@@ -22,6 +22,10 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
   let orderTypeList = [
     { value: "wholesale", label: "Whole Sales" },
     { value: "preorder", label: "Pre-Order" },
+    { value: "tester", label: "Tester" },
+    { value: "event", label: "Event" },
+    { value: "samples", label: "Samples" },
+
   ]
 
   const CheckError = (data) => {
@@ -29,22 +33,17 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     let checkLimit = 0;
     let errorCount = data.reduce((accumulator, item) => {
       let productDetails = getProductData(item["Product Code"] || item["ProductCode"] || null);
-
       if (item?.Quantity) {
-        let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name ||(productDetails.Min_Order_QTY__c>0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
-        if (orderType === "preorder") {
-          if (error === false) {
-              error = productDetails?.Category__c?.toLowerCase() !== orderType.toLowerCase();
-          }
-      } else {
-          if (error === false) {
-              error = productDetails?.Category__c?.toLowerCase() === "preorder";
-          }
-      }
+        let error = !item?.Quantity ||
+          !Number.isInteger(item?.Quantity) ||
+          item?.Quantity < (productDetails.Min_Order_QTY__c || 0) ||
+          !productDetails?.Name ||
+          (productDetails.Min_Order_QTY__c > 0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
+console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:productDetails?.Category__c?.toLowerCase() === "tester",samp:productDetails?.Category__c?.toLowerCase() === "samples",event:productDetails?.Category__c?.toLowerCase().match("event")});
 
-      if (orderType === "wholesale" && productDetails?.Category__c?.toLowerCase() === "preorder") {
-        error = true;
-    }
+        if (orderType.toLowerCase() === "wholesale" && (productDetails?.Category__c?.toLowerCase() === "preorder"||productDetails?.Category__c?.toLowerCase() === "tester"||productDetails?.Category__c?.toLowerCase() === "samples"||productDetails?.Category__c?.toLowerCase().match("event"))) {
+          error = true;
+        }
         checkLimit++;
         return accumulator + (error ? 1 : 0);
       } else {
@@ -52,13 +51,17 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       }
       return accumulator;
     }, 0);
+
+
     if (checkLimit > 500) {
-      setLimitCheck(true)
-      setIsLimitPass(true)
-    }else{
-      setLimitCheck(false)
+      setLimitCheck(true);
+      setIsLimitPass(true);
+    } else {
+      setLimitCheck(false);
     }
-    if (totalQty == data.length) {
+
+
+    if (totalQty === data.length) {
       setErrorOnList(totalQty);
     } else {
       setErrorOnList(errorCount);
@@ -131,7 +134,20 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         data.map((element) => {
           if (element.Quantity && Number.isInteger(element?.Quantity)) {
             let product = getProductData(element["Product Code"] || element["ProductCode"]);
-            if (orderType == "preorder" ? product?.Category__c?.toLowerCase() == "preorder" : product?.Category__c?.toLowerCase() != "preorder") {
+            if (
+              orderType === "preorder" 
+                ? product?.Category__c?.toLowerCase() == "preorder" 
+                : orderType === "tester" 
+                  ? product?.Category__c?.toLowerCase() == "tester" 
+                  : orderType === "samples" 
+                    ? product?.Category__c?.toLowerCase() == "samples" 
+                    : orderType === "event" 
+                    ? product?.Category__c?.toLowerCase().includes("event") 
+    
+                    : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples"& product?.Category__c?.toLowerCase().includes("event") 
+            )
+              
+              {
             if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c ||element?.Quantity % product.Min_Order_QTY__c === 0)) {
               productCount++;
               let item = {};
@@ -295,7 +311,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                   let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
                     let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || productDetails.Min_Order_QTY__c ? item?.Quantity % productDetails.Min_Order_QTY__c !== 0 : false;
-                    orderType == "preorder" ? (error == false) ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = productDetails?.Category__c?.toLowerCase() == "preorder" : error = error
+                    (orderType == "preorder"||orderType == "tester"||orderType == "samples") ? (error == false)? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = (productDetails?.Category__c?.toLowerCase() == "preorder"||productDetails?.Category__c?.toLowerCase() == "tester"||productDetails?.Category__c?.toLowerCase() == "samples"||productDetails?.Category__c?.toLowerCase().match("event")) : error = error
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>

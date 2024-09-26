@@ -114,7 +114,16 @@ function MyBagFinal() {
             let productLists = Object.values(fetchBag.orderList);
             if (productLists.length) {
               productLists.map((product) => {
-                if (product.product.Category__c == "PREORDER") orderType = "Pre Order";
+            
+                if (product.product.Category__c?.includes("PREORDER")) {
+                  orderType = "Pre Order";
+                } else if (product.product.Category__c?.includes("EVENT ")) {
+                  orderType = "Event Order";
+                } else if (product.product.Category__c?.includes("TESTER")) {
+                  orderType = "TESTER ORDER";
+                } else if (product.product.Category__c?.includes("SAMPLES")) {
+                  orderType = "Wholesale Numbers";
+                }
                 let temp = {
                   ProductCode: product.product.ProductCode,
                   qty: product.quantity,
