@@ -116,7 +116,7 @@ const BrandDetailCard = ({ brandId }) => {
                     </div>
 
                 <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
-                    <h3 className="mt-5">TOP PRODUCTS</h3>
+                    <h3 className="mt-5">Popular selling products</h3>
                     <OwlCarousel className="owl-theme" {...options}>
                         {topProducts.isLoaded ?
                             topProducts.data.map((item) => {
