@@ -113,9 +113,9 @@ function Product() {
         ?.flat()
         ?.filter((value) => {
           return (
-            value.Name?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductCode?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductUPC__c?.toLowerCase().includes(searchBy?.toLowerCase())
+            value.Name?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductCode?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductUPC__c?.toLowerCase()?.includes(searchBy?.toLowerCase())
           );
         });
       newData = groupProductDataByCategory(filteredProductsArray);
@@ -287,7 +287,7 @@ function Product() {
     FileSaver.saveAs(data, `Order Form ${new Date()}` + fileExtension);
   };
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
-    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   return (
     <>

@@ -5,7 +5,7 @@ import Loading from "../Loading";
 const NewnessReportTable = ({ newnessData, dataDisplay }) => {
   // console.log(newnessData);
   const handleTableDataDisplay = (value) => {
-    if (dataDisplay === "price") return `$${Number(value).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`;
+    if (dataDisplay === "price") return `$${Number(value).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`;
     else return value;
   };
   let length = 0;
