@@ -105,21 +105,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
-    let retailerPirce = found.usdRetail__c.trim().replace('$', '').replace(',', '')
+    let retailerPirce = found.usdRetail__c.trim()?.replace('$', '')?.replace(',', '')
     if (found?.Category__c === "TESTER") {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.sample / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.sample;
     } else {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.margin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
@@ -139,21 +139,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           (orderType === "preorder" || orderType === "tester" || orderType === "samples") ?
             product?.Category__c?.toLowerCase() == orderType.toLowerCase()
             : orderType === "event"
-              ? product?.Category__c?.toLowerCase().includes("event")
+              ? product?.Category__c?.toLowerCase()?.includes("event")
               : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples" & !product?.Category__c?.toLowerCase().includes("event")
         ) {
           if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
             let salesPrice = null;
             if (product?.Category__c === "TESTER") {
-              salesPrice = product.usdRetail__c.includes("$")
+              salesPrice = product.usdRetail__c?.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
             } else if (product?.Category__c === "Samples") {
-              salesPrice = product.usdRetail__c.includes("$")
+              salesPrice = product.usdRetail__c?.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
             } else {
-              salesPrice = product.usdRetail__c.includes("$")
+              salesPrice = product.usdRetail__c?.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
             }
@@ -178,7 +178,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 (orderType === "preorder" || orderType === "tester" || orderType === "samples") ?
                   product?.Category__c?.toLowerCase() == orderType.toLowerCase()
                   : orderType === "event"
-                    ? product?.Category__c?.toLowerCase().includes("event")
+                    ? product?.Category__c?.toLowerCase()?.includes("event")
                     : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples" & !product?.Category__c?.toLowerCase().includes("event")
               ) {
                 if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
@@ -186,21 +186,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                   let item = {};
                   let discountAmount = discount?.margin;
                   if (product.Category__c === "TESTER") {
-                    let salesPrice = product.usdRetail__c.includes("$")
+                    let salesPrice = product.usdRetail__c?.includes("$")
                       ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                       : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
                     item.price = salesPrice;
                     item.discount = discount?.testerMargin;
                     discountAmount = discount?.testerMargin;
                   } else if (product.Category__c === "Samples") {
-                    let salesPrice = product.usdRetail__c.includes("$")
+                    let salesPrice = product.usdRetail__c?.includes("$")
                       ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                       : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
                     item.price = salesPrice;
                     item.discount = discount?.sample;
                     discountAmount = discount?.sample;
                   } else {
-                    let salesPrice = product.usdRetail__c.includes("$")
+                    let salesPrice = product.usdRetail__c?.includes("$")
                       ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                       : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
                     item.price = salesPrice;
