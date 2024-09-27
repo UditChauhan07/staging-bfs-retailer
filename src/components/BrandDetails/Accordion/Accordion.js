@@ -119,7 +119,7 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                     return (
                       <CollapsibleRow title={key != "null" ? key : "No Category"} quantity={categoryOrderQuantity} key={index} index={index} >
                         {Object.values(formattedData)[index]?.map((value, indexed) => {
-                          let listPrice = Number(value.usdRetail__c.replace('$','').replace(',',''));
+                          let listPrice = Number(value?.usdRetail__c?.replace('$','').replace(',',''));
                           let salesPrice = 0;
                           let discount = data?.discount?.margin;
                           let inputPrice = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice;
@@ -152,7 +152,7 @@ const Accordion = ({ data, formattedData,productImage={} }) => {
                               </td>
                               <td>{value.ProductCode}</td>
                               <td>{(value.ProductUPC__c === null || value.ProductUPC__c === "n/a") ? "--" : value.ProductUPC__c}</td>
-                              <td>{value.usdRetail__c.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
+                              <td>{value?.usdRetail__c?.includes("$") ? `$${listPrice}` : `$${Number(value.usdRetail__c).toFixed(2)}`}</td>
                               <td>
                                 ${(qtyofItem > 0 && inputPrice || inputPrice == 0) ? (<>
                                 {/* <input type="number" value={inputPrice} placeholder={Number(inputPrice).toFixed(2)} className={`${styles.customPriceInput} ms-1`}
