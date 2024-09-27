@@ -16,6 +16,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
   const [errorOnlist, setErrorOnList] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
+  const [alert, setAlert] = useState('-');
   const [orderType, setorderType] = useState("wholesale")
   const [limitCheck, setLimitCheck] = useState(false)
   const [isLimitPass, setIsLimitPass] = useState(false)
@@ -24,7 +25,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     { value: "preorder", label: "Pre-Order" },
     { value: "tester", label: "Tester" },
     { value: "event", label: "Event" },
-    { value: "samples", label: "Samples" },
+    // { value: "samples", label: "Samples" },
 
   ]
 
@@ -39,9 +40,9 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           item?.Quantity < (productDetails.Min_Order_QTY__c || 0) ||
           !productDetails?.Name ||
           (productDetails.Min_Order_QTY__c > 0 && item?.Quantity % productDetails.Min_Order_QTY__c !== 0);
-console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:productDetails?.Category__c?.toLowerCase() === "tester",samp:productDetails?.Category__c?.toLowerCase() === "samples",event:productDetails?.Category__c?.toLowerCase().match("event")});
+        console.log({ pre: productDetails?.Category__c?.toLowerCase() === "preorder", test: productDetails?.Category__c?.toLowerCase() === "tester", samp: productDetails?.Category__c?.toLowerCase() === "samples", event: productDetails?.Category__c?.toLowerCase().match("event") });
 
-        if (orderType.toLowerCase() === "wholesale" && (productDetails?.Category__c?.toLowerCase() === "preorder"||productDetails?.Category__c?.toLowerCase() === "tester"||productDetails?.Category__c?.toLowerCase() === "samples"||productDetails?.Category__c?.toLowerCase().match("event"))) {
+        if (orderType.toLowerCase() === "wholesale" && (productDetails?.Category__c?.toLowerCase() === "preorder" || productDetails?.Category__c?.toLowerCase() === "tester" || productDetails?.Category__c?.toLowerCase() === "samples" || productDetails?.Category__c?.toLowerCase().match("event"))) {
           error = true;
         }
         checkLimit++;
@@ -104,7 +105,7 @@ console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
-    let retailerPirce = found.usdRetail__c.trim().replace('$','').replace(',','')
+    let retailerPirce = found.usdRetail__c.trim().replace('$', '').replace(',', '')
     if (found?.Category__c === "TESTER") {
       let salesPrice = retailerPirce.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
@@ -126,82 +127,135 @@ console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:
     }
     return found;
   };
+  console.log({ rawData });
+
   const submitForm = () => {
     setOrders({});
-    GetAuthData()
-      .then((user) => {
-        let productCount = 0;
-        data.map((element) => {
-          if (element.Quantity && Number.isInteger(element?.Quantity)) {
-            let product = getProductData(element["Product Code"] || element["ProductCode"]);
-            if (
-              orderType === "preorder" 
-                ? product?.Category__c?.toLowerCase() == "preorder" 
-                : orderType === "tester" 
-                  ? product?.Category__c?.toLowerCase() == "tester" 
-                  : orderType === "samples" 
-                    ? product?.Category__c?.toLowerCase() == "samples" 
-                    : orderType === "event" 
-                    ? product?.Category__c?.toLowerCase().includes("event") 
-    
-                    : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples"& product?.Category__c?.toLowerCase().includes("event") 
-            )
-              
-              {
-            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c ||element?.Quantity % product.Min_Order_QTY__c === 0)) {
-              productCount++;
-              let item = {};
-              let discountAmount = discount?.margin;
-              if (product.Category__c === "TESTER") {
-                let salesPrice = product.usdRetail__c.includes("$")
-                  ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                  : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
-                item.price = salesPrice;
-                item.discount = discount?.testerMargin;
-                discountAmount = discount?.testerMargin;
-              } else if (product.Category__c === "Samples") {
-                let salesPrice = product.usdRetail__c.includes("$")
-                  ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                  : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
-                item.price = salesPrice;
-                item.discount = discount?.sample;
-                discountAmount = discount?.sample;
-              } else {
-                let salesPrice = product.usdRetail__c.includes("$")
-                  ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                  : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
-                item.price = salesPrice;
-                item.discount = discount?.margin;
-              }
-              item.ProductCode = element["Product Code"] || element["ProductCode"];
-              item.qty = element["Quantity"];
-              addOrder(product, element["Quantity"], discount);
+    let bagPrice = 0;
+    data.map((element) => {
+      if (element.Quantity && Number.isInteger(element?.Quantity)) {
+        let product = getProductData(element["Product Code"] || element["ProductCode"]);
+        if (
+          (orderType === "preorder" || orderType === "tester" || orderType === "samples") ?
+            product?.Category__c?.toLowerCase() == orderType.toLowerCase()
+            : orderType === "event"
+              ? product?.Category__c?.toLowerCase().includes("event")
+              : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples" & !product?.Category__c?.toLowerCase().includes("event")
+        ) {
+          if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
+            let salesPrice = null;
+            if (product?.Category__c === "TESTER") {
+              salesPrice = product.usdRetail__c.includes("$")
+                ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
+            } else if (product?.Category__c === "Samples") {
+              salesPrice = product.usdRetail__c.includes("$")
+                ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
+            } else {
+              salesPrice = product.usdRetail__c.includes("$")
+                ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
             }
+            bagPrice += salesPrice * element["Quantity"];
           }
         }
+      }
+    })
+
+
+    setAlert('-');
+    if (rawData.discount.MinOrderAmount >= bagPrice) {
+      setAlert(bagPrice);
+    } else {
+      GetAuthData()
+        .then((user) => {
+          let productCount = 0;
+          data.map((element) => {
+            if (element.Quantity && Number.isInteger(element?.Quantity)) {
+              let product = getProductData(element["Product Code"] || element["ProductCode"]);
+              if (
+                (orderType === "preorder" || orderType === "tester" || orderType === "samples") ?
+                  product?.Category__c?.toLowerCase() == orderType.toLowerCase()
+                  : orderType === "event"
+                    ? product?.Category__c?.toLowerCase().includes("event")
+                    : product?.Category__c?.toLowerCase() != "preorder" && product?.Category__c?.toLowerCase() != "tester" && product?.Category__c?.toLowerCase() != "samples" & !product?.Category__c?.toLowerCase().includes("event")
+              ) {
+                if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
+                  productCount++;
+                  let item = {};
+                  let discountAmount = discount?.margin;
+                  if (product.Category__c === "TESTER") {
+                    let salesPrice = product.usdRetail__c.includes("$")
+                      ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                      : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
+                    item.price = salesPrice;
+                    item.discount = discount?.testerMargin;
+                    discountAmount = discount?.testerMargin;
+                  } else if (product.Category__c === "Samples") {
+                    let salesPrice = product.usdRetail__c.includes("$")
+                      ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                      : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
+                    item.price = salesPrice;
+                    item.discount = discount?.sample;
+                    discountAmount = discount?.sample;
+                  } else {
+                    let salesPrice = product.usdRetail__c.includes("$")
+                      ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                      : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
+                    item.price = salesPrice;
+                    item.discount = discount?.margin;
+                  }
+                  item.ProductCode = element["Product Code"] || element["ProductCode"];
+                  item.qty = element["Quantity"];
+                  addOrder(product, element["Quantity"], discount);
+                }
+              }
+            }
+          });
+          if (productCount) {
+            // navigate("/my-bag");
+            let currentUrl = window.location.origin;
+            let url = currentUrl + "/my-bag";
+            window.location.href = url
+          } else {
+            alert("Product list not found");
+          }
+        })
+        .catch((error) => {
+          console.error({ error });
         });
-        if (productCount) {
-          // navigate("/my-bag");
-          let currentUrl = window.location.origin;
-          let url = currentUrl + "/my-bag";
-          window.location.href = url
-        } else {
-          alert("Product list not found");
-        }
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
+    }
   };
   useEffect(() => {
     if (errorOnlist > 0) {
       setOpenModal(true);
     }
     CheckError(data);
-  }, [errorOnlist,orderType]);
+  }, [errorOnlist, orderType]);
   if (!showTable) {
     return (
       <div>
+        {alert != '-' && (
+          <ModalPage
+            open
+            content={
+              <>
+                <div style={{ maxWidth: "309px" }}>
+                  <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
+                  <p className={` ${Styles.ModalContent}`}>Please Select Products of Minimum Order Amount</p>
+                  <p className={` ${Styles.ModalContent}`}>Selected Order Amount ${alert.toFixed(2)}</p>
+                  <div className="d-flex justify-content-center">
+                    <button className={`${Styles.modalButton}`} onClick={() => setAlert('-')}>
+                      OK
+                    </button>
+                  </div>
+                </div>
+              </>
+            }
+            onClose={() => setAlert('-')}
+          />
+        )}
         {/* <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleFileChange} /> */}
         <ModalPage
           open={limitCheck || false}
@@ -311,7 +365,28 @@ console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:
                   let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
                     let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || productDetails.Min_Order_QTY__c ? item?.Quantity % productDetails.Min_Order_QTY__c !== 0 : false;
-                    (orderType == "preorder"||orderType == "tester"||orderType == "samples") ? (error == false)? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : (error == false) ? error = (productDetails?.Category__c?.toLowerCase() == "preorder"||productDetails?.Category__c?.toLowerCase() == "tester"||productDetails?.Category__c?.toLowerCase() == "samples"||productDetails?.Category__c?.toLowerCase().match("event")) : error = error
+                    if (orderType == "preorder" || orderType == "tester" || orderType == "samples") {
+                      if (error == false) {
+                        error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase();
+                      } else {
+                        error = error;
+                      }
+                    }
+
+                    else if (orderType == "event") {
+
+                      if (productDetails?.Category__c?.toLowerCase().match("event")?.length > 0) {
+                        error = false;
+                      } else {
+                        error = true;
+                      }
+                    } else {
+                      if (error == false) {
+                        error = (productDetails?.Category__c?.toLowerCase() == "preorder" ||
+                          productDetails?.Category__c?.toLowerCase() == "tester" ||
+                          productDetails?.Category__c?.toLowerCase() == "samples" || productDetails?.Category__c?.toLowerCase().match("event")?.length);
+                      }
+                    }
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>
@@ -329,14 +404,14 @@ console.log({pre:productDetails?.Category__c?.toLowerCase() === "preorder",test:
                 })}
               </tbody>
             </table>
-            {console.log({errorOnlist})}
+            {console.log({ errorOnlist })}
             {errorOnlist && data.length > 0 && errorOnlist == data.length ? (
               <div className="flex flex-column justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
                 <div>Products with zero quantity are uploaded! </div>
                 <div className="mt-3">No Data Found.</div>
               </div>
             ) : null}
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center" style={{ position: 'sticky', bottom: '-4%', background: '#fff', padding: '1rem 0' }}>
               <button className={btnClassName} onClick={() => { !isLimitPass ? submitForm() : setLimitCheck(true) }}>
                 Submit
               </button>
