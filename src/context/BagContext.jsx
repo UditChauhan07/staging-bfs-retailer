@@ -14,7 +14,7 @@ const BagProvider = ({ children }) => {
     let orderTotal = 0;
     Object.values(orders)?.forEach((order) => {
       console.log({order});
-      let listPrice = Number(order.product.usdRetail__c.replace('$','').replace(',',''));
+      let listPrice = Number(order.product.usdRetail__c?.replace('$','')?.replace(',',''));
       let salesPrice= 0;
       if (order.product.Category__c === "TESTER") {
           salesPrice = (+listPrice - (order?.discount?.testerMargin / 100) * +listPrice).toFixed(2)
