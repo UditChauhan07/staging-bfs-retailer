@@ -54,11 +54,11 @@ export async function AuthCheck() {
 }
 export function formatNumber(num) {
   if (num >= 0 && num < 1000000) {
-    return (num / 1000).toFixed(1) + 'K';
+    return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
   } else if (num >= 1000000) {
-    return (num / 1000000).toFixed(0) + 'M';
+    return (num / 1000000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "M";
   } else if (num < 0) {
-    return (num / 1000).toFixed(1) + 'K';
+    return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
   } else {
     return num;
   }
@@ -488,6 +488,7 @@ export async function getDashboardata({ user }) {
       "Access-Control-Allow-Origin": "*",
     };
   }
+  
   let response = await fetch(originAPi + "/95zWpMEFtbAr8lqn/38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
@@ -743,7 +744,7 @@ export async function getSessionStatus({ key, retailerId }) {
     return data;
   }
 }
-export async function getMarketingCalendar({ key, manufacturerId }) {
+export async function getMarketingCalendar({ key, manufacturerId,year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -751,7 +752,7 @@ export async function getMarketingCalendar({ key, manufacturerId }) {
 
   let response = await fetch(originAPi + "/beauty/v3/eVC3IaiEEz3x7ym", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId }),
+    body: JSON.stringify({ key, manufacturerId,year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -781,14 +782,14 @@ export async function getOrderDetailsPdf({ key, opportunity_id }) {
   }
 }
 
-export async function getMarketingCalendarPDF({ key, manufacturerId, month, manufacturerStr }) {
+export async function getMarketingCalendarPDF({ key, manufacturerId, month, manufacturerStr,year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc46", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -800,7 +801,7 @@ export async function getMarketingCalendarPDF({ key, manufacturerId, month, manu
   }
 }
 
-export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, manufacturerStr }) {
+export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, manufacturerStr,year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -808,7 +809,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
 
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -820,7 +821,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
   }
 }
 
-export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr }) {
+export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr,year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -828,7 +829,7 @@ export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, ma
 
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/H893PuzIaG1miIo", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -883,7 +884,7 @@ export async function getAllAccountOrders({ key, accountIds, month }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "/UQPIByU1hllkP9m", {
+  let response = await fetch(url2 + "UQPIByU1hllkP9m", {
     method: "POST",
     body: JSON.stringify({ key, accountIds, month }),
     headers: headersList,

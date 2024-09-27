@@ -20,8 +20,8 @@ const CustomerSupport = () => {
   const [manufacturerData, setManufacturerData] = useState([]);
   const [accountList, setAccountList] = useState([]);
   const [account, setAccount] = useState(null);
-  let statusList = ["New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
-  const [status, setStatus] = useState(["New"]);
+  let statusList = ["Open","New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
+  const [status, setStatus] = useState(["Open"]);
   useEffect(() => {
     getSupportListHandler()
   }, []);
@@ -37,7 +37,7 @@ const CustomerSupport = () => {
             setManufacturerData(resManu);
             getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })
               .then((supports) => {
-                console.log({ supports });
+                // console.log({ supports });
                 if (supports) {
                   setSupportList(supports);
                 }
@@ -66,7 +66,11 @@ const CustomerSupport = () => {
   const filteredData = useMemo(() => {
     let newValues = supportList;
     if (status.length > 0) {
-      newValues = newValues.filter((item) => status.includes(item.Status));
+      if(status == "Open"){
+        newValues = newValues.filter((item) => !"Approved".includes(item.Status)&&!"Closed".includes(item.Status));
+      }else{
+        newValues = newValues.filter((item) => status.includes(item.Status));
+      }
     }
     if (manufacturerFilter) {
       newValues = newValues.filter((item) => item.ManufacturerId__c === manufacturerFilter);

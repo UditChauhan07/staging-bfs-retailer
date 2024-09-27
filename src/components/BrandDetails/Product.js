@@ -82,8 +82,24 @@ function Product() {
           if (key === "PREORDER") {
             newData[key] = finalFilteredProducts[key];
           }
-        } else {
-          if (key !== "PREORDER") {
+        }
+        else if (productTypeFilter === "TESTER") {
+          if (key.match("TESTER")) {
+            newData[key] = finalFilteredProducts[key];
+          }
+        } else if (productTypeFilter === "EVENT") {
+          if (key.match("EVENT")) {
+            newData[key] = finalFilteredProducts[key];
+          }
+        } 
+        else if (productTypeFilter === "SAMPLES") {
+          if (key.toUpperCase().match("SAMPLES")) {
+            newData[key] = finalFilteredProducts[key];
+          }
+        } 
+        else {
+          if (key !== "PREORDER"&&!key.toUpperCase().match("TESTER")&&!key.toUpperCase().match("EVENT")&&!key.toUpperCase().match("SAMPLES")) {
+            
             newData[key] = finalFilteredProducts[key];
           }
         }
@@ -428,6 +444,14 @@ function Product() {
                         label: "PREORDER",
                         value: "Pre-order",
                       },
+                      {
+                        label: "TESTER",
+                        value: "TESTER",
+                      },
+                      {
+                        label: "EVENT",
+                        value: "EVENT",
+                      }
                     ]}
                     onChange={(value) => {
                       setProductTypeFilter(value);

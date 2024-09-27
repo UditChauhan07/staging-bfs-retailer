@@ -10,7 +10,7 @@ const Header = () => {
     <div id={`${styles.main}`} className="d-flex justify-content-between  align-items-center gap-1">
       <p className={`m-0 ${styles.text}`}>
         <Link to="/top-products" className="linkStyle">
-          Top Products
+        Popular selling products
         </Link>
       </p>
       <p className={`m-0  ${styles.text}`}>
