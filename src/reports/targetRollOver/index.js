@@ -98,6 +98,7 @@ const TargetRollOver = () => {
         setPreOrder(true);
         sendApiCall();
     };
+    useEffect(()=>{},[])
     const PriceDisplay = (value) => {
         return `$${Number(value).toFixed(2)}`;
     };
@@ -428,7 +429,8 @@ const TargetRollOver = () => {
             filterNodes={
                 <div className="d-flex justify-content-between m-auto" style={{ width: "99%" }}>
                     <div className="d-flex justify-content-start col-6 gap-4">
-                        {accountList?.length > 1 &&
+                        {accountList?.length > 1 ?
+                        <>
                             <FilterItem
                                 minWidth="220px"
                                 label="All Store"
@@ -446,11 +448,11 @@ const TargetRollOver = () => {
                                     }
                                 }}
                                 name={"Account-menu"}
-                            />}
+                            />
                         <button onClick={() => sendApiCall()} className="border px-2 d-grid py-1 leading-tight flex justify-center align-center gap-1">
                             <SearchIcon fill="#fff" width={20} height={20} />
                             <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>search</small>
-                        </button>
+                        </button></>:null}
                     </div>
                     <div className="d-flex justify-content-start col-1">
                         <hr className={Styles.breakHolder} />
