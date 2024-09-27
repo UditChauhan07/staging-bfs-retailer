@@ -37,7 +37,7 @@ const CustomerSupport = () => {
             setManufacturerData(resManu);
             getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })
               .then((supports) => {
-                console.log({ supports });
+                // console.log({ supports });
                 if (supports) {
                   setSupportList(supports);
                 }
