@@ -14,6 +14,7 @@ const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sh
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const MarketingCalendar = () => {
+  let date = new Date();
   const [isLoaded, setIsloaed] = useState(false);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
   const [pdfLoadingText, setPdfLoadingText] = useState(".");
@@ -36,23 +37,28 @@ const MarketingCalendar = () => {
     { value: "TBD", label: "TBD" },
 
   ];
-
+  const [selectYear, setSelectYear] = useState(date.getFullYear())
+  let yearList = [
+    { value: date.getFullYear(), label: date.getFullYear() },
+    { value: date.getFullYear()+1, label: date.getFullYear()+1 }
+  ]
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
 
   useEffect(() => {
+    setIsloaed(false)
     GetAuthData().then((user) => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
+        getMarketingCalendar({ key: user.data.x_access_token,year:selectYear }).then((productRes) => {
           setProductList(productRes)
           setIsloaed(true)
           setTimeout(() => {
             let getMonth = new Date().getMonth();
             var element = document.getElementById(monthNames[getMonth]);
-            if (element) {
+            if (element && selectYear == date.getFullYear()) {
               element.scrollIntoView({ behavior: "smooth", block: "center" });
             }
           }, 2000);
@@ -63,7 +69,7 @@ const MarketingCalendar = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand, month, isLoaded])
+  }, [selectBrand, month,selectYear])
 
   const LoadingEffect = () => {
     const intervalId = setInterval(() => {
@@ -96,7 +102,7 @@ const MarketingCalendar = () => {
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
       if(version == 1){
-        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -114,7 +120,7 @@ const MarketingCalendar = () => {
           console.log({ pdfErr });
         })
       }else if(version == 2){
-        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -132,7 +138,7 @@ const MarketingCalendar = () => {
           console.log({ pdfErr });
         })
       }else{
-        getMarketingCalendarPDF({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr }).then((file) => {
+        getMarketingCalendarPDF({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -251,6 +257,13 @@ const MarketingCalendar = () => {
     <AppLayout
       filterNodes={
         <>
+                  <FilterItem
+            label="year"
+            name="Year"
+            value={selectYear}
+            options={yearList}
+            onChange={(value) => setSelectYear(value)}
+          />
           <FilterItem
             minWidth="220px"
             label="All Brand"
@@ -284,7 +297,8 @@ const MarketingCalendar = () => {
             onClick={() => {
               setSelectBrand(null);
               setMonth(null);
-              setIsEmpty(false)
+              setIsEmpty(false);
+              setSelectYear(date.getFullYear())
               // setForceUpdate(prev=>prev)
             }}
           >

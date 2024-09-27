@@ -451,11 +451,7 @@ function Product() {
                       {
                         label: "EVENT",
                         value: "EVENT",
-                      },
-                      {
-                        label: "SAMPLES",
-                        value: "SAMPLES",
-                      },
+                      }
                     ]}
                     onChange={(value) => {
                       setProductTypeFilter(value);
