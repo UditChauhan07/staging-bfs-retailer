@@ -330,7 +330,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               <>
                 <div style={{ maxWidth: "309px" }}>
                   <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                  <p className={` ${Styles.ModalContent} tracking-[1.2px] leading-[20px]`}>Highlighted rows have issues in their given quantity. </p>
+                  <p className={` ${Styles.ModalContent} tracking-[1.2px] leading-[20px]`}>Highlighted rows have issues. Kindly check the quantity or order type </p>
                   <p className={` ${Styles.ModalContent} tracking-[1.2px] leading-[20px]`}>Upload Again or Move further with correct rows.</p>
                   <div className="d-flex justify-content-center">
                     <button className={`${Styles.modalButton}`} onClick={() => setOpenModal(false)}>
