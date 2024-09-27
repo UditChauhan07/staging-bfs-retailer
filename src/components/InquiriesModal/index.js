@@ -65,7 +65,7 @@ const Inquiries = ({ show, onHide }) => {
   const inputHandler = (e) => {
     const { name, value } = e.target;
     if (name == "brand") {
-      if (formData.brand.includes(value)) {
+      if (formData.brand?.includes(value)) {
         let index = formData.brand.indexOf(value);
         formData.brand.splice(index, 1);
       } else {
@@ -240,7 +240,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"Diptyque"}
                     id={"a0O3b00000fQrZyEAK"}
-                    checked={formData.brand.includes("Diptyque") ? true : false}
+                    checked={formData.brand?.includes("Diptyque") ? true : false}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="4">
@@ -253,7 +253,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"Byredo"}
                     id={"a0O3b00000hym7GEAQ"}
-                    checked={formData.brand.includes("Byredo") ? true : false}
+                    checked={formData.brand?.includes("Byredo") ? true : false}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="4">
@@ -267,7 +267,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"Maison Margiela"}
                     id={"a0O3b00000ffNzbEAE"}
                     checked={
-                      formData.brand.includes("Maison Margiela") ? true : false
+                      formData.brand?.includes("Maison Margiela") ? true : false
                     }
                   />
                 </Form.Group>
@@ -282,7 +282,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"Bobbi Brown"}
                     id={"a0O3b00000p7zqKEAQ"}
                     checked={
-                      formData.brand.includes("Bobbi Brown") ? true : false
+                      formData.brand?.includes("Bobbi Brown") ? true : false
                     }
                   />
                 </Form.Group>
@@ -297,7 +297,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"estee launder"}
                     id={"a0O1O00000XYBvpqfAH"}
                     checked={
-                      formData.brand.includes("Estee Lauder") ? true : false
+                      formData.brand?.includes("Estee Lauder") ? true : false
                     }
                   />
                 </Form.Group>
@@ -312,7 +312,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"RMS Beauty"}
                     id={"a0O1O00000XYBvQUAX"}
                     checked={
-                      formData.brand.includes("RMS Beauty") ? true : false
+                      formData.brand?.includes("RMS Beauty") ? true : false
                     }
                   />
                 </Form.Group>
@@ -326,7 +326,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"ReVive"}
                     id={"a0O3b00000pY2vqEAC"}
-                    checked={formData.brand.includes("ReVive") ? true : false}
+                    checked={formData.brand?.includes("ReVive") ? true : false}
                   />
                 </Form.Group>
 
@@ -340,7 +340,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"R+Co"}
                     id={"a0O1O00000XYBvefUAH"}
-                    checked={formData.brand.includes("R+Co") ? true : false}
+                    checked={formData.brand?.includes("R+Co") ? true : false}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="4">
@@ -354,7 +354,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"R-Co-Bleu"}
                     id={"a0O3b00000pY1wOEeAS"}
                     checked={
-                      formData.brand.includes("R-Co-Bleu") ? true : false
+                      formData.brand?.includes("R-Co-Bleu") ? true : false
                     }
                   />
                 </Form.Group>
@@ -370,7 +370,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"Bumble and Bumble"}
                     id={"a0O3b00000p80IJEAY"}
                     checked={
-                      formData.brand.includes("Bumble and Bumble")
+                      formData.brand?.includes("Bumble and Bumble")
                         ? true
                         : false
                     }
@@ -386,7 +386,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"BY TERRY"}
                     id={"a0O1O00000XYBvaUAH"}
-                    checked={formData.brand.includes("BY TERRY") ? true : false}
+                    checked={formData.brand?.includes("BY TERRY") ? true : false}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="4">
@@ -400,7 +400,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"Susanne Kaufmann"}
                     id={"a0O3b00000p7xfAEAQ"}
                     checked={
-                      formData.brand.includes("Susanne Kaufmann") ? true : false
+                      formData.brand?.includes("Susanne Kaufmann") ? true : false
                     }
                   />
                 </Form.Group>
@@ -415,7 +415,7 @@ const Inquiries = ({ show, onHide }) => {
                     value={"Kevyn Aucoin Cosmetics"}
                     id={"a0O1O00000XYBvkUAH"}
                     checked={
-                      formData.brand.includes("Kevyn Aucoin Cosmetics")
+                      formData.brand?.includes("Kevyn Aucoin Cosmetics")
                         ? true
                         : false
                     }
@@ -431,7 +431,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"Smashbox"}
                     id={"a0O3b00000lCFmREAW"}
-                    checked={formData.brand.includes("Smashbox") ? true : false}
+                    checked={formData.brand?.includes("Smashbox") ? true : false}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="4">
@@ -444,7 +444,7 @@ const Inquiries = ({ show, onHide }) => {
                     feedbackType="invalid"
                     value={"Eve Lom"}
                     id={"a0O1O00000gAhRFUA0"}
-                    checked={formData.brand.includes("Eve Lom") ? true : false}
+                    checked={formData.brand?.includes("Eve Lom") ? true : false}
                   />
                 </Form.Group>
               </Row>

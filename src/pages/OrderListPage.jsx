@@ -53,7 +53,7 @@ const OrderListPage = () => {
         ?.filter((order) => {
           return (
             !filterValue?.search?.length ||
-            order.AccountName?.toLowerCase().includes(
+            order.AccountName?.toLowerCase()?.includes(
               filterValue?.search?.toLowerCase()
             )
           );
@@ -64,16 +64,16 @@ const OrderListPage = () => {
             if (orderItems?.length) {
               return (
                 orderItems?.some((item) => {
-                  return item.Name?.toLowerCase().includes(
+                  return item.Name?.toLowerCase()?.includes(
                     searchShipBy?.toLowerCase()
                   );
                 }) ||
-                order.PO_Number__c?.toLowerCase().includes(
+                order.PO_Number__c?.toLowerCase()?.includes(
                   searchShipBy?.toLowerCase()
                 )
               );
             } else if (
-              order.PO_Number__c?.toLowerCase().includes(
+              order.PO_Number__c?.toLowerCase()?.includes(
                 searchShipBy.toLowerCase()
               )
             ) {

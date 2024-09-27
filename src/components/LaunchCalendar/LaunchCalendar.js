@@ -99,7 +99,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                             let listPrice = "$-- . --";
                             if (product?.usdRetail__c) {
                               if (Number(product?.usdRetail__c?.replace("$", ""))) {
-                                listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                                listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
                               } else {
                                 listPrice = product?.usdRetail__c
                               }
