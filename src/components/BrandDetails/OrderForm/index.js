@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { GetAuthData, POGenerator } from "../../../lib/store";
@@ -145,15 +146,15 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
             let salesPrice = null;
             if (product?.Category__c === "TESTER") {
-              salesPrice = product.usdRetail__c?.includes("$")
+              salesPrice = product.usdRetail__c.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
             } else if (product?.Category__c === "Samples") {
-              salesPrice = product.usdRetail__c?.includes("$")
+              salesPrice = product.usdRetail__c.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
             } else {
-              salesPrice = product.usdRetail__c?.includes("$")
+              salesPrice = product.usdRetail__c.includes("$")
                 ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
                 : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
             }
