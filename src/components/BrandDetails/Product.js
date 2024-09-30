@@ -60,6 +60,12 @@ function Product() {
 
     return groupedData;
   };
+  useEffect(() => {
+    if (productTypeFilter === "Pre-order"||productTypeFilter === "tester"||productTypeFilter === "EVENT"||productTypeFilter === "SAMPLES") {
+      setCategoryFilters([])
+    }
+  }, [productTypeFilter])
+
   const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
 
   const formattedFilterData = useMemo(() => {
@@ -452,10 +458,10 @@ function Product() {
                         label: "EVENT",
                         value: "EVENT",
                       },
-                      {
-                        label: "SAMPLES",
-                        value: "SAMPLES",
-                      },
+                      // {
+                      //   label: "SAMPLES",
+                      //   value: "SAMPLES",
+                      // },
                     ]}
                     onChange={(value) => {
                       setProductTypeFilter(value);

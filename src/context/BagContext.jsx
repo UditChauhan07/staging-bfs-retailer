@@ -92,7 +92,9 @@ const BagProvider = ({ children }) => {
         name: manufacturer?.name??localStorage.getItem("manufacturer"),
         id: manufacturer?.id??localStorage.getItem("ManufacturerId__c"),
       },
-      productType: product.Category__c === "PREORDER" ? "pre-order" : "wholesale",
+      productType : product.Category__c === "PREORDER" ? "pre-order" :
+                    product?.Category__c?.toUpperCase().match("EVENT") ? "event" :
+                    product.Category__c === "TESTER" ? "tester": product.Category__c?.toUpperCase() === "SAMPLES" ? "samples"  :"wholesale",
     };
   };
   // deletion of orders with quantity 0
