@@ -66,13 +66,17 @@ const CustomerSupport = () => {
   const filteredData = useMemo(() => {
     let newValues = supportList;
     if (status.length > 0) {
-      newValues = newValues.filter((item) => status.includes(item.Status));
+      if(status == "Open"){
+        newValues = newValues.filter((item) => !"Approved".includes(item.Status)&&!"Closed".includes(item.Status));
+      }else{
+        newValues = newValues.filter((item) => status.includes(item.Status));
+      }
     }
     if (manufacturerFilter) {
       newValues = newValues.filter((item) => item.ManufacturerId__c === manufacturerFilter);
     }
     if (searchBy) {
-      newValues = newValues?.filter((value) => value.CaseNumber?.toLowerCase().includes(searchBy?.toLowerCase()) || value.Reason?.toLowerCase().includes(searchBy?.toLowerCase()) || value?.RecordType?.Name?.toLowerCase().includes(searchBy?.toLowerCase()));
+      newValues = newValues?.filter((value) => value.CaseNumber?.toLowerCase()?.includes(searchBy?.toLowerCase()) || value.Reason?.toLowerCase()?.includes(searchBy?.toLowerCase()) || value?.RecordType?.Name?.toLowerCase()?.includes(searchBy?.toLowerCase()));
     }
     if (retailerFilter) {
       newValues = newValues.filter((item) => item.AccountId === retailerFilter);
