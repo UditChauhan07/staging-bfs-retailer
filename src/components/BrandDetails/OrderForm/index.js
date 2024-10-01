@@ -299,7 +299,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
             }}
           />
         </form>
-        <div>{errorOnlist > 0 && errorOnlist !== data.length && <p className="text-start mt-2 text-danger">Highlighted rows have issues in their given quantity. Upload Again or Move further with correct rows.</p>}</div>
+        <div>{errorOnlist > 0 && errorOnlist !== data.length && <p className="text-start mt-2 text-danger">Highlighted rows have issues. Kindly check the quantity or order type. Upload Again or Move further with correct rows.</p>}</div>
         <div>{errorOnlist > 0 && errorOnlist === data.length && <p className="text-start mt-2 text-danger">No Data Found.</p>}</div>
         <div>
           {openModal && errorOnlist === data.length ? (
