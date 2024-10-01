@@ -10,6 +10,7 @@ import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import LoaderV2 from "../loader/v2";
 import ProductDetails from "../../pages/productDetails";
+import Loading from "../Loading";
 
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
@@ -28,16 +29,37 @@ function MyBagFinal() {
   const [isDisabled, setIsDisabled] = useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
-
+  const [isLoading, setIsLoading] = useState(true);
   const handleNameChange = (event) => {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
   };
   useEffect(() => {
+    const FetchPoNumber = async () => {
+      try {
+        const res = await POGenerator();
+        if (res) {
+          setPONumber(res);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching PO number:", error);
+        setIsLoading(false);
+      } finally {
+
+      }
+    };
+
+    FetchPoNumber();
+  }, []);
+
+
+  useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
     }
   }, []);
+  
   let total = 0;
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
 
@@ -210,6 +232,9 @@ function MyBagFinal() {
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
+        {isLoading ? (
+        <Loading height={'50vh'} /> // Display full-page loader while data is loading
+      ) : (
       <section>
         <ModalPage
           open={confirm || false}
@@ -283,19 +308,19 @@ function MyBagFinal() {
               </div>
 
               <div className={Styles.MyBagFinalleft}>
-                <h5>
-                  PO Number{" "}
-                  {!isPOEditable ? (
-                    <b> {buttonActive ? PONumber : "---"}</b>
-                  ) : (
-                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }}
-                      id="limit_input"
-                      name="limit_input"
-                      value={limitInput}
-                      onChange={handleNameChange}
-                    />
-                  )}
-                </h5>
+              <h5>
+                PO Number{" "}
+                    {!isPOEditable ? (
+                      <b> {buttonActive ? PONumber : "---"}</b>
+                    ) : (
+                      <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }}
+                        id="limit_input"
+                        name="limit_input"
+                        value={limitInput}
+                        onChange={handleNameChange} />
+
+                    )}
+                  </h5>
                 {!isPOEditable && (
                   <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
                     <path
@@ -477,6 +502,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
+       )}
       <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")} />
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>
