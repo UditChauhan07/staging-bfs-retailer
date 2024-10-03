@@ -79,7 +79,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
       setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
-
+// console.log(jeiioopppppppppppppppppp                       fbbbbbbbbbbbbbbbb)
   }, [month, selectBrand, productList, brand]);
   return (
     <div id="Calendar">
@@ -174,7 +174,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
           </div>
         </div>
       </div>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={true} />
     </div>
   );
 }
