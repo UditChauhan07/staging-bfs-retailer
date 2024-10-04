@@ -30,6 +30,9 @@ function MyBagFinal() {
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchBag = fetchBeg({});
+  const productLists = Object.values(fetchBag.orderList ?? {}); 
   const handleNameChange = (event) => {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
@@ -309,16 +312,30 @@ function MyBagFinal() {
 
               <div className={Styles.MyBagFinalleft}>
               <h5>
-                PO Number{" "}
+                    PO Number{" "}
                     {!isPOEditable ? (
-                      <b> {buttonActive ? PONumber : "---"}</b>
+                      <b>
+                        {buttonActive ? (
+                          // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
+                          productLists.some(product => product.product.Category__c?.toUpperCase()?.includes("PREORDER")) && !PONumber.startsWith("PRE")
+                            ? `PRE-${PONumber}`
+                            : PONumber
+                        ) : (
+                          "---"
+                        )}
+                      </b>
                     ) : (
-                      <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }}
+                      <input
+                        type="text"
+                        defaultValue={PONumber}
+                        onKeyUp={(e) => setPONumber(e.target.value)}
+                        placeholder=" Enter PO Number"
+                        style={{ borderBottom: "1px solid black" }}
                         id="limit_input"
                         name="limit_input"
                         value={limitInput}
-                        onChange={handleNameChange} />
-
+                        onChange={handleNameChange}
+                      />
                     )}
                   </h5>
                 {!isPOEditable && (
