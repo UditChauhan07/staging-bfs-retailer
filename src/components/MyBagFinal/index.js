@@ -136,6 +136,7 @@ function MyBagFinal() {
             // setButtonActive(true)
             let list = [];
             let orderType = "Wholesale Numbers";
+            let oPONumber = PONumber;
             let productLists = Object.values(fetchBag.orderList);
             if (productLists.length) {
               productLists.map((product) => {
