@@ -79,7 +79,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
       setIsEmpty(isEmptyFlag);
       setFilterData(newValues);
     }
-
+// console.log(jeiioopppppppppppppppppp                       fbbbbbbbbbbbbbbbb)
   }, [month, selectBrand, productList, brand]);
   return (
     <div id="Calendar">
@@ -99,7 +99,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                             let listPrice = "$-- . --";
                             if (product?.usdRetail__c) {
                               if (Number(product?.usdRetail__c?.replace("$", ""))) {
-                                listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                                listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
                               } else {
                                 listPrice = product?.usdRetail__c
                               }
@@ -174,7 +174,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
           </div>
         </div>
       </div>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={true} />
     </div>
   );
 }

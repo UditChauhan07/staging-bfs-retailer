@@ -10,7 +10,7 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
   if (!product) {
     return null;
   }
-  let listPrice = Number(product?.data?.usdRetail__c?.replace("$", "").replace(",", ""));
+  let listPrice = Number(product?.data?.usdRetail__c?.replace("$", "")?.replace(",", ""));
   let salesPrice = 0;
   let discount = product?.discount?.margin;
   let inputPrice = Object.values(orders)?.find(
@@ -49,7 +49,8 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                 <>{product?.data?.usdRetail__c}</>
               ) : (
                 <>
-                  ${parseFloat(salesPrice).toFixed(2)}&nbsp;<span className={Styles.crossed}>{product?.data?.usdRetail__c}</span>
+                  ${parseFloat(salesPrice).toFixed(2)}
+                  {/* &nbsp;<span className={Styles.crossed}>{product?.data?.usdRetail__c}</span> */}
                 </>
               )}
             </p>
@@ -91,7 +92,7 @@ const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuan
                         onChange={(e) => {
                           onPriceChangeHander(
                             product?.data,
-                            e.target.value < 10 ? e.target.value.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0
+                            e.target.value < 10 ? e.target.value?.replace("0", "").slice(0, 4) : e.target.value.slice(0, 4) || 0
                           );
                         }}
                         id="limit_input"

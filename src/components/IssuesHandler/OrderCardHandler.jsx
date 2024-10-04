@@ -105,9 +105,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 productRes?.data?.records?.map((product, index) => {
                                     productCode += `'${product?.ProductCode}'`
                                     if (productRes?.data?.records?.length - 1 != index) productCode += ', ';
-                                    if (!opcs.includes(product.Id)) {
+                                    if (!opcs?.includes(product.Id)) {
                                         let pDiscount = 0;
-                                        let listPrice = Number(product.usdRetail__c.replace('$', '').replace(',', ''));
+                                        let listPrice = Number(product.usdRetail__c?.replace('$', '')?.replace(',', ''));
                                         if (product.Category__c === "TESTER") {
                                             pDiscount = productRes?.discount?.testerMargin || 0
                                         } else if (product.Category__c === "Samples") {
@@ -324,9 +324,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 </thead>
                                 <tbody>
                                     {productAllList.map((ele, index) => {
-                                        if (!searchItem || (ele.ProductCode?.toLowerCase().includes(
-                                            searchItem?.toLowerCase()) || ele.Name?.toLowerCase().includes(
-                                                searchItem?.toLowerCase()) || ele.ProductUPC__c?.toLowerCase().includes(
+                                        if (!searchItem || (ele.ProductCode?.toLowerCase()?.includes(
+                                            searchItem?.toLowerCase()) || ele.Name?.toLowerCase()?.includes(
+                                                searchItem?.toLowerCase()) || ele.ProductUPC__c?.toLowerCase()?.includes(
                                                     searchItem?.toLowerCase()))) {
                                             return (
                                                 <ErrorProductCard Styles1={Styles1} productErrorHandler={productSelectHandler} errorList={productList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={""} ErrorProductQtyHandler={ErrorProductQtyHandler}
@@ -358,9 +358,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 } ${date.getFullYear()}`;
                             let datemonth = `${date.getDate()} ${months[date.getMonth()]
                                 }`;
-                            if (((searchPo && searchPo != "") ? (item.PO_Number__c?.toLowerCase().includes(
-                                searchPo?.toLowerCase()) || item.AccountName?.toLowerCase().includes(
-                                    searchPo?.toLowerCase()) || item.ManufacturerName__c?.toLowerCase().includes(
+                            if (((searchPo && searchPo != "") ? (item.PO_Number__c?.toLowerCase()?.includes(
+                                searchPo?.toLowerCase()) || item.AccountName?.toLowerCase()?.includes(
+                                    searchPo?.toLowerCase()) || item.ManufacturerName__c?.toLowerCase()?.includes(
                                         searchPo?.toLowerCase())) : !orderId) || orderId == item.Id) {
                                 show++;
                                 return (
@@ -415,7 +415,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
 
                                                                         {item.OpportunityLineItems?.records
                                                                             .map((ele, index) => {
-                                                                                if (!orderConfirmed || (orderConfirmed && Object.keys(errorList).includes(ele.Id))) {
+                                                                                if (!orderConfirmed || (orderConfirmed && Object.keys(errorList)?.includes(ele.Id))) {
                                                                                     return (<ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler} readOnly={orderConfirmed} />)
                                                                                 }
                                                                             })}

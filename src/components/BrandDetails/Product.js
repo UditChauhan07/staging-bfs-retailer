@@ -60,6 +60,12 @@ function Product() {
 
     return groupedData;
   };
+  useEffect(() => {
+    if (productTypeFilter === "Pre-order"||productTypeFilter === "tester"||productTypeFilter === "EVENT"||productTypeFilter === "SAMPLES") {
+      setCategoryFilters([])
+    }
+  }, [productTypeFilter])
+
   const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
 
   const formattedFilterData = useMemo(() => {
@@ -113,9 +119,9 @@ function Product() {
         ?.flat()
         ?.filter((value) => {
           return (
-            value.Name?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductCode?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductUPC__c?.toLowerCase().includes(searchBy?.toLowerCase())
+            value.Name?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductCode?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductUPC__c?.toLowerCase()?.includes(searchBy?.toLowerCase())
           );
         });
       newData = groupProductDataByCategory(filteredProductsArray);
@@ -239,7 +245,7 @@ function Product() {
         Object.values(begValue.orderList).map((product) => {
           let productPriceStr = product.product.salesPrice;
           let productQuantity = product.quantity;
-          let productPrice = parseInt(productPriceStr || 0);
+          let productPrice = parseFloat(productPriceStr || 0);
           bagPrice += productPrice * productQuantity;
         });
         setAlert(0);
@@ -287,7 +293,7 @@ function Product() {
     FileSaver.saveAs(data, `Order Form ${new Date()}` + fileExtension);
   };
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
-    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   return (
     <>

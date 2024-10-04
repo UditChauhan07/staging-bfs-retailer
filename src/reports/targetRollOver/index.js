@@ -422,7 +422,7 @@ const TargetRollOver = () => {
             });
     };
     const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
-        return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+        return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
     }
     return (
         <AppLayout
