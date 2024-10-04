@@ -38,6 +38,7 @@
     "react-select": "^5.8.0",
     "react-use-downloader": "^1.2.8",
     "recharts": "^2.10.3",
+    "sweetalert2": "^11.14.1",
     "swr": "^2.2.4",
     "terser-webpack-plugin": "^5.3.10",
     "web-vitals": "^2.1.4",
