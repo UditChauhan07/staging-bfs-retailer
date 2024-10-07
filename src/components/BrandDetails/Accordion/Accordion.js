@@ -7,43 +7,124 @@ import { useBag } from "../../../context/BagContext";
 import LoaderV2 from "../../loader/v2";
 import ProductDetails from "../../../pages/productDetails";
 
-const Accordion = ({ data, formattedData, productImage = [] }) => {
+const Accordion = ({ data, formattedData, productImage = [], productCartSchema = {} }) => {
+  const { testerInclude, sampleInclude } = productCartSchema || true;
+  
   let Img1 = "/assets/images/dummy.png";
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
-  console.log(replaceCartModalOpen)
+  console.log(productCartSchema)
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
   const [showName, setShowName] = useState(false);
   const [productDetailId, setProductDetailId] = useState(null)
 
-  const onQuantityChange = (product, quantity, salesPrice = null, discount = null) => {
+  const onQuantityChange = (
+    product,
+    quantity,
+    salesPrice = null,
+    discount = null
+  ) => {
     product.salesPrice = salesPrice;
+
+    const currentOrder = Object.values(orders)[0];
+    const manufacturerName = localStorage.getItem("manufacturer");
+    const accountName = localStorage.getItem("Account");
+
+    // Determine the product type
+    const productType =
+      product?.Category__c === "PREORDER"
+        ? "pre-order"
+        : product?.Category__c === "TESTER"
+          ? "tester"
+          : product?.Category__c?.toUpperCase().match("EVENT")
+            ? "event"
+            : product?.Category__c?.toUpperCase() === "SAMPLES"
+              ? "samples"
+              : "wholesale"; // default to wholesale for anything else
+
     if (Object.values(orders).length) {
-      
-      if (
-        Object.values(orders)[0]?.manufacturer?.name === localStorage.getItem("manufacturer") &&
-        Object.values(orders)[0].account.name === localStorage.getItem("Account") &&
-        Object.values(orders)[0].productType ===
-        (product?.Category__c === "PREORDER"
-          ? "pre-order"
-          : product?.Category__c === "TESTER"
-            ? "tester"
-            : product?.Category__c?.toUpperCase().match("EVENT")
-              ? "event"
-              : product?.Category__c?.toUpperCase() === "SAMPLES"
-                ? "samples"
-                : "wholesale")
-      ) {
-        orderSetting(product, quantity);
-        setReplaceCartModalOpen(false);
+      const isSameManufacturer = currentOrder?.manufacturer?.name === manufacturerName;
+      const isSameAccount = currentOrder?.account.name === accountName;
+      const currentOrderType = currentOrder?.productType;
+      console.log({ currentOrderType });
+
+
+      const isTester = product?.Category__c === "TESTER";
+      const isSample = product?.Category__c?.toUpperCase() === "SAMPLES";
+      const isPreOrder = product?.Category__c === "PREORDER";
+      const isEvent = product?.Category__c?.toUpperCase().includes("EVENT");
+
+      // Check if manufacturer and account match
+      if (isSameManufacturer && isSameAccount) {
+        if (currentOrderType === "wholesale") {
+          // Logic for wholesale order
+          if (
+            !isTester &&
+            !isSample &&
+            productType !== "wholesale"
+          ) {
+            // alert("You can only add Wholesale, Tester (if allowed), or Sample (if allowed) products to this order.");
+            setReplaceCartModalOpen(true);
+            setReplaceCartProduct({ product, quantity });
+            return;
+          }
+
+          // Check if trying to add a tester or sample without permissions
+          if ((!testerInclude && isTester) || (!sampleInclude && isSample)) {
+            // alert(`You cannot add ${
+            //   isTester ? "Tester" : "Sample"
+            // } items to this Wholesale order unless allowed.`);
+            setReplaceCartModalOpen(true);
+            setReplaceCartProduct({ product, quantity });
+            return;
+          }
+
+          // Allow adding testers or samples if flags are true, or regular wholesale products
+          orderSetting(product, quantity);
+          setReplaceCartModalOpen(false);
+        } else if (currentOrderType === "pre-order") {
+          // Logic for pre-order order
+          if (!isPreOrder && !isEvent) {
+            // alert("You can only add Pre-order or Event items to this Pre-order order.");
+            setReplaceCartModalOpen(true);
+            setReplaceCartProduct({ product, quantity });
+            return;
+          }
+
+          // Allow adding pre-order or event products
+          orderSetting(product, quantity);
+          setReplaceCartModalOpen(false);
+        } else if (currentOrderType == "tester" && productType == "wholesale" && testerInclude) {
+          // Check pass, proceed with adding the product
+          orderSetting(product, quantity);
+          setReplaceCartModalOpen(false);
+        } else {
+          // Handle other product type mismatches
+          if (currentOrderType !== productType) {
+            // alert("You cannot mix different product types in the same order.");
+            setReplaceCartModalOpen(true);
+            setReplaceCartProduct({ product, quantity });
+            return;
+          }
+
+          // Check pass, proceed with adding the product
+          orderSetting(product, quantity);
+          setReplaceCartModalOpen(false);
+        }
       } else {
+        // Alert if manufacturer or account does not match
+        // alert("Manufacturer or Account does not match the current order.");
         setReplaceCartModalOpen(true);
         setReplaceCartProduct({ product, quantity });
+        return;
       }
     } else {
+      // No previous orders, proceed with adding the product
       orderSetting(product, quantity);
+      setReplaceCartModalOpen(false);
     }
   };
+
   const onPriceChangeHander = (product, price = '0') => {
     if (price == '') price = 0;
     console.log({ product });

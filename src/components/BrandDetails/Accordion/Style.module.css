@@ -8,7 +8,9 @@
   border: 1px solid #F8F8F8;
   background: #FFF;
 }
-
+input[type=radio]:checked{
+  accent-color: #000;
+}
 .ControlStyle img{
   
   margin: auto;
