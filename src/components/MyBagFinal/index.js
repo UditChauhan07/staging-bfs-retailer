@@ -141,17 +141,14 @@ function MyBagFinal() {
             if (productLists.length) {
               productLists.map((product) => {
             
-                if (product.product.Category__c?.includes("PREORDER")) {
+                let productCategory = product?.product?.Category__c?.toUpperCase()?.trim();
+
+                // Set orderType based on product category and prepend "PRE" to PONumber if "PREORDER"
+                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event").length>0) {
                   orderType = "Pre Order";
                   if (!PONumber.startsWith("PRE")) {
                     oPONumber = `PRE-${PONumber}`; // Prepend "PRE" to the PO number
                   }
-                } else if (product.product.Category__c?.includes("EVENT ")) {
-                  orderType = "Event Order";
-                } else if (product.product.Category__c?.includes("TESTER")) {
-                  orderType = "TESTER ORDER";
-                } else if (product.product.Category__c?.includes("SAMPLES")) {
-                  orderType = "Wholesale Numbers";
                 }
                 let temp = {
                   ProductCode: product.product.ProductCode,
