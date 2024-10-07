@@ -184,7 +184,7 @@ function Product() {
         let productData = productRes.data.records || []
         let discount = productRes.discount;
         
-        setProductCartSchema({testerInclude:productData.testerInclude,sampleInclude:productData.sampleInclude})
+        setProductCartSchema({testerInclude:discount.testerInclude,sampleInclude:discount.sampleInclude})
         setProductlist({ data: productData, isLoading: true, discount })
 
         //version 1
