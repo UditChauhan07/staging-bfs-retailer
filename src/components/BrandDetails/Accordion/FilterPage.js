@@ -31,6 +31,15 @@ function FilterPage({ data, formattedData, setCategoryFilters, categoryFilters, 
           </svg>
           Discount Offer: {data?.discount?.margin || 0}%
         </h2>
+        {productTypeFilter=="Wholesale"?
+        <div className="mt-4">
+          <div className="pt-1 pb-1">
+            <input type="radio" name="catType" checked={productTypeFilter == "Wholesale" ? categoryFilters?.length == 0 ? true : false : false} onClick={(e) => { setCategoryFilters([]) }} id="catType1"/><label for="catType1" className="ml-2 text-uppercase cursor-pointer">All</label>
+          </div>
+          <div className="pt-1 pb-1">
+            <input type="radio" name="catType" checked={productTypeFilter == "Wholesale" ? categoryFilters?.includes("TESTER") ? true : false : false} onClick={(e) => { setCategoryFilters(["TESTER"]) }} id="catType3"/><label for="catType3" className="ml-2 text-uppercase cursor-pointer">Testers</label>
+          </div>
+        </div>:null}
         {/* dropDown */}
 
         {/* <div className={styles.Filterdropdownsection}>
@@ -110,29 +119,27 @@ function FilterPage({ data, formattedData, setCategoryFilters, categoryFilters, 
             <Accordion.Item className={styles.AcciIten} eventKey="0">
               <Accordion.Header className={styles.HeaderAccor}>Category</Accordion.Header>
               <Accordion.Body className={` overflow-auto ${styles.bodyAccor}`} style={{height:"44vh"}}>
-                {productTypeFilter==="Pre-order"?<>
-                <div className={`${styles.title} ${styles.borderRad} text-uppercase`}> No Category</div>
-               </>:<>
+              {categoryFilters?.includes("Samples") || categoryFilters?.includes("TESTER") ? <>
+                  <div className={`${styles.title} ${styles.borderRad} text-uppercase text-[11px]`}> No Category</div>
+                </> : <>
                 
                {Object.keys(formattedData)
                   // ?.filter((category) => category !== "PREORDER")
                   ?.filter((category) => {
                     if (productTypeFilter === 'Pre-order') {
                       // Return only categories that include 'PREORDER'
-                      return category.includes('PREORDER');
-                    } else if (productTypeFilter === 'TESTER') {
-                      // Return only categories that include 'TESTER'
-                      return category.includes('TESTER');
-                    } else if (productTypeFilter === 'EVENT') {
-                      // Return only categories that include 'EVENT'
-                      return category.includes('EVENT');
-                    } 
-                    else if (productTypeFilter === 'SAMPLES') {
-                      // Return only categories that include 'EVENT'
-                      return category.includes('SAMPLES');
-                    }else if (productTypeFilter === 'Wholesale') {
+                      return category.includes('EVENT') || category.includes('PREORDER');
+                      // } else if (productTypeFilter === 'TESTER') {
+                      //   // Return only categories that include 'TESTER'
+                      //   return category.includes('TESTER');
+                      // }
+                      // else if (productTypeFilter === 'Samples') {
+                      //   // Return only categories that include 'EVENT'
+                      //   return category.includes('Samples');
+                    }
+                    else if (productTypeFilter === 'Wholesale') {
                       // Remove categories that include 'PREORDER', 'TESTER', or 'EVENT'
-                      if(!category.includes('PREORDER') && !category.includes('TESTER') && !category.includes('EVENT')){
+                      if (!category.includes('PREORDER') && !category.includes('EVENT') && !category.includes('Samples') && !category.includes('TESTER')) {
                         return true;
                       }
                     }

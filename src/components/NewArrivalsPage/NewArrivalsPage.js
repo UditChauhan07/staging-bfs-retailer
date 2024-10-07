@@ -77,10 +77,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             if (selectBrand) {
               if (selectBrand == item.ManufacturerName__c) {
                 // console.log({aa:item.date.toLowerCase().includes(month.toLowerCase()),})
-                return item.date.toLowerCase().includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
+                return item.date.toLowerCase()?.includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
-              return item.date.toLowerCase().includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              return item.date.toLowerCase()?.includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -184,7 +184,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                       let listPrice = "$-- . --";
                       if (product?.usdRetail__c) {
                         if (Number(product?.usdRetail__c?.replace("$", ""))) {
-                          listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "").replace(",", "")).toFixed(2);
+                          listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
                         } else {
                           listPrice = product?.usdRetail__c
                         }

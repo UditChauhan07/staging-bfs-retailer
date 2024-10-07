@@ -121,7 +121,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
       <div>
         <div className={Styles.dGrid}>
           {data.map((product) => {
-            let listPrice = Number(product?.usdRetail__c?.replace("$", "").replace(",", ""));
+            let listPrice = Number(product?.usdRetail__c?.replace("$", "")?.replace(",", ""));
             let salesPrice = 0;
             let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0;
             let inputPrice = Object.values(orders)?.find(

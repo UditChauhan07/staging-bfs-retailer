@@ -14,7 +14,7 @@ const BagProvider = ({ children }) => {
     let orderTotal = 0;
     Object.values(orders)?.forEach((order) => {
       console.log({order});
-      let listPrice = Number(order.product.usdRetail__c.replace('$','').replace(',',''));
+      let listPrice = Number(order.product.usdRetail__c?.replace('$','')?.replace(',',''));
       let salesPrice= 0;
       if (order.product.Category__c === "TESTER") {
           salesPrice = (+listPrice - (order?.discount?.testerMargin / 100) * +listPrice).toFixed(2)
@@ -92,7 +92,9 @@ const BagProvider = ({ children }) => {
         name: manufacturer?.name??localStorage.getItem("manufacturer"),
         id: manufacturer?.id??localStorage.getItem("ManufacturerId__c"),
       },
-      productType: product.Category__c === "PREORDER" ? "pre-order" : "wholesale",
+      productType: product.Category__c === "PREORDER" ? "pre-order" :
+        product?.Category__c?.toUpperCase().match("EVENT") ? "pre-order" :
+          product.Category__c === "TESTER" ? "tester" : product.Category__c?.toUpperCase() === "Samples" ? "samples" : "wholesale",
     };
   };
   // deletion of orders with quantity 0

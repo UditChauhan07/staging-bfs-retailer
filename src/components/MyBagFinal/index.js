@@ -10,6 +10,7 @@ import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
 import LoaderV2 from "../loader/v2";
 import ProductDetails from "../../pages/productDetails";
+import Loading from "../Loading";
 
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
@@ -28,16 +29,40 @@ function MyBagFinal() {
   const [isDisabled, setIsDisabled] = useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
+  const fetchBag = fetchBeg({});
+  const productLists = Object.values(fetchBag.orderList ?? {}); 
   const handleNameChange = (event) => {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
   };
   useEffect(() => {
+    const FetchPoNumber = async () => {
+      try {
+        const res = await POGenerator();
+        if (res) {
+          setPONumber(res);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching PO number:", error);
+        setIsLoading(false);
+      } finally {
+
+      }
+    };
+
+    FetchPoNumber();
+  }, []);
+
+
+  useEffect(() => {
     if (bagValue?.Account?.id && bagValue?.Manufacturer?.id && Object.values(bagValue?.orderList)?.length > 0) {
       setButtonActive(true);
     }
   }, []);
+  
   let total = 0;
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
 
@@ -111,18 +136,19 @@ function MyBagFinal() {
             // setButtonActive(true)
             let list = [];
             let orderType = "Wholesale Numbers";
+            let oPONumber = PONumber;
             let productLists = Object.values(fetchBag.orderList);
             if (productLists.length) {
               productLists.map((product) => {
             
-                if (product.product.Category__c?.includes("PREORDER")) {
+                let productCategory = product?.product?.Category__c?.toUpperCase()?.trim();
+
+                // Set orderType based on product category and prepend "PRE" to PONumber if "PREORDER"
+                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event")?.length>0) {
                   orderType = "Pre Order";
-                } else if (product.product.Category__c?.includes("EVENT ")) {
-                  orderType = "Event Order";
-                } else if (product.product.Category__c?.includes("TESTER")) {
-                  orderType = "TESTER ORDER";
-                } else if (product.product.Category__c?.includes("SAMPLES")) {
-                  orderType = "Wholesale Numbers";
+                  if (!PONumber.startsWith("PRE")) {
+                    oPONumber = `PRE-${PONumber}`; // Prepend "PRE" to the PO number
+                  }
                 }
                 let temp = {
                   ProductCode: product.product.ProductCode,
@@ -210,6 +236,9 @@ function MyBagFinal() {
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
+        {isLoading ? (
+        <Loading height={'50vh'} /> // Display full-page loader while data is loading
+      ) : (
       <section>
         <ModalPage
           open={confirm || false}
@@ -283,28 +312,52 @@ function MyBagFinal() {
               </div>
 
               <div className={Styles.MyBagFinalleft}>
-                <h5>
-                  PO Number{" "}
-                  {!isPOEditable ? (
-                    <b> {buttonActive ? PONumber : "---"}</b>
-                  ) : (
-                    <input type="text" defaultValue={PONumber} onKeyUp={(e) => setPONumber(e.target.value)} placeholder=" Enter PO Number" style={{ borderBottom: "1px solid black" }}
-                      id="limit_input"
-                      name="limit_input"
-                      value={limitInput}
-                      onChange={handleNameChange}
-                    />
+                  <h5>
+                    PO Number{" "}
+                    {!isPOEditable ? (
+                      <b>
+                        {buttonActive ? (
+                          // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
+                          productLists.some(product => product.product.Category__c?.toUpperCase()?.includes("PREORDER")) && !PONumber.startsWith("PRE")
+                            ? `PRE-${PONumber}`
+                            : PONumber
+                        ) : (
+                          "---"
+                        )}
+                      </b>
+                    ) : (
+                      <input
+                        type="text"
+                        defaultValue={PONumber}
+                        onKeyUp={(e) => setPONumber(e.target.value)}
+                        placeholder=" Enter PO Number"
+                        style={{ borderBottom: "1px solid black" }}
+                        id="limit_input"
+                        name="limit_input"
+                        value={limitInput}
+                        onChange={handleNameChange}
+                      />
+                    )}
+                  </h5>
+
+                  {!isPOEditable && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="21"
+                      height="20"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                      onClick={() => setIsPOEditable(true)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <path
+                        d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
+                        fill="black"
+                      />
+                    </svg>
                   )}
-                </h5>
-                {!isPOEditable && (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
-                    <path
-                      d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
-                      fill="black"
-                    />
-                  </svg>
-                )}
-              </div>
+                </div>
+
             </div>
 
             <div className={Styles.MyBagFinalMain}>
@@ -477,6 +530,7 @@ function MyBagFinal() {
           </div>
         </div>
       </section>
+       )}
       <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")} />
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>

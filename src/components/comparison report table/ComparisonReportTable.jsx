@@ -3,7 +3,7 @@ import Loading from "../Loading";
 import styles from "./table.module.css";
 const ComparisonReportTable = ({ comparisonData }) => {
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
-    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   let totalRetail = 0
   let totalSale = 0;

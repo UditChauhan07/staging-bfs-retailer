@@ -42,7 +42,10 @@ function Product() {
   const [orderFormModal, setOrderFromModal] = useState(false);
   const [productList, setProductlist] = useState({ isLoading: false, data: [], discount: {} });
   const brandName = productList?.data?.[0]?.ManufacturerName__c;
-
+  const [productCartSchema,setProductCartSchema] = useState({
+    testerInclude: true,
+    sampleInclude: true,
+  })
   const groupProductDataByCategory = (productData) => {
     const groupedData = groupBy(productData || [], "Category__c");
 
@@ -60,6 +63,12 @@ function Product() {
 
     return groupedData;
   };
+  useEffect(() => {
+    if (productTypeFilter === "Pre-order") {
+      setCategoryFilters([])
+    }
+  }, [productTypeFilter])
+
   const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
 
   const formattedFilterData = useMemo(() => {
@@ -74,7 +83,12 @@ function Product() {
       });
       finalFilteredProducts = { ...newData };
     }
-
+    if (categoryFilters.length == 0 && !productCartSchema.sampleInclude) {
+      delete finalFilteredProducts["Samples"];
+    }
+    if (categoryFilters.length == 0 && !productCartSchema.testerInclude) {
+      delete finalFilteredProducts["TESTER"];
+    }
     if (productTypeFilter) {
       let newData = {};
       Object.keys(finalFilteredProducts)?.forEach((key) => {
@@ -82,24 +96,12 @@ function Product() {
           if (key === "PREORDER") {
             newData[key] = finalFilteredProducts[key];
           }
-        }
-        else if (productTypeFilter === "TESTER") {
-          if (key.match("TESTER")) {
-            newData[key] = finalFilteredProducts[key];
-          }
-        } else if (productTypeFilter === "EVENT") {
           if (key.match("EVENT")) {
             newData[key] = finalFilteredProducts[key];
           }
-        } 
-        else if (productTypeFilter === "SAMPLES") {
-          if (key.toUpperCase().match("SAMPLES")) {
-            newData[key] = finalFilteredProducts[key];
-          }
-        } 
+        }
         else {
-          if (key !== "PREORDER"&&!key.toUpperCase().match("TESTER")&&!key.toUpperCase().match("EVENT")&&!key.toUpperCase().match("SAMPLES")) {
-            
+          if (key !== "PREORDER" && !key.toUpperCase().match("EVENT")) {
             newData[key] = finalFilteredProducts[key];
           }
         }
@@ -113,9 +115,9 @@ function Product() {
         ?.flat()
         ?.filter((value) => {
           return (
-            value.Name?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductCode?.toLowerCase().includes(searchBy?.toLowerCase()) ||
-            value.ProductUPC__c?.toLowerCase().includes(searchBy?.toLowerCase())
+            value.Name?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductCode?.toLowerCase()?.includes(searchBy?.toLowerCase()) ||
+            value.ProductUPC__c?.toLowerCase()?.includes(searchBy?.toLowerCase())
           );
         });
       newData = groupProductDataByCategory(filteredProductsArray);
@@ -181,6 +183,8 @@ function Product() {
       getProductList({ rawData }).then((productRes) => {
         let productData = productRes.data.records || []
         let discount = productRes.discount;
+        
+        setProductCartSchema({testerInclude:discount.testerInclude,sampleInclude:discount.sampleInclude})
         setProductlist({ data: productData, isLoading: true, discount })
 
         //version 1
@@ -239,7 +243,7 @@ function Product() {
         Object.values(begValue.orderList).map((product) => {
           let productPriceStr = product.product.salesPrice;
           let productQuantity = product.quantity;
-          let productPrice = parseInt(productPriceStr || 0);
+          let productPrice = parseFloat(productPriceStr || 0);
           bagPrice += productPrice * productQuantity;
         });
         setAlert(0);
@@ -287,7 +291,7 @@ function Product() {
     FileSaver.saveAs(data, `Order Form ${new Date()}` + fileExtension);
   };
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
-    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+    return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
   return (
     <>
@@ -443,14 +447,6 @@ function Product() {
                       {
                         label: "PREORDER",
                         value: "Pre-order",
-                      },
-                      {
-                        label: "TESTER",
-                        value: "TESTER",
-                      },
-                      {
-                        label: "EVENT",
-                        value: "EVENT",
                       }
                     ]}
                     onChange={(value) => {
@@ -522,7 +518,7 @@ function Product() {
                             border: "1px dashed black",
                           }}
                         >
-                          <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage}></Accordion>
+                          <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage} productCartSchema={productCartSchema}></Accordion>
                         </div>
                         <div className={`${styles.TotalSide} `}>
                           <h4>Total Number of Products : {orderQuantity}</h4>
