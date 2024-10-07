@@ -144,7 +144,7 @@ function MyBagFinal() {
                 let productCategory = product?.product?.Category__c?.toUpperCase()?.trim();
 
                 // Set orderType based on product category and prepend "PRE" to PONumber if "PREORDER"
-                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event").length>0) {
+                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event")?.length>0) {
                   orderType = "Pre Order";
                   if (!PONumber.startsWith("PRE")) {
                     oPONumber = `PRE-${PONumber}`; // Prepend "PRE" to the PO number
