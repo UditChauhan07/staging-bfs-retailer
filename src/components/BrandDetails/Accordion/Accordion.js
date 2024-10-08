@@ -13,11 +13,11 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
   let Img1 = "/assets/images/dummy.png";
   const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
-  console.log(productCartSchema)
+  // console.log(productCartSchema)
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
   const [showName, setShowName] = useState(false);
   const [productDetailId, setProductDetailId] = useState(null)
-
+  const [msg, setMsg] = useState('');
   const onQuantityChange = (
     product,
     quantity,
@@ -74,6 +74,9 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
             // alert(`You cannot add ${
             //   isTester ? "Tester" : "Sample"
             // } items to this Wholesale order unless allowed.`);
+            setMsg(`This brand requires you to add ${isTester ? "Tester" : "Sample"
+            } Products in a separate Order <br/> and cannot be mixed with Wholesale products.
+`)
             setReplaceCartModalOpen(true);
             setReplaceCartProduct({ product, quantity });
             return;
@@ -156,12 +159,11 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
           content={
             <div className="d-flex flex-column gap-3">
               <h2 className={`${styles.warning} `}>Warning</h2>
-              <p className={`${styles.warningContent} `}>
-                Adding this item will replace <br></br> your current cart
+              <p className={`${styles.warningContent} `} dangerouslySetInnerHTML={{ __html: msg ? msg : "Adding this item will replace </br> your current cart" }}>
               </p>
               <div className="d-flex justify-content-around ">
-                <button className={`${styles.modalButton}`} onClick={replaceCart}>
-                  OK
+                <button className={`${styles.modalButton}`} style={msg?{width:'150px'}:{}} onClick={replaceCart}>
+                {msg ? "Replace cart" : "OK"}
                 </button>
                 <button className={`${styles.modalButton}`} onClick={() => setReplaceCartModalOpen(false)}>
                   Cancel
