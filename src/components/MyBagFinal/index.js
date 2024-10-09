@@ -16,7 +16,7 @@ function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const navigate = useNavigate();
   const [orderDesc, setOrderDesc] = useState(null);
-  const [PONumber, setPONumber] = useState(POGenerator());
+  const [PONumber, setPONumber] = useState();
   const [buttonActive, setButtonActive] = useState(false);
   const { addOrder, orderQuantity, deleteOrder, orders, setOrders, setOrderProductPrice } = useBag();
   const [bagValue, setBagValue] = useState(fetchBeg());
@@ -42,7 +42,12 @@ function MyBagFinal() {
       try {
         const res = await POGenerator();
         if (res) {
-          setPONumber(res);
+          let isPreOrder = productLists.some(product => (product.product.Category__c?.toUpperCase()?.includes("PREORDER")||product.product.Category__c?.toUpperCase()?.includes("EVENT")))
+          let poInit = res;
+          if(isPreOrder){
+            poInit = `PRE-${poInit}`
+          }
+          setPONumber(poInit);
         }
         setIsLoading(false);
       } catch (error) {
@@ -144,7 +149,7 @@ function MyBagFinal() {
                 let productCategory = product?.product?.Category__c?.toUpperCase()?.trim();
 
                 // Set orderType based on product category and prepend "PRE" to PONumber if "PREORDER"
-                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event")?.length>0) {
+                if (productCategory?.toUpperCase()?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event")?.length>0) {
                   orderType = "Pre Order";
                   if (!PONumber.startsWith("PRE")) {
                     oPONumber = `PRE-${PONumber}`; // Prepend "PRE" to the PO number
@@ -318,9 +323,7 @@ function MyBagFinal() {
                       <b>
                         {buttonActive ? (
                           // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                          productLists.some(product => product.product.Category__c?.toUpperCase()?.includes("PREORDER")) && !PONumber.startsWith("PRE")
-                            ? `PRE-${PONumber}`
-                            : PONumber
+                           PONumber
                         ) : (
                           "---"
                         )}
