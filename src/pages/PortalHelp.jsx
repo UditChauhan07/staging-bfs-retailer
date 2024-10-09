@@ -5,13 +5,17 @@ import Attachements from "../components/IssuesHandler/Attachements";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
 
-import { getAllAccountBrand, getAllAccountOrders, GetAuthData } from "../lib/store";
+import { getAllAccountBrand, getAllAccountLocation, getAllAccountOrders, GetAuthData, months, postSupportAny, uploadFileSupport } from "../lib/store";
 import { CalenderIcon } from "../lib/svg";
 import OrderListHolder from "../components/OrderList/List";
 import LoaderV4 from "../components/loader/v4";
 import ModalPage from "../components/Modal UI";
+import LoaderV3 from "../components/loader/v3";
+import AppLayout from "../components/AppLayout";
 const PortalHelp = () => {
+    const navigate = useNavigate();
     const [maxDate, setMaxDate] = useState(new Date());
     let recordId = "012Rb000003EFK1IAO";
     const [vType, setVType] = useState({ main: null, child: null });
@@ -30,7 +34,8 @@ const PortalHelp = () => {
     const [orderList, setOrderList] = useState({ isLoaded: false, data: [] });
     const [isNoneCheck, setIsNoneCheck] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false)
-
+    const [sumitForm, setSubmitForm] = useState(false)
+    // const [accountList, setAccountList] = useState([]);
     useEffect(() => {
         GetAuthData().then((user) => {
             getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands) => {
@@ -38,6 +43,17 @@ const PortalHelp = () => {
             }).catch((brandErr) => {
                 console.log({ brandErr });
             })
+            // getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
+            //     console.log({accounts});
+                
+            //     setAccountList(accounts)
+            //     if(accounts.length==1){
+            //         setManufacturerList(accounts[0].data);
+
+            //     }
+            //   }).catch((storeErr) => {
+            //     console.log({ storeErr });
+            //   })
         }).catch((err) => {
             console.log({ err });
         })
@@ -315,18 +331,87 @@ const PortalHelp = () => {
             }
         }
     }
-    console.log({
-        form: {
-            reason: vType.main,
-            type: vType.child,
-            device: deviceInfo?.value || "NA",
-            browser: browserInfo?.value || "NA",
-            files, desc, manufacturer, orderId, subject, orderDate, orderType, pageAffected: pageAffected?.value
-        }
-    });
     const SubmitHandler = () => {
         setIsDisabled(true)
-        setConfirm(false);
+        setSubmitForm(true)
+        GetAuthData()
+            .then((user) => {
+                if (user) {
+                    let subject = `Portal Help for ${vType.main}`;
+                    if(vType.child){
+                        subject += ` that ${vType.child}`
+                    }
+                    let systemDesc = `Device : ${deviceInfo.value}\nBrowser : ${browserInfo.value}\n`;
+                    if(pageAffected){
+                        if(pageAffected.value){
+                        systemDesc += `Issue on : ${pageAffected.value}\n`
+                        }
+                    }
+                    if(orderDate){
+                        let date = new Date(orderDate);
+                        let datemonth = `${date.getDate()} ${months[date.getMonth()]}`;
+                        subject += ` Created On ${datemonth}`
+                    }
+                    if(orderType){
+                        if(orderType?.value){
+                            systemDesc += `Order Type : ${orderType.value}`
+                        }
+                    }
+                    if(desc){
+                        systemDesc += `User Wrote : ${desc}`
+                    }
+                    let rawData = {
+                        orderStatusForm: {
+                            typeId: "012Rb000003EFK1IAO",
+                            reason: vType.main,
+                            salesRepId:"0053b00000DgEvqAAF",
+                            contactId: user.data.retailerId,
+                            accountId:user.data.accountIds[0],
+                            opportunityId: orderId,
+                            manufacturerId:manufacturer?.value||null,
+                            desc: systemDesc,
+                            priority: "Medium",
+                            sendEmail:true,
+                            subject,
+                        },
+                        key: user.data.x_access_token,
+                    };
+                    postSupportAny({ rawData })
+                        .then((response) => {
+                            if (response) {
+                                if (response) {
+                                    if (files.length > 0) {
+                                        setIsDisabled(false);
+                                        uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
+                                            setIsDisabled(false)
+                                            if (fileUploader) {
+                                                navigate("/CustomerSupportDetails?id=" + response);
+                                                setSubmitForm(false);
+                                            }
+                                        }).catch((fileErr) => {
+                                            console.log({ fileErr });
+                                        })
+                                    } else {
+                                        setIsDisabled(false);
+                                        setSubmitForm(false);
+
+                                        navigate("/CustomerSupportDetails?id=" + response);
+                                    }
+                                }
+                            }
+                        })
+                        .catch((err) => {
+                            setSubmitForm(false);
+                            setIsDisabled(false);
+                            console.error({ err });
+                        });
+                }
+            })
+            .catch((error) => {
+                setSubmitForm(false);
+                setIsDisabled(false);
+                console.log(error);
+            });
     }
     const confimationHandler = (value) => {
         if (value) {
@@ -380,13 +465,13 @@ const PortalHelp = () => {
                     descElement.style.border = 'none';
                 }
             }
-            if(!error){
+            if (!error) {
                 setConfirm(value);
             }
         }
     }
 
-
+    if (sumitForm) return <AppLayout><LoaderV3 text={"Generating You ticket. Please wait..."} /></AppLayout>;
     return (<CustomerSupportLayout>
         <ModalPage
             open={confirm}
