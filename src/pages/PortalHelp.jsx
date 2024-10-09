@@ -59,9 +59,9 @@ const PortalHelp = () => {
         })
     }, [])
     let visitType = [
-        { name: "Portal Issues", icon: '/assets/images/portalIssuesicon.svg', desc: "Get Support for All Things Portal" },
-        { name: "Order Issues", icon: '/assets/images/orderIssuesIcon.svg', desc: "Find Solutions for Your Order Problems" },
-        { name: "General Feedback", icon: '/assets/images/infoIcon.svg', desc: "Unlocking Solutions for General Feedback" },
+        { name: "Portal Issues", icon: '/assets/images/portalIssuesicon.svg', desc: "Get support for issues related to portal" },
+        { name: "Order Issues", icon: '/assets/images/orderIssuesIcon.svg', desc: "Find solutions for problems related to order" },
+        { name: "General Feedback", icon: '/assets/images/infoIcon.svg', desc: "Share feedback related to portal" },
     ]
     let orderIssues = [
         {
@@ -79,30 +79,6 @@ const PortalHelp = () => {
         { label: "Wholesale Numbers", value: "Wholesale Numbers" },
         { label: "Pre order", value: "Pre order" },
     ]
-    const devices = [
-        { label: 'Android', value: 'Android' },
-        { label: 'iOS', value: 'iOS' },
-        { label: 'Windows', value: 'Windows' },
-        { label: 'Mac', value: 'Mac' },
-        { label: 'Linux', value: 'Linux' },
-        { label: 'Chrome OS', value: 'Chrome OS' },
-        { label: 'iPadOS', value: 'iPadOS' },
-        { label: 'Other', value: 'Other' }
-    ];
-    const browsers = [
-        { label: 'Google Chrome', value: 'Chrome' },
-        { label: 'Mozilla Firefox', value: 'Firefox' },
-        { label: 'Microsoft Edge', value: 'Edge' },
-        { label: 'Apple Safari', value: 'Safari' },
-        { label: 'Opera', value: 'Opera' },
-        { label: 'Brave', value: 'Brave' },
-        { label: 'Vivaldi', value: 'Vivaldi' },
-        { label: 'Samsung Internet', value: 'Samsung Internet' },
-        { label: 'Tor Browser', value: 'Tor' },
-        { label: 'DuckDuckGo Privacy Browser', value: 'DuckDuckGo' },
-        { label: 'Opera Mini', value: 'Opera Mini' },
-        { label: 'Internet Explorer', value: 'Internet Explorer' }
-    ];
     const pages = [
         { label: "Dashboard", value: "Dashboard" },
         { label: "Orders", value: "Orders" },
@@ -341,10 +317,10 @@ const PortalHelp = () => {
                     if(vType.child){
                         subject += ` that ${vType.child}`
                     }
-                    let systemDesc = `Device : ${deviceInfo.value}\nBrowser : ${browserInfo.value}\n`;
+                    let systemDesc = `Device : ${deviceInfo.value},\nBrowser : ${browserInfo.value},\n`;
                     if(pageAffected){
                         if(pageAffected.value){
-                        systemDesc += `Issue on : ${pageAffected.value}\n`
+                        systemDesc += `Issue on : ${pageAffected.value},\n`
                         }
                     }
                     if(orderDate){
@@ -354,7 +330,7 @@ const PortalHelp = () => {
                     }
                     if(orderType){
                         if(orderType?.value){
-                            systemDesc += `Order Type : ${orderType.value}`
+                            systemDesc += `Order Type : ${orderType.value},\n`
                         }
                     }
                     if(desc){
@@ -506,7 +482,7 @@ const PortalHelp = () => {
             }));
         }} reason={vType.child} resetHandler={ResetHandlerChild} /> : null}
         {vType ? vType.main ? (vType.child != "Where is my order?" || isNoneCheck) ?
-            <Attachements title={vType?.main == "General Feedback" ? "Please define your feedBack below" : true} files={files} setFile={setFile} setDesc={setDesc} orderConfirmed={(vType?.main == "Order Issues" && vType.child) ? true : (vType?.main && vType?.main != "Order Issues") ? true : false} setConfirm={confimationHandler} unLockIcon={<div className="d-flex flex-column text-[10px]" style={{ float: 'right' }}><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>device:</b>&nbsp;{deviceInfo?.value ?? 'Other'}</small><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>browser:</b>&nbsp;{browserInfo?.value ?? 'Other'}</small></div>}>
+            <Attachements title={vType?.main == "General Feedback" ? "Please define your feedBack below" : "to Help us by sharing details"} files={files} setFile={setFile} setDesc={setDesc} orderConfirmed={(vType?.main == "Order Issues" && vType.child) ? true : (vType?.main && vType?.main != "Order Issues") ? true : false} setConfirm={confimationHandler} unLockIcon={<div className="d-flex flex-column text-[10px]" style={{ float: 'right' }}><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>device:</b>&nbsp;{deviceInfo?.value ?? 'Other'}</small><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>browser:</b>&nbsp;{browserInfo?.value ?? 'Other'}</small></div>}>
                 {vType?.main == "General Feedback" ?
                     // <HtmlFieldInput id={"subject"} title={"Issues Related to"} value={subject} onChange={(value) => setSubject(value.target.value)
                     // } />
