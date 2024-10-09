@@ -13,7 +13,7 @@ import { GetAuthData } from "../../lib/store";
 import Select from "react-select";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
   const navigate = useNavigate();
-
+  console.log('product listtttt' , productList   , selectBrand)
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
 
