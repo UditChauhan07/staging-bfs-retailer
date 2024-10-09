@@ -81,6 +81,26 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
     }
 // console.log(jeiioopppppppppppppppppp                       fbbbbbbbbbbbbbbbb)
   }, [month, selectBrand, productList, brand]);
+
+  const ImageWithFallback = ({ src, alt, fallback,className,style }) => {
+    // State to manage the current image source
+    const [imgSrc, setImgSrc] = useState(src);
+
+    // Function to handle image loading errors
+    const handleError = () => {
+        setImgSrc(fallback); // Set fallback image on error
+    };
+
+    return (
+        <img
+            src={imgSrc}
+            alt={alt}
+            onError={handleError}
+            style={style}
+            className={className}
+        />
+    );
+};
   return (
     <div id="Calendar">
       <div className="container">
@@ -96,7 +116,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                         <span className={`timelineHolder0${(index % 3) + 1}`} id={month.month}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
                           if (!selectBrand || selectBrand == product.ManufacturerName__c) {
-                            let listPrice = "$-- . --";
+                            // let listPrice = "$-- . --";
+                            let listPrice = "TBD";
                             if (product?.usdRetail__c) {
                               if (Number(product?.usdRetail__c?.replace("$", ""))) {
                                 listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
@@ -120,8 +141,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                       </div>
                                     </div>
                                     <div className="d-flex mt-2">
-                                      <div className="m-auto ProductImg">
-                                        <img src={product?.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
+                                    <div className="m-auto ProductImg">
+                                        <img className="zoomInEffect" src={product?.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
                                           setProductDetailId(product.Id);
                                         }} style={{ cursor: 'pointer' }} />
                                       </div>
@@ -140,8 +161,10 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                     </div>
                                   </div>
                                   <div className="launchBrand" onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>
-                                    <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} style={{cursor:'pointer'}}/>
+                                  <ImageWithFallback className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.name} logo`} fallback={"\\assets\\images\\dummy.png"} style={{maxWidth:'200px',height:'auto'}} />
                                   </div>
+                                  
+
                                 </div>
                               </>
                             );
