@@ -76,12 +76,12 @@
   justify-content: center;
 }
 .attachHolder {
-  width: 49%;
+  width: 39%;
   border: 1px dashed #ccc;
   padding: 10px;
 }
 .descholder {
-  width: 49%;
+  width: 60%;
   height: 100%;
   border: 1px dashed #ccc;
   padding: 10px;

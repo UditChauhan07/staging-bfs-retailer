@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef } from "react";
+import { useEffect, useState, forwardRef, useRef } from "react";
 import CustomerSupportLayout from "../components/customerSupportLayout";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler";
 import Attachements from "../components/IssuesHandler/Attachements";
@@ -8,7 +8,12 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { getAllAccountBrand, getAllAccountOrders, GetAuthData } from "../lib/store";
 import { CalenderIcon } from "../lib/svg";
+import OrderListHolder from "../components/OrderList/List";
+import LoaderV4 from "../components/loader/v4";
+import ModalPage from "../components/Modal UI";
 const PortalHelp = () => {
+    const [maxDate, setMaxDate] = useState(new Date());
+    let recordId = "012Rb000003EFK1IAO";
     const [vType, setVType] = useState({ main: null, child: null });
     const [files, setFile] = useState([]);
     const [desc, setDesc] = useState();
@@ -22,6 +27,9 @@ const PortalHelp = () => {
     const [orderDate, setOrderDate] = useState();
     const [manufacturerList, setManufacturerList] = useState([]);
     const [pageAffected, setPageAffected] = useState();
+    const [orderList, setOrderList] = useState({ isLoaded: false, data: [] });
+    const [isNoneCheck, setIsNoneCheck] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false)
 
     useEffect(() => {
         GetAuthData().then((user) => {
@@ -32,13 +40,12 @@ const PortalHelp = () => {
             })
         }).catch((err) => {
             console.log({ err });
-
         })
     }, [])
     let visitType = [
         { name: "Portal Issues", icon: '/assets/images/portalIssuesicon.svg', desc: "Get Support for All Things Portal" },
         { name: "Order Issues", icon: '/assets/images/orderIssuesIcon.svg', desc: "Find Solutions for Your Order Problems" },
-        { name: "Information Issues", icon: '/assets/images/infoIcon.svg', desc: "Unlocking Solutions for Information Issues" },
+        { name: "General Feedback", icon: '/assets/images/infoIcon.svg', desc: "Unlocking Solutions for General Feedback" },
     ]
     let orderIssues = [
         {
@@ -52,29 +59,9 @@ const PortalHelp = () => {
     ]
 
 
-
-
-
-
-
-
-
-
-
-
     let orderTypes = [
         { label: "Wholesale Numbers", value: "Wholesale Numbers" },
-        { label: "New Business", value: "New Business" },
-        { label: "Tester Order", value: "Tester Order" },
         { label: "Pre order", value: "Pre order" },
-        { label: "GWP", value: "GWP" },
-        { label: "Display/ Display Updates", value: "Display/ Display Updates" },
-        { label: "Cancelled Order", value: "Cancelled Order" },
-        { label: "Holiday 2023", value: "Holiday 2023" },
-        { label: "Spring 2024", value: "Spring 2024" },
-        { label: "Spring 2024-A", value: "Spring 2024-A" },
-        { label: "Cancelled and Re-entered", value: "Cancelled and Re-entered" },
-        { label: "Event Order", value: "Event Order" }
     ]
     const devices = [
         { label: 'Android', value: 'Android' },
@@ -216,6 +203,7 @@ const PortalHelp = () => {
             <p style={styles.title}>{title}</p>
             <Select
                 type="text"
+                id={title.replaceAll(/\s+/g, '-')}
                 options={list}
                 onChange={(option) => {
                     onChange?.(option)
@@ -224,24 +212,62 @@ const PortalHelp = () => {
             />
         </div>)
     }
-    console.log({
-        form: {
-            reason: vType.main,
-            type: vType.child,
-            device: deviceInfo?.value || "NA",
-            browser: browserInfo?.value || "NA",
-            files, desc, manufacturer, orderId, subject, orderDate, orderType, pageAffected: pageAffected?.value
-        }
-    });
 
     const ResetHandler = () => {
+        resetErrorHandler();
         setDesc('');
+        setConfirm(false);
         const device = getDeviceInfo();
         setDeviceInfo({ value: device });
         const browser = getBrowserInfo();
         setBrowserInfo({ value: browser });
         setFile([])
         setPageAffected();
+        setSubject();
+        setOrderList({ isLoaded: false, data: [] });
+        setIsNoneCheck(false)
+        setVType((prevState) => ({
+            ...prevState,        // Spread the previous state
+            child: null // Update the child value
+        }));
+        setOrderDate();
+        setOrderType();
+        setManufacturer();
+    }
+    const ResetHandlerChild = () => {
+        resetErrorHandler();
+        setOrderType();
+        setOrderDate()
+        setDesc('');
+        setConfirm(false);
+        const device = getDeviceInfo();
+        setDeviceInfo({ value: device });
+        const browser = getBrowserInfo();
+        setBrowserInfo({ value: browser });
+        setFile([])
+        setPageAffected();
+        setSubject();
+        setOrderList({ isLoaded: false, data: [] });
+        setIsNoneCheck(false);
+        setManufacturer();
+    }
+    const resetErrorHandler = () => {
+        let descElement = document.getElementById("desc");
+        let pageEElement = document.getElementById("Page-Affected");
+        let brandElement = document.getElementById("Choose-Brand");
+        let orderTypeElement = document.getElementById("Choose-Order-Type");
+        if (descElement) {
+            descElement.style.border = '1px solid #ccc';
+        }
+        if (pageEElement) {
+            pageEElement.style.border = '1px solid #ccc';
+        }
+        if (brandElement) {
+            brandElement.style.border = '1px solid #ccc';
+        }
+        if (orderTypeElement) {
+            orderTypeElement.style.border = '1px solid #ccc';
+        }
     }
     const DatePickerLabel = forwardRef(({ value, onClick }, ref) => (
         <button type='button' className='w-[100%] d-flex justify-content-between align-items-center m-0' style={{ background: '#fff', color: '#000', height: '38px', padding: '15px' }} onClick={onClick} ref={ref}>
@@ -255,103 +281,207 @@ const PortalHelp = () => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
         const day = String(date.getDate()).padStart(2, '0');
-        
+
         const formattedDate = `${year}-${month}-${day}`; // Format: YYYY-MM-DD
-        console.log({formattedDate});
-        
         setOrderDate(value)
-        // GetAuthData()
-        //     .then((response) => {
-        //         getAllAccountOrders({
-        //             key: response.data.x_access_token,
-        //             accountIds: JSON.stringify(response.data.accountIds),
-        //             date: formattedDate,
-        //         })
-        //             .then((order) => {
-        //                 console.log({ order });
-        //             })
-        //             .catch((error) => {
-        //                 console.log({ error });
-        //             });
-        //     })
-        //     .catch((err) => {
-        //         console.log({ err });
-        //     });
+        GetAuthData()
+            .then((response) => {
+                getAllAccountOrders({
+                    key: response.data.x_access_token,
+                    accountIds: JSON.stringify(response.data.accountIds),
+                    date: formattedDate,
+                })
+                    .then((order) => {
+                        setOrderList({ isLoaded: true, data: order })
+                        console.log({ order });
+                    })
+                    .catch((error) => {
+                        console.log({ error });
+                    });
+            })
+            .catch((err) => {
+                console.log({ err });
+            });
+    }
+    const SubmitHandler = () => {
+        setIsDisabled(true)
+    }
+    const shakeHandler = (id = null) => {
+        if (id) {
+
+            let lock = document.getElementById(id);
+            if (lock) {
+                setTimeout(() => {
+                    lock.classList.remove('shake');
+                }, 300)
+                lock.classList.add('shake')
+            }
+        }
+    }
+    console.log({
+        form: {
+            reason: vType.main,
+            type: vType.child,
+            device: deviceInfo?.value || "NA",
+            browser: browserInfo?.value || "NA",
+            files, desc, manufacturer, orderId, subject, orderDate, orderType, pageAffected: pageAffected?.value
+        }
+    });
+    const confimationHandler = (value) => {
+        if (value) {
+            let descElement = document.getElementById("desc");
+            let pageEElement = document.getElementById("Page-Affected");
+            let brandElement = document.getElementById("Choose-Brand");
+            let orderTypeElement = document.getElementById("Choose-Order-Type");
+
+            if (vType.main == "Portal Issues") {
+                if (pageEElement) {
+                    if (!pageAffected) {
+                        pageEElement.style.border = '1px solid red';
+                        pageEElement.style.borderRadius = '4px'
+                        shakeHandler("Page-Affected");
+                    } else {
+                        pageEElement.style.border = '1px solid #ccc';
+                    }
+                }
+            } else if (vType.main == "Order Issues") {
+                if (vType.child) {
+                    if (vType.child == "Not able to Order") {
+                        if (!orderType) {
+                            orderTypeElement.style.border = '1px solid red';
+                            orderTypeElement.style.borderRadius = '4px';
+                            shakeHandler("Choose-Order-Type");
+                        } else {
+                            orderTypeElement.style.border = '1px solid #ccc';
+                        }
+                    }
+                    if (!manufacturer) {
+                        brandElement.style.border = '1px solid red';
+                        brandElement.style.borderRadius = '4px';
+                        shakeHandler("Choose-Brand");
+                    } else {
+                        brandElement.style.border = '1px solid #ccc';
+                    }
+                }
+            } else {
+
+            }
+            if (descElement) {
+                if (!desc) {
+                    descElement.style.border = '1px solid red';
+                    shakeHandler("desc");
+                } else {
+                    descElement.style.border = 'none';
+                }
+            }
+        }
     }
 
+
     return (<CustomerSupportLayout>
-        <BMAIHandler reasons={visitType} setReason={(reason) => setVType({ main: reason })} reason={vType.main} resetHandler={ResetHandler} />
-        {vType?.main == "Order Issues" ? <BMAIHandler reasons={orderIssues} setReason={(reason) => {
+        <ModalPage
+            open={false}
+            content={
+                <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
+                    <h2 >Please Confirm</h2>
+                    <p style={{ lineHeight: '22px' }}>
+                        Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
+                    </p>
+                    <div className="d-flex justify-content-around ">
+                        <button disabled={isDisabled} style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { SubmitHandler() }}>
+                            Yes
+                        </button>
+                        <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setConfirm(false)}>
+                            No
+                        </button>
+                    </div>
+                </div>
+            }
+            onClose={() => {
+                setConfirm(false);
+            }}
+        />
+        {orderDate ?
+            <LoaderV4 loading={!orderList.isLoaded} /> : null
+        }
+        <BMAIHandler title reasons={visitType} setReason={(reason) => setVType({ main: reason })} reason={vType.main} resetHandler={ResetHandler} />
+        {vType?.main == "Order Issues" ? <BMAIHandler name="sub categories" title={false} reasons={orderIssues} setReason={(reason) => {
             setVType((prevState) => ({
                 ...prevState,        // Spread the previous state
                 child: reason // Update the child value
             }));
-        }} reason={vType.child} resetHandler={null} /> : null}
-        <Attachements files={files} setFile={setFile} setDesc={setDesc} orderConfirmed={(vType?.main == "Order Issues" && vType.child) ? true : (vType?.main && vType?.main != "Order Issues") ? true : false} setConfirm={setConfirm}>
-            {vType?.main == "Information Issues" ?
-                <HtmlFieldInput id={"subject"} title={"Issues Related to"} value={subject} onChange={(value) => setSubject(value.target.value)
-                } />
-                : vType?.main == "Order Issues" ? <>
-                    {vType.child == "Where is my order?" ?
-                        <>
+        }} reason={vType.child} resetHandler={ResetHandlerChild} /> : null}
+        {vType ? vType.main ? (vType.child != "Where is my order?" || isNoneCheck) ?
+            <Attachements title={vType?.main == "General Feedback" ? "Please define your feedBack below" : true} files={files} setFile={setFile} setDesc={setDesc} orderConfirmed={(vType?.main == "Order Issues" && vType.child) ? true : (vType?.main && vType?.main != "Order Issues") ? true : false} setConfirm={confimationHandler} unLockIcon={<div className="d-flex flex-column text-[10px]" style={{ float: 'right' }}><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>device:</b>&nbsp;{deviceInfo?.value ?? 'Other'}</small><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>browser:</b>&nbsp;{browserInfo?.value ?? 'Other'}</small></div>}>
+                {vType?.main == "General Feedback" ?
+                    // <HtmlFieldInput id={"subject"} title={"Issues Related to"} value={subject} onChange={(value) => setSubject(value.target.value)
+                    // } />
+                    null
+                    : vType?.main == "Order Issues" ? <>
+                        {(vType.child == "Where is my order?" && isNoneCheck) ?
                             <div className=" mr-2 w-full">
-                                {/* <HtmlFieldInput title={'Order Date'} id={'OD'} type="date" value={orderDate} onChange={(value) => setOrderDate(value)
-                            }/> */}
-                                <div id="needHelpDatePickerHolder" style={styles.holder}>
-                                    <p style={styles.title}>{'Order Date'}</p>
-                                    <DatePicker
-                                        selected={orderDate}
-                                        onChange={(value) => getSelectDateOrder(value)}
-                                        dateFormat="MMM/dd/yyyy"
-                                        popperPlacement="auto"
-                                        // minDate={minDate}
-                                        // maxDate={maxDate}
-                                        popperModifiers={{
-                                            preventOverflow: {
-                                                enabled: true,
-                                            },
-                                        }}
-                                        customInput={<DatePickerLabel />}
-                                    />
-                                </div>
-                            </div>
-                            <div className="ml-2 mr-2 w-full">
-                                <HtmlFieldSelect title={"List of Orders"} list={[]} value={orderId} onChange={(value) => setOrderId(value)
+                                <HtmlFieldSelect title={"Choose Brand"} list={manufacturerList.map((manufacturer) => ({
+                                    label: manufacturer.Name,
+                                    value: manufacturer.Id,
+                                }))} value={manufacturer} onChange={(value) => setManufacturer(value)
                                 } />
                             </div>
-                        </>
-                        : vType.child == "Not able to Order" ?
-                            <>
-                                <div className=" mr-2 w-full">
-                                    <HtmlFieldSelect title={"Choose Brand"} list={manufacturerList.map((manufacturer) => ({
-                                        label: manufacturer.Name,
-                                        value: manufacturer.Id,
-                                    }))} value={manufacturer} onChange={(value) => setManufacturer(value)
-                                    } />
-                                </div>
-                                <div className="ml-2 mr-2 w-full">
-                                    <HtmlFieldSelect title={"Choose Order Type"} list={orderTypes} value={orderType} onChange={(value) => setOrderType(value)
-                                    } />
-                                </div>
-                            </>
-                            :
-                            null}
-                </> : vType?.main == "Portal Issues" ?
-                    <>
-                        <div className=" mr-2 w-full">
-                            <HtmlFieldSelect title={"Device"} list={devices} value={deviceInfo} onChange={(value) => setDeviceInfo(value)
-                            } />
-                        </div>
-                        <div className="ml-2 mr-2 w-full">
-                            <HtmlFieldSelect title={"Browser"} list={browsers} value={browserInfo} onChange={(value) => setBrowserInfo(value)
-                            } />
-                        </div>
-                        <div className="ml-2 w-full">
-                            <HtmlFieldSelect title={"Page Affected"} list={pages} value={pageAffected} onChange={(value) => setPageAffected(value)
-                            } />
-                        </div>
-                    </> : null}
-        </Attachements>
+                            : vType.child == "Not able to Order" ?
+                                <>
+                                    <div className=" mr-2 w-full">
+                                        <HtmlFieldSelect title={"Choose Brand"} list={manufacturerList.map((manufacturer) => ({
+                                            label: manufacturer.Name,
+                                            value: manufacturer.Id,
+                                        }))} value={manufacturer} onChange={(value) => setManufacturer(value)
+                                        } />
+                                    </div>
+                                    <div className="ml-2 mr-2 w-full">
+                                        <HtmlFieldSelect title={"Choose Order Type"} list={orderTypes} value={orderType} onChange={(value) => setOrderType(value)
+                                        } />
+                                    </div>
+                                </>
+                                :
+                                null}
+                    </> : vType?.main == "Portal Issues" ?
+                        <>
+                            <div className="ml-2 w-full">
+                                <HtmlFieldSelect title={"Page Affected"} list={pages} value={pageAffected} onChange={(value) => setPageAffected(value)
+                                } />
+                            </div>
+                        </> : null}
+            </Attachements> : null : null : null}
+        {vType ? vType.main == "Order Issues" ? (vType.child == "Where is my order?" && !isNoneCheck) ?
+            orderList.isLoaded ?
+                <div>
+                    <OrderListHolder data={orderList.data || []} />
+                    <div className="d-flex">
+                        <input type="checkbox" id="none" onClick={() => setIsNoneCheck(!isNoneCheck)} checked={isNoneCheck} />
+                        <label for="none">&nbsp;
+                            {orderList.data.length ? "None of this?" : "Still can't find your order?"}
+                        </label>
+                    </div>
+                </div>
+                :
+                <div id="needHelpDatePickerHolder" style={styles.holder}>
+                    <p style={styles.title}>{'Order Date'}</p>
+                    <DatePicker
+                        selected={orderDate}
+                        onChange={(value) => getSelectDateOrder(value)}
+                        dateFormat="MMM/dd/yyyy"
+                        popperPlacement="auto"
+                        // minDate={minDate}
+                        // maxDate={maxDate}
+                        popperModifiers={{
+                            preventOverflow: {
+                                enabled: true,
+                            },
+                        }}
+                        inline
+                        maxDate={maxDate}
+                        customInput={<DatePickerLabel />}
+                    />
+                </div> : null : null : null}
+
     </CustomerSupportLayout>)
 }
 export default PortalHelp;

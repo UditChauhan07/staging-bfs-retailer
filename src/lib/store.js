@@ -119,10 +119,10 @@ export const sortArrayHandler = (arr, getter, order = 'asc') =>
   
   
       const poData = await response.json();
-      console.log(poData);
-  
+      
       if (poData.success) {
         let generatedPONumber = poData.poNumber;
+        console.log({generatedPONumber});
   
         return await generatedPONumber;
       } else {
