@@ -97,10 +97,10 @@ const CustomerService = () => {
           .catch((error) => {
             console.log({ error });
           });
-          getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) }).then((accounts) => {
-            setAccountList(accounts)
+        getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) }).then((accounts) => {
+          setAccountList(accounts)
         }).catch((storeErr) => {
-            console.log({ storeErr });
+          console.log({ storeErr });
         })
       })
       .catch((err) => {
@@ -206,7 +206,7 @@ const CustomerService = () => {
         }}
       />
       <BMAIHandler reasons={reasons} setReason={setReason} reason={reason} resetHandler={resetHandler} />
-      {reason != "Update Account Info" ? isLoad ? <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} autoSelect={OrderId}/> : <LoaderV3 text={"Loading Order List..."} /> : null}
+      {reason != "Update Account Info" ? isLoad ? <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} autoSelect={OrderId} /> : <LoaderV3 text={"Loading Order List..."} /> : null}
       {/*  files={files} desc={desc} */}
       {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
       {reason == "Update Account Info" && <AccountInfo reason={reason} accountList={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
