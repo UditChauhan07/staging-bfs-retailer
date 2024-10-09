@@ -272,6 +272,11 @@ input#searchright {
   color: black;
 }
 
+#needHelpDatePickerHolder .react-datepicker-wrapper {
+  border: 1px solid #ccc;
+  width: 100%;
+  border-radius: 5px;
+}
 .search-container {
   position: relative;
   display: inline-block;

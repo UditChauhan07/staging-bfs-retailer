@@ -33,7 +33,7 @@ const BMAIHandler = ({ reasons, reason, setReason,resetHandler }) => {
                   Are you sure you want to change Reason?
                 </p>
                 <div className="d-flex justify-content-around ">
-                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { setReason(temReason);resetHandler();SetTemReason();SetConfirm(false)}}>
+                <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { setReason(temReason);resetHandler?.();SetTemReason();SetConfirm(false)}}>
                     Ok
                   </button>
                   <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => SetConfirm(false)}>

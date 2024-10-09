@@ -899,7 +899,7 @@ export async function getAllAccountBrand({ key, accountIds }) {
     return data?.data || [];
   }
 }
-export async function getAllAccountOrders({ key, accountIds, month }) {
+export async function getAllAccountOrders({ key, accountIds, month,date=null }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -907,7 +907,7 @@ export async function getAllAccountOrders({ key, accountIds, month }) {
 
   let response = await fetch(url2 + "UQPIByU1hllkP9m", {
     method: "POST",
-    body: JSON.stringify({ key, accountIds, month }),
+    body: JSON.stringify({ key, accountIds, month ,date}),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());

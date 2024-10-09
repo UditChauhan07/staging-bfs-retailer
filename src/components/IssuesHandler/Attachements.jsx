@@ -2,7 +2,7 @@ import { BiLock, BiSave, BiUpload } from "react-icons/bi";
 import Styles from "./Attachements.module.css";
 import { useEffect } from "react";
 
-const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) => {
+const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm, children }) => {
     function handleChange(e) {
         let tempFile = [...files];
         let reqfiles = e.target.files;
@@ -48,11 +48,11 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) =
         return (
             files.map((file, index) => (
                 <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', right: '5px', top: '-5px', color: '#000', zIndex: 1, cursor: 'pointer', fontSize: '18px' }} onClick={()=>{fileRemoveHandler(index)}}>x</span>
-                <a href={file?.preview} target="_blank" title="Click to Download">
-                  <img src={file?.preview} key={index} alt={file?.preview} />
-                </a>
-              </div>
+                    <span style={{ position: 'absolute', right: '5px', top: '-5px', color: '#000', zIndex: 1, cursor: 'pointer', fontSize: '18px' }} onClick={() => { fileRemoveHandler(index) }}>x</span>
+                    <a href={file?.preview} target="_blank" title="Click to Download">
+                        <img src={file?.preview} key={index} alt={file?.preview} />
+                    </a>
+                </div>
             ))
         )
     }
@@ -65,6 +65,7 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) =
         <h2 className={Styles.reasonTitle}><span style={{ cursor: "pointer" }} onClick={shakeHandler}>Help us by sending some Details:</span> {!orderConfirmed && <BiLock style={{ float: 'right' }} id="lock2" />}</h2>
         {orderConfirmed &&
             <div className={Styles.attachContainer}>
+                {children ? <div className={Styles.dFlex}>{children}</div> : null}
                 <div className={Styles.dFlex}>
                     <div className={Styles.attachHolder}>
                         <p className={Styles.subTitle}>upload some attachments</p>
@@ -79,8 +80,9 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm }) =
                         <textarea name="desc" id="" className={Styles.textAreaPut} onKeyUp={(e) => setDesc(e.target.value)}></textarea>
                     </div>
                 </div>
-                <button className={Styles.btnHolder} onClick={()=>setConfirm(true)}><BiSave />&nbsp;Submit</button>
-            </div>}
+                <button className={Styles.btnHolder} onClick={() => setConfirm(true)}><BiSave />&nbsp;Submit</button>
+            </div>
+        }
     </section>)
 }
 export default Attachements;
