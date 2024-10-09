@@ -303,9 +303,6 @@ const PortalHelp = () => {
                 console.log({ err });
             });
     }
-    const SubmitHandler = () => {
-        setIsDisabled(true)
-    }
     const shakeHandler = (id = null) => {
         if (id) {
 
@@ -327,8 +324,13 @@ const PortalHelp = () => {
             files, desc, manufacturer, orderId, subject, orderDate, orderType, pageAffected: pageAffected?.value
         }
     });
+    const SubmitHandler = () => {
+        setIsDisabled(true)
+        setConfirm(false);
+    }
     const confimationHandler = (value) => {
         if (value) {
+            let error = false;
             let descElement = document.getElementById("desc");
             let pageEElement = document.getElementById("Page-Affected");
             let brandElement = document.getElementById("Choose-Brand");
@@ -337,6 +339,7 @@ const PortalHelp = () => {
             if (vType.main == "Portal Issues") {
                 if (pageEElement) {
                     if (!pageAffected) {
+                        error = true;
                         pageEElement.style.border = '1px solid red';
                         pageEElement.style.borderRadius = '4px'
                         shakeHandler("Page-Affected");
@@ -348,6 +351,7 @@ const PortalHelp = () => {
                 if (vType.child) {
                     if (vType.child == "Not able to Order") {
                         if (!orderType) {
+                            error = true;
                             orderTypeElement.style.border = '1px solid red';
                             orderTypeElement.style.borderRadius = '4px';
                             shakeHandler("Choose-Order-Type");
@@ -356,6 +360,7 @@ const PortalHelp = () => {
                         }
                     }
                     if (!manufacturer) {
+                        error = true;
                         brandElement.style.border = '1px solid red';
                         brandElement.style.borderRadius = '4px';
                         shakeHandler("Choose-Brand");
@@ -368,11 +373,15 @@ const PortalHelp = () => {
             }
             if (descElement) {
                 if (!desc) {
+                    error = true;
                     descElement.style.border = '1px solid red';
                     shakeHandler("desc");
                 } else {
                     descElement.style.border = 'none';
                 }
+            }
+            if(!error){
+                setConfirm(value);
             }
         }
     }
@@ -380,7 +389,7 @@ const PortalHelp = () => {
 
     return (<CustomerSupportLayout>
         <ModalPage
-            open={false}
+            open={confirm}
             content={
                 <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
                     <h2 >Please Confirm</h2>
