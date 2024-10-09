@@ -15,7 +15,7 @@ const OrderListHolder = ({ data = [] }) => {
                     <div className={Styles.row} key={order.Id} onClick={() => onCLick(order.Id)}>
                         <div className={Styles.info}>
                             <div className={Styles.poHolder}>{order.PO_Number__c ?? "No PO Avaiable"}</div>
-                            <div className={Styles.orderText}>order for {order.AccountName} of {order.ManufacturerName__c} with {order.ProductCount} products ${parseFloat(order.Amount).toFixed(2)}, type: {order.Type}</div>
+                            <div className={Styles.orderText}>Order for {order.AccountName} of {order.ManufacturerName__c} with {order.ProductCount} products ${parseFloat(order.Amount).toFixed(2)}, type: {order.Type}</div>
                         </div>
                     </div>
                 ))}
