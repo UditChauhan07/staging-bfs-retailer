@@ -29,7 +29,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
   return (
     <>
       {salesData.length ? (
-        <div className={`d-flex p-3 ${styles.tableBoundary} mb-5`}>
+        <div className={`d-flex p-3 ${styles.tableBoundary} mb-5 mt-3`}>
           <div
             className=""
             style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto",width:'100%' }}

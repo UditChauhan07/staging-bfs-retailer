@@ -2,7 +2,7 @@ import { BiLock, BiSave, BiUpload } from "react-icons/bi";
 import Styles from "./Attachements.module.css";
 import { useEffect } from "react";
 
-const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm, children }) => {
+const Attachements = ({ title=true, files, setFile, setDesc, orderConfirmed, setConfirm, children,unLockIcon=false }) => {
     function handleChange(e) {
         let tempFile = [...files];
         let reqfiles = e.target.files;
@@ -62,11 +62,15 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm, chi
         setFile(tempFile);
     }
     return (<section style={{ borderBottom: '1px solid #ccc' }} id="AttachementSection">
-        <h2 className={Styles.reasonTitle}><span style={{ cursor: "pointer" }} onClick={shakeHandler}>Help us by sending some Details:</span> {!orderConfirmed && <BiLock style={{ float: 'right' }} id="lock2" />}</h2>
+        <h2 className={`${Styles.reasonTitle} ${unLockIcon ? 'd-flex justify-content-between align-items-center':''}`}><span style={{ cursor: "pointer" }} onClick={shakeHandler}>{title?title!=true?title:"Help us by sending some Details:":null}</span> {!orderConfirmed ? <BiLock style={{ float: 'right' }} id="lock2" />:unLockIcon?unLockIcon:null}</h2>
         {orderConfirmed &&
             <div className={Styles.attachContainer}>
                 {children ? <div className={Styles.dFlex}>{children}</div> : null}
                 <div className={Styles.dFlex}>
+                    <div className={Styles.descholder}>
+                        <p className={Styles.subTitle}>Describe you Problem</p>
+                        <textarea name="desc" id="desc" className={Styles.textAreaPut} onKeyUp={(e) => setDesc(e.target.value)}></textarea>
+                    </div>
                     <div className={Styles.attachHolder}>
                         <p className={Styles.subTitle}>upload some attachments</p>
                         <label className={Styles.attachLabel} for="attachement"><div><div className={Styles.attachLabelDiv}><BiUpload /></div></div></label>
@@ -74,10 +78,6 @@ const Attachements = ({ files, setFile, setDesc, orderConfirmed, setConfirm, chi
                         <div className={Styles.imgHolder}>
                             <ImageSlider />
                         </div>
-                    </div>
-                    <div className={Styles.descholder}>
-                        <p className={Styles.subTitle}>Describe you Problem</p>
-                        <textarea name="desc" id="" className={Styles.textAreaPut} onKeyUp={(e) => setDesc(e.target.value)}></textarea>
                     </div>
                 </div>
                 <button className={Styles.btnHolder} onClick={() => setConfirm(true)}><BiSave />&nbsp;Submit</button>

@@ -104,7 +104,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             </div>
 
                                             <div className={Styles.supportLeftContent}>
-                                                <h2>Portal Helps</h2>
+                                                <h2>Portal Help</h2>
                                                 <p>Need Help? Your Portal Solutions Await</p>
                                             </div>
                                         </div>

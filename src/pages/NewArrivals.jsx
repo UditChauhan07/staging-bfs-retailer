@@ -166,19 +166,28 @@ const NewArrivals = () => {
             value={month}
             options={months}
             onChange={(value) => {
-              setFilterLoad(true);
-              let imgElement = document.getElementById("newArrivalsSection").querySelectorAll("img");
-              let keys = Object.keys(imgElement);
-              console.log({imgElement});
-
-              if(keys.length>0){
-                keys.map((key)=>{
-                  console.log({aa:imgElement[key]});
-                  imgElement[key].removeAttribute('src');
-                })
-              }
-              setTimeout(()=>{setFilterLoad(false);setMonth(value);}, 1000);
+              setFilterLoad(true)
+                 let newArrivalsSection = document.getElementById("newArrivalsSection")
               
+              if (newArrivalsSection) { 
+                let imgElement = newArrivalsSection.querySelectorAll("img");
+                let keys = Object.keys(imgElement);
+                console.log({ imgElement });
+            
+                if (keys.length > 0) {
+                  keys.map((key) => {
+                    
+                    imgElement[key].removeAttribute('src');
+                  });
+                }
+              } else {
+                console.error('Element with id "newArrivalsSection" not found.');
+              }
+            
+              setTimeout(() => {
+                setFilterLoad(false);
+                setMonth(value);
+              }, 1000);
             }}
           />
           <button
