@@ -260,23 +260,23 @@ const PortalHelp = () => {
         console.log({formattedDate});
         
         setOrderDate(value)
-        // GetAuthData()
-        //     .then((response) => {
-        //         getAllAccountOrders({
-        //             key: response.data.x_access_token,
-        //             accountIds: JSON.stringify(response.data.accountIds),
-        //             date: formattedDate,
-        //         })
-        //             .then((order) => {
-        //                 console.log({ order });
-        //             })
-        //             .catch((error) => {
-        //                 console.log({ error });
-        //             });
-        //     })
-        //     .catch((err) => {
-        //         console.log({ err });
-        //     });
+        GetAuthData()
+            .then((response) => {
+                getAllAccountOrders({
+                    key: response.data.x_access_token,
+                    accountIds: JSON.stringify(response.data.accountIds),
+                    date: formattedDate,
+                })
+                    .then((order) => {
+                        console.log({ order });
+                    })
+                    .catch((error) => {
+                        console.log({ error });
+                    });
+            })
+            .catch((err) => {
+                console.log({ err });
+            });
     }
 
     return (<CustomerSupportLayout>

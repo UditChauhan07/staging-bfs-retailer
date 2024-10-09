@@ -96,7 +96,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                         <span className={`timelineHolder0${(index % 3) + 1}`} id={month.month}>{month.month}</span>
                         {month.content.map((product, productIndex) => {
                           if (!selectBrand || selectBrand == product.ManufacturerName__c) {
-                            let listPrice = "$-- . --";
+                            // let listPrice = "$-- . --";
+                            let listPrice = "TBD";
                             if (product?.usdRetail__c) {
                               if (Number(product?.usdRetail__c?.replace("$", ""))) {
                                 listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
@@ -120,8 +121,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                       </div>
                                     </div>
                                     <div className="d-flex mt-2">
-                                      <div className="m-auto ProductImg">
-                                        <img src={product?.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
+                                    <div className="m-auto ProductImg">
+                                        <img className="zoomInEffect" src={product?.ProductImage ?? "\\assets\\images\\dummy.png"} alt={product.Name} onClick={() => {
                                           setProductDetailId(product.Id);
                                         }} style={{ cursor: 'pointer' }} />
                                       </div>
@@ -142,6 +143,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                   <div className="launchBrand" onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>
                                     <img className="img-fluid" src={"\\assets\\images\\brandImage\\" + product.ManufacturerId__c + ".png"} alt={`${product.ManufacturerName__c} logo`} style={{cursor:'pointer'}}/>
                                   </div>
+                                  
+
                                 </div>
                               </>
                             );
