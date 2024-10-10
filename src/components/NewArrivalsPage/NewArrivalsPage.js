@@ -247,7 +247,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
           </div>
         </div>
         {/*  AccountId={AccountId} */}
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId}  />
       </section>
       <Pagination
         className="pagination-bar"
