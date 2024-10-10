@@ -893,6 +893,7 @@ export async function getAllAccountBrand({ key, accountIds }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  
   if (data.status == 300) {
     DestoryAuth();
   } else {
