@@ -8,9 +8,10 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
 
-const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null,   }) => {
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null, SalesRepId=null }) => {
     console.log("product details " , productId)
-    let SalesRepId = localStorage.getItem("Sales_Rep__c")
+    console.log('salesrepid' , SalesRepId )
+    console.log('manufacturer id ' , ManufacturerId)
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -39,9 +40,10 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
         setReplaceCartModalOpen(false);
         addOrder(element, quantity, product.discount);
     };
+   
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
         // if (AccountId && SalesRepId) {
-        console.log('salesrepid' , SalesRepId )
+        
             if (SalesRepId) {
                 setIsModalNoRepOpen(false)
                 element.salesPrice = salesPrice;
