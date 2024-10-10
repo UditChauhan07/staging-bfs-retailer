@@ -195,9 +195,12 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                 <p className={Styles.priceHolder}>
-                  
+                <div>
                 {salesPrice!=listPrice&&<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>}
-                  {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
+                </div>
+                <div>
+                {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
+                </div>
                 </p>
                 {orders[product?.Id] ? (
                   <>
