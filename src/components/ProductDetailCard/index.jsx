@@ -20,11 +20,6 @@ function cleanPrice(price) {
   return price ? parseFloat(price.replace(/[^\d.-]/g, '')) : 0;
 }
 
-
-
-
-
-
 let inputPrice = Object.values(orders)?.find(
   (order) =>
     order.product.Id === product?.data?.Id &&
@@ -86,7 +81,7 @@ if (inputPrice === undefined || cleanUsdRetail) {
             {product?.data?.Name}
           </h2>
           {product?.discount ? (
-              <p className={Styles.priceHolder}>
+              <p className={`${Styles.priceHolder} `}>
               {isNaN(salesPrice) || salesPrice === null || salesPrice === undefined ? (
                 <>{product?.data?.usdRetail__c}</>
               ) : (
@@ -161,7 +156,7 @@ if (inputPrice === undefined || cleanUsdRetail) {
                       <DeleteIcon fill="red" />
                     </button>
                   </div>
-                  <p className="mt-2" style={{ textAlign: "start" }}>
+                  <p className="mt-3" style={{ textAlign: "start" }}>
                     Total: <b>{(inputPrice * orders[product?.data?.Id]?.quantity).toFixed(2)}</b>
                   </p>
                 </div>
@@ -180,7 +175,7 @@ if (inputPrice === undefined || cleanUsdRetail) {
             </>
           )}
           {/* {product?.data?.Description && <p style={{ textAlign: 'start', color: "#898989" }}>{product?.data?.Description}</p>} */}
-          <hr style={{ borderTop: "3px dashed #000", fontSize: "20px", color: "black" }}></hr>
+          <hr className="mt-5" style={{ borderTop: "3px dashed #000", fontSize: "20px", color: "black" }}></hr>
           {product?.data?.ProductCode && <p className={Styles.descHolder}>
             Product Code: <span >{product?.data?.ProductCode}</span>
           </p>}
