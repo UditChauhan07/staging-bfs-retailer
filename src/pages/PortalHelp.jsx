@@ -6,13 +6,15 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
-import { getAllAccountBrand, getAllAccountOrders, GetAuthData, months, postSupportAny, uploadFileSupport } from "../lib/store";
+import { DestoryAuth, getAllAccountBrand, getAllAccountOrders, GetAuthData, months, postSupportAny, uploadFileSupport } from "../lib/store";
 import { CalenderIcon } from "../lib/svg";
 import OrderListHolder from "../components/OrderList/List";
 import LoaderV4 from "../components/loader/v4";
 import ModalPage from "../components/Modal UI";
 import LoaderV3 from "../components/loader/v3";
 import AppLayout from "../components/AppLayout";
+import SelectableCardList from "../components/Badges";
+import Bubbles from "../components/Badges/bubble";
 const PortalHelp = () => {
     const navigate = useNavigate();
     const [maxDate, setMaxDate] = useState(new Date());
@@ -37,22 +39,26 @@ const PortalHelp = () => {
     // const [accountList, setAccountList] = useState([]);
     useEffect(() => {
         GetAuthData().then((user) => {
-            getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands) => {
-                setManufacturerList(brands);
-            }).catch((brandErr) => {
-                console.log({ brandErr });
-            })
-            // getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
-            //     console.log({accounts});
+            if (user) {
+                getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands) => {
+                    setManufacturerList(brands);
+                }).catch((brandErr) => {
+                    console.log({ brandErr });
+                })
+                // getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
+                //     console.log({accounts});
 
-            //     setAccountList(accounts)
-            //     if(accounts.length==1){
-            //         setManufacturerList(accounts[0].data);
+                //     setAccountList(accounts)
+                //     if(accounts.length==1){
+                //         setManufacturerList(accounts[0].data);
 
-            //     }
-            //   }).catch((storeErr) => {
-            //     console.log({ storeErr });
-            //   })
+                //     }
+                //   }).catch((storeErr) => {
+                //     console.log({ storeErr });
+                //   })
+            } else {
+                DestoryAuth();
+            }
         }).catch((err) => {
             console.log({ err });
         })
@@ -64,8 +70,8 @@ const PortalHelp = () => {
     ]
     let orderIssues = [
         {
-            name: "Where is my order?", icon: '/assets/images/orderUnknownIcon.png',
-            desc: "Your Order Journey: Where is it Now?"
+            name: "Can't find my Order in portal", icon: '/assets/images/orderUnknownIcon.png',
+            desc: "Order Disappeared? Solutions to Get It Back."
         },
         {
             name: "Not able to Order", icon: '/assets/images/orderFailedIcon.png',
@@ -75,14 +81,14 @@ const PortalHelp = () => {
 
 
     let orderTypes = [
-        { label: "Wholesale Numbers", value: "Wholesale Numbers" },
-        { label: "Pre order", value: "Pre order" },
+        { name: "Wholesale Numbers", value: "Wholesale Numbers" },
+        { name: "Pre order", value: "Pre order" },
     ]
     const pages = [
-        { label: "Dashboard", value: "Dashboard" },
-        { label: "Orders", value: "Orders" },
-        { label: "Marketing Calendar", value: "Marketing Calendar" },
-        { label: "Reports", value: "Reports" }
+        { name: "Dashboard", value: "Dashboard" },
+        { name: "Orders", value: "Orders" },
+        { name: "Marketing Calendar", value: "Marketing Calendar" },
+        { name: "Reports", value: "Reports" }
     ]
     let styles = {
         holder: {
@@ -475,52 +481,39 @@ const PortalHelp = () => {
             <LoaderV4 loading={!orderList.isLoaded} /> : null
         }
         <BMAIHandler title reasons={visitType} setReason={(reason) => setVType({ main: reason })} reason={vType.main} resetHandler={ResetHandler} />
-        {vType?.main == "Order Issues" ? <BMAIHandler name="sub categories" title={false} reasons={orderIssues} setReason={(reason) => {
-            setVType((prevState) => ({
-                ...prevState,        // Spread the previous state
-                child: reason // Update the child value
-            }));
-        }} reason={vType.child} resetHandler={ResetHandlerChild} /> : null}
-        {vType ? vType.main ? (vType.child != "Where is my order?" || isNoneCheck) ?
+        {vType?.main == "Order Issues" ?
+            <div>
+
+                <BMAIHandler name="sub categories" title={false} reasons={orderIssues} setReason={(reason) => {
+                    setVType((prevState) => ({
+                        ...prevState,        // Spread the previous state
+                        child: reason // Update the child value
+                    }));
+                }} reason={vType.child} resetHandler={ResetHandlerChild} />
+                <>
+                    {(vType.child == "Can't find my Order in portal" && isNoneCheck) ?
+                        <div className=" mr-2 w-full">
+                            <Bubbles title={"Choose Brand"} data={manufacturerList} value={manufacturer} handleChange={(value) => setManufacturer(value)} />
+                        </div>
+                        : vType.child == "Not able to Order" ?
+                            <>
+                                <div className=" mr-2 w-full">
+                                    <Bubbles title={"Choose Brand"} data={manufacturerList} value={manufacturer} handleChange={(value) => setManufacturer(value)} />
+                                </div>
+                                <div className="ml-2 mr-2 w-full">
+                                    <SelectableCardList title={"Choose Order Type"} data={orderTypes} onCardSelect={(value) => setOrderType(value)
+                                    } />
+                                </div>
+                            </>
+                            :
+                            null}
+                </>
+            </div>
+            : vType.main == "Portal Issues" ? <SelectableCardList data={pages} title={"Page Affected"} onCardSelect={(value) => setPageAffected(value)} /> : null}
+        {vType ? vType.main ? (vType.child != "Can't find my Order in portal" || isNoneCheck) ?
             <Attachements title={vType?.main == "General Feedback" ? "Please define your feedBack below" : "to Help us by sharing details"} files={files} setFile={setFile} setDesc={setDesc} orderConfirmed={(vType?.main == "Order Issues" && vType.child) ? true : (vType?.main && vType?.main != "Order Issues") ? true : false} setConfirm={confimationHandler} unLockIcon={<div className="d-flex flex-column text-[10px]" style={{ float: 'right' }}><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>device:</b>&nbsp;{deviceInfo?.value ?? 'Other'}</small><small style={{ lineHeight: 1, letterSpacing: '0.5px' }}><b>browser:</b>&nbsp;{browserInfo?.value ?? 'Other'}</small></div>}>
-                {vType?.main == "General Feedback" ?
-                    // <HtmlFieldInput id={"subject"} title={"Issues Related to"} value={subject} onChange={(value) => setSubject(value.target.value)
-                    // } />
-                    null
-                    : vType?.main == "Order Issues" ? <>
-                        {(vType.child == "Where is my order?" && isNoneCheck) ?
-                            <div className=" mr-2 w-full">
-                                <HtmlFieldSelect title={"Choose Brand"} list={manufacturerList.map((manufacturer) => ({
-                                    label: manufacturer.Name,
-                                    value: manufacturer.Id,
-                                }))} value={manufacturer} onChange={(value) => setManufacturer(value)
-                                } />
-                            </div>
-                            : vType.child == "Not able to Order" ?
-                                <>
-                                    <div className=" mr-2 w-full">
-                                        <HtmlFieldSelect title={"Choose Brand"} list={manufacturerList.map((manufacturer) => ({
-                                            label: manufacturer.Name,
-                                            value: manufacturer.Id,
-                                        }))} value={manufacturer} onChange={(value) => setManufacturer(value)
-                                        } />
-                                    </div>
-                                    <div className="ml-2 mr-2 w-full">
-                                        <HtmlFieldSelect title={"Choose Order Type"} list={orderTypes} value={orderType} onChange={(value) => setOrderType(value)
-                                        } />
-                                    </div>
-                                </>
-                                :
-                                null}
-                    </> : vType?.main == "Portal Issues" ?
-                        <>
-                            <div className="ml-2 w-full">
-                                <HtmlFieldSelect title={"Page Affected"} list={pages} value={pageAffected} onChange={(value) => setPageAffected(value)
-                                } />
-                            </div>
-                        </> : null}
             </Attachements> : null : null : null}
-        {vType ? vType.main == "Order Issues" ? (vType.child == "Where is my order?"&&!isNoneCheck) ?
+        {vType ? vType.main == "Order Issues" ? (vType.child == "Can't find my Order in portal" && !isNoneCheck) ?
             <>
                 <div id="needHelpDatePickerHolder" className="" style={{ ...styles.holder, marginTop: '1rem' }}>
                     <p style={styles.title}>{'Order Date'}</p>
@@ -557,7 +550,7 @@ const PortalHelp = () => {
                                 lineHeight: '33px',
                                 letterSpacing: '1.6px',
                                 textTransform: 'uppercase',
-                                border: '1px solid #000',
+                                border: '1px solid #ccc',
                                 background: '#000',
                                 width: 'fit-content',
                                 float: 'left',
