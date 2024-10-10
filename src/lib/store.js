@@ -827,7 +827,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-
+  console.log(month , "month in pdf v2")
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
     body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
@@ -843,6 +843,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
 }
 
 export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr,year }) {
+  console.log(month , "month of v3")
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -854,6 +855,7 @@ export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, ma
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  console.log({data})
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -893,6 +895,7 @@ export async function getAllAccountBrand({ key, accountIds }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  
   if (data.status == 300) {
     DestoryAuth();
   } else {

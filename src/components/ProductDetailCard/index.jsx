@@ -27,15 +27,15 @@ let inputPrice = Object.values(orders)?.find(
     order.account.id === AccountId
 )?.product?.salesPrice;
 
-// If usdRetail__c has a dollar sign, clean it
+
 let cleanUsdRetail = cleanPrice(product?.data?.usdRetail__c);
 
-// Log to verify the price formats
+
 console.log('Input Price:', inputPrice);
 console.log('Cleaned USD Retail:', cleanUsdRetail);
 
 // Ensure the correct comparison or calculations
-if (inputPrice === undefined && cleanUsdRetail) {
+if (inputPrice === undefined || cleanUsdRetail) {
   inputPrice = cleanUsdRetail; // Fallback to usdRetail__c if inputPrice is undefined
 }
 

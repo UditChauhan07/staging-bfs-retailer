@@ -101,7 +101,7 @@ const MarketingCalendar = () => {
         }
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
-      if(version == 1){
+      if(version === 1){
         getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
@@ -119,9 +119,10 @@ const MarketingCalendar = () => {
         }).catch((pdfErr) => {
           console.log({ pdfErr });
         })
-      }else if(version == 2){
-        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
-          if (file) {
+      }else if(version === 2){
+        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId , month , manufacturerStr , year:selectYear }).then((file) => {
+        if (file) {
+          
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
             // a.target = '_blank'
