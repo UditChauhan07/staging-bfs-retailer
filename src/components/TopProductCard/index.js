@@ -19,6 +19,9 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectBrand, setBrand] = useState();
   const [salesRepId, setsalesRepId] = useState();
+  const [manufacturerId , setManfacturerId] = useState()
+  const [manufacturerName , setManufacturerName] = useState()
+  // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm" , manufacturerId)
   useEffect(() => {}, [productDetailId, productImages]);
 
   const orderSetting = (element, quantity, manufacturer) => {
@@ -189,6 +192,9 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     setProductDetailId(product.Id);
                     setBrand(product.ManufacturerId__c);
                     setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
+                    setManfacturerId(product.ManufacturerId__c)
+                    setManufacturerName(product.ManufacturerName__c)
+                    
                   }}
                 >
                   {product?.Name.substring(0, 20)}...
@@ -258,7 +264,9 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         setProductDetailId={setProductDetailId}
         accountDetails={accountDetails?.[product?.ManufacturerId__c]}
         AccountId={localStorage.getItem("AccountId__c")}
-        ManufacturerId={localStorage.getItem("ManufacturerId__c")}
+        ManufacturerId={manufacturerId}
+        manufacturerName = {manufacturerName}
+       
         SalesRepId={salesRepId}
       />
     </section>
