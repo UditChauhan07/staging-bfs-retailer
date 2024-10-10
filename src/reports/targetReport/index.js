@@ -559,7 +559,7 @@ const TargetReport = () => {
               <div></div>
             </div>
           )}
-          <div className={`d-flex p-3 ${Styles.tableBoundary} mb-5`}>
+          <div className={`d-flex p-3 ${Styles.tableBoundary} mb-5 mt-3`}>
             <div className="" style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto", width: "100%" }}>
               <table id="salesReportTable" className="table table-responsive" style={{ minHeight: "600px" }}>
                 <thead>

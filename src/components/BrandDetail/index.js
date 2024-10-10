@@ -114,7 +114,7 @@ const BrandDetailCard = ({ brandId }) => {
                             <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand.desc ??'NA'}} />
                         </div>
                     </div>
-
+                {(topProducts.isLoaded && topProducts?.data.length)||(!topProducts.isLoaded) ?
                 <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
                     <h3 className="mt-5">Popular selling products</h3>
                     <OwlCarousel className="owl-theme" {...options}>
@@ -157,7 +157,7 @@ const BrandDetailCard = ({ brandId }) => {
                                 </div>
                             </>}
                     </OwlCarousel>
-                </div>
+                </div>: null}
             </div>
         </section>
     );
