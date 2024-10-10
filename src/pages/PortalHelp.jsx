@@ -6,8 +6,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
-
-import { getAllAccountBrand, getAllAccountLocation, getAllAccountOrders, GetAuthData, months, postSupportAny, uploadFileSupport } from "../lib/store";
+import { getAllAccountBrand, getAllAccountOrders, GetAuthData, months, postSupportAny, uploadFileSupport } from "../lib/store";
 import { CalenderIcon } from "../lib/svg";
 import OrderListHolder from "../components/OrderList/List";
 import LoaderV4 from "../components/loader/v4";
@@ -45,7 +44,7 @@ const PortalHelp = () => {
             })
             // getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
             //     console.log({accounts});
-                
+
             //     setAccountList(accounts)
             //     if(accounts.length==1){
             //         setManufacturerList(accounts[0].data);
@@ -269,6 +268,7 @@ const PortalHelp = () => {
     ));
 
     const getSelectDateOrder = (value) => {
+        setOrderList({ isLoaded: false, data: [] })
         let date = new Date(value);
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
@@ -314,40 +314,40 @@ const PortalHelp = () => {
             .then((user) => {
                 if (user) {
                     let subject = `Portal Help for ${vType.main}`;
-                    if(vType.child){
+                    if (vType.child) {
                         subject += ` that ${vType.child}`
                     }
                     let systemDesc = `Device : ${deviceInfo.value},\nBrowser : ${browserInfo.value},\n`;
-                    if(pageAffected){
-                        if(pageAffected.value){
-                        systemDesc += `Issue on : ${pageAffected.value},\n`
+                    if (pageAffected) {
+                        if (pageAffected.value) {
+                            systemDesc += `Issue on : ${pageAffected.value},\n`
                         }
                     }
-                    if(orderDate){
+                    if (orderDate) {
                         let date = new Date(orderDate);
                         let datemonth = `${date.getDate()} ${months[date.getMonth()]}`;
                         subject += ` Created On ${datemonth}`
                     }
-                    if(orderType){
-                        if(orderType?.value){
+                    if (orderType) {
+                        if (orderType?.value) {
                             systemDesc += `Order Type : ${orderType.value},\n`
                         }
                     }
-                    if(desc){
+                    if (desc) {
                         systemDesc += `User Wrote : ${desc}`
                     }
                     let rawData = {
                         orderStatusForm: {
                             typeId: "012Rb000003EFK1IAO",
                             reason: vType.main,
-                            salesRepId:"0053b00000DgEvqAAF",
+                            salesRepId: "0053b00000DgEvqAAF",
                             contactId: user.data.retailerId,
-                            accountId:user.data.accountIds[0],
+                            accountId: user.data.accountIds[0],
                             opportunityId: orderId,
-                            manufacturerId:manufacturer?.value||null,
+                            manufacturerId: manufacturer?.value || null,
                             desc: systemDesc,
                             priority: "Medium",
-                            sendEmail:true,
+                            sendEmail: true,
                             subject,
                         },
                         key: user.data.x_access_token,
@@ -520,37 +520,60 @@ const PortalHelp = () => {
                             </div>
                         </> : null}
             </Attachements> : null : null : null}
-        {vType ? vType.main == "Order Issues" ? (vType.child == "Where is my order?" && !isNoneCheck) ?
-            orderList.isLoaded ?
-                <div>
-                    <OrderListHolder data={orderList.data || []} />
-                    <div className="d-flex">
-                        <input type="checkbox" id="none" onClick={() => setIsNoneCheck(!isNoneCheck)} checked={isNoneCheck} />
-                        <label for="none">&nbsp;
-                            {orderList.data.length ? "None of this?" : "Still can't find your order?"}
-                        </label>
-                    </div>
-                </div>
-                :
-                <div id="needHelpDatePickerHolder" style={styles.holder}>
+        {vType ? vType.main == "Order Issues" ? (vType.child == "Where is my order?"&&!isNoneCheck) ?
+            <>
+                <div id="needHelpDatePickerHolder" className="" style={{ ...styles.holder, marginTop: '1rem' }}>
                     <p style={styles.title}>{'Order Date'}</p>
-                    <DatePicker
-                        selected={orderDate}
-                        onChange={(value) => getSelectDateOrder(value)}
-                        dateFormat="MMM/dd/yyyy"
-                        popperPlacement="auto"
-                        // minDate={minDate}
-                        // maxDate={maxDate}
-                        popperModifiers={{
-                            preventOverflow: {
-                                enabled: true,
-                            },
-                        }}
-                        inline
-                        maxDate={maxDate}
-                        customInput={<DatePickerLabel />}
-                    />
-                </div> : null : null : null}
+                    <div style={{ width: '300px' }}>
+                        <DatePicker
+                            selected={orderDate}
+                            onChange={(value) => getSelectDateOrder(value)}
+                            dateFormat="MMM/dd/yyyy"
+                            popperPlacement="auto"
+                            // minDate={minDate}
+                            // maxDate={maxDate}
+                            popperModifiers={{
+                                preventOverflow: {
+                                    enabled: true,
+                                },
+                            }}
+                            inline={(!orderList.isLoaded && !orderDate)}
+                            maxDate={maxDate}
+                            customInput={<DatePickerLabel />}
+                        />
+                    </div>
+                    {orderList.isLoaded ?
+                        <div>
+                            <p style={styles.title}>{'Order List'}</p>
+                            <OrderListHolder data={orderList.data || []} />
+                            <div className="d-flex" style={{
+                                color: '#fff',
+                                textAlign: 'center',
+                                fontFamily: "Montserrat",
+                                fontSize: '16px',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                padding: '0px 10px',
+                                lineHeight: '33px',
+                                letterSpacing: '1.6px',
+                                textTransform: 'uppercase',
+                                border: '1px solid #000',
+                                background: '#000',
+                                width: 'fit-content',
+                                float: 'left',
+                                margin: '20px auto'
+                            }}>
+                                <input type="checkbox" id="none" onClick={() => setIsNoneCheck(!isNoneCheck)} checked={isNoneCheck} />
+                                <label for="none">&nbsp;
+                                    {orderList.data.length ? "None of this?" : "Still can't find your order?"}
+                                </label>
+                            </div>
+                        </div>
+                        :
+                        null}
+                </div>
+
+            </> : null : null : null}
 
     </CustomerSupportLayout>)
 }
