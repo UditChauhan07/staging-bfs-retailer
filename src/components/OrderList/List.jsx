@@ -21,7 +21,7 @@ const OrderListHolder = ({ data = [] }) => {
                 ))}
             </div>)
     } else {
-        return (<p>No order found.</p>)
+        return (<p className="text-[13px] text-[Arial]">No order found.</p>)
     }
 }
 export default OrderListHolder;
