@@ -184,11 +184,16 @@ function MyBagFinal() {
             OrderPlaced({ order: begToOrder })
               .then((response) => {
                 if (response) {
+                  if (response.length) {
+                    setIsOrderPlaced(0);
+                    setorderStatus({ status: true, message: response[0].message });
+                  } else {
                   fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
                   localStorage.removeItem("orders");
                   setIsDisabled(false)
                   navigate("/order-list");
                   setIsOrderPlaced(2);
+                  }
                 }
               })
               .catch((err) => {
