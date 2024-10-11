@@ -8,11 +8,11 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
 
-const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , ManufacturerName }) => {
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , ManufacturerName , shippingMethod , accountNumber}) => {
     console.log("product details " , productId)
     console.log('salesrepid' , SalesRepId )
     localStorage.setItem('ManufacturerId__c' , ManufacturerId )
-    // localStorage.setItem('manufacturer' , ManufacturerName )
+    console.log("shipping method -------" ,shippingMethod , accountNumber )
    
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -169,7 +169,9 @@ console.log("orders" , orders)
                                 />
                             ) : null}
                             {!product?.isLoaded ? <Loading /> :
-                                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} />}
+                                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} ManufacturerName = {ManufacturerName}
+                                shippingMethod = {shippingMethod} accountNumber = {accountNumber}
+                                />}
                         </div>
                     }
                     onClose={() => {

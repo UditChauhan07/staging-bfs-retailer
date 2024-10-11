@@ -97,7 +97,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             </div>
                                         </div>
                                     </div> */}
-                                    <Link to={"/needHelp"} className={`${path == "/needHelp" && Styles1.activeReason}`}>
+                                    {/* <Link to={"/needHelp"} className={`${path == "/needHelp" && Styles1.activeReason}`}>
                                         <div className={Styles.supportLeftBox}>
                                             <div className={Styles.supportLeftImg}>
                                                 <HelpIcon width={42} height={42} />
@@ -108,7 +108,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                                 <p>Need Help? Your Portal Solutions Await</p>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </Link> */}
                                 </div>
                             </div>
 
