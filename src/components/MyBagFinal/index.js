@@ -186,6 +186,7 @@ function MyBagFinal() {
               .then((response) => {
                 if (response) {
                   if (response.length) {
+                    setIsDisabled(false)
                     setIsOrderPlaced(0);
                     setorderStatus({ status: true, message: response[0].message });
                   } else {
@@ -307,9 +308,14 @@ console.log("fetch bag"   , fetchBag)
               open
               content={
                 <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
-                  <h2 className={`${Styles.warning} `}>SalesForce Error</h2>
+                  <h2 className={`${Styles.warning} `}>Error while Generating order</h2>
                   <p className={`${Styles.warningContent} `} style={{ lineHeight: '22px' }}>
+                    We apologize for inconvenience, But we are facing trouble placing your order.
+                   <br/> 
+                   <p style={{fontSize:'14px'}}>Please contact your SalesRep or Portal Support.</p>
+                    <small>
                     {orderStatus.message}
+                    </small>
                   </p>
                   <div className="d-flex justify-content-around ">
                     <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setorderStatus({ status: false, message: "" })}>
