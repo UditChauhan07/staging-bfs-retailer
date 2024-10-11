@@ -17,7 +17,7 @@
     "classnames": "^2.4.0",
     "dotenv-webpack": "^8.1.0",
     "file-saver": "^2.0.5",
-    "formik": "^2.4.5",
+    "formik": "^2.4.6",
     "html2pdf.js": "^0.10.1",
     "image-webpack-loader": "^8.1.0",
     "mini-css-extract-plugin": "^2.9.0",

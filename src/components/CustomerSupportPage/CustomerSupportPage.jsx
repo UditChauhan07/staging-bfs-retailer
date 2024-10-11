@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import Styles from "./Style.module.css";
 import MySupportTicket from "./MySupportTicket";
 import { Link } from "react-router-dom";
-import { CustomerServiceIcon, OrderStatusIcon, DisplayIssuesIcon } from "../../lib/svg";
+import { CustomerServiceIcon, OrderStatusIcon, DisplayIssuesIcon, HelpIcon } from "../../lib/svg";
 
 function CustomerSupportPage({ data, PageSize, currentPage }) {
   return (
@@ -25,23 +25,23 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
                   </div>
                 </Link>
                 <Link to={"/customerService"}>
-                <div
-                  className={Styles.supportLeftBox}
-                  style={{ cursor: "pointer" }}
+                  <div
+                    className={Styles.supportLeftBox}
+                    style={{ cursor: "pointer" }}
                   // onClick={() => {
                   //   setModalOpen(true);
                   // }}
-                >
-                  <div className={Styles.supportLeftImg}>
-                    <CustomerServiceIcon width={42} height={42} />
+                  >
+                    <div className={Styles.supportLeftImg}>
+                      <CustomerServiceIcon width={42} height={42} />
+                    </div>
+                    <div className={Styles.supportLeftContent}>
+                      <h2>Customer Services </h2>
+                      <p>Report order issues or update account</p>
+                    </div>
                   </div>
-                  <div className={Styles.supportLeftContent}>
-                    <h2>Customer Services </h2>
-                    <p>Report order issues or update account</p>
-                  </div>
-                </div>
                 </Link>
-                <div>
+                {/* <div>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <DisplayIssuesIcon width={42} height={42} />
@@ -52,7 +52,19 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
                       <p>Request updates</p>
                     </div>
                   </div>
-                </div>
+                </div> */}
+                {/* <Link to={"/needHelp"}>
+                  <div className={Styles.supportLeftBox}>
+                    <div className={Styles.supportLeftImg}>
+                      <HelpIcon width={42} height={42} />
+                    </div>
+
+                    <div className={Styles.supportLeftContent}>
+                      <h2>Portal Help</h2>
+                      <p>Need Help? Your Portal Solutions Await</p>
+                    </div>
+                  </div>
+                </Link> */}
               </div>
             </div>
 

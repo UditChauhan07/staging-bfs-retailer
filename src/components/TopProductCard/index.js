@@ -19,6 +19,10 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectBrand, setBrand] = useState();
   const [salesRepId, setsalesRepId] = useState();
+  const [manufacturerId , setManfacturerId] = useState()
+  const [manufacturerName , setManufacturerName] = useState()
+const [shippingMethod , setShippingMethod] = useState()
+const [accountNumber , setAccountNumber] = useState()
   useEffect(() => {}, [productDetailId, productImages]);
 
   const orderSetting = (element, quantity, manufacturer) => {
@@ -189,15 +193,23 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     setProductDetailId(product.Id);
                     setBrand(product.ManufacturerId__c);
                     setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
+                    setManfacturerId(product.ManufacturerId__c)
+                    setManufacturerName(product.ManufacturerName__c)
+                    setAccountNumber(accountDetails?.[product.ManufacturerId__c]?.AccountNumber)
+                    setShippingMethod(accountDetails?.[product.ManufacturerId__c]?.ShippingMethod)
+                    
                   }}
                 >
                   {product?.Name.substring(0, 20)}...
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
                 <p className={Styles.priceHolder}>
-                  
+                <div>
                 {salesPrice!=listPrice&&<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>}
-                  {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
+                </div>
+                <div>
+                {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
+                </div>
                 </p>
                 {orders[product?.Id] ? (
                   <>
@@ -255,7 +267,10 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         setProductDetailId={setProductDetailId}
         accountDetails={accountDetails?.[product?.ManufacturerId__c]}
         AccountId={localStorage.getItem("AccountId__c")}
-        ManufacturerId={localStorage.getItem("ManufacturerId__c")}
+        ManufacturerId={manufacturerId}
+        ManufacturerName = {manufacturerName}
+        shippingMethod = {shippingMethod}
+        accountNumber = {accountNumber}
         SalesRepId={salesRepId}
       />
     </section>

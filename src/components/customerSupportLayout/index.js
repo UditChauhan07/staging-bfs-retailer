@@ -4,7 +4,7 @@ import Styles from "../CustomerSupportPage/Style.module.css"
 import Styles1 from "./Style.module.css"
 import ModalPage from "../Modal UI";
 import { Link, useNavigate } from "react-router-dom";
-import { CustomerServiceIcon, OrderStatusIcon, DefaultSupportIcon, MarketingSupportIcon, DIFTestIcon, DisplayIssuesIcon } from "../../lib/svg";
+import { CustomerServiceIcon, OrderStatusIcon, DefaultSupportIcon, MarketingSupportIcon, DIFTestIcon, DisplayIssuesIcon, HelpIcon } from "../../lib/svg";
 import SelectCaseReason from "../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
 import { BiLeftArrow } from "react-icons/bi";
 import BrandManagementModal from "../Brand Management Approval/BrandManagementModal";
@@ -85,7 +85,7 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                             </div>
                                         </div>
                                     </Link> */}
-                                    <div style={{cursor:'pointer'}}>
+                                    {/* <div style={{cursor:'pointer'}}>
                                         <div className={Styles.supportLeftBox}>
                                             <div className={Styles.supportLeftImg}>
                                                 <DisplayIssuesIcon width={42} height={42} />
@@ -96,7 +96,19 @@ const CustomerSupportLayout = ({ children, filterNodes }) => {
                                                 <p>Request updates</p>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
+                                    {/* <Link to={"/needHelp"} className={`${path == "/needHelp" && Styles1.activeReason}`}>
+                                        <div className={Styles.supportLeftBox}>
+                                            <div className={Styles.supportLeftImg}>
+                                                <HelpIcon width={42} height={42} />
+                                            </div>
+
+                                            <div className={Styles.supportLeftContent}>
+                                                <h2>Portal Help</h2>
+                                                <p>Need Help? Your Portal Solutions Await</p>
+                                            </div>
+                                        </div>
+                                    </Link> */}
                                 </div>
                             </div>
 

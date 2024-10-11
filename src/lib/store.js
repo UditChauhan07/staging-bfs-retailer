@@ -1,6 +1,6 @@
 export const originAPi = process.env.REACT_APP_OA_URL || "https://temp.beautyfashionsales.com/"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:2611"
+// export const originAPi = "http://localhost:2619"
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
@@ -44,7 +44,6 @@ export function ShareDrive(data, remove = false) {
 }
 
 export async function AuthCheck() {
-  console.log({ aa: JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7")) });
   if (JSON.parse(localStorage.getItem("jAuNW7c6jdi6mg7"))) {
     return true;
   } else {
@@ -119,8 +118,7 @@ export const sortArrayHandler = (arr, getter, order = 'asc') =>
   
   
       const poData = await response.json();
-      console.log(poData);
-  
+      
       if (poData.success) {
         let generatedPONumber = poData.poNumber;
   
@@ -296,7 +294,6 @@ export async function getSupportFormRaw({ rawData }) {
 }
 
 export async function getAllAccount({ user }) {
-  console.log({ user });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -319,7 +316,6 @@ export async function getAllAccount({ user }) {
 }
 
 export async function postSupport({ rawData }) {
-  console.log({ rawData });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -343,7 +339,6 @@ export async function uploadFileSupport({ key, supportId, files }) {
     let headersList = {
       "Accept": "*/*", key, supportId
     }
-    console.log({ headersList });
     let bodyContent = new FormData();
     files.map((file) => {
       bodyContent.append("files", file.file);
@@ -447,7 +442,6 @@ export async function getOrderList({ user, month }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -598,7 +592,6 @@ export async function getTargetReportAll({ user, year, preOrder, accountIds = nu
       headers: headersList,
     });
     let data = JSON.parse(await response.text());
-    console.log({ data });
     if (data.status == 300) {
       DestoryAuth();
     } else {
@@ -668,7 +661,6 @@ export async function getProductImage({ rawData }) {
 }
 
 export async function getProductImageAll({ rawData }) {
-  console.log({ rawData });
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -752,7 +744,6 @@ export async function getSessionStatus({ key, retailerId }) {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-  console.log({ key, retailerId })
   let response = await fetch(url + "v3/VQzxx7VoZqQrVKe", {
     method: "POST",
     body: JSON.stringify({ key, retailerId }),
@@ -814,7 +805,6 @@ export async function getMarketingCalendarPDF({ key, manufacturerId, month, manu
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -827,14 +817,12 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
     body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
   if (data.status == 300) {
     DestoryAuth();
   } else {
@@ -893,13 +881,14 @@ export async function getAllAccountBrand({ key, accountIds }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  
   if (data.status == 300) {
     DestoryAuth();
   } else {
     return data?.data || [];
   }
 }
-export async function getAllAccountOrders({ key, accountIds, month }) {
+export async function getAllAccountOrders({ key, accountIds, month,date=null }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -907,7 +896,7 @@ export async function getAllAccountOrders({ key, accountIds, month }) {
 
   let response = await fetch(url2 + "UQPIByU1hllkP9m", {
     method: "POST",
-    body: JSON.stringify({ key, accountIds, month }),
+    body: JSON.stringify({ key, accountIds, month ,date}),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());

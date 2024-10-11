@@ -398,7 +398,9 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                         </div>
                                                     </div>
 
-                                                    <div className={Styles.ProtuctInnerBox1} style={{ maxHeight: '400px', overflow: 'scroll', width: '100%' }}>
+                                                    <div className={Styles.ProtuctInnerBox1} 
+                                                    // style={{ maxHeight: '400px', overflow: 'scroll', width: '100%' }}
+                                                    >
                                                         {item.OpportunityLineItems && item.OpportunityLineItems?.records.length > 0 ? (
                                                             orderId == item.Id ? (<>
                                                                 <table>

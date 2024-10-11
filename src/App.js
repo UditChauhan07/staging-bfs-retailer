@@ -36,6 +36,7 @@ import TargetRollOver from "./reports/targetRollOver";
 import StoreDetails from "./pages/StoreDetails";
 import BrandDetails from "./pages/BrandDetails";
 import HelpSection from "./pages/HelpSection";
+import PortalHelp from "./pages/PortalHelp";
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
             <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route>
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
             <Route path="/customerService" element={<CustomerService />}></Route>
+            {/* <Route path="/needHelp" element={<PortalHelp />}></Route> */}
             {/* <Route path="/Target-Report" element={<TargetReport />}></Route> */}
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>

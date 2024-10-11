@@ -16,11 +16,12 @@ function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const navigate = useNavigate();
   const [orderDesc, setOrderDesc] = useState(null);
-  const [PONumber, setPONumber] = useState(POGenerator());
+  const [PONumber, setPONumber] = useState();
   const [buttonActive, setButtonActive] = useState(false);
   const { addOrder, orderQuantity, deleteOrder, orders, setOrders, setOrderProductPrice } = useBag();
   const [bagValue, setBagValue] = useState(fetchBeg());
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
+  const [orderStatus, setorderStatus] = useState({ status: false, message: "" })
   const [isPOEditable, setIsPOEditable] = useState(false);
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim, setClearConfim] = useState(false)
@@ -28,11 +29,12 @@ function MyBagFinal() {
   const [confirm, setConfirm] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
-  const [limitInput, setLimitInput] = useState("");
+  const [limitInput, setLimitInput] = useState(PONumber);
   const [isLoading, setIsLoading] = useState(true);
+  const [limitCheck, setLimitCheck] = useState(false)
 
   const fetchBag = fetchBeg({});
-  const productLists = Object.values(fetchBag.orderList ?? {}); 
+  const productLists = Object.values(fetchBag.orderList ?? {});
   const handleNameChange = (event) => {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
@@ -42,7 +44,12 @@ function MyBagFinal() {
       try {
         const res = await POGenerator();
         if (res) {
-          setPONumber(res);
+          let isPreOrder = productLists.some(product => (product.product.Category__c?.toUpperCase()?.includes("PREORDER") || product.product.Category__c?.toUpperCase()?.includes("EVENT")))
+          let poInit = res;
+          if (isPreOrder) {
+            poInit = `PRE-${poInit}`
+          }
+          setPONumber(poInit);
         }
         setIsLoading(false);
       } catch (error) {
@@ -62,7 +69,7 @@ function MyBagFinal() {
       setButtonActive(true);
     }
   }, []);
-  
+
   let total = 0;
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
 
@@ -140,11 +147,11 @@ function MyBagFinal() {
             let productLists = Object.values(fetchBag.orderList);
             if (productLists.length) {
               productLists.map((product) => {
-            
+
                 let productCategory = product?.product?.Category__c?.toUpperCase()?.trim();
 
                 // Set orderType based on product category and prepend "PRE" to PONumber if "PREORDER"
-                if (productCategory?.includes("PREORDER")||productCategory?.toUpperCase()?.match("event")?.length>0) {
+                if (productCategory?.toUpperCase()?.includes("PREORDER") || productCategory?.toUpperCase()?.match("event")?.length > 0) {
                   orderType = "Pre Order";
                   if (!PONumber.startsWith("PRE")) {
                     oPONumber = `PRE-${PONumber}`; // Prepend "PRE" to the PO number
@@ -179,11 +186,17 @@ function MyBagFinal() {
             OrderPlaced({ order: begToOrder })
               .then((response) => {
                 if (response) {
-                  fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
-                  localStorage.removeItem("orders");
-                  setIsDisabled(false)
-                  navigate("/order-list");
-                  setIsOrderPlaced(2);
+                  if (response.length) {
+                    setIsDisabled(false)
+                    setIsOrderPlaced(0);
+                    setorderStatus({ status: true, message: response[0].message });
+                  } else {
+                    fetchBag.orderList.map((ele) => addOrder(ele.product, 0, ele.discount));
+                    localStorage.removeItem("orders");
+                    setIsDisabled(false)
+                    navigate("/order-list");
+                    setIsOrderPlaced(2);
+                  }
                 }
               })
               .catch((err) => {
@@ -233,94 +246,138 @@ function MyBagFinal() {
     localStorage.removeItem("orders")
     window.location.reload();
   }
+  console.log("fetch bag", fetchBag)
+
+
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
-        {isLoading ? (
+      {isLoading ? (
         <Loading height={'50vh'} /> // Display full-page loader while data is loading
       ) : (
-      <section>
-        <ModalPage
-          open={confirm || false}
-          content={
-            <div className="d-flex flex-column gap-3">
-              <h2 style={{ textDecoration: 'underline' }}>
-                Confirm
-              </h2>
-              <p>
-                Are you sure you want to generate a order?<br /> This action cannot be undone.
-              </p>
-              <div className="d-flex justify-content-around ">
-                <button className={Styles.btnHolder} onClick={orderPlaceHandler} disabled={isDisabled}>
-                  Submit
-                </button>
-                <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          }
-          onClose={() => {
-            setConfirm(false);
-          }}
-        />
-        {clearConfim ? (
+        <section>
           <ModalPage
-            open
+            open={limitCheck || false}
+            content={
+              <>
+                <div style={{ maxWidth: "309px" }}>
+                  <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
+                  <p className={` ${Styles.ModalContent}`}>Please upload file with less than 100 products</p>
+                  <div className="d-flex justify-content-center">
+                    <button className={StylesModal.modalButton} onClick={() => setLimitCheck(false)}>
+                      OK
+                    </button>
+                  </div>
+                </div>
+              </>
+            }
+            onClose={() => setLimitCheck(false)}
+          />
+          <ModalPage
+            open={confirm || false}
             content={
               <div className="d-flex flex-column gap-3">
-                <h2 className={`${Styles.warning} `}>Warning</h2>
-                <p className={`${Styles.warningContent} `}>
-                  Are you Sure you want to clear bag?
+                <h2 style={{ textDecoration: 'underline' }}>
+                  Confirm
+                </h2>
+                <p>
+                  Are you sure you want to generate a order?<br /> This action cannot be undone.
                 </p>
                 <div className="d-flex justify-content-around ">
-                  <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={deleteBag}>
-                    Yes
+                  <button className={Styles.btnHolder} onClick={orderPlaceHandler} disabled={isDisabled}>
+                    Submit
                   </button>
-                  <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setClearConfim(false)}>
+                  <button className={Styles.btnHolder} onClick={() => setConfirm(false)}>
                     Cancel
                   </button>
                 </div>
               </div>
             }
             onClose={() => {
-              setClearConfim(false);
+              setConfirm(false);
             }}
           />
-        ) : null}
-        <div className="">
-          <div>
-            <div className={Styles.MyBagFinalTop}>
-              <div className={Styles.MyBagFinalRight}>
-                <button onClick={() => navigate("/orders")}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="none">
-                    <path
-                      d="M8.94284 2.27615C9.46349 1.75544 9.46349 0.911229 8.94284 0.390521C8.42213 -0.130174 7.57792 -0.130174 7.05721 0.390521L2.3911 5.05666C2.39092 5.05684 2.39128 5.05648 2.3911 5.05666L0.390558 7.05721C0.153385 7.29442 0.024252 7.59868 0.00313201 7.90895C-0.00281464 7.99562 -0.000321319 8.08295 0.010852 8.17002C0.0431986 8.42308 0.148118 8.66868 0.325638 8.87322C0.348651 8.89975 0.372651 8.92535 0.397585 8.94989L7.05721 15.6095C7.57792 16.1302 8.42213 16.1302 8.94284 15.6095C9.46349 15.0888 9.46349 14.2446 8.94284 13.7239L4.55231 9.33335H22.6667C23.4031 9.33335 24 8.73642 24 8.00002C24 7.26362 23.4031 6.66668 22.6667 6.66668H4.55231L8.94284 2.27615Z"
-                      fill="black"
-                    />
-                  </svg>
-                </button>
-                <h4>
-                  {buttonActive ? (
-                    <>
-                      <span> {bagValue?.Manufacturer?.name} | </span> {bagValue?.Account?.name}
-                    </>
-                  ) : (
-                    <span>Empty bag</span>
-                  )}
-                </h4>
-              </div>
+          {clearConfim ? (
+            <ModalPage
+              open
+              content={
+                <div className="d-flex flex-column gap-3">
+                  <h2 className={`${Styles.warning} `}>Warning</h2>
+                  <p className={`${Styles.warningContent} `}>
+                    Are you Sure you want to clear bag?
+                  </p>
+                  <div className="d-flex justify-content-around ">
+                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={deleteBag}>
+                      Yes
+                    </button>
+                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setClearConfim(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              }
+              onClose={() => {
+                setClearConfim(false);
+              }}
+            />
+          ) : null}
+          {orderStatus?.status ? (
+            <ModalPage
+              open
+              content={
+                <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
+                  <h2 className={`${Styles.warning} `}>Error while Generating order</h2>
+                  <p className={`${Styles.warningContent} `} style={{ lineHeight: '22px' }}>
+                    We apologize for inconvenience, But we are facing trouble placing your order.
+                    <br />
+                    <p style={{ fontSize: '14px' }}>Please contact your SalesRep or Portal Support.</p>
+                    <small>
+                      {orderStatus.message}
+                    </small>
+                  </p>
+                  <div className="d-flex justify-content-around ">
+                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setorderStatus({ status: false, message: "" })}>
+                      OK
+                    </button>
+                  </div>
+                </div>
+              }
+              onClose={() => {
+                setorderStatus({ status: false, message: "" });
+              }}
+            />
+          ) : null}
+          <div className="">
+            <div>
+              <div className={Styles.MyBagFinalTop}>
+                <div className={Styles.MyBagFinalRight}>
+                  <button onClick={() => navigate("/orders")}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="none">
+                      <path
+                        d="M8.94284 2.27615C9.46349 1.75544 9.46349 0.911229 8.94284 0.390521C8.42213 -0.130174 7.57792 -0.130174 7.05721 0.390521L2.3911 5.05666C2.39092 5.05684 2.39128 5.05648 2.3911 5.05666L0.390558 7.05721C0.153385 7.29442 0.024252 7.59868 0.00313201 7.90895C-0.00281464 7.99562 -0.000321319 8.08295 0.010852 8.17002C0.0431986 8.42308 0.148118 8.66868 0.325638 8.87322C0.348651 8.89975 0.372651 8.92535 0.397585 8.94989L7.05721 15.6095C7.57792 16.1302 8.42213 16.1302 8.94284 15.6095C9.46349 15.0888 9.46349 14.2446 8.94284 13.7239L4.55231 9.33335H22.6667C23.4031 9.33335 24 8.73642 24 8.00002C24 7.26362 23.4031 6.66668 22.6667 6.66668H4.55231L8.94284 2.27615Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </button>
+                  <h4>
+                    {buttonActive ? (
+                      <>
+                        <span> {bagValue?.Manufacturer?.name} | </span> {bagValue?.Account?.name}
+                      </>
+                    ) : (
+                      <span>Empty bag</span>
+                    )}
+                  </h4>
+                </div>
 
-              <div className={Styles.MyBagFinalleft}>
+                <div className={Styles.MyBagFinalleft}>
                   <h5>
                     PO Number{" "}
                     {!isPOEditable ? (
                       <b>
                         {buttonActive ? (
                           // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                          productLists.some(product => product.product.Category__c?.toUpperCase()?.includes("PREORDER")) && !PONumber.startsWith("PRE")
-                            ? `PRE-${PONumber}`
-                            : PONumber
+                          PONumber
                         ) : (
                           "---"
                         )}
@@ -336,6 +393,11 @@ function MyBagFinal() {
                         name="limit_input"
                         value={limitInput}
                         onChange={handleNameChange}
+                        onKeyPress={(e) => {
+                          if (e.key === " ") {
+                            e.preventDefault(); // Prevent space character from being entered
+                          }
+                        }}
                       />
                     )}
                   </h5>
@@ -358,179 +420,192 @@ function MyBagFinal() {
                   )}
                 </div>
 
-            </div>
+              </div>
 
-            <div className={Styles.MyBagFinalMain}>
-              <div className="row">
-                <div className="col-lg-7 col-md-8 col-sm-12">
-                  <div className={Styles.MainBag}>
-                    <h3>SHOPPING BAG ({orderQuantity})</h3>
-                    <div className={Styles.scrollP}>
-                      <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: "400px" }}>
-                        {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders")))?.length > 0 ? (
-                          Object.values(JSON.parse(localStorage.getItem("orders")))?.map((ele) => {
-                            // console.log(ele);
-                            total += parseFloat(ele.product?.salesPrice * ele.quantity)
-                            return (
-                              <div className={Styles.Mainbox}>
-                                <div className={Styles.Mainbox1M}>
-                                  <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
-                                    {
-                                      ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
-                                        productImage.images?.[ele.product?.ProductCode] ?
-                                          productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl ?
-                                            <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
-                                            : <img src={productImage.images[ele.product?.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
-                                          : <img src={Img1} alt="img" onClick={() => { setProductDetailId(ele?.product?.Id) }} />
-                                    }
+              <div className={Styles.MyBagFinalMain}>
+                <div className="row">
+                  <div className="col-lg-7 col-md-8 col-sm-12">
+                    <div className={Styles.MainBag}>
+                      <h3>SHOPPING BAG ({orderQuantity})</h3>
+                      <div className={Styles.scrollP}>
+                        <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: "400px" }}>
+                          {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders")))?.length > 0 ? (
+                            Object.values(JSON.parse(localStorage.getItem("orders")))?.map((ele) => {
+                              let salesPrice = ele.product?.salesPrice;
+                              let listPrice = Number().toFixed(2);
+                              if (salesPrice == 'NaN') {
+                                salesPrice = 0;
+                              }
+                              if (ele.product?.usdRetail__c.includes("$")) {
+                                listPrice = (+ele.product?.usdRetail__c.substring(1)).toFixed(2);
+                                if (listPrice == 'NaN') {
+                                  listPrice = 0;
+                                }
+                              }
+
+                              // console.log(ele);
+                              total += parseFloat(salesPrice * ele.quantity)
+                              return (
+                                <div className={Styles.Mainbox}>
+                                  <div className={Styles.Mainbox1M}>
+                                    <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
+                                      {
+                                        ele.product?.ContentDownloadUrl ? <img src={ele.product?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.product?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
+                                          productImage.images?.[ele.product?.ProductCode] ?
+                                            productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl ?
+                                              <img src={productImage.images[ele.product?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
+                                              : <img src={productImage.images[ele.product?.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(ele?.product?.Id) }} />
+                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(ele?.product?.Id) }} />
+                                      }
+                                    </div>
+                                    <div className={Styles.Mainbox3}>
+                                      <h2 onClick={() => { setProductDetailId(ele?.product?.Id) }} style={{ cursor: 'pointer' }}>{ele.product?.Name}</h2>
+                                      <p>
+                                        <span className={Styles.Span1}>
+                                          {`$${listPrice}`}
+                                        </span>
+                                        <span className={Styles.Span2}>${Number(salesPrice).toFixed(2)}</span>
+                                        {false && <span className={Styles.Span2}><input type="number" onKeyUp={(e) => onPriceChangeHander(ele.product, e.target.value)} /></span>}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div className={Styles.Mainbox3}>
-                                    <h2 onClick={() => { setProductDetailId(ele?.product?.Id) }} style={{ cursor: 'pointer' }}>{ele.product?.Name}</h2>
-                                    <p>
-                                      <span className={Styles.Span1}>
-                                        {ele.product?.usdRetail__c.includes("$") ? `$${(+ele.product?.usdRetail__c.substring(1)).toFixed(2)}` : `$${Number(ele.product?.usdRetail__c).toFixed(2)}`}
-                                      </span>
-                                      <span className={Styles.Span2}>${Number(ele.product?.salesPrice).toFixed(2)}</span>
-                                      {false && <span className={Styles.Span2}><input type="number" onKeyUp={(e) => onPriceChangeHander(ele.product, e.target.value)} /></span>}
-                                    </p>
+
+                                  <div className={Styles.Mainbox2M}>
+                                    <div className={Styles.Mainbox4} onClick={() => handleRemoveProductFromCart(ele)}>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="19" viewBox="0 0 14 19" fill="none">
+                                        <path
+                                          d="M1.02103 2.77521H4.90502V1.78442C4.90522 1.49679 5.0213 1.22098 5.22779 1.01753C5.43429 0.814078 5.71433 0.699599 6.00645 0.699219H7.99421C8.28633 0.699599 8.56637 0.814078 8.77287 1.01753C8.97936 1.22098 9.09545 1.49679 9.09564 1.78442V2.77521H12.9796C13.2504 2.77521 13.51 2.88111 13.7015 3.06962C13.8929 3.25812 14.0005 3.51378 14.0005 3.78036V4.96501C14.0004 5.21951 13.9022 5.4645 13.7258 5.65052C13.5494 5.83654 13.3079 5.94974 13.05 5.96729V16.6215C13.0495 17.1206 12.8481 17.5991 12.4898 17.9521C12.1315 18.3052 11.6457 18.5039 11.1388 18.5047H2.86258C2.35572 18.5039 1.86988 18.3052 1.51161 17.9521C1.15334 17.5991 0.951874 17.1206 0.951392 16.6215V5.96836C0.693394 5.95099 0.451705 5.83786 0.275144 5.65183C0.0985832 5.46579 0.00030899 5.22071 0.000172615 4.96608V3.78144C2.86102e-05 3.64935 0.0263271 3.51853 0.0775661 3.39646C0.128804 3.27438 0.203979 3.16345 0.298788 3.07C0.393598 2.97655 0.506184 2.90241 0.630111 2.85183C0.754039 2.80125 0.886876 2.77521 1.02103 2.77521ZM8.51229 1.78442C8.5122 1.64909 8.4576 1.51933 8.36049 1.42357C8.26337 1.32781 8.13165 1.27388 7.99421 1.27359H6.00645C5.86901 1.27388 5.73729 1.32781 5.64017 1.42357C5.54306 1.51933 5.48847 1.64909 5.48837 1.78442V2.77521H8.51229V1.78442ZM1.53401 16.6215C1.5343 16.9683 1.67424 17.3008 1.92316 17.5462C2.17207 17.7916 2.50964 17.9297 2.86185 17.9304H11.1381C11.4903 17.9297 11.8279 17.7916 12.0768 17.5462C12.3257 17.3008 12.4656 16.9683 12.4659 16.6215V5.97123H1.53401V16.6215ZM0.583519 4.96608C0.583519 5.08033 0.629614 5.1899 0.711662 5.27069C0.793712 5.35148 0.904994 5.39686 1.02103 5.39686H12.9796C13.0957 5.39686 13.2069 5.35148 13.289 5.27069C13.371 5.1899 13.4171 5.08033 13.4171 4.96608V3.78144C13.4171 3.66719 13.371 3.55762 13.289 3.47684C13.2069 3.39605 13.0957 3.35066 12.9796 3.35066H1.02103C0.904994 3.35066 0.793712 3.39605 0.711662 3.47684C0.629614 3.55762 0.583519 3.66719 0.583519 3.78144V4.96608Z"
+                                          fill="black"
+                                        />
+                                        <path
+                                          d="M9.28889 16.1916C9.21154 16.1916 9.13735 16.1613 9.08265 16.1075C9.02795 16.0536 8.99722 15.9806 8.99722 15.9044V7.95906C8.99722 7.88289 9.02795 7.80985 9.08265 7.75599C9.13735 7.70213 9.21154 7.67188 9.28889 7.67188C9.36625 7.67188 9.44044 7.70213 9.49514 7.75599C9.54984 7.80985 9.58057 7.88289 9.58057 7.95906V15.9044C9.58057 15.9806 9.54984 16.0536 9.49514 16.1075C9.44044 16.1613 9.36625 16.1916 9.28889 16.1916Z"
+                                          fill="black"
+                                        />
+                                        <path
+                                          d="M4.83479 16.1916C4.75744 16.1916 4.68325 16.1613 4.62855 16.1075C4.57385 16.0536 4.54312 15.9806 4.54312 15.9044V7.95906C4.54312 7.88289 4.57385 7.80985 4.62855 7.75599C4.68325 7.70213 4.75744 7.67188 4.83479 7.67188C4.91215 7.67188 4.98634 7.70213 5.04104 7.75599C5.09574 7.80985 5.12646 7.88289 5.12646 7.95906V15.9044C5.12646 15.9806 5.09574 16.0536 5.04104 16.1075C4.98634 16.1613 4.91215 16.1916 4.83479 16.1916Z"
+                                          fill="black"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div className={Styles.Mainbox5}>
+                                      <QuantitySelector
+                                        min={ele.product.Min_Order_QTY__c || 0}
+                                        onChange={(quantity) => {
+                                          addOrder(ele.product, quantity, ele.discount);
+                                        }}
+                                        value={ele.quantity}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
-
-                                <div className={Styles.Mainbox2M}>
-                                  <div className={Styles.Mainbox4} onClick={() => handleRemoveProductFromCart(ele)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="19" viewBox="0 0 14 19" fill="none">
-                                      <path
-                                        d="M1.02103 2.77521H4.90502V1.78442C4.90522 1.49679 5.0213 1.22098 5.22779 1.01753C5.43429 0.814078 5.71433 0.699599 6.00645 0.699219H7.99421C8.28633 0.699599 8.56637 0.814078 8.77287 1.01753C8.97936 1.22098 9.09545 1.49679 9.09564 1.78442V2.77521H12.9796C13.2504 2.77521 13.51 2.88111 13.7015 3.06962C13.8929 3.25812 14.0005 3.51378 14.0005 3.78036V4.96501C14.0004 5.21951 13.9022 5.4645 13.7258 5.65052C13.5494 5.83654 13.3079 5.94974 13.05 5.96729V16.6215C13.0495 17.1206 12.8481 17.5991 12.4898 17.9521C12.1315 18.3052 11.6457 18.5039 11.1388 18.5047H2.86258C2.35572 18.5039 1.86988 18.3052 1.51161 17.9521C1.15334 17.5991 0.951874 17.1206 0.951392 16.6215V5.96836C0.693394 5.95099 0.451705 5.83786 0.275144 5.65183C0.0985832 5.46579 0.00030899 5.22071 0.000172615 4.96608V3.78144C2.86102e-05 3.64935 0.0263271 3.51853 0.0775661 3.39646C0.128804 3.27438 0.203979 3.16345 0.298788 3.07C0.393598 2.97655 0.506184 2.90241 0.630111 2.85183C0.754039 2.80125 0.886876 2.77521 1.02103 2.77521ZM8.51229 1.78442C8.5122 1.64909 8.4576 1.51933 8.36049 1.42357C8.26337 1.32781 8.13165 1.27388 7.99421 1.27359H6.00645C5.86901 1.27388 5.73729 1.32781 5.64017 1.42357C5.54306 1.51933 5.48847 1.64909 5.48837 1.78442V2.77521H8.51229V1.78442ZM1.53401 16.6215C1.5343 16.9683 1.67424 17.3008 1.92316 17.5462C2.17207 17.7916 2.50964 17.9297 2.86185 17.9304H11.1381C11.4903 17.9297 11.8279 17.7916 12.0768 17.5462C12.3257 17.3008 12.4656 16.9683 12.4659 16.6215V5.97123H1.53401V16.6215ZM0.583519 4.96608C0.583519 5.08033 0.629614 5.1899 0.711662 5.27069C0.793712 5.35148 0.904994 5.39686 1.02103 5.39686H12.9796C13.0957 5.39686 13.2069 5.35148 13.289 5.27069C13.371 5.1899 13.4171 5.08033 13.4171 4.96608V3.78144C13.4171 3.66719 13.371 3.55762 13.289 3.47684C13.2069 3.39605 13.0957 3.35066 12.9796 3.35066H1.02103C0.904994 3.35066 0.793712 3.39605 0.711662 3.47684C0.629614 3.55762 0.583519 3.66719 0.583519 3.78144V4.96608Z"
-                                        fill="black"
-                                      />
-                                      <path
-                                        d="M9.28889 16.1916C9.21154 16.1916 9.13735 16.1613 9.08265 16.1075C9.02795 16.0536 8.99722 15.9806 8.99722 15.9044V7.95906C8.99722 7.88289 9.02795 7.80985 9.08265 7.75599C9.13735 7.70213 9.21154 7.67188 9.28889 7.67188C9.36625 7.67188 9.44044 7.70213 9.49514 7.75599C9.54984 7.80985 9.58057 7.88289 9.58057 7.95906V15.9044C9.58057 15.9806 9.54984 16.0536 9.49514 16.1075C9.44044 16.1613 9.36625 16.1916 9.28889 16.1916Z"
-                                        fill="black"
-                                      />
-                                      <path
-                                        d="M4.83479 16.1916C4.75744 16.1916 4.68325 16.1613 4.62855 16.1075C4.57385 16.0536 4.54312 15.9806 4.54312 15.9044V7.95906C4.54312 7.88289 4.57385 7.80985 4.62855 7.75599C4.68325 7.70213 4.75744 7.67188 4.83479 7.67188C4.91215 7.67188 4.98634 7.70213 5.04104 7.75599C5.09574 7.80985 5.12646 7.88289 5.12646 7.95906V15.9044C5.12646 15.9806 5.09574 16.0536 5.04104 16.1075C4.98634 16.1613 4.91215 16.1916 4.83479 16.1916Z"
-                                        fill="black"
-                                      />
-                                    </svg>
-                                  </div>
-                                  <div className={Styles.Mainbox5}>
-                                    <QuantitySelector
-                                      min={ele.product.Min_Order_QTY__c || 0}
-                                      onChange={(quantity) => {
-                                        addOrder(ele.product, quantity, ele.discount);
-                                      }}
-                                      value={ele.quantity}
-                                    />
-                                  </div>
-                                </div>
+                              );
+                            })
+                          ) : (
+                            <>
+                              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+                                No Products in Bag
                               </div>
-                            );
-                          })
-                        ) : (
-                          <>
-                            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
-                              No Products in Bag
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <div className={Styles.TotalPricer}>
-                        <div>
-                          <h2>Total</h2>
+                            </>
+                          )}
                         </div>
-                        <div>
-                          <h2>${Number(total).toFixed(2)}</h2>
+                        <div className={Styles.TotalPricer}>
+                          <div>
+                            <h2>Total</h2>
+                          </div>
+                          <div>
+                            <h2>${Number(total).toFixed(2)}</h2>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="col-lg-5 col-md-4 col-sm-12">
-                  <div className={Styles.ShippControl}>
-                    <h2>Shipping Address</h2>
+                  <div className="col-lg-5 col-md-4 col-sm-12">
+                    <div className={Styles.ShippControl}>
+                      <h2>Shipping Address</h2>
 
-                    <div className={Styles.ShipAdress}>
-                      {buttonActive ? (
-                        <p>
-                          {bagValue?.Account?.address?.street}, {bagValue?.Account?.address?.city} <br />
-                          {bagValue?.Account?.address?.state}, {bagValue?.Account?.address?.country} {bagValue?.Account?.address?.postalCode}
-                          <br />
-                          {bagValue?.Account?.address?.email} {bagValue?.Account?.address?.contact && `{ |  ${bagValue?.Account?.address?.contact}}`}
-                        </p>
-                      ) : (
-                        <p>No Shipping Address</p>
-                      )}
-                    </div>
+                      <div className={Styles.ShipAdress}>
+                        {buttonActive ? (
+                          <p>
+                            {bagValue?.Account?.address?.street}, {bagValue?.Account?.address?.city} <br />
+                            {bagValue?.Account?.address?.state}, {bagValue?.Account?.address?.country} {bagValue?.Account?.address?.postalCode}
+                            <br />
+                            {bagValue?.Account?.address?.email} {bagValue?.Account?.address?.contact && `{ |  ${bagValue?.Account?.address?.contact}}`}
+                          </p>
+                        ) : (
+                          <p>No Shipping Address</p>
+                        )}
+                      </div>
 
-                    <div className={Styles.ShipAdress2}>
-                      {/* <label>NOTE</label> */}
-                      <textarea onKeyUp={(e) => setOrderDesc(e.target.value)} placeholder="NOTE" className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] " />
-                    </div>
-                    {!PONumberFilled ? (
-                      <ModalPage
-                        open
-                        content={
-                          <>
-                            <div style={{ maxWidth: "309px" }}>
-                              <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
-                              <p className={` ${StylesModal.ModalContent}`}>Enter PO Number</p>
-                              <div className="d-flex justify-content-center">
-                                <button
-                                  className={`${StylesModal.modalButton}`}
-                                  onClick={() => {
-                                    setPONumberFilled(true);
-                                  }}
-                                >
-                                  OK
-                                </button>
+                      <div className={Styles.ShipAdress2}>
+                        {/* <label>NOTE</label> */}
+                        <textarea onKeyUp={(e) => setOrderDesc(e.target.value)} placeholder="NOTE" className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] " />
+                      </div>
+                      {!PONumberFilled ? (
+                        <ModalPage
+                          open
+                          content={
+                            <>
+                              <div style={{ maxWidth: "309px" }}>
+                                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
+                                <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
+                                <div className="d-flex justify-content-center">
+                                  <button
+                                    className={`${StylesModal.modalButton}`}
+                                    onClick={() => {
+                                      setPONumberFilled(true);
+                                    }}
+                                  >
+                                    OK
+                                  </button>
+                                </div>
                               </div>
-                            </div>
-                          </>
-                        }
-                        onClose={() => {
-                          setPONumberFilled(true);
-                        }}
-                      />
-                    ) : null}
-                    <div className={Styles.ShipBut}>
-                      <button
-                        onClick={() => {
-                          if (Object.keys(orders).length) {
-                            if (PONumber.length) {
-                              setConfirm(true)
-                            } else {
-                              setPONumberFilled(false);
-                            }
+                            </>
                           }
-                        }}
-                        disabled={!buttonActive}
-                      >
-                        ${Number(total).toFixed(2)} PLACE ORDER
-                      </button>
-                      <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
-                        onClick={() => {
-                          if (Object.keys(orders).length) {
-                            if (clearConfim.length) {
-                              orderPlaceHandler();
-                            } else {
-                              setClearConfim(true)
+                          onClose={() => {
+                            setPONumberFilled(true);
+                          }}
+                        />
+                      ) : null}
+                      <div className={Styles.ShipBut}>
+                        <button
+                          onClick={() => {
+                            if (Object.keys(orders).length) {
+
+                              if (PONumber.length) {
+                                if(Object.keys(orders).length >100){
+                                  setLimitCheck(true)
+                                }else{
+                                  setConfirm(true);
+                                }
+                              } else {
+                                setPONumberFilled(false);
+
+                              }
                             }
+                          }}
+                          disabled={!buttonActive}
+                        >
+                          ${Number(total).toFixed(2)} PLACE ORDER
+                        </button>
+                        <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
+                          onClick={() => {
+
+                            setClearConfim(true)
                           }
-                        }
-                        }
-                        disabled={!buttonActive}
-                      >Clear Bag</p>
-                      {/* {Number(total) ? null : window.location.reload()} */}
+                          }
+                          disabled={!buttonActive}
+                        >Clear Bag</p>
+                        {/* {Number(total) ? null : window.location.reload()} */}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-       )}
+        </section>
+      )}
       <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={bagValue?.Manufacturer?.id} AccountId={bagValue?.Account?.id} SalesRepId={localStorage.getItem("Sales_Rep__c")} />
       {/* ManufacturerId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.manufacturer?.id} AccountId={Object.values(JSON.parse(localStorage.getItem("orders")))?.[0]?.account?.id} */}
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { CustomerServiceIcon, NeedHelp, OrderStatusIcon } from "../../../lib/svg";
+import { CustomerServiceIcon, HelpIcon, NeedHelp, OrderStatusIcon } from "../../../lib/svg";
 import ModalPage from "../../Modal UI";
 import SelectCaseReason from "../../CustomerServiceFormSection/SelectCaseReason/SelectCaseReason";
 import { GetAuthData,getSessionStatus } from "../../../lib/store";
@@ -77,6 +77,16 @@ const TopNav = () => {
                       <Link to="/customerService" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
                        <CustomerServiceIcon width={15} height={15}/>&nbsp;Customer Services
                       </Link>
+                    </li>
+                    <li
+                      onClick={() => {
+                        // setModalOpen(true);
+                        navigate("/needHelp")
+                      }}
+                    >
+                      {/* <Link to="/needHelp" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                       <HelpIcon width={15} height={15}/>&nbsp;Portal Help
+                      </Link> */}
                     </li>
                     <li
                       onClick={() => {

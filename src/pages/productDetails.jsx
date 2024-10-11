@@ -8,7 +8,12 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
 
-const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId = null, SalesRepId = null }) => {
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , ManufacturerName , shippingMethod , accountNumber}) => {
+    console.log("product details " , productId)
+    console.log('salesrepid' , SalesRepId )
+    localStorage.setItem('ManufacturerId__c' , ManufacturerId )
+    console.log("shipping method -------" ,shippingMethod , accountNumber )
+   
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -37,8 +42,10 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
         setReplaceCartModalOpen(false);
         addOrder(element, quantity, product.discount);
     };
+   
     const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
         // if (AccountId && SalesRepId) {
+        
             if (SalesRepId) {
                 setIsModalNoRepOpen(false)
                 element.salesPrice = salesPrice;
@@ -74,6 +81,8 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
             
         // }
     };
+
+console.log("orders" , orders)
 
     const onPriceChangeHander = (element, price = '0') => {
         if (price == '') price = 0;
@@ -160,7 +169,9 @@ const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, Acc
                                 />
                             ) : null}
                             {!product?.isLoaded ? <Loading /> :
-                                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} />}
+                                <ProductDetailCard product={product} orders={orders} onQuantityChange={onQuantityChange} onPriceChangeHander={onPriceChangeHander} isAddtoCart={isAddtoCart} AccountId={AccountId} ManufacturerName = {ManufacturerName}
+                                shippingMethod = {shippingMethod} accountNumber = {accountNumber}
+                                />}
                         </div>
                     }
                     onClose={() => {

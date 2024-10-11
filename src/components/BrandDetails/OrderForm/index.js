@@ -55,7 +55,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       }
       return accumulator;
     }, 0);
-    if (checkLimit > 500) {
+    if (checkLimit > 100) {
       setLimitCheck(true)
       setIsLimitPass(true)
     } else {
@@ -104,23 +104,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
-    let retailerPirce = found.usdRetail__c.trim().replace('$', '').replace(',', '')
+    let retailerPirce = found.usdRetail__c?.trim()?.replace('$', '')?.replace(',', '');
+    if (!/^\d*\.?\d+$/.test(retailerPirce)) {
+      retailerPirce = 0;
+  }
+    
     if (found?.Category__c === "TESTER") {
-      let salesPrice = retailerPirce.includes("$")
-        ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
-        : (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
+      let salesPrice =  (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
-      let salesPrice = retailerPirce.includes("$")
-        ? (+retailerPirce.substring(1) - (discount?.sample / 100) * +retailerPirce.substring(1)).toFixed(2)
-        : (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
+      let salesPrice = (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.sample;
     } else {
-      let salesPrice = retailerPirce.includes("$")
-        ? (+retailerPirce.substring(1) - (discount?.margin / 100) * +retailerPirce.substring(1)).toFixed(2)
-        : (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
+      let salesPrice = (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.margin;
     }
@@ -137,17 +135,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         if (orderType == "preorder" ? (category === "preorder" || (category?.match("event")?.length > 0)) : (category !== "preorder" && !category?.match("event"))) {
           if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
             let salesPrice = null;
+            let listPrice = product.usdRetail__c.substring(1);
+            if(listPrice == 'NaN'){
+              listPrice = 0;
+            }
             if (product.Category__c === "TESTER") {
               salesPrice = product.usdRetail__c.includes("$")
-                ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                ? (+listPrice - (discount?.testerMargin / 100) * +listPrice).toFixed(2)
                 : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
             } else if (product.Category__c === "Samples") {
               salesPrice = product.usdRetail__c.includes("$")
-                ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                ? (+listPrice - (discount?.sample / 100) * +listPrice).toFixed(2)
                 : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
             } else {
               salesPrice = product.usdRetail__c.includes("$")
-                ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
+                ? (+listPrice - (discount?.margin / 100) * +listPrice).toFixed(2)
                 : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
             }
             bagPrice += salesPrice * element["Quantity"];
@@ -172,24 +174,25 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                   productCount++;
                   let item = {};
                   let discountAmount = discount?.margin;
+                  let listPrice = product.usdRetail__c;
+                  if(product.usdRetail__c.includes("$")){
+                    listPrice = product.usdRetail__c.substring(1);
+                  }
+                  if(listPrice == 'NaN'){
+                    listPrice = 0;
+                  }
                   if (product.Category__c === "TESTER") {
-                    let salesPrice = product.usdRetail__c.includes("$")
-                      ? (+product.usdRetail__c.substring(1) - (discount?.testerMargin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                      : (+product.usdRetail__c - (discount?.testerMargin / 100) * +product.usdRetail__c).toFixed(2);
+                    let salesPrice = (+listPrice - (discount?.testerMargin / 100) * +listPrice).toFixed(2);
                     item.price = salesPrice;
                     item.discount = discount?.testerMargin;
                     discountAmount = discount?.testerMargin;
                   } else if (product.Category__c === "Samples") {
-                    let salesPrice = product.usdRetail__c.includes("$")
-                      ? (+product.usdRetail__c.substring(1) - (discount?.sample / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                      : (+product.usdRetail__c - (discount?.sample / 100) * +product.usdRetail__c).toFixed(2);
+                    let salesPrice = (+listPrice - (discount?.sample / 100) * +listPrice).toFixed(2);
                     item.price = salesPrice;
                     item.discount = discount?.sample;
                     discountAmount = discount?.sample;
                   } else {
-                    let salesPrice = product.usdRetail__c.includes("$")
-                      ? (+product.usdRetail__c.substring(1) - (discount?.margin / 100) * +product.usdRetail__c.substring(1)).toFixed(2)
-                      : (+product.usdRetail__c - (discount?.margin / 100) * +product.usdRetail__c).toFixed(2);
+                    let salesPrice = (+listPrice - (discount?.margin / 100) * +listPrice).toFixed(2);
                     item.price = salesPrice;
                     item.discount = discount?.margin;
                   }
@@ -250,7 +253,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
             <>
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                <p className={` ${Styles.ModalContent}`}>Please upload file with less than 500 products</p>
+                <p className={` ${Styles.ModalContent}`}>Please upload file with less than 100 products</p>
                 <div className="d-flex justify-content-center">
                   <button className={`${Styles.modalButton}`} onClick={() => setLimitCheck(false)}>
                     OK
@@ -377,7 +380,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                 <div className="mt-3">No Data Found.</div>
               </div>
             ) : null}
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center" >
               <button className={btnClassName} onClick={() => { !isLimitPass ? submitForm() : setLimitCheck(true) }}>
                 Submit
               </button>
