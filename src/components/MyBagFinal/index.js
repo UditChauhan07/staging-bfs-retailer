@@ -413,8 +413,20 @@ console.log("fetch bag"   , fetchBag)
                       <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: "400px" }}>
                         {localStorage.getItem("orders") && Object.values(JSON.parse(localStorage.getItem("orders")))?.length > 0 ? (
                           Object.values(JSON.parse(localStorage.getItem("orders")))?.map((ele) => {
+                            let salesPrice = ele.product?.salesPrice;
+                            let listPrice = Number().toFixed(2);
+                            if(salesPrice == 'NaN'){
+                              salesPrice = 0;
+                            }
+                            if(ele.product?.usdRetail__c.includes("$")){
+                              listPrice = (+ele.product?.usdRetail__c.substring(1)).toFixed(2);
+                              if(listPrice == 'NaN'){
+                                listPrice = 0;
+                              }
+                            }
+
                             // console.log(ele);
-                            total += parseFloat(ele.product?.salesPrice * ele.quantity)
+                            total += parseFloat(salesPrice * ele.quantity)
                             return (
                               <div className={Styles.Mainbox}>
                                 <div className={Styles.Mainbox1M}>
@@ -432,9 +444,9 @@ console.log("fetch bag"   , fetchBag)
                                     <h2 onClick={() => { setProductDetailId(ele?.product?.Id) }} style={{ cursor: 'pointer' }}>{ele.product?.Name}</h2>
                                     <p>
                                       <span className={Styles.Span1}>
-                                        {ele.product?.usdRetail__c.includes("$") ? `$${(+ele.product?.usdRetail__c.substring(1)).toFixed(2)}` : `$${Number(ele.product?.usdRetail__c).toFixed(2)}`}
+                                        {`$${listPrice}`}
                                       </span>
-                                      <span className={Styles.Span2}>${Number(ele.product?.salesPrice).toFixed(2)}</span>
+                                      <span className={Styles.Span2}>${Number(salesPrice).toFixed(2)}</span>
                                       {false && <span className={Styles.Span2}><input type="number" onKeyUp={(e) => onPriceChangeHander(ele.product, e.target.value)} /></span>}
                                     </p>
                                   </div>

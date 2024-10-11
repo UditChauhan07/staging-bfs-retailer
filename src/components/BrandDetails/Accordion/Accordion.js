@@ -205,7 +205,11 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                     return (
                       <CollapsibleRow title={key != "null" ? key : "No Category"} quantity={categoryOrderQuantity} key={index} index={index} >
                         {Object.values(formattedData)[index]?.map((value, indexed) => {
+                          
                           let listPrice = Number(value?.usdRetail__c?.replace('$', '').replace(',', ''));
+                          if(listPrice == 'NaN'){
+                            listPrice = 0;
+                          }
                           let salesPrice = 0;
                           let discount = data?.discount?.margin;
                           let inputPrice = Object.values(orders)?.find((order) => order.product.Id === value.Id && order.manufacturer.name === value.ManufacturerName__c && order.account.name === localStorage.getItem("Account"))?.product?.salesPrice;
