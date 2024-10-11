@@ -21,7 +21,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const [salesRepId, setsalesRepId] = useState();
   const [manufacturerId , setManfacturerId] = useState()
   const [manufacturerName , setManufacturerName] = useState()
-  // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm" , manufacturerId)
+
   useEffect(() => {}, [productDetailId, productImages]);
 
   const orderSetting = (element, quantity, manufacturer) => {
@@ -265,7 +265,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         accountDetails={accountDetails?.[product?.ManufacturerId__c]}
         AccountId={localStorage.getItem("AccountId__c")}
         ManufacturerId={manufacturerId}
-        manufacturerName = {manufacturerName}
+        ManufacturerName = {manufacturerName}
        
         SalesRepId={salesRepId}
       />
