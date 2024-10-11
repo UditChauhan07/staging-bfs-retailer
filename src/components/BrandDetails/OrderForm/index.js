@@ -104,21 +104,21 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     if (!productCode) return {};
     let found = productList.find((item) => item.ProductCode == productCode);
     if (!found) return {};
-    let retailerPirce = found.usdRetail__c.trim().replace('$', '').replace(',', '')
+    let retailerPirce = found.usdRetail__c?.trim()?.replace('$', '')?.replace(',', '')
     if (found?.Category__c === "TESTER") {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.testerMargin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.sample / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.sample / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.sample;
     } else {
-      let salesPrice = retailerPirce.includes("$")
+      let salesPrice = retailerPirce?.includes("$")
         ? (+retailerPirce.substring(1) - (discount?.margin / 100) * +retailerPirce.substring(1)).toFixed(2)
         : (+retailerPirce - (discount?.margin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
