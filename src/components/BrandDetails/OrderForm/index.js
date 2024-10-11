@@ -55,7 +55,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       }
       return accumulator;
     }, 0);
-    if (checkLimit > 200) {
+    if (checkLimit > 100) {
       setLimitCheck(true)
       setIsLimitPass(true)
     } else {
@@ -253,7 +253,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
             <>
               <div style={{ maxWidth: "309px" }}>
                 <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                <p className={` ${Styles.ModalContent}`}>Please upload file with less than 200 products</p>
+                <p className={` ${Styles.ModalContent}`}>Please upload file with less than 100 products</p>
                 <div className="d-flex justify-content-center">
                   <button className={`${Styles.modalButton}`} onClick={() => setLimitCheck(false)}>
                     OK
