@@ -162,7 +162,7 @@ if (inputPrice === undefined || cleanUsdRetail) {
                 </div>
               ) : (
                 <div className="d-flex align-items-center gap-4 h-[5rem] ">
-                  <button
+                  {/* <button
                     className={`${Styles.button}`}
                     onClick={() =>
                       onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount
@@ -176,7 +176,7 @@ if (inputPrice === undefined || cleanUsdRetail) {
                     }
                   >
                     Add to cart
-                  </button>
+                  </button> */}
                 </div>
               )}
             </>
