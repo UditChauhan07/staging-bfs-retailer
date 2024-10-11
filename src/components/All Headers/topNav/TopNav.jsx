@@ -84,9 +84,9 @@ const TopNav = () => {
                         navigate("/needHelp")
                       }}
                     >
-                      <Link to="/needHelp" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
+                      {/* <Link to="/needHelp" className={`dropdown-item text-start d-flex align-items-center ${styles.nameText}`}>
                        <HelpIcon width={15} height={15}/>&nbsp;Portal Help
-                      </Link>
+                      </Link> */}
                     </li>
                     <li
                       onClick={() => {
