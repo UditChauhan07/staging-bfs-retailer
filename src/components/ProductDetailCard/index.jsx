@@ -5,8 +5,8 @@ import Slider from "../../utilities/Slider";
 import { useState } from "react";
 import { DateConvert } from "../../lib/store";
 import { Link } from "react-router-dom";
-const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuantityChange = null, isAddtoCart, AccountId }) => {
-
+const ProductDetailCard = ({ product, orders, onPriceChangeHander = null, onQuantityChange = null, isAddtoCart, AccountId , ManufacturerName  , accountNumber , shippingMethod}) => {
+   console.log("manufacturer name --------" , ManufacturerName)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState();
   if (!product) {
     return null;
@@ -165,7 +165,14 @@ if (inputPrice === undefined || cleanUsdRetail) {
                   <button
                     className={`${Styles.button}`}
                     onClick={() =>
-                      onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount)
+                      onQuantityChange(product?.data, product?.data?.Min_Order_QTY__c || 1, inputPrice || parseFloat(salesPrice), product?.discount
+                    , localStorage.setItem("manufacturer" , ManufacturerName) , 
+                    localStorage.setItem("shippingMethod",
+        JSON.stringify({
+          numbeer : accountNumber , 
+          method : shippingMethod
+        }))
+                    )
                     }
                   >
                     Add to cart

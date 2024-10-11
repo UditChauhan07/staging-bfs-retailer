@@ -53,7 +53,7 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
                     </div>
                   </div>
                 </div> */}
-                <Link to={"/needHelp"}>
+                {/* <Link to={"/needHelp"}>
                   <div className={Styles.supportLeftBox}>
                     <div className={Styles.supportLeftImg}>
                       <HelpIcon width={42} height={42} />
@@ -64,7 +64,7 @@ function CustomerSupportPage({ data, PageSize, currentPage }) {
                       <p>Need Help? Your Portal Solutions Await</p>
                     </div>
                   </div>
-                </Link>
+                </Link> */}
               </div>
             </div>
 
