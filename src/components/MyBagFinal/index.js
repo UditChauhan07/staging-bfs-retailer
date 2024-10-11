@@ -21,6 +21,7 @@ function MyBagFinal() {
   const { addOrder, orderQuantity, deleteOrder, orders, setOrders, setOrderProductPrice } = useBag();
   const [bagValue, setBagValue] = useState(fetchBeg());
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
+  const [orderStatus, setorderStatus] = useState({ status: false, message: "" })
   const [isPOEditable, setIsPOEditable] = useState(false);
   const [PONumberFilled, setPONumberFilled] = useState(true);
   const [clearConfim, setClearConfim] = useState(false)
@@ -298,6 +299,27 @@ function MyBagFinal() {
             }}
           />
         ) : null}
+        {orderStatus?.status ? (
+            <ModalPage
+              open
+              content={
+                <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
+                  <h2 className={`${Styles.warning} `}>SalesForce Error</h2>
+                  <p className={`${Styles.warningContent} `} style={{ lineHeight: '22px' }}>
+                    {orderStatus.message}
+                  </p>
+                  <div className="d-flex justify-content-around ">
+                    <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setorderStatus({ status: false, message: "" })}>
+                      OK
+                    </button>
+                  </div>
+                </div>
+              }
+              onClose={() => {
+                setorderStatus({ status: false, message: "" });
+              }}
+            />
+          ) : null}
         <div className="">
           <div>
             <div className={Styles.MyBagFinalTop}>
