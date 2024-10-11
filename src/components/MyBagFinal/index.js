@@ -28,7 +28,7 @@ function MyBagFinal() {
   const [confirm, setConfirm] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false)
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
-  const [limitInput, setLimitInput] = useState("");
+  const [limitInput, setLimitInput] = useState(PONumber);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchBag = fetchBeg({});
@@ -238,6 +238,9 @@ function MyBagFinal() {
     localStorage.removeItem("orders")
     window.location.reload();
   }
+console.log("fetch bag"   , fetchBag)
+
+
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -330,16 +333,21 @@ function MyBagFinal() {
                       </b>
                     ) : (
                       <input
-                        type="text"
-                        defaultValue={PONumber}
-                        onKeyUp={(e) => setPONumber(e.target.value)}
-                        placeholder=" Enter PO Number"
-                        style={{ borderBottom: "1px solid black" }}
-                        id="limit_input"
-                        name="limit_input"
-                        value={limitInput}
-                        onChange={handleNameChange}
-                      />
+                      type="text"
+                      defaultValue={PONumber}
+                      onKeyUp={(e) => setPONumber(e.target.value)}
+                      placeholder=" Enter PO Number"
+                      style={{ borderBottom: "1px solid black" }}
+                      id="limit_input"
+                      name="limit_input"
+                      value={limitInput}
+                      onChange={handleNameChange}
+                      onKeyPress={(e) => {
+                        if (e.key === " ") {
+                          e.preventDefault(); // Prevent space character from being entered
+                        }
+                      }}
+                    />
                     )}
                   </h5>
 
@@ -477,7 +485,7 @@ function MyBagFinal() {
                           <>
                             <div style={{ maxWidth: "309px" }}>
                               <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
-                              <p className={` ${StylesModal.ModalContent}`}>Enter PO Number</p>
+                              <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
                               <div className="d-flex justify-content-center">
                                 <button
                                   className={`${StylesModal.modalButton}`}
@@ -497,20 +505,21 @@ function MyBagFinal() {
                       />
                     ) : null}
                     <div className={Styles.ShipBut}>
-                      <button
-                        onClick={() => {
-                          if (Object.keys(orders).length) {
-                            if (PONumber.length) {
-                              setConfirm(true)
-                            } else {
-                              setPONumberFilled(false);
-                            }
-                          }
-                        }}
-                        disabled={!buttonActive}
-                      >
-                        ${Number(total).toFixed(2)} PLACE ORDER
-                      </button>
+                    <button
+  onClick={() => {
+    if (Object.keys(orders).length) {
+      if (PONumber.length) {
+        setConfirm(true);
+      } else {
+        setPONumberFilled(false);
+        
+      }
+    }
+  }}
+  disabled={!buttonActive}
+>
+  ${Number(total).toFixed(2)} PLACE ORDER
+</button>
                       <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
                         onClick={() => {
                           if (Object.keys(orders).length) {

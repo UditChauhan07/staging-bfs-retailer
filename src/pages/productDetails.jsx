@@ -8,11 +8,11 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 
 
-const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , manufacturerName }) => {
+const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , ManufacturerName }) => {
     console.log("product details " , productId)
     console.log('salesrepid' , SalesRepId )
     localStorage.setItem('ManufacturerId__c' , ManufacturerId )
-    localStorage.setItem('manufacturer' , manufacturerName )
+    // localStorage.setItem('manufacturer' , ManufacturerName )
    
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
