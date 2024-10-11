@@ -262,7 +262,7 @@ function MyBagFinal() {
               <>
                 <div style={{ maxWidth: "309px" }}>
                   <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
-                  <p className={` ${Styles.ModalContent}`}>Please upload file with less than 200 products</p>
+                  <p className={` ${Styles.ModalContent}`}>Please upload file with less than 100 products</p>
                   <div className="d-flex justify-content-center">
                     <button className={StylesModal.modalButton} onClick={() => setLimitCheck(false)}>
                       OK
@@ -573,7 +573,7 @@ function MyBagFinal() {
                             if (Object.keys(orders).length) {
 
                               if (PONumber.length) {
-                                if(Object.keys(orders).length >200){
+                                if(Object.keys(orders).length >100){
                                   setLimitCheck(true)
                                 }else{
                                   setConfirm(true);
