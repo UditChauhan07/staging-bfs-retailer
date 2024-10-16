@@ -246,8 +246,8 @@ function MyBagFinal() {
     localStorage.removeItem("orders")
     window.location.reload();
   }
-  console.log("fetch bag", fetchBag)
-
+  // console.log("fetch bag", fetchBag)
+  
 
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
