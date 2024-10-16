@@ -334,7 +334,9 @@ input#searchright {
   background-color: white;
   color: black;
 }
-
+.abc{
+  display: inline;
+}
 .search {
   position: absolute;
   left: 49px;
