@@ -28,6 +28,7 @@ import OrderStatusForm from "./pages/OrderStatusForm";
 import CustomerSupportDetails from "./pages/CustomerSupportDetails";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
+import HubSpotTracker from "./components/Tracker/Hubspot";
 import OrderStatusIssues from "./pages/OrderStatusIssues";
 import CustomerService from "./pages/CustomerService";
 import PageNotFound from "./pages/PageNotFound";
@@ -46,6 +47,7 @@ function App() {
     <UserProvider>
       <BagProvider>
         <BrowserRouter>
+            <HubSpotTracker />
           <Routes>
             <Route path="/" element={<Login />}></Route>
             <Route path="/login" element={<Login />}></Route>
