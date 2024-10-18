@@ -37,12 +37,14 @@ import StoreDetails from "./pages/StoreDetails";
 import BrandDetails from "./pages/BrandDetails";
 import HelpSection from "./pages/HelpSection";
 import PortalHelp from "./pages/PortalHelp";
+import HubSpotTracker from "./components/Tracker/Hubspot";
 
 function App() {
   return (
     <UserProvider>
       <BagProvider>
         <BrowserRouter>
+        <HubSpotTracker />
           <Routes>
             <Route path="/" element={<Login />}></Route>
             <Route path="/login" element={<Login />}></Route>
