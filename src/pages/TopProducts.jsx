@@ -5,6 +5,7 @@ import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import { CartProvider } from "../context/CartContent";
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const TopProducts = () => {
@@ -53,7 +54,8 @@ const TopProducts = () => {
   //     //   );
   //     // })
   //   );
-  // }, [searchText, topProductList, selectedMonth]);
+  // }, [searchText, topProductList, selectedMonth])
+
   const SearchData = ({ selectedMonth, manufacturerFilter, accountId = null }) => {
     let data = ShareDrive();
     if (!data) {
@@ -80,7 +82,7 @@ const TopProducts = () => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((products) => {
+      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
         let result = [];
         console.log({ products });
         if (products?.data?.length > 0) {
@@ -150,9 +152,10 @@ const TopProducts = () => {
     setSelectedMonth(month);
     SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId, accountId })
   }
+
   return (
     <AppLayout filterNodes={<>
-      {accountList.length > 1 &&
+      {/* {accountList.length > 1 &&
         <FilterItem
           minWidth="220px"
           label="All Store"
@@ -165,7 +168,7 @@ const TopProducts = () => {
             btnHandler({ manufacturerId: manufacturerFilter, month: selectedMonth, accountId: value });
           }}
           name={"Account-menu"}
-        />}
+        />} */}
       <FilterItem
         minWidth="220px"
         label="Manufacturer"
@@ -200,6 +203,7 @@ const TopProducts = () => {
       </button>
     </>
     }>
+      <CartProvider>
       {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth-1]} ${((selectedMonth-1) <= monthIndex)?2024:2023}`}/> : (topProductList.data.length == 0 && topProductList.message) ?
         <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
@@ -210,6 +214,7 @@ const TopProducts = () => {
         </div>
         :
         <TopProductCard data={topProductList.data} accountDetails={topProductList.accountDetails} isLoaded={isLoaded} productImages={productImages} />}
+        </CartProvider>
     </AppLayout>
   );
 };

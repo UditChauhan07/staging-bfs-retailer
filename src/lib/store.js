@@ -1,6 +1,6 @@
-export const originAPi = process.env.REACT_APP_OA_URL || "https://temp.beautyfashionsales.com"
+// export const originAPi = process.env.REACT_APP_OA_URL || "https://temp.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:2611"
+export const originAPi = "http://localhost:2611"
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
@@ -725,7 +725,7 @@ export async function topProduct({ month, manufacturerId, accountIds }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "IParlpz6lDE6kfU", {
+  let response = await fetch(url2 + "IParlpz6lDE6kfUv2", {
     method: "POST",
     body: JSON.stringify({ month, manufacturerId, accountIds }),
     headers: headersList,
