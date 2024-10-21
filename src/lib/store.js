@@ -58,116 +58,95 @@ export const sortArrayHandler = (arr, getter, order = 'asc') =>
       : (a, b) => getter(a).localeCompare(getter(b))
   );
 
-  export function fetchBeg() {
-    let orderStr = localStorage.getItem("orders");
-    let orderDetails = {
-      orderList: [],
-      Account: {
-        name: null,
-        id: null,
-        address: null,
-        shippingMethod: null,
-      },
-      Manufacturer: {
-        name: null,
-        id: null,
-      },
-    };
-  
-    if (orderStr) {
-      let orderList = Object.values(JSON.parse(orderStr));
-      if (orderList.length > 0) {
-        orderDetails.Account.id = orderList[0].account.id;
-        orderDetails.Account.name = orderList[0].account.name;
-        orderDetails.Account.shippingMethod = orderList[0].account.shippingMethod;
-        orderDetails.Account.address = JSON.parse(orderList[0].account.address);
-        orderDetails.Manufacturer.id = orderList[0].manufacturer.id;
-        orderDetails.Manufacturer.name = orderList[0].manufacturer.name;
-        orderDetails.orderList = orderList;
-      }
-    }
-  
-    return orderDetails;
+export function fetchBeg() {
+  let orderStr = localStorage.getItem("AA0KfX2OoNJvz7x");
+
+
+  if (orderStr) {
+    let orderList = JSON.parse(orderStr);
+
+    return orderList;
   }
-  
-  
-  export async function POGenerator() {
-    try {
-  
-      let orderDetails = fetchBeg();
-      let date = new Date();
-  
-      //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
-      const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          accountName: orderDetails.Account?.name,
-          manufacturerName: orderDetails.Manufacturer?.name,
-          orderDate: date.toISOString(),
-          accountId: orderDetails.Account?.id,  
-          manufacturerId: orderDetails.Manufacturer?.id 
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-  
-      const poData = await response.json();
-      
-      if (poData.success) {
-        let generatedPONumber = poData.poNumber;
-  
-        return await generatedPONumber;
-      } else {
-        console.error('Failed to generate PO number:', poData.message);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error generating PO number:', error.message);
+}
+
+
+export async function POGenerator() {
+  try {
+
+    let orderDetails = fetchBeg();
+    let date = new Date();
+
+    //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
+    const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        accountName: orderDetails.Account?.name,
+        manufacturerName: orderDetails.Manufacturer?.name,
+        orderDate: date.toISOString(),
+        accountId: orderDetails.Account?.id,
+        manufacturerId: orderDetails.Manufacturer?.id
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+
+    const poData = await response.json();
+
+    if (poData.success) {
+      let generatedPONumber = poData.poNumber;
+
+      return await generatedPONumber;
+    } else {
+      console.error('Failed to generate PO number:', poData.message);
       return null;
     }
+  } catch (error) {
+    console.error('Error generating PO number:', error.message);
+    return null;
   }
-  
-  // Helper function to generate codes
-  export function getStrCode(str) {
-    if (!str) return null;
-    let codeLength = str.split(" ");
-  
-    if (codeLength.length >= 2) {
-      return `${codeLength[0].charAt(0).toUpperCase() + codeLength[1].charAt(0).toUpperCase()}`;
-    } else {
-      return `${codeLength[0].charAt(0).toUpperCase() + codeLength[0].charAt(codeLength[0].length - 1).toUpperCase()}`;
-    }
+}
+
+// Helper function to generate codes
+export function getStrCode(str) {
+  if (!str) return null;
+  let codeLength = str.split(" ");
+
+  if (codeLength.length >= 2) {
+    return `${codeLength[0].charAt(0).toUpperCase() + codeLength[1].charAt(0).toUpperCase()}`;
+  } else {
+    return `${codeLength[0].charAt(0).toUpperCase() + codeLength[0].charAt(codeLength[0].length - 1).toUpperCase()}`;
   }
-  
-  // Helper function to pad numbers
-  function padNumber(n, isTwoDigit) {
-    if (isTwoDigit) {
-      return n < 10 ? "0" + n : n;
-    } else {
-      if (n < 10) return "000" + n;
-      if (n < 100) return "00" + n;
-      if (n < 1000) return "0" + n;
-      return n;
-    }
+}
+
+// Helper function to pad numbers
+function padNumber(n, isTwoDigit) {
+  if (isTwoDigit) {
+    return n < 10 ? "0" + n : n;
+  } else {
+    if (n < 10) return "000" + n;
+    if (n < 100) return "00" + n;
+    if (n < 1000) return "0" + n;
+    return n;
   }
-  
-  export function formatNumber(num) {
-    if (num >= 0 && num < 1000000) {
-      return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
-    } else if (num >= 1000000) {
-      return (num / 1000000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "M";
-    } else if (num < 0) {
-      return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
-    } else {
-      return num;
-    }
+}
+
+export function formatNumber(num) {
+  if (num >= 0 && num < 1000000) {
+    return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
+  } else if (num >= 1000000) {
+    return (num / 1000000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "M";
+  } else if (num < 0) {
+    return (num / 1000).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "K";
+  } else {
+    return num;
   }
+}
 
 export function supportDriveBeg() {
   let supportList = localStorage.getItem(support);
@@ -503,7 +482,7 @@ export async function getDashboardata({ user }) {
       "Access-Control-Allow-Origin": "*",
     };
   }
-  
+
   let response = await fetch(originAPi + "/95zWpMEFtbAr8lqn/38Akka0hdLL8Kyo", {
     // let response = await fetch(url + "v3/3kMMguJj62cyyf0", {
     method: "POST",
@@ -725,7 +704,7 @@ export async function topProduct({ month, manufacturerId, accountIds }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "IParlpz6lDE6kfU", {
+  let response = await fetch(url2 + "IelYpnHX2RDZxkj", {
     method: "POST",
     body: JSON.stringify({ month, manufacturerId, accountIds }),
     headers: headersList,
@@ -756,7 +735,7 @@ export async function getSessionStatus({ key, retailerId }) {
     return data;
   }
 }
-export async function getMarketingCalendar({ key, manufacturerId,year }) {
+export async function getMarketingCalendar({ key, manufacturerId, year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -764,7 +743,7 @@ export async function getMarketingCalendar({ key, manufacturerId,year }) {
 
   let response = await fetch(originAPi + "/beauty/v3/eVC3IaiEEz3x7ym", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId,year }),
+    body: JSON.stringify({ key, manufacturerId, year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -794,14 +773,14 @@ export async function getOrderDetailsPdf({ key, opportunity_id }) {
   }
 }
 
-export async function getMarketingCalendarPDF({ key, manufacturerId, month, manufacturerStr,year }) {
+export async function getMarketingCalendarPDF({ key, manufacturerId, month, manufacturerStr, year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc46", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr, year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -812,14 +791,14 @@ export async function getMarketingCalendarPDF({ key, manufacturerId, month, manu
   }
 }
 
-export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, manufacturerStr,year }) {
+export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, manufacturerStr, year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/Y6C9n4OZMqRdhvr", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr, year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -830,7 +809,7 @@ export async function getMarketingCalendarPDFV2({ key, manufacturerId, month, ma
   }
 }
 
-export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr,year }) {
+export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, manufacturerStr, year }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -838,7 +817,7 @@ export async function getMarketingCalendarPDFV3({ key, manufacturerId, month, ma
 
   let response = await fetch(originAPi + "/mIRX7B9FlQjmOaf/H893PuzIaG1miIo", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr,year }),
+    body: JSON.stringify({ key, manufacturerId, month, manufacturerStr, year }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -881,14 +860,14 @@ export async function getAllAccountBrand({ key, accountIds }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  
+
   if (data.status == 300) {
     DestoryAuth();
   } else {
     return data?.data || [];
   }
 }
-export async function getAllAccountOrders({ key, accountIds, month,date=null }) {
+export async function getAllAccountOrders({ key, accountIds, month, date = null }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -896,7 +875,7 @@ export async function getAllAccountOrders({ key, accountIds, month,date=null }) 
 
   let response = await fetch(url2 + "UQPIByU1hllkP9m", {
     method: "POST",
-    body: JSON.stringify({ key, accountIds, month ,date}),
+    body: JSON.stringify({ key, accountIds, month, date }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
