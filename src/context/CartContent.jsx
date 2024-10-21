@@ -12,12 +12,15 @@ const initialOrder = {
         id: null,
         address: null,
         shippingMethod: null,
+        SalesRepId: null,
         discount: {
             MinOrderAmount: null,
             margin: null,
             sample: null,
             testerMargin: null,
             testerproductLimit: null,
+            sampleInclude: true,
+            testerInclude: true
         },
     },
     Manufacturer: {
@@ -44,11 +47,14 @@ const CartProvider = ({ children }) => {
     // const confirmReplaceCart = () => {
     //     return window.confirm("Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?");
     // };
-    const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch) => {
+    const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch, msg = null) => {
         let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?";
-
         if (accountMatch && manufacturerMatch && orderTypeMatch) {
-            message = "The account, manufacturer, and order type match. Do you want to proceed with the cart replacement?";
+            if (msg) {
+                message = msg;
+            } else {
+                message = "The account, manufacturer, and order type match. Do you want to proceed with the cart replacement?";
+            }
         } else if (!accountMatch) {
             message = "The account does not match the current cart. Do you want to replace the cart with the new account details?";
         } else if (!manufacturerMatch) {
@@ -87,10 +93,11 @@ const CartProvider = ({ children }) => {
         };
     };
 
-    // Add a product to the cart with validation and cart replacement logic
+
     const addOrder = async (product, account, manufacturer) => {
+        let qty = product.qty || product.Min_Order_QTY__c || 1;
+
         // If the cart is empty or just initialized, set the orderType based on the first product added
-        let qty = product.qty || product.Min_Order_QTY__c || 1
         if (!order.ordertype) {
             setOrder({
                 ...order,
@@ -99,7 +106,7 @@ const CartProvider = ({ children }) => {
                 Manufacturer: manufacturer,
                 items: [{ ...product, qty }],
                 orderQuantity: qty,
-                total: product.price * (qty),
+                total: product.price * qty,
             });
 
             return {
@@ -108,26 +115,92 @@ const CartProvider = ({ children }) => {
             };
         }
 
-        // Check if the account, manufacturer, and order type match
+        // Check if the account, manufacturer, and orderType match
         const isAccountMatch = order.Account.id === account.id;
         const isManufacturerMatch = order.Manufacturer.id === manufacturer.id;
         const isOrderTypeMatch = order.ordertype === product.orderType;
 
         if (isAccountMatch && isManufacturerMatch && isOrderTypeMatch) {
-            // If all match, add the product to the existing cart
+            // Now check if the product being added is a Tester or Sample
+            const isTester = product?.Category__c === "TESTER";
+            const isSample = product?.Category__c?.toUpperCase() === "SAMPLES";
+
+            // Check if testerInclude or sampleInclude is false and we're adding the wrong type
+            const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
+            const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
+
+            // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
+            if ((!account.discount.testerInclude && isTester) || (!account.discount.sampleInclude && isSample)) {
+                let msg = `This brand requires you to add ${isTester ? "Tester" : "Sample"} products in a separate order. You cannot mix it with other products.`;
+
+                let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
+                if (status) {
+                    // Replace the cart with the new tester or sample product
+                    setOrder({
+                        ...initialOrder,
+                        ordertype: product.orderType,
+                        Account: account,
+                        Manufacturer: manufacturer,
+                        items: [{ ...product, qty }],
+                        orderQuantity: qty,
+                        total: product.price * qty,
+                    });
+
+                    return {
+                        status: 'success',
+                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                    };
+                } else {
+                    // User cancels the cart replacement
+                    return {
+                        status: 'warning',
+                        message: 'Cart replacement was canceled. The current cart remains unchanged, and the product was not added.',
+                    };
+                }
+            }
+
+            // **Fix: Ensure this block is only triggered when testerInclude or sampleInclude is false**
+            if ((hasTesterInCart && !account.discount.testerInclude && !isTester) ||
+                (hasSampleInCart && !account.discount.sampleInclude && !isSample)) {
+                let msg = `You already have ${hasTesterInCart ? "Tester" : "Sample"} products in your cart. You cannot add other types of products.`;
+
+                let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
+                if (status) {
+                    // Replace the cart with the new product
+                    setOrder({
+                        ...initialOrder,
+                        ordertype: product.orderType,
+                        Account: account,
+                        Manufacturer: manufacturer,
+                        items: [{ ...product, qty }],
+                        orderQuantity: qty,
+                        total: product.price * qty,
+                    });
+
+                    return {
+                        status: 'success',
+                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                    };
+                } else {
+                    // User cancels the cart replacement
+                    return {
+                        status: 'warning',
+                        message: 'Cart replacement was canceled. The current cart remains unchanged, and the product was not added.',
+                    };
+                }
+            }
+
+            // If all checks pass, add the product to the existing cart
             setOrder((prevOrder) => {
                 const existingProduct = prevOrder.items.find(item => item.Id === product.Id);
-                console.log({ existingProduct });
-
 
                 if (existingProduct) {
+                    // Update the existing product quantity
                     const updatedItems = prevOrder.items.map(item =>
-                        item.Id === product.Id
-                            ? { ...item, qty }  // Update quantity
-                            : item
+                        item.Id === product.Id ? { ...item, qty } : item
                     );
 
-                    // Adjust the total quantity and price by removing the old values and adding the new ones
+                    // Update the total quantity and price
                     const updatedOrderQuantity = prevOrder.orderQuantity - existingProduct.qty + qty;
                     const updatedTotal = prevOrder.total - (existingProduct.price * existingProduct.qty) + (product.price * qty);
 
@@ -138,7 +211,7 @@ const CartProvider = ({ children }) => {
                         total: updatedTotal,
                     };
                 } else {
-                    // For new products, just add to order
+                    // Add new product to the cart
                     return {
                         ...prevOrder,
                         items: [...prevOrder.items, { ...product, qty }],
@@ -148,22 +221,21 @@ const CartProvider = ({ children }) => {
                 }
             });
 
-
             return { status: 'success', message: 'Product added to the existing cart' };
         } else {
             // If account, manufacturer, or orderType don't match, ask for confirmation to replace the cart
             let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch);
 
             if (status) {
-                // If confirmed, replace the cart and add the product
+                // Replace the cart with the new product
                 setOrder({
                     ...initialOrder,
                     ordertype: product.orderType,
                     Account: account,
                     Manufacturer: manufacturer,
-                    items: [{ ...product, qty: product.qty || 1 }],
-                    orderQuantity: product.qty || 1,
-                    total: product.price * (product.qty || 1),
+                    items: [{ ...product, qty }],
+                    orderQuantity: qty,
+                    total: product.price * qty,
                 });
 
                 return {
@@ -171,7 +243,6 @@ const CartProvider = ({ children }) => {
                     message: 'The cart has been replaced with a new one. The product has been added to the new cart.',
                 };
             } else {
-                // User cancels the cart replacement
                 return {
                     status: 'warning',
                     message: 'Cart replacement was canceled. The current cart remains unchanged, and the product was not added.',
@@ -180,13 +251,15 @@ const CartProvider = ({ children }) => {
         }
     };
 
+
+
     // Update product quantity
     const updateProductQty = (productId, qty) => {
         // Ensure qty is a valid positive number
         if (isNaN(qty) || qty <= 0) {
-            console.log({qty});
-            
-            if(qty == 0){
+            console.log({ qty });
+
+            if (qty == 0) {
                 removeProduct(productId)
             }
             return; // Don't update if qty is invalid
@@ -224,12 +297,12 @@ const CartProvider = ({ children }) => {
         setOrder((prevOrder) => {
             const updatedItems = prevOrder.items.filter(item => item.Id !== productId);
             const removedItem = prevOrder.items.find(item => item.Id === productId);
-    
+
             // If the cart is empty after removing the item, reset to initialOrder
             if (updatedItems.length === 0) {
                 return initialOrder;
             }
-    
+
             // Otherwise, update the cart normally
             return {
                 ...prevOrder,
@@ -239,15 +312,55 @@ const CartProvider = ({ children }) => {
             };
         });
     };
-    
+
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
         const matchingProducts = order.items.filter(item => item.Id === productId);
-        
+
         // If found, return the array of matching products; if not, return false
         return matchingProducts.length > 0 ? matchingProducts[0] : false;
     };
+
+    const isCategoryCarted = (categoryKey) => {
+        // Ensure order.items exists and is an array
+        if (!Array.isArray(order.items)) {
+            return false;
+        }
+        // Convert the string 'null' to actual null for comparison
+        const normalizedCategoryKey = categoryKey === 'null' ? null : categoryKey;
+
+        // Filter items that match the given category, handling potential null/undefined product or category
+        const matchingItems = order.items.filter(item =>
+            item && item.Category__c == normalizedCategoryKey
+        );
+
+
+        // If found, sum up the quantity of matching products; otherwise, return false
+        if (matchingItems.length > 0) {
+            const totalQuantity = matchingItems.reduce((sum, item) => sum + (item.qty || 0), 0);
+            return totalQuantity;
+        }
+
+        return false;
+    };
+
+    const contentApiFunction = (productList, account, manufacturer, ordertype = 'wholesale') => {
+        // Directly replace the current order with a new one based on the provided product list
+        const newOrderTotal = productList.reduce((sum, product) => sum + product.price * (product.qty || 1), 0);
+        const newOrderQuantity = productList.reduce((sum, product) => sum + (product.qty || 1), 0);
+
+        // Set the new order with the account and manufacturer details
+        setOrder({
+            ordertype, // Set the order type; adjust if needed
+            Account: account,
+            Manufacturer: manufacturer,
+            items: productList.map(product => ({ ...product, qty: product.qty || 1 })), // Ensure each product has a qty
+            orderQuantity: newOrderQuantity,
+            total: newOrderTotal,
+        });
+    };
+
 
     // Delete the entire cart (reset to initial state)
     const deleteOrder = () => {
@@ -273,7 +386,9 @@ const CartProvider = ({ children }) => {
         deleteOrder,
         getOrderTotal,
         getOrderQuantity,
-        isProductCarted
+        isProductCarted,
+        isCategoryCarted,
+        contentApiFunction
     };
 
     return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;

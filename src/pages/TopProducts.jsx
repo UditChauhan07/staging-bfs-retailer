@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
+import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, topProduct } from "../lib/store";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
@@ -203,7 +203,6 @@ const TopProducts = () => {
       </button>
     </>
     }>
-      <CartProvider>
       {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth-1]} ${((selectedMonth-1) <= monthIndex)?2024:2023}`}/> : (topProductList.data.length == 0 && topProductList.message) ?
         <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
@@ -214,7 +213,6 @@ const TopProducts = () => {
         </div>
         :
         <TopProductCard data={topProductList.data} accountDetails={topProductList.accountDetails} isLoaded={isLoaded} productImages={productImages} />}
-        </CartProvider>
     </AppLayout>
   );
 };

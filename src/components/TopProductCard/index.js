@@ -107,7 +107,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             id: element.ManufacturerId__c,
         }
         let orderType = 'wholesale';
-        if(element?.Category__c?.toUpperCase() === "PREORDER"||product?.Category__c?.toUpperCase()?.match("EVENT")){
+        if(element?.Category__c?.toUpperCase() === "PREORDER"||element?.Category__c?.toUpperCase()?.match("EVENT")){
           orderType = 'pre-order'
         }
         element.orderType = orderType;
@@ -123,12 +123,10 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         element.price = salesPrice;
         element.qty = element.Min_Order_QTY__c;
         let cartStatus = addOrder(element,account, manufacturer);
-        console.log({cartStatus,element});
-        
+        console.log({cartStatus}); 
       }
     }
   };
-  console.log({order});
   
 
   const replaceCart = () => {
@@ -371,13 +369,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
       <ProductDetails
         productId={productDetailId}
         setProductDetailId={setProductDetailId}
-        accountDetails={accountDetails?.[product?.ManufacturerId__c]}
-        AccountId={localStorage.getItem("AccountId__c")}
-        ManufacturerId={manufacturerId}
-        ManufacturerName={manufacturerName}
-        shippingMethod={shippingMethod}
-        accountNumber={accountNumber}
-        SalesRepId={salesRepId}
       />
     </section>
   );
