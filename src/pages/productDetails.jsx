@@ -9,11 +9,6 @@ import { CloseButton } from "../lib/svg";
 
 
 const ProductDetails = ({ productId, setProductDetailId, isAddtoCart = true, AccountId = null, ManufacturerId  , SalesRepId=null  , ManufacturerName , shippingMethod , accountNumber}) => {
-    console.log("product details " , productId)
-    console.log('salesrepid' , SalesRepId )
-    localStorage.setItem('ManufacturerId__c' , ManufacturerId )
-    console.log("shipping method -------" ,shippingMethod , accountNumber )
-   
     const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);

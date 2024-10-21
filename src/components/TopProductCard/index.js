@@ -7,76 +7,181 @@ import { useBag } from "../../context/BagContext";
 import ModalPage from "../Modal UI";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { DeleteIcon } from "../../lib/svg";
+import Select from "react-select";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContent";
 
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
-  const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
+  // const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
+  const { order,updateProductQty, addOrder, removeProduct,deleteOrder,isProductCarted } = useCart();
+  
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectBrand, setBrand] = useState();
   const [salesRepId, setsalesRepId] = useState();
-  const [manufacturerId , setManfacturerId] = useState()
-  const [manufacturerName , setManufacturerName] = useState()
-const [shippingMethod , setShippingMethod] = useState()
-const [accountNumber , setAccountNumber] = useState()
-  useEffect(() => {}, [productDetailId, productImages]);
+  const [manufacturerId, setManfacturerId] = useState()
+  const [manufacturerName, setManufacturerName] = useState()
+  const [shippingMethod, setShippingMethod] = useState()
+  const [accountNumber, setAccountNumber] = useState()
+  const [dealAccountList, setAccountList] = useState([]);
+  const [selectAccount, setSelectAccount] = useState();
+
+  let styles = {
+    holder: {
+      border: '1px dashed #ccc',
+      padding: '10px',
+      width: '100%',
+      marginBottom: '20px'
+    },
+    title: {
+      color: '#000',
+      textAlign: 'left',
+      fontFamily: 'Montserrat',
+      fontSize: '14px',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      lineHeight: '24px',
+      letterSpacing: '2.2px',
+      textTransform: 'uppercase'
+    },
+    field: {
+      width: '100%',
+      minHeight: '40px',
+      borderBottom: '1px solid #ccc',
+      borderRadius: '10px',
+      background: '#f4f4f4'
+    }
+  }
+
+  useEffect(() => { }, [productDetailId, productImages]);
 
   const orderSetting = (element, quantity, manufacturer) => {
     setReplaceCartModalOpen(false);
     addOrder(element, quantity, product.discount, manufacturer);
   };
-  const onQuantityChange = (element, quantity, salesPrice = null, discount = null) => {
-    if (accountDetails?.[element.ManufacturerId__c]?.SalesRepId) {
-      setIsModalOpen(false);
-      localStorage.setItem("manufacturer", element.ManufacturerName__c);
-      localStorage.setItem("ManufacturerId__c", element.ManufacturerId__c);
-      localStorage.setItem("address", JSON.stringify(accountDetails?.[element.ManufacturerId__c]?.ShippingAddress));
-      localStorage.setItem(
-        "shippingMethod",
-        JSON.stringify({
-          number: accountDetails?.[element.ManufacturerId__c]?.AccountNumber,
-          method: accountDetails?.[element.ManufacturerId__c]?.ShippingMethod,
-        })
-      );
-      localStorage.setItem("Sales_Rep__c", accountDetails?.[element.ManufacturerId__c]?.SalesRepId);
-      element.salesPrice = salesPrice;
-      if (Object.values(orders).length) {
-        if (
-          Object.values(orders)[0]?.manufacturer?.id === element.ManufacturerId__c &&
-          Object.values(orders)[0].account.id === localStorage.getItem("AccountId__c") &&
-          Object.values(orders)[0].productType === (element.Category__c === "PREORDER" ? "pre-order" : "wholesale")
-        ) {
-          orderSetting(element, quantity, { id: element.ManufacturerId__c, name: element.ManufacturerName__c });
-          setReplaceCartModalOpen(false);
-        } else {
-          setReplaceCartModalOpen(true);
-          setReplaceCartProduct({ product: element, quantity });
-        }
+  const onQuantityChange = (element, quantity) => {
+    let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+    let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
+    let listOfAccounts = Object.keys(selectProductDealWith);
+    let addProductToAccount = null
+
+    if (listOfAccounts.length) {
+      if (listOfAccounts.length == 1) {
+        addProductToAccount = listOfAccounts[0];
       } else {
-        orderSetting(element, quantity, { id: element.ManufacturerId__c, name: element.ManufacturerName__c });
+        //multi store deal with
+        if (selectAccount) {
+          if(selectAccount?.value){
+            addProductToAccount = selectAccount.value
+          }
+        } else {
+          let accounts = [];
+          listOfAccounts.map((actId) => {
+            if (selectProductDealWith[actId]) {
+              accounts.push({ value: actId, label: selectProductDealWith[actId].Name })
+            }
+          })
+          setReplaceCartProduct({ product: element, quantity });
+          setAccountList(accounts);
+          //alert user
+          return;
+        }
       }
-    } else {
-      setIsModalOpen(true);
+      if(addProductToAccount){
+        let selectAccount = selectProductDealWith[addProductToAccount];
+        
+        let account=  {
+            name: selectAccount?.Name,
+            id: addProductToAccount,
+            address: selectAccount?.ShippingAddress,
+            shippingMethod: selectAccount?.ShippingMethod,
+            discount: selectAccount?.Discount,
+          }
+
+          let manufacturer= {
+            name: element.ManufacturerName__c,
+            id: element.ManufacturerId__c,
+        }
+        let orderType = 'wholesale';
+        if(element?.Category__c?.toUpperCase() === "PREORDER"||element?.Category__c?.toUpperCase()?.match("EVENT")){
+          orderType = 'pre-order'
+        }
+        element.orderType = orderType;
+        let discount= 0;
+        if (element?.Category__c === "TESTER") {
+          discount = selectAccount?.Discount?.testerMargin || 0;
+        } else if (element?.Category__c === "Samples") {
+          discount = selectAccount?.Discount?.sample || 0;
+        } else {
+          discount = selectAccount?.Discount?.margin || 0;
+        }
+        let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+        element.price = salesPrice;
+        element.qty = element.Min_Order_QTY__c;
+        let cartStatus = addOrder(element,account, manufacturer);
+        console.log({cartStatus}); 
+      }
     }
   };
+  
 
-  const onPriceChangeHander = (element, price = "0") => {
-    if (price == "") price = 0;
-    setOrderProductPrice(element, price);
-  };
   const replaceCart = () => {
-    localStorage.removeItem("orders");
+    
     setReplaceCartModalOpen(false);
-    setOrderQuantity(0);
-    setOrders({});
-    addOrder(replaceCartProduct.product, replaceCartProduct.quantity, product.discount);
+    // if(replaceCartProduct?.product){
+    //   addOrder(replaceCartProduct.product, replaceCartProduct.quantity, product.discount);
+    // }
   };
+  const accountSelectionHandler = () => {
+    onQuantityChange(replaceCartProduct.product, replaceCartProduct.quantity, replaceCartProduct.salesPrice)
+    accountSelectionCloseHandler();
+  }
+  const accountSelectionCloseHandler = () => {
+    setReplaceCartProduct();
+    setAccountList();
+    setSelectAccount();
+  }
+  const HtmlFieldSelect = ({ title, list = [], value, onChange }) => {
+    return (<div style={styles.holder}>
+      <p style={styles.title}>{title}</p>
+      <Select
+        type="text"
+        id={title?.replaceAll(/\s+/g, '-')}
+        options={list}
+        onChange={(option) => {
+          onChange?.(option)
+        }}
+        value={list ? list.find((option) => option.value === value?.value) : ""}
+      />
+    </div>)
+  }
   return (
     <section>
+      <ModalPage
+        open={dealAccountList?.length ? true : false}
+        content={
+          <div className="d-flex flex-column gap-3">
+            <h2>Alert!</h2>
+            <p>
+              You have multi store with deal with this Brand.<br /> can you please select you create order for
+              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
+            </p>
+            <div className="d-flex justify-content-around ">
+              <button className={Styles.btn} onClick={accountSelectionHandler}>
+                OK
+              </button>
+              <button className={Styles.btn} onClick={accountSelectionCloseHandler}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+        onClose={accountSelectionCloseHandler}
+      />
       {replaceCartModalOpen ? (
         <ModalPage
           open
@@ -108,7 +213,7 @@ const [accountNumber , setAccountNumber] = useState()
             <div className="d-flex flex-column gap-3">
               <h2>Warning</h2>
               <p>
-              You can not order from this brand.<br/> Kindly contact your Sales Rep
+                You can not order from this brand.<br /> Kindly contact your Sales Rep
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btn} onClick={() => setIsModalOpen(false)}>
@@ -127,27 +232,29 @@ const [accountNumber , setAccountNumber] = useState()
           {data.map((product) => {
             let listPrice = Number(product?.usdRetail__c?.replace("$", "")?.replace(",", ""));
             let salesPrice = 0;
-            let discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0;
-            let inputPrice = Object.values(orders)?.find(
-              (order) =>
-                order.product.Id === product?.Id &&
-                order.manufacturer.name === product?.ManufacturerName__c &&
-                order.account.id === localStorage.getItem("AccountId__c")
-            )?.product?.salesPrice;
-            if (product?.Category__c === "TESTER") {
-              discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin;
-              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.testerMargin||0) / 100) * +listPrice).toFixed(2);
-            } else if (product?.Category__c === "Samples") {
-              discount = accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample;
-              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.sample||0) / 100) * +listPrice).toFixed(2);
-            } else {
-              salesPrice = (+listPrice - ((accountDetails?.[product?.ManufacturerId__c]?.Discount?.margin||0) / 100) * +listPrice).toFixed(2);
+            let selectProductDealWith = accountDetails?.[product.ManufacturerId__c] || []
+            let listOfAccounts = Object.keys(selectProductDealWith);
+            let discount = 0;
+            let selAccount = {};
+            if (listOfAccounts.length) {
+              if (listOfAccounts.length == 1) {
+                selAccount = accountDetails?.[product?.ManufacturerId__c]?.[listOfAccounts[0]];
+                if (product?.Category__c === "TESTER") {
+                  discount = selAccount?.Discount?.testerMargin || 0;
+                } else if (product?.Category__c === "Samples") {
+                  discount = selAccount?.Discount?.sample || 0;
+                } else {
+                  discount = selAccount?.Discount?.margin || 0;
+                }
+              }
             }
+            salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+            let ProductInCart = isProductCarted(product.Id);
             return (
               <div className={Styles.cardElement}>
                 <div className={Styles.salesHolder}>
                   <svg class="salesIcon" viewBox="0 0 100 100">
-                    <circle  r="45" cx="50" cy="50"fill="none" stroke="#ccc"  stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283">
+                    <circle r="45" cx="50" cy="50" fill="none" stroke="#ccc" stroke-width="5" stroke-dasharray="283" stroke-dashoffset="283">
                       {" "}
                       <animate attributeName="stroke-dashoffset" from="283" to="0" dur="2s" fill="freeze" />{" "}
                     </circle>
@@ -171,22 +278,22 @@ const [accountNumber , setAccountNumber] = useState()
                 </div>
                 {productImages?.isLoaded ? (
                   <div className={` last:mb-0 mb-4 ${Styles.HoverArrow}`}>
-                  <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
-                  <img
-                    className={Styles.imgHolder}
-                    onClick={() => {
-                      setProductDetailId(product.Id);
-                      setBrand(product.ManufacturerId__c);
-                      setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
-                    }}
-                    src={product.ProductImage?product.ProductImage:productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
-                  />
-                  </div>
+                    <div className={` border-[#D0CFCF] flex flex-col gap-4 h-full  ${Styles.ImgHover1}`}>
+                      <img
+                        className={Styles.imgHolder}
+                        onClick={() => {
+                          setProductDetailId(product.Id);
+                          setBrand(product.ManufacturerId__c);
+                          setsalesRepId(accountDetails?.[product.ManufacturerId__c]?.SalesRepId ?? null);
+                        }}
+                        src={product.ProductImage ? product.ProductImage : productImages?.images?.[product.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <LoaderV2 />
                 )}
-                <p className={Styles.brandHolder} onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)}>{product?.ManufacturerName__c}</p>
+                <p className={Styles.brandHolder} onClick={() => navigate("/Brand/" + product.ManufacturerId__c)}>{product?.ManufacturerName__c}</p>
                 <p
                   className={Styles.titleHolder}
                   onClick={() => {
@@ -197,50 +304,47 @@ const [accountNumber , setAccountNumber] = useState()
                     setManufacturerName(product.ManufacturerName__c)
                     setAccountNumber(accountDetails?.[product.ManufacturerId__c]?.AccountNumber)
                     setShippingMethod(accountDetails?.[product.ManufacturerId__c]?.ShippingMethod)
-                    
+
                   }}
                 >
                   {product?.Name.substring(0, 20)}...
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
+                {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> : null}
                 <p className={Styles.priceHolder}>
-                <div>
-                {salesPrice!=listPrice&&<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>}
-                </div>
-                <div>
-                {orders[product?.Id] ? <Link to={"/my-bag"}>${salesPrice}</Link> : <p>${salesPrice}</p>}
-                </div>
+                  <div>
+                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
+                  </div>
+                  <div>
+                    {/* {orders[product?.Id] ? <Link to={"/my-bag"}>${orders[product?.Id].product.salesPrice}</Link> : } */}
+                    <p>${salesPrice}</p>
+                  </div>
                 </p>
-                {orders[product?.Id] ? (
+                {ProductInCart ? (
                   <>
+                  
                     {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
                     <div className="d-flex">
                       <QuantitySelector
                         min={product?.Min_Order_QTY__c || 0}
-                        value={orders[product?.Id]?.quantity}
+                        value={ProductInCart.qty}
                         onChange={(quantity) => {
-                          onQuantityChange(
-                            product,
-                            quantity,
-                            inputPrice || parseFloat(salesPrice),
-                            accountDetails?.[product?.ManufacturerId__c]?.Discount
+                          updateProductQty(
+                            product.Id,
+                            quantity
                           );
                         }}
                       />
                       <button
                         className="ml-4"
                         onClick={() =>
-                          onQuantityChange(product, 0, inputPrice || parseFloat(salesPrice), accountDetails?.[product?.ManufacturerId__c]?.Discount)
+                          removeProduct(product.Id)
                         }
                       >
                         <DeleteIcon fill="red" />
                       </button>
                     </div>
                   </>
-                ) : to ? (
-                  <Link to={to} className={Styles.linkHolder}>
-                    <p className={Styles.btnHolder}>add to Cart</p>
-                  </Link>
                 ) : (
                   <p
                     className={Styles.btnHolder}
@@ -248,7 +352,7 @@ const [accountNumber , setAccountNumber] = useState()
                       onQuantityChange(
                         product,
                         product?.Min_Order_QTY__c || 1,
-                        inputPrice || parseFloat(salesPrice),
+                        parseFloat(salesPrice),
                         accountDetails?.[product?.ManufacturerId__c]?.Discount
                       )
                     }
@@ -265,13 +369,6 @@ const [accountNumber , setAccountNumber] = useState()
       <ProductDetails
         productId={productDetailId}
         setProductDetailId={setProductDetailId}
-        accountDetails={accountDetails?.[product?.ManufacturerId__c]}
-        AccountId={localStorage.getItem("AccountId__c")}
-        ManufacturerId={manufacturerId}
-        ManufacturerName = {manufacturerName}
-        shippingMethod = {shippingMethod}
-        accountNumber = {accountNumber}
-        SalesRepId={salesRepId}
       />
     </section>
   );

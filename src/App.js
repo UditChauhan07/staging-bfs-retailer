@@ -38,6 +38,7 @@ import StoreDetails from "./pages/StoreDetails";
 import BrandDetails from "./pages/BrandDetails";
 import HelpSection from "./pages/HelpSection";
 import PortalHelp from "./pages/PortalHelp";
+import { CartProvider } from "./context/CartContent";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -45,7 +46,8 @@ function App() {
   // };
   return (
     <UserProvider>
-      <BagProvider>
+      <CartProvider>
+        <BagProvider>
         <BrowserRouter>
             <HubSpotTracker />
           <Routes>
@@ -88,7 +90,8 @@ function App() {
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>
-      </BagProvider>
+        </BagProvider>
+      </CartProvider>
     </UserProvider>
   );
 }
