@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { cartSync } from '../lib/store';
 let orderCartKey = "AA0KfX2OoNJvz7x"
 
 // Create the context
@@ -13,6 +14,8 @@ const initialOrder = {
         address: null,
         shippingMethod: null,
         SalesRepId: null,
+        PoNumber: null,
+        Note: null,
         discount: {
             MinOrderAmount: null,
             margin: null,
@@ -29,7 +32,8 @@ const initialOrder = {
     },
     items: [], // Cart items
     orderQuantity: 0, // Total quantity of products
-    total: 0, // Total price
+    total: 0, // Total price,
+    PaymentDetails: {}
 };
 
 // Cart Provider component
@@ -41,12 +45,38 @@ const CartProvider = ({ children }) => {
 
     useEffect(() => {
         localStorage.setItem(orderCartKey, JSON.stringify(order));
+        if (order.Account.id && order.Manufacturer.id) {
+            if (!order.id) {
+               let unquieId = generateUniqueCode();
+               if(unquieId){
+                keyBasedUpdateCart({id:unquieId});
+               }
+            } else {
+
+                cartSync({cart:order}).then((res)=>{
+                    console.log({res});
+                }).catch(
+                    (err)=>{
+                        console.error(err);
+                    }
+                )
+            }
+        }
     }, [order]);
 
-    // Helper function to confirm cart replacement
-    // const confirmReplaceCart = () => {
-    //     return window.confirm("Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?");
-    // };
+
+    const generateUniqueCode = () => {
+        const sanitize = (str) => str.replace(/[^a-zA-Z0-9]/g, '');
+        const accountPart = sanitize(order.Account.name).slice(0, 5).toUpperCase(); // First 5 chars of account name
+        const brandPart = sanitize(order.Manufacturer.name).slice(0, 5).toUpperCase(); // First 5 chars of brand name
+        const now = new Date();
+        const datePart = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
+        const timePart = `${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
+
+        return `${accountPart}${brandPart}${datePart}${timePart}`;
+    }
+
+
     const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch, msg = null) => {
         let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?";
         if (accountMatch && manufacturerMatch && orderTypeMatch) {
@@ -96,7 +126,6 @@ const CartProvider = ({ children }) => {
 
     const addOrder = async (product, account, manufacturer) => {
         let qty = product.qty || product.Min_Order_QTY__c || 1;
-
         // If the cart is empty or just initialized, set the orderType based on the first product added
         if (!order.ordertype) {
             setOrder({
@@ -257,7 +286,6 @@ const CartProvider = ({ children }) => {
     const updateProductQty = (productId, qty) => {
         // Ensure qty is a valid positive number
         if (isNaN(qty) || qty <= 0) {
-            console.log({ qty });
 
             if (qty == 0) {
                 removeProduct(productId)
@@ -313,13 +341,21 @@ const CartProvider = ({ children }) => {
         });
     };
 
+    // update order based on data 
+    const keyBasedUpdateCart = (data) => {
+        setOrder((prevOrder) => {
+            return {
+                ...prevOrder, ...data
+            };
+        });
+    };
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
         const matchingProducts = order.items.filter(item => item.Id === productId);
 
         // If found, return the array of matching products; if not, return false
-        return matchingProducts.length > 0 ? matchingProducts[0] : false;
+        return matchingProducts.length > 0 ? { ...order, items: matchingProducts[0] } : false;
     };
 
     const isCategoryCarted = (categoryKey) => {
@@ -388,7 +424,8 @@ const CartProvider = ({ children }) => {
         getOrderQuantity,
         isProductCarted,
         isCategoryCarted,
-        contentApiFunction
+        contentApiFunction,
+        keyBasedUpdateCart
     };
 
     return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;

@@ -5,7 +5,7 @@ import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
-import { CartProvider } from "../context/CartContent";
+
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const TopProducts = () => {
@@ -75,8 +75,7 @@ const TopProducts = () => {
     GetAuthData().then((user) => {
       setSelectAccount(accountId || user.data.accountIds[0])
       setAccountList(user.data.accountList);
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((resManu) => {
-        console.log({ resManu });
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
@@ -84,7 +83,6 @@ const TopProducts = () => {
 
       topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
         let result = [];
-        console.log({ products });
         if (products?.data?.length > 0) {
           result = products?.data?.sort(function (a, b) {
             return b.Sales - a.Sales;

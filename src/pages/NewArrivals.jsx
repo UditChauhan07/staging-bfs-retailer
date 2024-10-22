@@ -12,7 +12,8 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
-  const [productList, setProductList] = useState([])
+  const [productList, setProductList] = useState([]);
+  const [accountDiscount,setAccountDiscount]= useState();
   const [month, setMonth] = useState("");
 
   let months = [
@@ -45,8 +46,10 @@ const NewArrivals = () => {
     GetAuthData().then((user) => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
-          productRes.map((month) => {
+        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((productRes) => {
+          setAccountDiscount(productRes?.discount||{})
+          
+          productRes.list.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
               element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
@@ -55,7 +58,7 @@ const NewArrivals = () => {
             })
             return month;
           })
-          setProductList(productRes)
+          setProductList(productRes.list)
           setIsloaed(true)
         }).catch((err) => console.log({ err }))
       }).catch((err) => {
@@ -172,7 +175,6 @@ const NewArrivals = () => {
               if (newArrivalsSection) { 
                 let imgElement = newArrivalsSection.querySelectorAll("img");
                 let keys = Object.keys(imgElement);
-                console.log({ imgElement });
             
                 if (keys.length > 0) {
                   keys.map((key) => {
@@ -202,7 +204,7 @@ const NewArrivals = () => {
       }
     >
       {isLoaded ? (
-        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
+        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} accountDetails={accountDiscount}/>
       ) : (
         <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}
