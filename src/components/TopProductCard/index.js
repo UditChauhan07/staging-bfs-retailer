@@ -3,7 +3,6 @@ import Styles from "./index.module.css";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
-import { useBag } from "../../context/BagContext";
 import ModalPage from "../Modal UI";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { DeleteIcon } from "../../lib/svg";
@@ -15,7 +14,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
   // const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
-  const { order,updateProductQty, addOrder, removeProduct,deleteOrder,isProductCarted } = useCart();
+  const { updateProductQty, addOrder, removeProduct,isProductCarted } = useCart();
   
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -59,10 +58,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
 
   useEffect(() => { }, [productDetailId, productImages]);
 
-  const orderSetting = (element, quantity, manufacturer) => {
-    setReplaceCartModalOpen(false);
-    addOrder(element, quantity, product.discount, manufacturer);
-  };
   const onQuantityChange = (element, quantity) => {
     let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
     let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
@@ -100,6 +95,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             address: selectAccount?.ShippingAddress,
             shippingMethod: selectAccount?.ShippingMethod,
             discount: selectAccount?.Discount,
+            SalesRepId:selectAccount?.SalesRepId
           }
 
           let manufacturer= {
@@ -122,8 +118,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
         element.price = salesPrice;
         element.qty = element.Min_Order_QTY__c;
-        let cartStatus = addOrder(element,account, manufacturer);
-        console.log({cartStatus}); 
+          let cartStatus = addOrder(element,account, manufacturer);
       }
     }
   };
@@ -250,6 +245,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             }
             salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
             let ProductInCart = isProductCarted(product.Id);
+            
             return (
               <div className={Styles.cardElement}>
                 <div className={Styles.salesHolder}>
@@ -310,14 +306,13 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                   {product?.Name.substring(0, 20)}...
                 </p>
                 {product?.Category__c === "PREORDER" && <small className={Styles.preOrderBadge}>Pre-Order</small>}
-                {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> : null}
+                {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                 <p className={Styles.priceHolder}>
                   <div>
-                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
+                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
                   </div>
                   <div>
-                    {/* {orders[product?.Id] ? <Link to={"/my-bag"}>${orders[product?.Id].product.salesPrice}</Link> : } */}
-                    <p>${salesPrice}</p>
+                    <p>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice}</p>
                   </div>
                 </p>
                 {ProductInCart ? (
@@ -327,7 +322,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     <div className="d-flex">
                       <QuantitySelector
                         min={product?.Min_Order_QTY__c || 0}
-                        value={ProductInCart.qty}
+                        value={ProductInCart?.items?.qty}
                         onChange={(quantity) => {
                           updateProductQty(
                             product.Id,

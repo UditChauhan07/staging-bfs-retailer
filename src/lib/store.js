@@ -371,6 +371,24 @@ export async function getOrderProduct({ rawData }) {
     return data;
   }
 }
+
+export async function cartSync({ cart }) {
+  console.log({cart});
+  
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  let response = await fetch(url2 + "/SQ26OYkaaEAGNnK", {
+    method: "POST",
+    body: JSON.stringify(cart),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  console.log({data});
+}
+
 export async function OrderPlaced({ order }) {
   let orderinit = {
     info: order,
@@ -735,22 +753,27 @@ export async function getSessionStatus({ key, retailerId }) {
     return data;
   }
 }
-export async function getMarketingCalendar({ key, manufacturerId, year }) {
+export async function getMarketingCalendar({ key, manufacturerId, year,accountIds }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(originAPi + "/beauty/v3/eVC3IaiEEz3x7ym", {
+  let response = await fetch(url2 + "/eVC3IaiEEz3x7ym", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, year }),
+    body: JSON.stringify({ key, manufacturerId, year,accountIds }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
+  
   if (data.status == 300) {
     DestoryAuth();
   } else {
-    return data?.data;
+    let discount = {};
+    if(data?.Discount){
+      discount = data.Discount;
+    }
+    return {list:data?.data,discount};
   }
 }
 
