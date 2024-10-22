@@ -15,8 +15,9 @@ import { DeleteIcon } from "../../lib/svg";
 
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal } = useCart();
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(0);
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState();
   const [buttonActive, setButtonActive] = useState(false);
@@ -72,7 +73,6 @@ function MyBagFinal() {
     }
   }, []);
 
-  let total = 0;
   const [productImage, setProductImage] = useState({ isLoaded: false, images: {} });
 
   useEffect(() => {
@@ -119,12 +119,13 @@ function MyBagFinal() {
         }
       }
     }
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && total > 0) {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && getOrderTotal() > 0) {
       setButtonActive(true);
     }
-  }, [total, order]);
+  }, [order]);
 
   const orderPlaceHandler = () => {
+
     if (order.Account.SalesRepId) {
       setIsOrderPlaced(1);
       setIsDisabled(true)
@@ -198,7 +199,6 @@ function MyBagFinal() {
       alert("no sales rep.")
     }
   };
-  console.log({ order });
 
 
 
@@ -220,6 +220,47 @@ function MyBagFinal() {
         <Loading height={'50vh'} /> // Display full-page loader while data is loading
       ) : (
         <section>
+          {alert == 1 && (
+            <ModalPage
+              open
+              content={
+                <>
+                  <div style={{ maxWidth: "309px" }}>
+                    <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
+                    <p className={` ${Styles.ModalContent}`}>Please Select Products of Minimum Order Amount</p>
+                    {/* <p className={` ${Styles.ModalContent}`}><b>Current Order Total:</b> ${formentAcmount(orderTotal)}</p> */}
+                    <div className="d-flex justify-content-center">
+                      <button className={Styles.btnHolder} onClick={() => setAlert(0)}>
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </>
+              }
+              onClose={() => setAlert(0)}
+            />
+          )}
+          {alert == 2 && (
+            <ModalPage
+              open
+              content={
+                <>
+                  <div style={{ maxWidth: "309px" }}>
+                    <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
+                    <p className={` ${Styles.ModalContent}`}>Please Select Tester Product of Minimum Order Amount</p>
+                    <div className="d-flex justify-content-center">
+                      <button className={Styles.btnHolder} onClick={() => setAlert(0)}>
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </>
+              }
+              onClose={() => {
+                setAlert(0);
+              }}
+            />
+          )}
           <ModalPage
             open={limitCheck || false}
             content={
@@ -408,14 +449,12 @@ function MyBagFinal() {
                                 }
                               }
 
-                              // console.log(ele);
-                              total += parseFloat(salesPrice * ele.qty)
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
                                     <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
                                       {
-                                        ele?.ContentDownloadUrl ? <img src={ele?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} />:ele?.ProductImage ? <img src={ele?.ProductImage} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
+                                        ele?.ContentDownloadUrl ? <img src={ele?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} /> : ele?.ProductImage ? <img src={ele?.ProductImage} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
                                           productImage.images?.[ele?.ProductCode] ?
                                             productImage.images[ele?.ProductCode]?.ContentDownloadUrl ?
                                               <img src={productImage.images[ele?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(ele?.Id) }} />
@@ -464,7 +503,7 @@ function MyBagFinal() {
                             <h2>Total</h2>
                           </div>
                           <div>
-                            <h2>${Number(total).toFixed(2)}</h2>
+                            <h2>${Number(getOrderTotal()).toFixed(2)}</h2>
                           </div>
                         </div>
                       </div>
@@ -521,12 +560,19 @@ function MyBagFinal() {
                         <button
                           onClick={() => {
                             if (order?.items?.length) {
-
                               if (PONumber.length) {
                                 if (order?.items?.length > 100) {
                                   setLimitCheck(true)
                                 } else {
-                                  setConfirm(true);
+                                  if (order.Account.discount.MinOrderAmount > getOrderTotal()) {
+                                    setAlert(1);
+                                  } else {
+                                    // if (testerInBag && order.Account.discount.testerproductLimit > getOrderTotal()) {
+                                    //   setAlert(2);
+                                    // } else {
+                                    setConfirm(true);
+                                    // }
+                                  }
                                 }
                               } else {
                                 setPONumberFilled(false);
@@ -536,7 +582,7 @@ function MyBagFinal() {
                           }}
                           disabled={!buttonActive}
                         >
-                          ${Number(total).toFixed(2)} PLACE ORDER
+                          ${Number(getOrderTotal()).toFixed(2)} PLACE ORDER
                         </button>
                         <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
                           onClick={() => {
