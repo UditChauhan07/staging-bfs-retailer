@@ -238,12 +238,12 @@ function Product() {
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
     if (begValue.Account.id == localStorage.getItem("AccountId__c") && begValue.Manufacturer.id == localStorage.getItem("ManufacturerId__c")) {
-      if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
+      if (begValue?.Account?.id && begValue?.Manufacturer?.id && begValue.items.length > 0) {
         let bagPrice = 0;
         let bagTesterPrice = 0;
-        Object.values(begValue.orderList).map((product) => {
-          let productPriceStr = product.product.salesPrice;
-          let productQuantity = product.quantity;
+        begValue.items.map((product) => {
+          let productPriceStr = product.price;
+          let productQuantity = product.qty;
           let productPrice = parseFloat(productPriceStr || 0);
           bagPrice += productPrice * productQuantity;
         });
