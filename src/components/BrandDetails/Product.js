@@ -181,7 +181,6 @@ function Product() {
         AccountId__c: localStorage.getItem("AccountId__c"),
       }
       getProductList({ rawData }).then((productRes) => {
-        console.log({productRes});
         
         let productData = productRes.data.records || []
         let discount = productRes.discount;

@@ -212,8 +212,8 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
               product.qty = element["Quantity"];
               product.orderType = orderType;
 
-              manufacturer.name= product.ManufacturerName__c
-              manufacturer.id= product.ManufacturerId__c
+              manufacturer.name = product.ManufacturerName__c
+              manufacturer.id = product.ManufacturerId__c
 
               createOrderList.push(product)
 
@@ -222,14 +222,15 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         }
       });
       if (productCount) {
-        console.log({createOrderList});
         let uploadedType = "wholesale"
-        if(orderType == "preorder"){
+        if (orderType == "preorder") {
           uploadedType = "pre-order"
         }
 
-        let status = contentApiFunction(createOrderList,account,manufacturer,uploadedType);
+        let status = contentApiFunction(createOrderList, account, manufacturer, uploadedType);
+        console.log({status});
         
+
         // navigate("/my-bag");
         let currentUrl = window.location.origin;
         let url = currentUrl + "/my-bag";

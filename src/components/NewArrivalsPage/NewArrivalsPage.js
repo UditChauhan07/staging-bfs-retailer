@@ -11,18 +11,23 @@ import LoaderV2 from "../loader/v2";
 import { useNavigate } from "react-router-dom";
 import { GetAuthData } from "../../lib/store";
 import Select from "react-select";
-function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null }) {
+import { useCart } from "../../context/CartContent";
+import { DeleteIcon } from "../../lib/svg";
+import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
+function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails }) {
+  const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
   const navigate = useNavigate();
-  console.log('product listtttt' , productList   , selectBrand)
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
-
+  const [dealAccountList, setDealAccountList] = useState([]);
+  const [selectAccount, setSelectAccount] = useState();
   const [isEmpty, setIsEmpty] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [loadEffect, setEffect] = useState(0);
-  const [AccountId,setAccount]=useState();
-  const [accountList,setAccountList] = useState([]);
-  const [accountSelectCheck,setAccountSelectCheck] = useState(false)
+  const [AccountId, setAccount] = useState();
+  const [accountList, setAccountList] = useState([]);
+  const [accountSelectCheck, setAccountSelectCheck] = useState(false)
+  const [replaceCartProduct, setReplaceCartProduct] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
@@ -45,16 +50,16 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
 
   }, [filterData, PageSize, currentPage]);
 
-  useEffect(()=>{
-    GetAuthData().then((user)=>{
+  useEffect(() => {
+    GetAuthData().then((user) => {
       setAccountList(user.data.accountList)
-      if(user.data.accountIds.length==1){
+      if (user.data.accountIds.length == 1) {
         setAccount(user.data.accountIds[0])
       }
-    }).catch((userErr)=>{
-      console.log({userErr});
+    }).catch((userErr) => {
+      console.log({ userErr });
     })
-  },[])
+  }, [])
 
   // .................
   useEffect(() => {
@@ -111,36 +116,170 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const handleImageLoad = (imageId) => {
     setImageLoading((prevLoading) => ({ ...prevLoading, [imageId]: false }));
   };
+  const onQuantityChange = (element, quantity) => {
+    let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+    let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
+    let listOfAccounts = Object.keys(selectProductDealWith);
+    let addProductToAccount = null
 
+    if (listOfAccounts.length) {
+      if (listOfAccounts.length == 1) {
+        addProductToAccount = listOfAccounts[0];
+      } else {
+        //multi store deal with
+        if (selectAccount) {
+          if (selectAccount?.value) {
+            addProductToAccount = selectAccount.value
+          }
+        } else {
+          let accounts = [];
+          listOfAccounts.map((actId) => {
+            if (selectProductDealWith[actId]) {
+              accounts.push({ value: actId, label: selectProductDealWith[actId].Name })
+            }
+          })
+          setReplaceCartProduct({ product: element, quantity });
+          setDealAccountList(accounts);
+          //alert user
+          return;
+        }
+      }
+      if (addProductToAccount) {
+        let selectAccount = selectProductDealWith[addProductToAccount];
+
+        let account = {
+          name: selectAccount?.Name,
+          id: addProductToAccount,
+          address: selectAccount?.ShippingAddress,
+          shippingMethod: selectAccount?.ShippingMethod,
+          discount: selectAccount?.Discount,
+          SalesRepId: selectAccount?.SalesRepId
+        }
+
+        let manufacturer = {
+          name: element.ManufacturerName__c,
+          id: element.ManufacturerId__c,
+        }
+        let orderType = 'wholesale';
+        if (element?.Category__c?.toUpperCase() === "PREORDER" || element?.Category__c?.toUpperCase()?.match("EVENT")) {
+          orderType = 'pre-order'
+        }
+        element.orderType = orderType;
+        let discount = 0;
+        if (element?.Category__c === "TESTER") {
+          discount = selectAccount?.Discount?.testerMargin || 0;
+        } else if (element?.Category__c === "Samples") {
+          discount = selectAccount?.Discount?.sample || 0;
+        } else {
+          discount = selectAccount?.Discount?.margin || 0;
+        }
+        let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+        element.price = salesPrice;
+        element.qty = element.Min_Order_QTY__c;
+        let cartStatus = addOrder(element, account, manufacturer);
+      }
+    }
+  };
+  const accountSelectionHandler = () => {
+    onQuantityChange(replaceCartProduct.product, replaceCartProduct.quantity, replaceCartProduct.salesPrice)
+    accountSelectionCloseHandler();
+  }
+  const accountSelectionCloseHandler = () => {
+    setReplaceCartProduct();
+    setAccountList();
+    setSelectAccount();
+  }
+
+  const HtmlFieldSelect = ({ title, list = [], value, onChange }) => {
+    let styles = {
+      holder: {
+        border: '1px dashed #ccc',
+        padding: '10px',
+        width: '100%',
+        marginBottom: '20px'
+      },
+      title: {
+        color: '#000',
+        textAlign: 'left',
+        fontFamily: 'Montserrat',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: '24px',
+        letterSpacing: '2.2px',
+        textTransform: 'uppercase'
+      },
+      field: {
+        width: '100%',
+        minHeight: '40px',
+        borderBottom: '1px solid #ccc',
+        borderRadius: '10px',
+        background: '#f4f4f4'
+      }
+    }
+    return (<div style={styles.holder}>
+      <p style={styles.title}>{title}</p>
+      <Select
+        type="text"
+        id={title?.replaceAll(/\s+/g, '-')}
+        options={list}
+        onChange={(option) => {
+          onChange?.(option)
+        }}
+        value={list ? list.find((option) => option.value === value?.value) : ""}
+      />
+    </div>)
+  }
   if (isLoaded) return <Loading height={"70vh"} />
 
   return (
     <>
-    <ModalPage
-          open={accountSelectCheck??false}
-          content={
-            <>
-              <div style={{ maxWidth: "309px" }}>
-                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
-                <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
-                <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))}/>
-                <div className="d-flex justify-content-center">
-                  <button
-                    className={`${Styles.modalButton}`}
-                    onClick={() => {
-                      setAccountSelectCheck(false);
-                    }}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
+      <ModalPage
+        open={dealAccountList?.length ? true : false}
+        content={
+          <div className="d-flex flex-column gap-3">
+            <h2>Alert!</h2>
+            <p>
+              You have multi store with deal with this Brand.<br /> can you please select you create order for
+              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
+            </p>
+            <div className="d-flex justify-content-around ">
+              <button className={Styles.btn} onClick={accountSelectionHandler}>
+                OK
+              </button>
+              <button className={Styles.btn} onClick={accountSelectionCloseHandler}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+        onClose={accountSelectionCloseHandler}
+      />
+      <ModalPage
+        open={accountSelectCheck ?? false}
+        content={
+          <>
+            <div style={{ maxWidth: "309px" }}>
+              <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
+              <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
+              <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))} />
+              <div className="d-flex justify-content-center">
+                <button
+                  className={`${Styles.modalButton}`}
+                  onClick={() => {
+                    setAccountSelectCheck(false);
+                  }}
+                >
+                  Add to Cart
+                </button>
               </div>
-            </>
-          }
-          onClose={() => {
-            setAccountSelectCheck(false);
-          }}
-        />
+            </div>
+          </>
+        }
+        onClose={() => {
+          setAccountSelectCheck(false);
+        }}
+      />
       {modalShow ? (
         <ModalPage
           open
@@ -173,22 +312,34 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             {!isEmpty ? (
               pagination?.map((month, _i) => {
                 if (month.content?.length) {
-                  if(month.content.length<5){
+                  if (month.content.length < 5) {
                     let div = document.getElementById("dGridHolder");
-                    if(div){
-                      div.style.gridTemplateColumns = `repeat(auto-fill, ${(100/month.content.length)-1}`
+                    if (div) {
+                      div.style.gridTemplateColumns = `repeat(auto-fill, ${(100 / month.content.length) - 1}`
                     }
                   }
                   return month.content.map((product, __i) => {
+                    let ProductInCart = isProductCarted(product.Id);
                     if (true) {
-                      let listPrice = "$-- . --";
-                      if (product?.usdRetail__c) {
-                        if (Number(product?.usdRetail__c?.replace("$", ""))) {
-                          listPrice = "$" + Number(product?.usdRetail__c?.replace("$", "")?.replace(",", "")).toFixed(2);
-                        } else {
-                          listPrice = product?.usdRetail__c
+                      let listPrice = Number(product?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+                      let salesPrice = 0;
+                      let selectProductDealWith = accountDetails?.[product.ManufacturerId__c] || []
+                      let listOfAccounts = Object.keys(selectProductDealWith);
+                      let discount = 0;
+                      let selAccount = {};
+                      if (listOfAccounts.length) {
+                        if (listOfAccounts.length == 1) {
+                          selAccount = accountDetails?.[product?.ManufacturerId__c]?.[listOfAccounts[0]];
+                          if (product?.Category__c === "TESTER") {
+                            discount = selAccount?.Discount?.testerMargin || 0;
+                          } else if (product?.Category__c === "Samples") {
+                            discount = selAccount?.Discount?.sample || 0;
+                          } else {
+                            discount = selAccount?.Discount?.margin || 0;
+                          }
                         }
                       }
+                      salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice);
                       return (
 
                         <div className={Styles.cardElement}>
@@ -204,7 +355,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               )}
                             </div>
                           </div>
-                          <p onClick={()=>navigate("/Brand/"+product.ManufacturerId__c)} className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
+                          <p onClick={() => navigate("/Brand/" + product.ManufacturerId__c)} className={Styles.brandHolder}>{product?.ManufacturerName__c}</p>
                           <p
                             className={Styles.titleHolder}
                             onClick={() => {
@@ -213,21 +364,53 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           >
                             {product?.Name?.substring(0, 15)}...
                           </p>
-                          <p className={Styles.priceHolder}>{listPrice ?? "-- . --"}</p>
-                          {to ? (
-                            <Link className={Styles.linkHolder}>
-                              <p className={Styles.btnHolder}>
-                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
-                              </p>
-                            </Link>
-                          ) : (
-                            // onClick={() => setAccountSelectCheck(true)} 
+                          {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
+                          <p className={Styles.priceHolder}> 
+                          {salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:null}
+                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice.toFixed(2) ?? "-- . --"}</div>
+                            </p>
                             <div className={Styles.linkHolder}>
-                              <p className={Styles.btnHolder} onClick={() => setModalShow(true)}>
-                                add to Cart <small className={Styles.soonHolder}>coming soon</small>
-                              </p>
+                              {ProductInCart ? (
+                                <>
+
+                                  {/* <b className={Styles.priceHolder}>{inputPrice * orders[product?.Id]?.quantity}</b> */}
+                                  <div className="d-flex">
+                                    <QuantitySelector
+                                      min={product?.Min_Order_QTY__c || 0}
+                                      value={ProductInCart?.items?.qty}
+                                      onChange={(quantity) => {
+                                        updateProductQty(
+                                          product.Id,
+                                          quantity
+                                        );
+                                      }}
+                                    />
+                                    <button
+                                      className="ml-4"
+                                      onClick={() =>
+                                        removeProduct(product.Id)
+                                      }
+                                    >
+                                      <DeleteIcon fill="red" />
+                                    </button>
+                                  </div>
+                                </>
+                              ) : (
+                                <p className={Styles.btnHolder} onClick={() => {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)) {
+                                    onQuantityChange(
+                                      product,
+                                      product?.Min_Order_QTY__c || 1,
+                                    )
+                                  } else {
+                                    setModalShow(true)
+                                  }
+
+                                }
+                                }>
+                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive)?<small className={Styles.soonHolder}>coming soon</small>:null}
+                                </p>)}
                             </div>
-                          )}
                         </div>
 
                       );
@@ -247,7 +430,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
           </div>
         </div>
         {/*  AccountId={AccountId} */}
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId}  />
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} />
       </section>
       <Pagination
         className="pagination-bar"
