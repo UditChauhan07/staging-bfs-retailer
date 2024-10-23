@@ -102,18 +102,18 @@ const BrandDetailCard = ({ brandId }) => {
                         </div>
                         <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
                             <div className="row">
-                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand.tagLine ? Styles.borderRight : null}`}>
+                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand?.tagLine ? Styles.borderRight : null}`}>
                                     {errorImage?<p className={Styles.brandTitleHolder}>{topProducts.isLoaded?topProducts.data[0].ManufacturerName__c:null}</p>:
                                     <img className="img-fluid" src={`${originAPi}/brandImage/${brandId}.png`}  onError={()=>setErrorImg(true)}/>}
                                 </div>
-                                {brand.tagLine ?
+                                {brand?.tagLine ?
                                     <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
                                         <h1 className={Styles.titleWithLogo}>
                                             {brand.tagLine}
                                         </h1>
                                     </div> : null}
                             </div>
-                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand.desc ??'NA'}} />
+                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand?.desc ??'NA'}} />
                         </div>
                     </div>
                 {(topProducts.isLoaded && topProducts?.data.length)||(!topProducts.isLoaded) ?

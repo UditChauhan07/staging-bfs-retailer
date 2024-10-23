@@ -4,7 +4,7 @@ import Style from"./index.module.css";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useMatchMedia } from "../Hooks/useMatchMedia";
-
+import './style.css'
 const Slider = ({ data }) => {
   const [isDesktop] = useMatchMedia('(min-width: 520px)', true)
   const [windowWidth, setWindowWidth] = useState(false)
