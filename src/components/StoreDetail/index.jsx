@@ -3,7 +3,7 @@ import { DateConvert, GetAuthData, formatNumber, originAPi } from "../../lib/sto
 import { useState } from "react";
 import Loading from "../Loading";
 import OwlCarousel from "react-owl-carousel";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,6 +11,7 @@ import MapGenerator from "../Map";
 import Chart from "react-apexcharts";
 
 const StoreDetailCard = ({ account }) => {
+    const navigate = useNavigate()
     const totalCategories = account.Brands.map((value) => {
         return value?.ManufacturerName__c || "NA";
     })
@@ -146,7 +147,7 @@ const StoreDetailCard = ({ account }) => {
         },
     };
 
-    console.log({ account });
+
     return (<section className={Styles.container}>
         {fileDownload ? <Loading /> :
             <div>
@@ -155,7 +156,7 @@ const StoreDetailCard = ({ account }) => {
                         <div className={Styles.accountTitleHolder}>
                             <p className={Styles.accountLabel}>ACCOUNT NAME</p>
                             <h3 className={Styles.accountNameHolder}>{account.Name}</h3>
-                            {account.Website ? <Link to={account.Website} style={{ color: '#000' }} className={Styles.webLinkHolder}>{account.Website}</Link> : null}
+                            {account.Website ? <Link to={account.Website} style={{ color: '#000', zIndex: "0" }} className={Styles.webLinkHolder}>{account.Website}</Link> : null}
                         </div>
                         <div className="d-flex w-[100%] justify-between pl-2 mt-3">
                             <div className="d-flex gap-4">
@@ -179,7 +180,7 @@ const StoreDetailCard = ({ account }) => {
                         <div className="d-flex mt-4 min-h-[75px]">
                             <div className={`${Styles.infoHolder} d-flex`}>
                                 <p className={Styles.accountDetailerLabel}>Account Details</p>
-                                <p className={`${Styles.webLinkHolder} m-auto`}>More Info</p>
+                                <p className={`${Styles.webLinkHolder} m-auto`} style={{zIndex: "0"}}>More Info</p>
                             </div>
                             <div className={`${Styles.BrandInfoHolder} d-flex flex-column`}>
                                 <p className={Styles.accountLabel}>All Brands</p>
@@ -193,9 +194,9 @@ const StoreDetailCard = ({ account }) => {
                                 </div>
                             </div>
                         </div> : account.Brands.length ?
-                            <div className="d-flex mt-4 min-h-[75px]">
+                            <div className="d-flex mt-4 min-h-[75px] z-0">
                                 <div className={`${Styles.infoHolder} d-flex`}>
-                                    <p className={Styles.accountDetailerLabel}>Account Details</p>
+                                    <p className={`${Styles.accountDetailerLabel}`} z-0>Account Details</p>
                                     <p className={`${Styles.webLinkHolder} m-auto`}>More Info</p>
                                 </div>
                                 <div className={`${Styles.BrandInfoHolder} d-flex flex-column`}>
