@@ -271,7 +271,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                     setAccountSelectCheck(false);
                   }}
                 >
-                  Add to Cart
+                  Add to Bag
                 </button>
               </div>
             </div>
@@ -287,7 +287,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
           content={
             <>
               <div style={{ maxWidth: "309px" }}>
-                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Cart</h1>
+                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Bag</h1>
                 <p className={` ${StylesModal.ModalContent}`}>This product will be available soon. Please check back later</p>
                 <div className="d-flex justify-content-center">
                   <button
@@ -413,7 +413,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                   
                                 }
                               }>
-                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice))||!isDateEqualOrGreaterThanToday(product.Launch_Date__c))?<small className={Styles.soonHolder}>coming soon</small>:null}
+                                  add to Bag {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice))||!isDateEqualOrGreaterThanToday(product.Launch_Date__c))?<small className={Styles.soonHolder}>coming soon</small>:null}
                                 </p>)}
                             </div>
                         </div>

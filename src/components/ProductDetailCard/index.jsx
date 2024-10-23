@@ -112,7 +112,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
                   )
                 }
               >
-                Add to cart
+                Add to Bag
               </button>
             </div>
           )}
