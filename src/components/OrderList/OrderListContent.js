@@ -294,7 +294,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
           No data found
         </div>
       )}
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={accountId} ManufacturerId={manufacturerId} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[accountId]} />
     </>
   );
 }

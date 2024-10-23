@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { cartSync } from '../lib/store';
+import { cartSync, GetAuthData } from '../lib/store';
 let orderCartKey = "AA0KfX2OoNJvz7x"
 
 // Create the context
@@ -33,7 +33,9 @@ const initialOrder = {
     items: [], // Cart items
     orderQuantity: 0, // Total quantity of products
     total: 0, // Total price,
-    PaymentDetails: {}
+    PaymentDetails: {},
+    CreatedBy: null,
+    CreatedAt: null
 };
 
 // Cart Provider component
@@ -46,20 +48,28 @@ const CartProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem(orderCartKey, JSON.stringify(order));
         if (order.Account.id && order.Manufacturer.id) {
+            if(!order.CreatedAt){
+                order.CreatedAt = new Date();
+            }
             if (!order.id) {
-               let unquieId = generateUniqueCode();
-               if(unquieId){
-                keyBasedUpdateCart({id:unquieId});
-               }
+                let unquieId = generateUniqueCode();
+                if (unquieId) {
+                    keyBasedUpdateCart({ id: unquieId });
+                }
             } else {
-
-                cartSync({cart:order}).then((res)=>{
-                    console.log({res});
-                }).catch(
-                    (err)=>{
-                        console.error(err);
+                GetAuthData().then((user) => {
+                    if (!order.CreatedBy) {
+                        order.CreatedBy = user.data.retailerId;
                     }
-                )
+                    cartSync({ cart: order }).then((res) => {
+                        console.log({ res });
+                    }).catch(
+                        (err) => {
+                            console.error(err);
+                        }
+                    )
+                }).catch((err => console.error({ err })
+                ))
             }
         }
     }, [order]);
@@ -78,7 +88,7 @@ const CartProvider = ({ children }) => {
 
 
     const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch, msg = null) => {
-        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?";
+        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new cart?";
         if (accountMatch && manufacturerMatch && orderTypeMatch) {
             if (msg) {
                 message = msg;
@@ -86,9 +96,9 @@ const CartProvider = ({ children }) => {
                 message = "The account, manufacturer, and order type match. Do you want to proceed with the cart replacement?";
             }
         } else if (!accountMatch) {
-            message = "The account does not match the current cart. Do you want to replace the cart with the new account details?";
+            message = "The account does not match the current cart. Do you want to replace the cart with the new account order?";
         } else if (!manufacturerMatch) {
-            message = "The manufacturer does not match the current cart. Do you want to replace the cart with the new manufacturer details?";
+            message = "The brand does not match the current cart brand. Do you want to replace the cart with the new brand order?";
         } else if (!orderTypeMatch) {
             message = "The order type does not match the current cart. Do you want to replace the cart with the new order type?";
         }

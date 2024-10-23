@@ -8,12 +8,14 @@ import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, originAPi, t
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ContentLoader from "react-content-loader";
+import ProductDetails from "../../pages/productDetails";
 
 const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
     const [topProducts, setTopProduct] = useState({ isLoaded: false, data: [] })
     const [productImages, setProductImages] = useState({});
     const [errorImage, setErrorImg] = useState(false);
+    const [productId, setProductId] = useState();
     const d = new Date();
     let monthIndex = d.getMonth();
     useEffect(() => {
@@ -124,13 +126,13 @@ const BrandDetailCard = ({ brandId }) => {
                                 return (<div class="item">
                                     <div>
                                         <div className={Styles.ArriavalsInnerContent}>
-                                            <h4>{item.Name}</h4>
+                                            <h4 onClick={() => setProductId(item.Id)}>{item.Name}</h4>
                                             <p>{item.Description??'NA'}</p>
 
                                             <Link to={'/order?manufacturerId='+brandId}>
                                                 Shop The Collection
                                             </Link>
-                                            <div className="fitContent">
+                                            <div className="fitContent" onClick={() => setProductId(item.Id)}>
                                                 {productImages?.isLoaded ? (
                                                     <img className="zoomInEffect"
                                                         style={{ maxHeight: '320px', width: 'auto', margin: '10px auto' }}
@@ -159,6 +161,7 @@ const BrandDetailCard = ({ brandId }) => {
                     </OwlCarousel>
                 </div>: null}
             </div>
+            <ProductDetails productId={productId} setProductDetailId={setProductId} />
         </section>
     );
 }

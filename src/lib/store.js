@@ -684,7 +684,7 @@ export async function getProductDetails({ rawData }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url + "dLobBeDavajtlNa", {
+  let response = await fetch(url2 + "dLobBeDavajtlNa", {
     method: "POST",
     body: JSON.stringify(rawData),
     headers: headersList,
@@ -759,7 +759,7 @@ export async function getMarketingCalendar({ key, manufacturerId, year,accountId
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "/eVC3IaiEEz3x7ym", {
+  let response = await fetch(url2 + "eVC3IaiEEz3x7ym", {
     method: "POST",
     body: JSON.stringify({ key, manufacturerId, year,accountIds }),
     headers: headersList,
