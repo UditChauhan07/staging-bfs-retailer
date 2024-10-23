@@ -322,6 +322,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                     let ProductInCart = isProductCarted(product.Id);
                     if (true) {
                       let listPrice = Number(product?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+                      if(isNaN(listPrice)){
+                        listPrice = product?.usdRetail__c;
+                      }
                       let salesPrice = 0;
                       let selectProductDealWith = accountDetails?.[product.ManufacturerId__c] || []
                       let listOfAccounts = Object.keys(selectProductDealWith);
@@ -366,8 +369,8 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           </p>
                           {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                           <p className={Styles.priceHolder}> 
-                          {salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:null}
-                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice.toFixed(2) ?? "-- . --"}</div>
+                          {(!isNaN(salesPrice)&&!isNaN(listPrice)) ?salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:null:null}
+                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice.toFixed(2):listPrice ?? "-- . --"}</div>
                             </p>
                             <div className={Styles.linkHolder}>
                               {ProductInCart ? (
@@ -397,7 +400,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                 </>
                               ) : (
                                 <p className={Styles.btnHolder} onClick={() => {
-                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)) {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))) {
                                     onQuantityChange(
                                       product,
                                       product?.Min_Order_QTY__c || 1,
@@ -408,7 +411,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
 
                                 }
                                 }>
-                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive)?<small className={Styles.soonHolder}>coming soon</small>:null}
+                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice)))?<small className={Styles.soonHolder}>coming soon</small>:null}
                                 </p>)}
                             </div>
                         </div>
