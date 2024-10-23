@@ -378,7 +378,6 @@ export async function getOrderProduct({ rawData }) {
 }
 
 export async function cartSync({ cart }) {
-  console.log({ cart });
 
   let headersList = {
     Accept: "*/*",
@@ -391,7 +390,11 @@ export async function cartSync({ cart }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({ data });
+  if(data.data){
+    return data.data;
+  }else{
+    return true;
+  }
 }
 
 export async function OrderPlaced({ order,cartId }) {
@@ -1254,6 +1257,19 @@ export const productGuides = {
 
 
 };
+
+export function isDateEqualOrGreaterThanToday(dateString) {
+  // Parse the input date string
+  const inputDate = new Date(dateString);
+  // Get today's date
+  const today = new Date();
+  
+  // Set time to 00:00:00 to compare only dates
+  today.setHours(0, 0, 0, 0);
+
+  // Compare the dates
+  return today >= inputDate;
+}
 
 
 export function DateConvert(dateString, timeStamp = false) {

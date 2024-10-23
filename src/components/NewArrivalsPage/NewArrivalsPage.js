@@ -9,7 +9,7 @@ import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
 import LoaderV2 from "../loader/v2";
 import { useNavigate } from "react-router-dom";
-import { GetAuthData } from "../../lib/store";
+import { GetAuthData, isDateEqualOrGreaterThanToday } from "../../lib/store";
 import Select from "react-select";
 import { useCart } from "../../context/CartContent";
 import { DeleteIcon } from "../../lib/svg";
@@ -399,8 +399,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                   </div>
                                 </>
                               ) : (
+                                
                                 <p className={Styles.btnHolder} onClick={() => {
-                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))) {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {
                                     onQuantityChange(
                                       product,
                                       product?.Min_Order_QTY__c || 1,
@@ -408,10 +409,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                   } else {
                                     setModalShow(true)
                                   }
-
+                                  
                                 }
-                                }>
-                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice)))?<small className={Styles.soonHolder}>coming soon</small>:null}
+                              }>
+                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice))||!isDateEqualOrGreaterThanToday(product.Launch_Date__c))?<small className={Styles.soonHolder}>coming soon</small>:null}
                                 </p>)}
                             </div>
                         </div>
