@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, fetchBeg, getProductImageAll } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
@@ -17,6 +17,7 @@ function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal } = useCart();
   const navigate = useNavigate();
+  const [total, setTotal] = useState(0);
   const [alert, setAlert] = useState(0);
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState();
@@ -40,6 +41,10 @@ function MyBagFinal() {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
   };
+
+  useEffect(() => {
+    setTotal(getOrderTotal())
+  }, [order])
   useEffect(() => {
     const FetchPoNumber = async () => {
       try {
@@ -119,7 +124,7 @@ function MyBagFinal() {
         }
       }
     }
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && getOrderTotal() > 0) {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && total > 0) {
       setButtonActive(true);
     }
   }, [order]);
@@ -172,7 +177,7 @@ function MyBagFinal() {
               key: user.data.x_access_token,
               shippingMethod: order.Account.shippingMethod
             };
-            OrderPlaced({ order: begToOrder })
+            OrderPlaced({ order: begToOrder, cartId: order.id })
               .then((response) => {
                 if (response) {
                   if (response.length) {
@@ -181,9 +186,9 @@ function MyBagFinal() {
                     setorderStatus({ status: true, message: response[0].message });
                   } else {
                     setIsDisabled(false)
-                    deleteOrder();
-                    navigate("/order-list");
-                    setIsOrderPlaced(2);
+                    let status = deleteOrder();
+                    // navigate("/order-list");
+                    // setIsOrderPlaced(2);
                   }
                 }
               })
@@ -203,8 +208,12 @@ function MyBagFinal() {
 
 
   const deleteBag = () => {
-    localStorage.removeItem("AA0KfX2OoNJvz7x")
-    window.location.reload();
+    // localStorage.removeItem("AA0KfX2OoNJvz7x")
+    deleteOrder().then((res)=>{
+      if(res){
+        window.location.reload();
+      }
+    }).catch(err=>console.error({err}))
   }
   // console.log("fetch bag", fetchBag)
 
@@ -367,7 +376,7 @@ function MyBagFinal() {
                   <h4>
                     {buttonActive ? (
                       <>
-                        <span> {order?.Manufacturer?.name} | </span> {order?.Account?.name}
+                        <span> <Link style={{color:'#000'}} to={`/Brand/${order?.Manufacturer?.id}`}>{order?.Manufacturer?.name}</Link> |</span>&nbsp;<Link style={{color:'#000'}} to={`/store/${order?.Account?.id}`}>{order?.Account?.name}</Link>
                       </>
                     ) : (
                       <span>Empty bag</span>
@@ -503,7 +512,7 @@ function MyBagFinal() {
                             <h2>Total</h2>
                           </div>
                           <div>
-                            <h2>${Number(getOrderTotal()).toFixed(2)}</h2>
+                            <h2>${Number(total).toFixed(2)}</h2>
                           </div>
                         </div>
                       </div>
@@ -564,10 +573,10 @@ function MyBagFinal() {
                                 if (order?.items?.length > 100) {
                                   setLimitCheck(true)
                                 } else {
-                                  if (order.Account.discount.MinOrderAmount > getOrderTotal()) {
+                                  if (order.Account.discount.MinOrderAmount > total) {
                                     setAlert(1);
                                   } else {
-                                    // if (testerInBag && order.Account.discount.testerproductLimit > getOrderTotal()) {
+                                    // if (testerInBag && order.Account.discount.testerproductLimit > total) {
                                     //   setAlert(2);
                                     // } else {
                                     setConfirm(true);
@@ -582,7 +591,7 @@ function MyBagFinal() {
                           }}
                           disabled={!buttonActive}
                         >
-                          ${Number(getOrderTotal()).toFixed(2)} PLACE ORDER
+                          ${Number(total).toFixed(2)} PLACE ORDER
                         </button>
                         <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
                           onClick={() => {
@@ -602,7 +611,7 @@ function MyBagFinal() {
           </div>
         </section>
       )}
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={order?.Manufacturer?.id} AccountId={order?.Account?.id} SalesRepId={order.Account.SalesRepId} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[order?.Account?.id]} />
     </div>
   );
 }

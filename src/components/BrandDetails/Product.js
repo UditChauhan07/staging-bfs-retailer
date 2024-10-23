@@ -4,7 +4,7 @@ import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
 import { MdOutlineDownload, MdOutlineUpload } from "react-icons/md";
 import { useAuth } from "../../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
@@ -499,11 +499,11 @@ function Product() {
                         >
                           <BackArrow />
                         </button>
-                        {brandName}
+                        <Link style={{color:'#000'}} to={`/Brand/${localStorage.getItem("ManufacturerId__c")}`}>{brandName}</Link>
                       </h4>
 
                       <p>
-                        <span>Account</span>: {localStorage.getItem("Account")}
+                        <span>Account</span>: <Link style={{color:'#000'}} to={`/store/${localStorage.getItem("AccountId__c")}`}>{localStorage.getItem("Account")}</Link>
                       </p>
                     </div>
                    

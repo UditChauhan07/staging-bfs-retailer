@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
-const Modal = ({ isOpen, onClose, children, title = false }) => {
+const Modal = ({ isOpen, onClose, children, title = false,styles=null }) => {
   return (
     <>
       {isOpen && (
-        <div className={Styles.modalOverlay} onClick={onClose}>
+        <div className={Styles.modalOverlay} style={{...styles}} onClick={onClose}>
           <div
             className={`${Styles.modal} `}
             onClick={(e) => {
@@ -20,7 +20,7 @@ const Modal = ({ isOpen, onClose, children, title = false }) => {
     </>
   );
 };
-const ModalPage = ({ open, content,Link, onClose, title = false }) => {
+const ModalPage = ({ open, content,Link, onClose, title = false,styles=null }) => {
   const [isOpen, setIsOpen] = useState(open);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const ModalPage = ({ open, content,Link, onClose, title = false }) => {
   };
 
   return isOpen ? (
-    <Modal isOpen={isOpen} onClose={onModalClose} title={title}>
+    <Modal isOpen={isOpen} onClose={onModalClose} title={title} styles={styles}>
       <div className={Styles.ModalControl}>
         {content}
         {Link}

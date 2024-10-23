@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { cartSync } from '../lib/store';
+import { cartSync, GetAuthData } from '../lib/store';
 let orderCartKey = "AA0KfX2OoNJvz7x"
 
 // Create the context
@@ -33,7 +33,9 @@ const initialOrder = {
     items: [], // Cart items
     orderQuantity: 0, // Total quantity of products
     total: 0, // Total price,
-    PaymentDetails: {}
+    PaymentDetails: {},
+    CreatedBy: null,
+    CreatedAt: null
 };
 
 // Cart Provider component
@@ -44,25 +46,38 @@ const CartProvider = ({ children }) => {
     });
 
     useEffect(() => {
-        localStorage.setItem(orderCartKey, JSON.stringify(order));
-        if (order.Account.id && order.Manufacturer.id) {
-            if (!order.id) {
-               let unquieId = generateUniqueCode();
-               if(unquieId){
-                keyBasedUpdateCart({id:unquieId});
-               }
-            } else {
+        const syncCart = async () => {
+            try {
+                localStorage.setItem(orderCartKey, JSON.stringify(order));
 
-                cartSync({cart:order}).then((res)=>{
-                    console.log({res});
-                }).catch(
-                    (err)=>{
-                        console.error(err);
+                const user = await GetAuthData();
+                if (!order.CreatedBy) {
+                    order.CreatedBy = user.data.retailerId;
+                }
+
+                order.CreatedAt = order.CreatedAt || new Date();
+                if (order?.Account?.id && order?.Manufacturer?.id) {
+                    if (!order.id) {
+                        let uniqueId = generateUniqueCode();
+                        if (uniqueId) {
+                            keyBasedUpdateCart({ id: uniqueId });
+                        }
                     }
-                )
+                }
+
+                const res = await cartSync({ cart: order });
+                // if (res?.id) {
+                //     setOrder(res);
+                // }
+            } catch (err) {
+                console.error(err);
             }
-        }
+        };
+
+
+        syncCart();
     }, [order]);
+
 
 
     const generateUniqueCode = () => {
@@ -78,7 +93,7 @@ const CartProvider = ({ children }) => {
 
 
     const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch, msg = null) => {
-        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?";
+        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new cart?";
         if (accountMatch && manufacturerMatch && orderTypeMatch) {
             if (msg) {
                 message = msg;
@@ -86,9 +101,9 @@ const CartProvider = ({ children }) => {
                 message = "The account, manufacturer, and order type match. Do you want to proceed with the cart replacement?";
             }
         } else if (!accountMatch) {
-            message = "The account does not match the current cart. Do you want to replace the cart with the new account details?";
+            message = "The account does not match the current cart. Do you want to replace the cart with the new account order?";
         } else if (!manufacturerMatch) {
-            message = "The manufacturer does not match the current cart. Do you want to replace the cart with the new manufacturer details?";
+            message = "The brand does not match the current cart brand. Do you want to replace the cart with the new brand order?";
         } else if (!orderTypeMatch) {
             message = "The order type does not match the current cart. Do you want to replace the cart with the new order type?";
         }
@@ -399,9 +414,21 @@ const CartProvider = ({ children }) => {
 
 
     // Delete the entire cart (reset to initial state)
-    const deleteOrder = () => {
-        setOrder(initialOrder);
+    const deleteOrder = async () => {
+        try {
+            order.delete = true;
+            const res = await cartSync({ cart: order });
+
+            if (res) {
+                setOrder(initialOrder); // Only reset if deletion was successful
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     };
+
 
     // Get order total
     const getOrderTotal = () => {

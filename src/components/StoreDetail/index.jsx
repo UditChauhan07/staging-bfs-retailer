@@ -24,7 +24,7 @@ const StoreDetailCard = ({ account }) => {
     });
 
     const [startIndex, setStartIndex] = useState(0);
-    const [maxVisibleCategories,setMaxVisibleCategories] = useState(4)
+    const [maxVisibleCategories, setMaxVisibleCategories] = useState(4)
     let graph = {
         options: {
             chart: {
@@ -147,12 +147,6 @@ const StoreDetailCard = ({ account }) => {
         },
     };
 
-    console.log({ account });
-
-const handleBrandNavigate = (id)=>{
-    console.log("id" , id)
-    navigate(`/Brand/${id}`)
-}
 
     return (<section className={Styles.container}>
         {fileDownload ? <Loading /> :
@@ -194,7 +188,7 @@ const handleBrandNavigate = (id)=>{
                                 <div className={`${Styles.brandContainer} d-flex justify-between`}>
                                     <OwlCarousel {...options} style={{ position: 'absolute', top: '45px', left: '5%', width: '90%' }}>
                                         {account.Brands.map((element, index) => (
-                                            <p onClick={()=>handleBrandNavigate(element.ManufacturerId__c)} className={Styles.webLinkHolder} style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline', cursor: 'pointer' }} key={index}>{element.ManufacturerName__c  }</p>
+                                            <Link to={`/Brand/${element.ManufacturerId__c}`} className={Styles.webLinkHolder} style={{ textAlign: 'center', color: '#3296ED', textDecoration: 'underline', cursor: 'pointer' }} key={index}>{element.ManufacturerName__c}</Link>
                                         ))}
                                     </OwlCarousel>
                                 </div>

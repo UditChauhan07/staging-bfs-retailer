@@ -66,6 +66,10 @@
   letter-spacing: 1.12px!important;
   text-align: start!important;
 }
+.priceHolder a {
+  color: #000;
+  text-decoration: none;
+}
 .brandHolder{
   color: #000;
   font-family: "Arial-500"!important;

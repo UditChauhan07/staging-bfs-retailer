@@ -18,6 +18,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
   const [showName, setShowName] = useState(false);
   const [productDetailId, setProductDetailId] = useState(null)
   const [msg, setMsg] = useState('');
+  
 
 
   const onQuantityChange = (element, quantity) => {
@@ -35,7 +36,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
         address: JSON.parse(localStorage.getItem("address")),
         shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
         discount: data.discount,
-        SalesRepId: localStorage.getItem("Sales_Rep__c")
+        SalesRepId: localStorage.getItem("Sales_Rep__c"),
       }
 
       let manufacturer = {
@@ -60,12 +61,10 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
       element.qty = quantity;
       // element.discount = discount;
       let cartStatus = addOrder(element, account, manufacturer);
-      console.log({ cartStatus });
     }
   }
 
   const orderSetting = (product, quantity) => {
-    console.log(orderSetting)
     setReplaceCartModalOpen(false);
     addOrder(product, quantity, data.discount);
   };
@@ -141,8 +140,9 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                           }
                           let salesPrice = 0;
                           let discount = 0;
-                          let inputPrice = cartProduct?.price;
-                          let qtyofItem = cartProduct?.qty || 0;
+                          let inputPrice = cartProduct?.items?.price;
+                          let qtyofItem = cartProduct?.items?.qty || 0;
+                          
                           if (value?.Category__c === "TESTER") {
                             discount = data?.discount?.testerMargin
                           } else if (value?.Category__c === "Samples") {
@@ -217,7 +217,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
           </table>
         </div>
       </div>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={localStorage.getItem("ManufacturerId__c")} AccountId={localStorage.getItem("AccountId__c")} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={localStorage.getItem("ManufacturerId__c")} AccountId={[localStorage.getItem("AccountId__c")]} />
     </>
   );
 };
