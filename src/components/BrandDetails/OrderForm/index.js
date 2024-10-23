@@ -168,6 +168,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         address: localStorage.getItem("address"),
         shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
         discount: rawData.discount,
+        SalesRepId: localStorage.getItem("Sales_Rep__c"),
       }
 
       let manufacturer = {

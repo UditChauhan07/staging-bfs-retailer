@@ -130,6 +130,7 @@ function MyBagFinal() {
   }, [order]);
 
   const orderPlaceHandler = () => {
+console.log({order});
 
     if (order.Account.SalesRepId) {
       setIsOrderPlaced(1);
