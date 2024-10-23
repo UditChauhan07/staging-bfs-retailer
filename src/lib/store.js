@@ -174,8 +174,8 @@ export function supportClear() {
 
 
 export async function DestoryAuth() {
-  localStorage.clear();
-  window.location.href = window.location.origin;
+  // localStorage.clear();
+  // window.location.href = window.location.origin;
   return true;
 }
 

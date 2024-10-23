@@ -260,7 +260,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
         open={accountSelectCheck ?? false}
         content={
           <>
-            <div style={{ maxWidth: "309px" }}>
+            <div style={{ maxWidth: "309px" , height: "215px" }}>
               <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
               <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
               <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))} />
