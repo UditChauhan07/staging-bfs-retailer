@@ -11,10 +11,15 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
+  let date = new Date();
   const [productList, setProductList] = useState([]);
   const [accountDiscount,setAccountDiscount]= useState();
   const [month, setMonth] = useState("");
-
+  const [selectYear, setSelectYear] = useState(date.getFullYear())
+  let yearList = [
+    { value: date.getFullYear(), label: date.getFullYear() },
+    { value: date.getFullYear()+1, label: date.getFullYear()+1 }
+  ]
   let months = [
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
@@ -45,7 +50,7 @@ const NewArrivals = () => {
     GetAuthData().then((user) => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((productRes) => {
+        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds),year:selectYear }).then((productRes) => {
           
           setAccountDiscount(productRes?.discount||{})
           
@@ -67,13 +72,14 @@ const NewArrivals = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand, month, isLoaded])
+  }, [selectBrand,selectYear, month, isLoaded])
  
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();
     setMonth(months[currentMonthIndex].value);
     setSelectBrand(null);
     setIsEmpty(false)
+    setSelectYear(date.getFullYear())
   }
 
   //
@@ -145,6 +151,13 @@ const NewArrivals = () => {
     <AppLayout
       filterNodes={
         <>
+                          <FilterItem
+            label="year"
+            name="Year"
+            value={selectYear}
+            options={yearList}
+            onChange={(value) => setSelectYear(value)}
+          />
           <FilterItem
             minWidth="220px"
             label="All Brand"

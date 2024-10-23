@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MyBagFinal from "../components/MyBagFinal";
 import AppLayout from "../components/AppLayout";
 

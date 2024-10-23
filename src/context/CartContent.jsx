@@ -46,33 +46,38 @@ const CartProvider = ({ children }) => {
     });
 
     useEffect(() => {
-        localStorage.setItem(orderCartKey, JSON.stringify(order));
-        if (order.Account.id && order.Manufacturer.id) {
-            if(!order.CreatedAt){
-                order.CreatedAt = new Date();
-            }
-            if (!order.id) {
-                let unquieId = generateUniqueCode();
-                if (unquieId) {
-                    keyBasedUpdateCart({ id: unquieId });
+        const syncCart = async () => {
+            try {
+                localStorage.setItem(orderCartKey, JSON.stringify(order));
+
+                const user = await GetAuthData();
+                if (!order.CreatedBy) {
+                    order.CreatedBy = user.data.retailerId;
                 }
-            } else {
-                GetAuthData().then((user) => {
-                    if (!order.CreatedBy) {
-                        order.CreatedBy = user.data.retailerId;
-                    }
-                    cartSync({ cart: order }).then((res) => {
-                        console.log({ res });
-                    }).catch(
-                        (err) => {
-                            console.error(err);
+
+                order.CreatedAt = order.CreatedAt || new Date();
+                if (order?.Account?.id && order?.Manufacturer?.id) {
+                    if (!order.id) {
+                        let uniqueId = generateUniqueCode();
+                        if (uniqueId) {
+                            keyBasedUpdateCart({ id: uniqueId });
                         }
-                    )
-                }).catch((err => console.error({ err })
-                ))
+                    }
+                }
+
+                const res = await cartSync({ cart: order });
+                // if (res?.id) {
+                //     setOrder(res);
+                // }
+            } catch (err) {
+                console.error(err);
             }
-        }
+        };
+
+
+        syncCart();
     }, [order]);
+
 
 
     const generateUniqueCode = () => {
@@ -409,9 +414,21 @@ const CartProvider = ({ children }) => {
 
 
     // Delete the entire cart (reset to initial state)
-    const deleteOrder = () => {
-        setOrder(initialOrder);
+    const deleteOrder = async () => {
+        try {
+            order.delete = true;
+            const res = await cartSync({ cart: order });
+
+            if (res) {
+                setOrder(initialOrder); // Only reset if deletion was successful
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     };
+
 
     // Get order total
     const getOrderTotal = () => {

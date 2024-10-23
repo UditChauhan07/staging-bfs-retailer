@@ -177,7 +177,7 @@ function MyBagFinal() {
               key: user.data.x_access_token,
               shippingMethod: order.Account.shippingMethod
             };
-            OrderPlaced({ order: begToOrder,cartId:order.id })
+            OrderPlaced({ order: begToOrder, cartId: order.id })
               .then((response) => {
                 if (response) {
                   if (response.length) {
@@ -186,9 +186,9 @@ function MyBagFinal() {
                     setorderStatus({ status: true, message: response[0].message });
                   } else {
                     setIsDisabled(false)
-                    deleteOrder();
-                    navigate("/order-list");
-                    setIsOrderPlaced(2);
+                    let status = deleteOrder();
+                    // navigate("/order-list");
+                    // setIsOrderPlaced(2);
                   }
                 }
               })
@@ -208,8 +208,12 @@ function MyBagFinal() {
 
 
   const deleteBag = () => {
-    localStorage.removeItem("AA0KfX2OoNJvz7x")
-    window.location.reload();
+    // localStorage.removeItem("AA0KfX2OoNJvz7x")
+    deleteOrder().then((res)=>{
+      if(res){
+        window.location.reload();
+      }
+    }).catch(err=>console.error({err}))
   }
   // console.log("fetch bag", fetchBag)
 
