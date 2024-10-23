@@ -288,7 +288,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                 </svg>
                 <h4>
                   {" "}
-                  <span> {OrderData.ManufacturerName__c} | </span>
+                  <span> {OrderData.ManufacturerName__c} |&nbsp;</span>
                   {OrderData.Name}
                 </h4>{" "}
               </div>
@@ -500,7 +500,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
           </div>
         </div>
       </section>
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={OrderData.AccountId} ManufacturerId={OrderData.ManufacturerId__c} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[OrderData.AccountId]} />
     </div>
   );
 }

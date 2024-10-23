@@ -13,7 +13,6 @@ import { useCart } from "../../context/CartContent";
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
-  // const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const { updateProductQty, addOrder, removeProduct,isProductCarted } = useCart();
   
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -28,33 +27,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const [accountNumber, setAccountNumber] = useState()
   const [dealAccountList, setAccountList] = useState([]);
   const [selectAccount, setSelectAccount] = useState();
-
-  let styles = {
-    holder: {
-      border: '1px dashed #ccc',
-      padding: '10px',
-      width: '100%',
-      marginBottom: '20px'
-    },
-    title: {
-      color: '#000',
-      textAlign: 'left',
-      fontFamily: 'Montserrat',
-      fontSize: '14px',
-      fontStyle: 'normal',
-      fontWeight: 500,
-      lineHeight: '24px',
-      letterSpacing: '2.2px',
-      textTransform: 'uppercase'
-    },
-    field: {
-      width: '100%',
-      minHeight: '40px',
-      borderBottom: '1px solid #ccc',
-      borderRadius: '10px',
-      background: '#f4f4f4'
-    }
-  }
 
   useEffect(() => { }, [productDetailId, productImages]);
 
@@ -141,6 +113,32 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
     setSelectAccount();
   }
   const HtmlFieldSelect = ({ title, list = [], value, onChange }) => {
+    let styles = {
+      holder: {
+        border: '1px dashed #ccc',
+        padding: '10px',
+        width: '100%',
+        marginBottom: '20px'
+      },
+      title: {
+        color: '#000',
+        textAlign: 'left',
+        fontFamily: 'Montserrat',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: '24px',
+        letterSpacing: '2.2px',
+        textTransform: 'uppercase'
+      },
+      field: {
+        width: '100%',
+        minHeight: '40px',
+        borderBottom: '1px solid #ccc',
+        borderRadius: '10px',
+        background: '#f4f4f4'
+      }
+    }
     return (<div style={styles.holder}>
       <p style={styles.title}>{title}</p>
       <Select
@@ -159,12 +157,12 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
       <ModalPage
         open={dealAccountList?.length ? true : false}
         content={
-          <div className="d-flex flex-column gap-3">
-            <h2>Alert!</h2>
+          <div className="d-flex flex-column" style={{width:'400px'}}>
+            <h2>Attention!</h2>
             <p>
-              You have multi store with deal with this Brand.<br /> can you please select you create order for
-              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
+              Please select store you want to order for
             </p>
+              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
             <div className="d-flex justify-content-around ">
               <button className={Styles.btn} onClick={accountSelectionHandler}>
                 OK
@@ -347,8 +345,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                       onQuantityChange(
                         product,
                         product?.Min_Order_QTY__c || 1,
-                        parseFloat(salesPrice),
-                        accountDetails?.[product?.ManufacturerId__c]?.Discount
                       )
                     }
                     style={{ cursor: "pointer" }}

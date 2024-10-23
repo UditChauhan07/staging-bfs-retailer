@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
-import html2pdf from 'html2pdf.js';
 import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -47,6 +46,7 @@ const NewArrivals = () => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((productRes) => {
+          
           setAccountDiscount(productRes?.discount||{})
           
           productRes.list.map((month) => {

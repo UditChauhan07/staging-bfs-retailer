@@ -53,7 +53,7 @@ const MarketingCalendar = () => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token,year:selectYear }).then((productRes) => {
-          setProductList(productRes)
+          setProductList(productRes?.list)
           setIsloaed(true)
           setTimeout(() => {
             let getMonth = new Date().getMonth();

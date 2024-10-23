@@ -17,6 +17,7 @@ function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal } = useCart();
   const navigate = useNavigate();
+  const [total, setTotal] = useState(0);
   const [alert, setAlert] = useState(0);
   const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState();
@@ -40,6 +41,10 @@ function MyBagFinal() {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
   };
+
+  useEffect(() => {
+    setTotal(getOrderTotal())
+  }, [order])
   useEffect(() => {
     const FetchPoNumber = async () => {
       try {
@@ -119,7 +124,7 @@ function MyBagFinal() {
         }
       }
     }
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && getOrderTotal() > 0) {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && total > 0) {
       setButtonActive(true);
     }
   }, [order]);
@@ -503,7 +508,7 @@ function MyBagFinal() {
                             <h2>Total</h2>
                           </div>
                           <div>
-                            <h2>${Number(getOrderTotal()).toFixed(2)}</h2>
+                            <h2>${Number(total).toFixed(2)}</h2>
                           </div>
                         </div>
                       </div>
@@ -564,10 +569,10 @@ function MyBagFinal() {
                                 if (order?.items?.length > 100) {
                                   setLimitCheck(true)
                                 } else {
-                                  if (order.Account.discount.MinOrderAmount > getOrderTotal()) {
+                                  if (order.Account.discount.MinOrderAmount > total) {
                                     setAlert(1);
                                   } else {
-                                    // if (testerInBag && order.Account.discount.testerproductLimit > getOrderTotal()) {
+                                    // if (testerInBag && order.Account.discount.testerproductLimit > total) {
                                     //   setAlert(2);
                                     // } else {
                                     setConfirm(true);
@@ -582,7 +587,7 @@ function MyBagFinal() {
                           }}
                           disabled={!buttonActive}
                         >
-                          ${Number(getOrderTotal()).toFixed(2)} PLACE ORDER
+                          ${Number(total).toFixed(2)} PLACE ORDER
                         </button>
                         <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
                           onClick={() => {
@@ -602,7 +607,7 @@ function MyBagFinal() {
           </div>
         </section>
       )}
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} ManufacturerId={order?.Manufacturer?.id} AccountId={order?.Account?.id} SalesRepId={order.Account.SalesRepId} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[order?.Account?.id]} />
     </div>
   );
 }
