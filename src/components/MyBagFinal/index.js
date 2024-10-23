@@ -177,7 +177,7 @@ function MyBagFinal() {
               key: user.data.x_access_token,
               shippingMethod: order.Account.shippingMethod
             };
-            OrderPlaced({ order: begToOrder })
+            OrderPlaced({ order: begToOrder,cartId:order.id })
               .then((response) => {
                 if (response) {
                   if (response.length) {
