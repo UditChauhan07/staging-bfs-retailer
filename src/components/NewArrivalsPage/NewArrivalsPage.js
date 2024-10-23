@@ -15,6 +15,7 @@ import { useCart } from "../../context/CartContent";
 import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails }) {
+  console.log("account Details " , accountDetails)
   const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState();
