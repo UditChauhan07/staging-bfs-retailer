@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, fetchBeg, getProductImageAll } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
@@ -376,7 +376,7 @@ function MyBagFinal() {
                   <h4>
                     {buttonActive ? (
                       <>
-                        <span> {order?.Manufacturer?.name} | </span> {order?.Account?.name}
+                        <span> <Link style={{color:'#000'}} to={`/Brand/${order?.Manufacturer?.id}`}>{order?.Manufacturer?.name}</Link> |</span>&nbsp;<Link style={{color:'#000'}} to={`/store/${order?.Account?.id}`}>{order?.Account?.name}</Link>
                       </>
                     ) : (
                       <span>Empty bag</span>
