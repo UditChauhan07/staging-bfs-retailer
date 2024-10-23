@@ -74,36 +74,41 @@ export async function POGenerator() {
   try {
 
     let orderDetails = fetchBeg();
-    let date = new Date();
+    if (orderDetails.Manufacturer?.id && orderDetails.Account?.id) {
 
-    //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
-    const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        accountName: orderDetails.Account?.name,
-        manufacturerName: orderDetails.Manufacturer?.name,
-        orderDate: date.toISOString(),
-        accountId: orderDetails.Account?.id,
-        manufacturerId: orderDetails.Manufacturer?.id
-      }),
-    });
+      let date = new Date();
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+      //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
+      const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accountName: orderDetails.Account?.name,
+          manufacturerName: orderDetails.Manufacturer?.name,
+          orderDate: date.toISOString(),
+          accountId: orderDetails.Account?.id,
+          manufacturerId: orderDetails.Manufacturer?.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
 
-    const poData = await response.json();
+      const poData = await response.json();
 
-    if (poData.success) {
-      let generatedPONumber = poData.poNumber;
+      if (poData.success) {
+        let generatedPONumber = poData.poNumber;
 
-      return await generatedPONumber;
+        return await generatedPONumber;
+      } else {
+        console.error('Failed to generate PO number:', poData.message);
+        return null;
+      }
     } else {
-      console.error('Failed to generate PO number:', poData.message);
       return null;
     }
   } catch (error) {
@@ -373,8 +378,8 @@ export async function getOrderProduct({ rawData }) {
 }
 
 export async function cartSync({ cart }) {
-  console.log({cart});
-  
+  console.log({ cart });
+
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -386,12 +391,12 @@ export async function cartSync({ cart }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  console.log({ data });
 }
 
-export async function OrderPlaced({ order }) {
+export async function OrderPlaced({ order,cartId }) {
   let orderinit = {
-    info: order,
+    info: order,cartId
   };
   let headersList = {
     "Content-Type": "application/json",
@@ -753,7 +758,7 @@ export async function getSessionStatus({ key, retailerId }) {
     return data;
   }
 }
-export async function getMarketingCalendar({ key, manufacturerId, year,accountIds }) {
+export async function getMarketingCalendar({ key, manufacturerId, year, accountIds }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -761,19 +766,19 @@ export async function getMarketingCalendar({ key, manufacturerId, year,accountId
 
   let response = await fetch(url2 + "eVC3IaiEEz3x7ym", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, year,accountIds }),
+    body: JSON.stringify({ key, manufacturerId, year, accountIds }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  
+
   if (data.status == 300) {
     DestoryAuth();
   } else {
     let discount = {};
-    if(data?.Discount){
+    if (data?.Discount) {
       discount = data.Discount;
     }
-    return {list:data?.data,discount};
+    return { list: data?.data, discount };
   }
 }
 
