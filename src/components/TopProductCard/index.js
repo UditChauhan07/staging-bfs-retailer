@@ -182,7 +182,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             <div className="d-flex flex-column gap-3">
               <h2>Warning</h2>
               <p>
-                Adding this item will replace <br></br> your current cart
+                Adding this item will replace <br></br> your current Bag
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btn} onClick={replaceCart}>
@@ -349,7 +349,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    Add to Cart
+                    Add to Bag
                   </p>
                 )}
               </div>

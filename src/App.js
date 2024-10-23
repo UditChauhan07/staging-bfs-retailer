@@ -38,6 +38,7 @@ import BrandDetails from "./pages/BrandDetails";
 import HelpSection from "./pages/HelpSection";
 import PortalHelp from "./pages/PortalHelp";
 import { CartProvider } from "./context/CartContent";
+import CartHover from "./components/CartHover";
 
 function App() {
   // const Redirect = ({ href }) => {
@@ -47,6 +48,7 @@ function App() {
     <UserProvider>
       <CartProvider>
           <BrowserRouter>
+          <CartHover/>
             <HubSpotTracker />
             <Routes>
               <Route path="/" element={<Login />}></Route>
