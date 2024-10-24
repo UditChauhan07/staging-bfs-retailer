@@ -47,6 +47,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
     <div className={`${Styles.ButtonControl}w-[85px] h-[27px] flex `}>
       {qtyErrorModalOpen ? (
         <ModalPage
+        styles={{zIndex:1025,}}
           open
           content={
             <div className="d-flex flex-column gap-3">
