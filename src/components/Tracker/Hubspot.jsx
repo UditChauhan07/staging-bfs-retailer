@@ -8,14 +8,17 @@ const HubSpotTracker = () => {
     useEffect(() => {
         if (window.hj) {
           window.hj('stateChange', location.pathname);
-          GetAuthData().then((user) => {
-            if (user) {
-              window.hj('identify', user.data.retailerId, {
-                userName: user.data.Name,
-              });
+          GetAuthData().then((user)=>{
+            if(user){
+              if(user?.data){
+                window.hj('identify', user.data.retailerId, {
+                  userName: user.data.firstName +' '+user.data.lastName ,
+                  email: user.data.email
+                });
+              }
             }
-    
-          }).catch((err) => console.log({ err }))
+            
+          }).catch((err)=>console.log({err}))
         }
         console.log({aa:location.pathname});
         
