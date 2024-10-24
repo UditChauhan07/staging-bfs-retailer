@@ -40,10 +40,15 @@ const initialOrder = {
 
 // Cart Provider component
 const CartProvider = ({ children }) => {
-    const [order, setOrder] = useState(() => {
+    const [order, setOrder] = useState({});
+
+    useEffect(() => {
+        // Gets the orders from local storage on initial render
         const savedCart = localStorage.getItem(orderCartKey);
-        return savedCart ? JSON.parse(savedCart) : initialOrder;
-    });
+        if (savedCart) {
+          setOrder(savedCart ? JSON.parse(savedCart) : initialOrder);
+        }
+      }, []);
 
     useEffect(() => {
         const syncCart = async () => {
@@ -63,12 +68,20 @@ const CartProvider = ({ children }) => {
                             keyBasedUpdateCart({ id: uniqueId });
                         }
                     }
+                } else {
+
+                    let draft = localStorage.getItem(orderCartKey)||{};
+                    if(draft){
+                        draft = JSON.parse(draft);
+                    }
+                    console.log({draft});
+                    
                 }
 
-                const res = await cartSync({ cart: order });
-                // if (res?.id) {
-                //     setOrder(res);
-                // }
+                // const res = await cartSync({ cart: order });
+                // // if (res?.id) {
+                // //     setOrder(res);
+                // // }
             } catch (err) {
                 console.error(err);
             }
@@ -338,8 +351,8 @@ const CartProvider = ({ children }) => {
     // Remove a product from the cart by productId
     const removeProduct = (productId) => {
         setOrder((prevOrder) => {
-            const updatedItems = prevOrder.items.filter(item => item.Id !== productId);
-            const removedItem = prevOrder.items.find(item => item.Id === productId);
+            const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
+            const removedItem = prevOrder.items?.find(item => item.Id === productId);
 
             // If the cart is empty after removing the item, reset to initialOrder
             if (updatedItems.length === 0) {
@@ -367,7 +380,8 @@ const CartProvider = ({ children }) => {
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
-        const matchingProducts = order.items.filter(item => item.Id === productId);
+        const matchingProducts = order.items?.filter(item => item.Id === productId)||[];
+        
 
         // If found, return the array of matching products; if not, return false
         return matchingProducts.length > 0 ? { ...order, items: matchingProducts[0] } : false;
