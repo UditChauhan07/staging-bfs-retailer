@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, getRetailerBrands, topProduct } from "../lib/store";
+import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, topProduct } from "../lib/store";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const TopProducts = () => {
@@ -53,7 +54,8 @@ const TopProducts = () => {
   //     //   );
   //     // })
   //   );
-  // }, [searchText, topProductList, selectedMonth]);
+  // }, [searchText, topProductList, selectedMonth])
+
   const SearchData = ({ selectedMonth, manufacturerFilter, accountId = null }) => {
     let data = ShareDrive();
     if (!data) {
@@ -73,16 +75,14 @@ const TopProducts = () => {
     GetAuthData().then((user) => {
       setSelectAccount(accountId || user.data.accountIds[0])
       setAccountList(user.data.accountList);
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((resManu) => {
-        console.log({ resManu });
+      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify([accountId || user.data.accountIds[0]]) }).then((products) => {
+      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
         let result = [];
-        console.log({ products });
         if (products?.data?.length > 0) {
           result = products?.data?.sort(function (a, b) {
             return b.Sales - a.Sales;
@@ -150,9 +150,10 @@ const TopProducts = () => {
     setSelectedMonth(month);
     SearchData({ selectedMonth: month, manufacturerFilter: manufacturerId, accountId })
   }
+
   return (
     <AppLayout filterNodes={<>
-      {accountList.length > 1 &&
+      {/* {accountList.length > 1 &&
         <FilterItem
           minWidth="220px"
           label="All Store"
@@ -165,7 +166,7 @@ const TopProducts = () => {
             btnHandler({ manufacturerId: manufacturerFilter, month: selectedMonth, accountId: value });
           }}
           name={"Account-menu"}
-        />}
+        />} */}
       <FilterItem
         minWidth="220px"
         label="Manufacturer"

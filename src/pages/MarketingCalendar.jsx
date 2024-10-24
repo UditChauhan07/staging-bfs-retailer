@@ -53,7 +53,7 @@ const MarketingCalendar = () => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
         getMarketingCalendar({ key: user.data.x_access_token,year:selectYear }).then((productRes) => {
-          setProductList(productRes)
+          setProductList(productRes?.list)
           setIsloaed(true)
           setTimeout(() => {
             let getMonth = new Date().getMonth();
@@ -234,7 +234,7 @@ const MarketingCalendar = () => {
             temp["Product Ship Date"] = item.Ship_Date__c;
             temp["Product OCD Date"] = item.Launch_Date__c;
             temp["Product Brand"] = item.ManufacturerName__c;
-            temp["Product Price"] = item.usdRetail__c;
+            temp["Product Price"] = !item.usdRetail__c  ? "TBH" : item.usdRetail__c ;
             finalData.push(temp);
           })
         }

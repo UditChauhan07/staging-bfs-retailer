@@ -9,12 +9,13 @@ const HubSpotTracker = () => {
         if (window.hj) {
           window.hj('stateChange', location.pathname);
           GetAuthData().then((user)=>{
-            console.log({user});
-            if(user.data){
-              window.hj('identify', user.data.retailerId, {
-                    userName: user.data.firstName +' '+user.data.lastName ,
-                    email: user.data.email
+            if(user){
+              if(user?.data){
+                window.hj('identify', user.data.retailerId, {
+                  userName: user.data.firstName +' '+user.data.lastName ,
+                  email: user.data.email
                 });
+              }
             }
             
           }).catch((err)=>console.log({err}))

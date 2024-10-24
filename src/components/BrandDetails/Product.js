@@ -4,11 +4,10 @@ import Accordion from "./Accordion/Accordion";
 import FilterPage from "./Accordion/FilterPage";
 import { MdOutlineDownload, MdOutlineUpload } from "react-icons/md";
 import { useAuth } from "../../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
-import { useBag } from "../../context/BagContext";
 import { GetAuthData, ShareDrive, fetchBeg, getProductImageAll, getProductList, sortArrayHandler } from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow, CloseButton } from "../../lib/svg";
@@ -18,6 +17,7 @@ import * as XLSX from "xlsx";
 import SpreadsheetUploader from "./OrderForm";
 import { CSVLink } from "react-csv";
 import LoaderV3 from "../loader/v3";
+import { useCart } from "../../context/CartContent";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
@@ -29,7 +29,6 @@ const groupBy = function (xs, key) {
 
 function Product() {
   const [emptyBag, setEmptyBag] = useState(false);
-  const { orderQuantity, orderTotal } = useBag();
   const { user } = useAuth();
   const [categoryFilters, setCategoryFilters] = useState([]);
   const [productTypeFilter, setProductTypeFilter] = useState("Wholesale");
@@ -156,6 +155,10 @@ function Product() {
   }, [formattedData, categoryFilters, productTypeFilter, sortBy, searchBy]);
   const [productImage, setProductImage] = useState({});
   useEffect(() => {
+    
+    if ((!localStorage.getItem("ManufacturerId__c")||localStorage.getItem("ManufacturerId__c")=="undefined") || (!localStorage.getItem("AccountId__c")||localStorage.getItem("AccountId__c")=="undefined")) {
+      setRedirect(true);
+    }
     let data = ShareDrive();
     if (!data) {
       data = {};
@@ -170,9 +173,6 @@ function Product() {
         setProductImage({ isLoaded: false, images: {} })
       }
     }
-    if (!(localStorage.getItem("ManufacturerId__c") && localStorage.getItem("AccountId__c"))) {
-      setRedirect(true);
-    }
     GetAuthData().then((user) => {
       let rawData = {
         key: user?.data.x_access_token,
@@ -181,10 +181,11 @@ function Product() {
         AccountId__c: localStorage.getItem("AccountId__c"),
       }
       getProductList({ rawData }).then((productRes) => {
+        
         let productData = productRes.data.records || []
         let discount = productRes.discount;
         
-        setProductCartSchema({testerInclude:discount.testerInclude,sampleInclude:discount.sampleInclude})
+        setProductCartSchema({testerInclude:discount?.testerInclude||true,sampleInclude:discount?.sampleInclude||true})
         setProductlist({ data: productData, isLoading: true, discount })
 
         //version 1
@@ -232,17 +233,17 @@ function Product() {
     setTimeout(() => {
       navigate("/order");
     }, 2000);
-    // setRedirect(false);
+    setRedirect(false);
   };
   const generateOrderHandler = () => {
     let begValue = fetchBeg();
     if (begValue.Account.id == localStorage.getItem("AccountId__c") && begValue.Manufacturer.id == localStorage.getItem("ManufacturerId__c")) {
-      if (begValue?.Account?.id && begValue?.Manufacturer?.id && Object.values(begValue.orderList).length > 0) {
+      if (begValue?.Account?.id && begValue?.Manufacturer?.id && begValue.items.length > 0) {
         let bagPrice = 0;
         let bagTesterPrice = 0;
-        Object.values(begValue.orderList).map((product) => {
-          let productPriceStr = product.product.salesPrice;
-          let productQuantity = product.quantity;
+        begValue.items.map((product) => {
+          let productPriceStr = product.price;
+          let productQuantity = product.qty;
           let productPrice = parseFloat(productPriceStr || 0);
           bagPrice += productPrice * productQuantity;
         });
@@ -292,6 +293,16 @@ function Product() {
   };
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
     return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
+  }
+
+  const OrderQuantity = ()=>{
+    const {getOrderQuantity} = useCart();
+
+    return getOrderQuantity()||0;
+  }
+  const OrderPrice = ()=>{
+    const {getOrderTotal} = useCart();
+    return Number(getOrderTotal()||0).toFixed(2);
   }
   return (
     <>
@@ -488,14 +499,14 @@ function Product() {
                         >
                           <BackArrow />
                         </button>
-                        {brandName}
+                        <Link style={{color:'#000'}} to={`/Brand/${localStorage.getItem("ManufacturerId__c")}`}>{brandName}</Link>
                       </h4>
 
                       <p>
-                        <span>Account</span>: {localStorage.getItem("Account")}
+                        <span>Account</span>: <Link style={{color:'#000'}} to={`/store/${localStorage.getItem("AccountId__c")}`}>{localStorage.getItem("Account")}</Link>
                       </p>
                     </div>
-
+                   
                     <div className="row">
                       <div className="col-lg-3 col-md-4 col-sm-12">
                         <FilterPage
@@ -518,11 +529,15 @@ function Product() {
                             border: "1px dashed black",
                           }}
                         >
+                         
                           <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage} productCartSchema={productCartSchema}></Accordion>
+                        
                         </div>
                         <div className={`${styles.TotalSide} `}>
-                          <h4>Total Number of Products : {orderQuantity}</h4>
-                          {/* <h4>Total Price : ${formentAcmount(orderTotal)}</h4> */}
+                          <div className="d-flex align-items-start flex-column">
+                          <h4>Total Number of Products : <OrderQuantity/></h4>
+                          <h4>Total Price : $<OrderPrice /></h4>
+                          </div>
                           <button
                             onClick={() => {
                               generateOrderHandler();

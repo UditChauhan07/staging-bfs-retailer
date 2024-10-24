@@ -8,12 +8,14 @@ import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, originAPi, t
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ContentLoader from "react-content-loader";
+import ProductDetails from "../../pages/productDetails";
 
 const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
     const [topProducts, setTopProduct] = useState({ isLoaded: false, data: [] })
     const [productImages, setProductImages] = useState({});
     const [errorImage, setErrorImg] = useState(false);
+    const [productId, setProductId] = useState();
     const d = new Date();
     let monthIndex = d.getMonth();
     useEffect(() => {
@@ -100,18 +102,18 @@ const BrandDetailCard = ({ brandId }) => {
                         </div>
                         <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
                             <div className="row">
-                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand.tagLine ? Styles.borderRight : null}`}>
+                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand?.tagLine ? Styles.borderRight : null}`}>
                                     {errorImage?<p className={Styles.brandTitleHolder}>{topProducts.isLoaded?topProducts.data[0].ManufacturerName__c:null}</p>:
                                     <img className="img-fluid" src={`${originAPi}/brandImage/${brandId}.png`}  onError={()=>setErrorImg(true)}/>}
                                 </div>
-                                {brand.tagLine ?
+                                {brand?.tagLine ?
                                     <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
                                         <h1 className={Styles.titleWithLogo}>
                                             {brand.tagLine}
                                         </h1>
                                     </div> : null}
                             </div>
-                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand.desc ??'NA'}} />
+                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand?.desc ??'NA'}} />
                         </div>
                     </div>
                 {(topProducts.isLoaded && topProducts?.data.length)||(!topProducts.isLoaded) ?
@@ -124,13 +126,13 @@ const BrandDetailCard = ({ brandId }) => {
                                 return (<div class="item">
                                     <div>
                                         <div className={Styles.ArriavalsInnerContent}>
-                                            <h4>{item.Name}</h4>
+                                            <h4 onClick={() => setProductId(item.Id)}>{item.Name}</h4>
                                             <p>{item.Description??'NA'}</p>
 
                                             <Link to={'/order?manufacturerId='+brandId}>
                                                 Shop The Collection
                                             </Link>
-                                            <div className="fitContent">
+                                            <div className="fitContent" onClick={() => setProductId(item.Id)}>
                                                 {productImages?.isLoaded ? (
                                                     <img className="zoomInEffect"
                                                         style={{ maxHeight: '320px', width: 'auto', margin: '10px auto' }}
@@ -159,6 +161,7 @@ const BrandDetailCard = ({ brandId }) => {
                     </OwlCarousel>
                 </div>: null}
             </div>
+            <ProductDetails productId={productId} setProductDetailId={setProductId} />
         </section>
     );
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
-import html2pdf from 'html2pdf.js';
 import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -12,9 +11,15 @@ const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const NewArrivals = () => {
-  const [productList, setProductList] = useState([])
+  let date = new Date();
+  const [productList, setProductList] = useState([]);
+  const [accountDiscount, setAccountDiscount] = useState();
   const [month, setMonth] = useState("");
-
+  const [selectYear, setSelectYear] = useState(date.getFullYear())
+  let yearList = [
+    { value: date.getFullYear(), label: date.getFullYear() },
+    { value: date.getFullYear() + 1, label: date.getFullYear() + 1 }
+  ]
   let months = [
     { value: "JAN", label: "JAN" },
     { value: "FEB", label: "FEB" },
@@ -36,7 +41,7 @@ const NewArrivals = () => {
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
   const [isLoaded, setIsloaed] = useState(false);
-  const [filterLoad,setFilterLoad] = useState(false);
+  const [filterLoad, setFilterLoad] = useState(false);
 
   useEffect(() => {
     HandleClear()
@@ -45,8 +50,11 @@ const NewArrivals = () => {
     GetAuthData().then((user) => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token }).then((productRes) => {
-          productRes.map((month) => {
+        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds), year: selectYear }).then((productRes) => {
+
+          setAccountDiscount(productRes?.discount || {})
+
+          productRes.list.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
               element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
@@ -55,7 +63,7 @@ const NewArrivals = () => {
             })
             return month;
           })
-          setProductList(productRes)
+          setProductList(productRes.list)
           setIsloaed(true)
         }).catch((err) => console.log({ err }))
       }).catch((err) => {
@@ -64,13 +72,14 @@ const NewArrivals = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand, month, isLoaded])
- 
+  }, [selectBrand, selectYear, month, isLoaded])
+
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();
     setMonth(months[currentMonthIndex].value);
     setSelectBrand(null);
     setIsEmpty(false)
+    setSelectYear(date.getFullYear())
   }
 
   //
@@ -143,6 +152,13 @@ const NewArrivals = () => {
       filterNodes={
         <>
           <FilterItem
+            label="year"
+            name="Year"
+            value={selectYear}
+            options={yearList}
+            onChange={(value) => setSelectYear(value)}
+          />
+          <FilterItem
             minWidth="220px"
             label="All Brand"
             name="All-Brand"
@@ -167,23 +183,22 @@ const NewArrivals = () => {
             options={months}
             onChange={(value) => {
               setFilterLoad(true)
-                 let newArrivalsSection = document.getElementById("newArrivalsSection")
-              
-              if (newArrivalsSection) { 
+              let newArrivalsSection = document.getElementById("newArrivalsSection")
+
+              if (newArrivalsSection) {
                 let imgElement = newArrivalsSection.querySelectorAll("img");
                 let keys = Object.keys(imgElement);
-                console.log({ imgElement });
-            
+
                 if (keys.length > 0) {
                   keys.map((key) => {
-                    
+
                     imgElement[key].removeAttribute('src');
                   });
                 }
               } else {
                 console.error('Element with id "newArrivalsSection" not found.');
               }
-            
+
               setTimeout(() => {
                 setFilterLoad(false);
                 setMonth(value);
@@ -202,7 +217,7 @@ const NewArrivals = () => {
       }
     >
       {isLoaded ? (
-        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} />
+        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} accountDetails={accountDiscount} />
       ) : (
         <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}

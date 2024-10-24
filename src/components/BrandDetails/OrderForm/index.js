@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
-import { GetAuthData, POGenerator } from "../../../lib/store";
-import { useBag } from "../../../context/BagContext";
 import { useNavigate } from "react-router-dom";
 import ModalPage from "../../Modal UI";
 import Styles from "../../Modal UI/Styles.module.css";
+import { useCart } from "../../../context/CartContent";
 
 const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, orderData = {}, btnClassName = null }) => {
-  const { orders, setOrders, setOrderQuantity, addOrder } = useBag();
+  const { contentApiFunction } = useCart();
   const productList = rawData?.data || [];
   const discount = rawData?.discount || {};
   const [data, setData] = useState([]);
@@ -107,10 +106,10 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     let retailerPirce = found.usdRetail__c?.trim()?.replace('$', '')?.replace(',', '');
     if (!/^\d*\.?\d+$/.test(retailerPirce)) {
       retailerPirce = 0;
-  }
-    
+    }
+
     if (found?.Category__c === "TESTER") {
-      let salesPrice =  (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
+      let salesPrice = (+retailerPirce - (discount?.testerMargin / 100) * +retailerPirce).toFixed(2);
       found.salesPrice = salesPrice;
       // found.discount = discount?.testerMargin;
     } else if (found.Category__c === "Samples") {
@@ -125,7 +124,6 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
     return found;
   };
   const submitForm = () => {
-    setOrders({});
     let bagPrice = 0;
     data.map((element) => {
       if (element.Quantity && Number.isInteger(element?.Quantity)) {
@@ -136,7 +134,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
             let salesPrice = null;
             let listPrice = product.usdRetail__c.substring(1);
-            if(listPrice == 'NaN'){
+            if (listPrice == 'NaN') {
               listPrice = 0;
             }
             if (product.Category__c === "TESTER") {
@@ -162,59 +160,85 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       setAlert(bagPrice);
     } else {
       setAlert('-');
-      GetAuthData()
-        .then((user) => {
-          let productCount = 0;
-          data.map((element) => {
-            if (element.Quantity && Number.isInteger(element?.Quantity)) {
-              let product = getProductData(element["Product Code"] || element["ProductCode"]);
-              const category = product?.Category__c?.toLowerCase();
-              if (orderType == "preorder" ? (category === "preorder" || (category?.match("event")?.length > 0)) : (category !== "preorder" && !category?.match("event"))) {
-                if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
-                  productCount++;
-                  let item = {};
-                  let discountAmount = discount?.margin;
-                  let listPrice = product.usdRetail__c;
-                  if(product.usdRetail__c.includes("$")){
-                    listPrice = product.usdRetail__c.substring(1);
-                  }
-                  if(listPrice == 'NaN'){
-                    listPrice = 0;
-                  }
-                  if (product.Category__c === "TESTER") {
-                    let salesPrice = (+listPrice - (discount?.testerMargin / 100) * +listPrice).toFixed(2);
-                    item.price = salesPrice;
-                    item.discount = discount?.testerMargin;
-                    discountAmount = discount?.testerMargin;
-                  } else if (product.Category__c === "Samples") {
-                    let salesPrice = (+listPrice - (discount?.sample / 100) * +listPrice).toFixed(2);
-                    item.price = salesPrice;
-                    item.discount = discount?.sample;
-                    discountAmount = discount?.sample;
-                  } else {
-                    let salesPrice = (+listPrice - (discount?.margin / 100) * +listPrice).toFixed(2);
-                    item.price = salesPrice;
-                    item.discount = discount?.margin;
-                  }
-                  item.ProductCode = element["Product Code"] || element["ProductCode"];
-                  item.qty = element["Quantity"];
-                  addOrder(product, element["Quantity"], discount);
-                }
+      let productCount = 0;
+      let createOrderList = [];
+      let account = {
+        name: localStorage.getItem("Account"),
+        id: localStorage.getItem("AccountId__c"),
+        address: localStorage.getItem("address"),
+        shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
+        discount: rawData.discount,
+        SalesRepId: localStorage.getItem("Sales_Rep__c"),
+      }
+
+      let manufacturer = {
+        name: null,
+        id: null,
+      }
+      data.map((element) => {
+        if (element.Quantity && Number.isInteger(element?.Quantity)) {
+          let product = getProductData(element["Product Code"] || element["ProductCode"]);
+          const category = product?.Category__c?.toLowerCase();
+          if (orderType == "preorder" ? (category === "preorder" || (category?.match("event")?.length > 0)) : (category !== "preorder" && !category?.match("event"))) {
+            if (product?.Id && element?.Quantity >= (product.Min_Order_QTY__c || 0) && (!product.Min_Order_QTY__c || element?.Quantity % product.Min_Order_QTY__c === 0)) {
+              productCount++;
+              let item = {};
+              let discountAmount = 0;
+              let listPrice = product.usdRetail__c;
+              if (product.usdRetail__c.includes("$")) {
+                listPrice = product.usdRetail__c.substring(1);
               }
+              if (listPrice == 'NaN') {
+                listPrice = 0;
+              }
+              if (product.Category__c === "TESTER") {
+                item.discount = discount?.testerMargin;
+                discountAmount = discount?.testerMargin;
+              } else if (product.Category__c === "Samples") {
+                item.discount = discount?.sample;
+                discountAmount = discount?.sample;
+              } else {
+                item.discount = discount?.margin;
+                discountAmount = discount?.margin;
+              }
+              let salesPrice = (+listPrice - (discountAmount / 100) * +listPrice).toFixed(2);
+              item.price = salesPrice;
+              item.ProductCode = element["Product Code"] || element["ProductCode"];
+              item.qty = element["Quantity"];
+              let orderType = 'wholesale';
+              if (product?.Category__c?.toUpperCase() === "PREORDER" || product?.Category__c?.toUpperCase()?.match("EVENT")) {
+                orderType = 'pre-order'
+              }
+              product.price = salesPrice;
+              product.qty = element["Quantity"];
+              product.orderType = orderType;
+
+              manufacturer.name = product.ManufacturerName__c
+              manufacturer.id = product.ManufacturerId__c
+
+              createOrderList.push(product)
+
             }
-          });
-          if (productCount) {
-            // navigate("/my-bag");
-            let currentUrl = window.location.origin;
-            let url = currentUrl + "/my-bag";
-            window.location.href = url
-          } else {
-            alert("Product list not found");
           }
-        })
-        .catch((error) => {
-          console.error({ error });
-        });
+        }
+      });
+      if (productCount) {
+        let uploadedType = "wholesale"
+        if (orderType == "preorder") {
+          uploadedType = "pre-order"
+        }
+
+        let status = contentApiFunction(createOrderList, account, manufacturer, uploadedType);
+        console.log({status});
+        
+
+        // navigate("/my-bag");
+        let currentUrl = window.location.origin;
+        let url = currentUrl + "/my-bag";
+        window.location.href = url
+      } else {
+        alert("Product list not found");
+      }
     }
   };
   useEffect(() => {
@@ -355,7 +379,7 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
                   let productDetails = getProductData(item["Product Code"] || item['ProductCode'] || null);
                   if (item?.Quantity) {
                     let error = !item?.Quantity || !Number.isInteger(item?.Quantity) || item?.Quantity < (productDetails.Min_Order_QTY__c || 0) || !productDetails?.Name || productDetails.Min_Order_QTY__c ? item?.Quantity % productDetails.Min_Order_QTY__c !== 0 : false;
-                    orderType == "preorder" ? (error == false) ? !productDetails?.Category__c?.toLowerCase()?.match("event") ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase():error = error : error = error : (error == false) ? error = (productDetails?.Category__c?.toLowerCase() == "preorder"||productDetails?.Category__c?.toLowerCase()?.match("event")) : error = error
+                    orderType == "preorder" ? (error == false) ? !productDetails?.Category__c?.toLowerCase()?.match("event") ? error = productDetails?.Category__c?.toLowerCase() != orderType.toLowerCase() : error = error : error = error : (error == false) ? error = (productDetails?.Category__c?.toLowerCase() == "preorder" || productDetails?.Category__c?.toLowerCase()?.match("event")) : error = error
                     return (
                       <tr key={index}>
                         <td style={error ? { background: "red", color: "#fff" } : {}}>{productDetails?.Name || "---"}</td>
