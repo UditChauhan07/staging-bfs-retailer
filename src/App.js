@@ -39,15 +39,14 @@ import HelpSection from "./pages/HelpSection";
 import PortalHelp from "./pages/PortalHelp";
 import { CartProvider } from "./context/CartContent";
 import CartHover from "./components/CartHover";
+import HubSpotTracker from "./components/Tracker/Hubspot";
+
 
 function App() {
-  // const Redirect = ({ href }) => {
-  //   window.location.href = href;
-  // };
   return (
     <UserProvider>
       <CartProvider>
-          <BrowserRouter>
+          <BrowserRouter>  <HubSpotTracker/>
           <CartHover/>
             <HubSpotTracker />
             <Routes>
