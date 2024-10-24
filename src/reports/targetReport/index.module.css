@@ -185,3 +185,15 @@
     bottom: 0%;
     z-index: 6;
   } */
+  .breakHolder{
+    width: 2px;
+    height: 100%;
+    background: #fff;
+    margin: auto 0;
+  }
+  @media (max-width: 1023px) {
+    /* Remove sticky position for smaller devices */
+    .breakHolder{
+      margin-right: 69px;
+    }
+  }

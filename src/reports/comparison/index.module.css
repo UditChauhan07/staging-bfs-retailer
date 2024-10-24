@@ -16,3 +16,22 @@
     letter-spacing: 2px;
     margin: 0;
   }
+  @media (max-width: 900px) {
+    .stickyFirstColumnHeading,
+    .stickySecondColumnHeading,
+    .stickySecondLastColumnHeading,
+    .stickyLastColumnHeading,
+    .stickyFirstColumn,
+    .stickySecondColumn,
+    .stickySecondLastColumn,
+    .stickyLastColumn {
+      position:static ; /* Remove sticky position for smaller devices */
+      z-index: 5;
+     
+    }
+    .stickyMonth{
+    position: sticky;
+    top: 0%;
+    z-index: 2;
+    }
+  }

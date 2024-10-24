@@ -31,25 +31,26 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
       {salesData.length ? (
         <div className={`d-flex p-3 ${styles.tableBoundary} mb-5 mt-3`}>
           <div
-            className=""
+            className={`${styles.srcollvar}`}
             style={{ maxHeight: "73vh", minHeight: "40vh", overflow: "auto",width:'100%' }}
           >
-            <table id="salesReportTable" className="table table-responsive" style={{minHeight:"600px"}}>
+            <table id="salesReportTable" className={`${styles.tableResponsive} table table-responsive`}>
               <thead>
                 <tr>
                   <th
                     className={`${styles.th} ${styles.stickyFirstColumnHeading}`}
-                    style={{ minWidth: "150px" }}
+                    style={{ minWidth: "150px",top:"0%",left:"0%" }}
                   >
                     Store
                   </th>
                   <th
                     className={`${styles.th} ${styles.stickySecondColumnHeading} `}
-                    style={{ minWidth: "170px" }}
+                    style={{ minWidth: "170px",left:"150px",top:"0%" }}
                   >
                     Manufacturer
                   </th>
-                  {(currentYear == year) ? month >= 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
+
+              {(currentYear == year) ? month >= 0 && <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Jan
@@ -109,6 +110,7 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
                   </th> : <th className={`${styles.month} ${styles.stickyMonth}`}>
                     Dec
                   </th>}
+                  
                   <th
                     className={`${styles.th} ${styles.stickySecondLastColumnHeading}`}
                     style={{ minWidth: "200px" }}
