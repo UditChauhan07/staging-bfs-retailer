@@ -311,8 +311,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                 <p className={Styles.priceHolder}>
                   <div>
-                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
-                  </div>
+                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:null}
+                  </div>&nbsp;
                   <div>
                     <p>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice}</p>
                   </div>
