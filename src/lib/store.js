@@ -174,7 +174,11 @@ export function supportClear() {
 
 
 export async function DestoryAuth() {
-  localStorage.clear();
+  for (var key in localStorage) {
+    if (localStorage.hasOwnProperty(key) && (key != "AA0KfX2OoNJvz7x" && key != "passwordB2B" && key != "emailB2B")) {
+      localStorage.removeItem(key);
+    }
+  }
   window.location.href = window.location.origin;
   return true;
 }
@@ -390,16 +394,16 @@ export async function cartSync({ cart }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  if(data.data){
+  if (data.data) {
     return data.data;
-  }else{
+  } else {
     return true;
   }
 }
 
-export async function OrderPlaced({ order,cartId }) {
+export async function OrderPlaced({ order, cartId }) {
   let orderinit = {
-    info: order,cartId
+    info: order, cartId
   };
   let headersList = {
     "Content-Type": "application/json",
@@ -1263,7 +1267,7 @@ export function isDateEqualOrGreaterThanToday(dateString) {
   const inputDate = new Date(dateString);
   // Get today's date
   const today = new Date();
-  
+
   // Set time to 00:00:00 to compare only dates
   today.setHours(0, 0, 0, 0);
 
