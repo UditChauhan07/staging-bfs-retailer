@@ -32,6 +32,9 @@ const LoginUI = () => {
         localStorage.setItem("emailB2B", values.email);
         localStorage.setItem("passwordB2B", values.password);
       }
+      window.hj('identify', apiData?.data?.retailerId, {
+        userName: apiData?.data?.Name,
+      });
       localStorage.setItem("Name", apiData?.data?.Name);
 
       localStorage.setItem("Api Data", JSON.stringify(apiData));
