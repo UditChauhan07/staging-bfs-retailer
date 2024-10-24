@@ -145,6 +145,10 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         type="text"
         id={title?.replaceAll(/\s+/g, '-')}
         options={list}
+        menuPortalTarget={document.body} // This will render the dropdown outside of the div
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Ensure dropdown appears over everything
+        }}
         onChange={(option) => {
           onChange?.(option)
         }}

@@ -1,13 +1,26 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContent";
 import styles from "./index.module.css";
+import { useEffect, useState } from "react";
+import { AuthCheck, GetAuthData } from "../../lib/store";
 
 const CartHover = () => {
     const { order } = useCart();
     const navigate = useNavigate();
     const path = window.location.pathname;
-    console.log({ order });
-    if (!order?.items?.length) return null;
+    const [ isShow,setIsShow] = useState(false);
+
+    useEffect(()=>{
+        GetAuthData().then((user)=>{
+
+            if(user){
+                setIsShow(true);
+            }
+       }).catch((e)=>console.error({e}))
+        
+    },[path])
+    
+    if (!order?.items?.length||!isShow) return null;
     const addMoreHandler = () => {
         localStorage.setItem("manufacturer", order.Manufacturer.name);
         localStorage.setItem("ManufacturerId__c", order.Manufacturer.id);

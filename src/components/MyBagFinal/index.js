@@ -45,6 +45,7 @@ function MyBagFinal() {
   useEffect(() => {
     setTotal(getOrderTotal())
   }, [order])
+  
   useEffect(() => {
     const FetchPoNumber = async () => {
       try {
