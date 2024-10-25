@@ -161,7 +161,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
       <ModalPage
         open={dealAccountList?.length ? true : false}
         content={
-          <div className="d-flex flex-column" style={{width:'400px'}}>
+          <div className="d-flex flex-column" style={{width:'400px', height: "215px"}}>
             <h2>Attention!</h2>
             <p>
               Please select store you want to order for
