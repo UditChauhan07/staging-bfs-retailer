@@ -43,9 +43,9 @@ function MyBagFinal() {
   };
 
   useEffect(() => {
-    setTotal(getOrderTotal())
+    setTotal(getOrderTotal() ?? 0)
   }, [order])
-  
+
   useEffect(() => {
     const FetchPoNumber = async () => {
       try {
@@ -210,11 +210,11 @@ function MyBagFinal() {
 
   const deleteBag = () => {
     // localStorage.removeItem("AA0KfX2OoNJvz7x")
-    deleteOrder().then((res)=>{
-      if(res){
+    deleteOrder().then((res) => {
+      if (res) {
         window.location.reload();
       }
-    }).catch(err=>console.error({err}))
+    }).catch(err => console.error({ err }))
   }
   // console.log("fetch bag", fetchBag)
 
@@ -377,7 +377,7 @@ function MyBagFinal() {
                   <h4>
                     {buttonActive ? (
                       <>
-                        <span> <Link style={{color:'#000'}} to={`/Brand/${order?.Manufacturer?.id}`}>{order?.Manufacturer?.name}</Link> |</span>&nbsp;<Link style={{color:'#000'}} to={`/store/${order?.Account?.id}`}>{order?.Account?.name}</Link>
+                        <span> <Link style={{ color: '#000' }} to={`/Brand/${order?.Manufacturer?.id}`}>{order?.Manufacturer?.name}</Link> |</span>&nbsp;<Link style={{ color: '#000' }} to={`/store/${order?.Account?.id}`}>{order?.Account?.name}</Link>
                       </>
                     ) : (
                       <span>Empty bag</span>
@@ -596,8 +596,9 @@ function MyBagFinal() {
                         </button>
                         <p className={`${Styles.ClearBag}`} style={{ textAlign: 'center', cursor: 'pointer' }}
                           onClick={() => {
-
-                            setClearConfim(true)
+                            if (buttonActive) {
+                              setClearConfim(true)
+                            }
                           }
                           }
                           disabled={!buttonActive}
