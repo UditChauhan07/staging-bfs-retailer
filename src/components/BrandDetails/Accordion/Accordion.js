@@ -135,7 +135,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                           let cartProduct = isProductCarted(value.Id);
 
                           let listPrice = Number(value?.usdRetail__c?.replace('$', '').replace(',', ''));
-                          if (listPrice == 'NaN') {
+                          if (isNaN(listPrice)) {
                             listPrice = 0;
                           }
                           let salesPrice = 0;
