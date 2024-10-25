@@ -42,7 +42,7 @@ const initialOrder = {
 const CartProvider = ({ children }) => {
 
     const [order, setOrder] = useState({});
-    
+
 
     const fetchCart = async () => {
         try {
@@ -50,7 +50,7 @@ const CartProvider = ({ children }) => {
             const getOrder = { CreatedBy: user?.data?.retailerId };
             const cart = await cartSync({ cart: getOrder });
             console.log({ cart });
-    
+
             // Validate if the fetched cart has essential content like Account and Manufacturer
             if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
                 setOrder(cart); // Set the fetched cart if valid
@@ -61,9 +61,9 @@ const CartProvider = ({ children }) => {
         } catch (err) {
             console.error('Error fetching cart:', err);
         }
-    };    
+    };
 
-    
+
     useEffect(() => {
         // Add event listener for storage changes
         const handleStorageChange = (event) => {
@@ -72,7 +72,7 @@ const CartProvider = ({ children }) => {
                 setOrder(updatedCart); // Update the order state when another tab modifies the cart
             }
         };
-    
+
         window.addEventListener('storage', handleStorageChange);
         return () => {
             window.removeEventListener('storage', handleStorageChange); // Cleanup listener on unmount
@@ -402,13 +402,13 @@ const CartProvider = ({ children }) => {
         setOrder((prevOrder) => {
             const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
             const removedItem = prevOrder.items?.find(item => item.Id === productId);
-    
+
             // Check if the cart is empty after removing the item
             if (updatedItems.length === 0) {
                 deleteOrder();  // Call deleteOrder() if items array is empty
                 return initialOrder;
             }
-    
+
             // Otherwise, update the cart normally
             return {
                 ...prevOrder,
@@ -418,7 +418,7 @@ const CartProvider = ({ children }) => {
             };
         });
     };
-    
+
 
 
     // update order based on data 
@@ -461,8 +461,9 @@ const CartProvider = ({ children }) => {
 
         return false;
     };
+    
 
-    const contentApiFunction = (productList, account, manufacturer, ordertype = 'wholesale') => {
+    const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {
         // Directly replace the current order with a new one based on the provided product list
         const newOrderTotal = productList.reduce((sum, product) => sum + product.price * (product.qty || 1), 0);
         const newOrderQuantity = productList.reduce((sum, product) => sum + (product.qty || 1), 0);
@@ -476,6 +477,17 @@ const CartProvider = ({ children }) => {
             orderQuantity: newOrderQuantity,
             total: newOrderTotal,
         });
+        let orderStatus = await cartSync({
+            cart: {
+                ordertype, // Set the order type; adjust if needed
+                Account: account,
+                Manufacturer: manufacturer,
+                items: productList.map(product => ({ ...product, qty: product.qty || 1 })), // Ensure each product has a qty
+                orderQuantity: newOrderQuantity,
+                total: newOrderTotal,
+            }
+        })
+        return orderStatus;
     };
 
 
@@ -497,12 +509,12 @@ const CartProvider = ({ children }) => {
 
     // Get order total
     const getOrderTotal = () => {
-        return order.total;
+        return order?.total||0;
     };
 
     // Get order quantity
     const getOrderQuantity = () => {
-        return order.orderQuantity;
+        return order?.orderQuantity||0;
     };
 
     const contextValue = {

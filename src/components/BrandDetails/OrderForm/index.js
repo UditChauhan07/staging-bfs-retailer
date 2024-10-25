@@ -228,14 +228,11 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
           uploadedType = "pre-order"
         }
 
-        let status = contentApiFunction(createOrderList, account, manufacturer, uploadedType);
-        console.log({status});
-        
-
-        // navigate("/my-bag");
-        let currentUrl = window.location.origin;
-        let url = currentUrl + "/my-bag";
-        window.location.href = url
+        contentApiFunction(createOrderList, account, manufacturer, uploadedType).then((result) => {
+          let currentUrl = window.location.origin;
+          // let url = currentUrl + "/my-bag";
+          navigate('/my-bag')
+        }).catch(e => console.error({ e }))
       } else {
         alert("Product list not found");
       }
