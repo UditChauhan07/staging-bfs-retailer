@@ -13,6 +13,7 @@ import AppLayout from "../AppLayout";
 import { FilterItem } from "../FilterItem";
 import { UserIcon } from "../../lib/svg";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContent";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -66,6 +67,7 @@ const monthList = [
 ];
 
 function Dashboard({ dashboardData }) {
+  const {fetchCart} = useCart();
   const navigate = useNavigate();
   const [dataa, setDataa] = useState({
     series: [
@@ -205,6 +207,7 @@ function Dashboard({ dashboardData }) {
   // API INTEGRATION
 
   useEffect(() => {
+    fetchCart();
     if (!AuthCheck()) {
       // navigate("/");
     }
