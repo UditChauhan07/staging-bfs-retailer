@@ -434,7 +434,7 @@ const CartProvider = ({ children }) => {
             ordertype, // Set the order type; adjust if needed
             Account: account,
             Manufacturer: manufacturer,
-            items: productList.map(product => ({ ...product, qty: product.qty || 1 })), // Ensure each product has a qty
+            items: productList?.map(product => ({ ...product, qty: product.qty || 1 })), // Ensure each product has a qty
             orderQuantity: newOrderQuantity,
             total: newOrderTotal,
         });

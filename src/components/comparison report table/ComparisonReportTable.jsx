@@ -16,10 +16,10 @@ const ComparisonReportTable = ({ comparisonData }) => {
               <table id="salesReportTable" className="table table-responsive">
                 <thead>
                   <tr>
-                    <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
+                    <th className={`${styles.th} ${styles.stickyMonth}`} style={{ minWidth: "200px" }}>
                       Store Name
                     </th>
-                    <th className={`${styles.th} ${styles.stickyFirstColumnHeading} `} style={{ minWidth: "200px" }}>
+                    <th className={`${styles.th} ${styles.stickyMonth}`} style={{ minWidth: "200px" }}>
                       Brand
                     </th>
                     <th className={`${styles.th}  ${styles.stickyMonth}`} style={{ minWidth: "200px" }}>
@@ -47,7 +47,7 @@ const ComparisonReportTable = ({ comparisonData }) => {
                           return (
                             <>
                               <tr key={index}>
-                                <td className={`${styles.td} ${styles.stickyFirstColumn}`}>{ele.Retail_Store_Name__c}</td>
+                                <td className={`${styles.td}`}>{ele.Retail_Store_Name__c}</td>
                                 <td className={`${styles.td}`}>{ele.ManufacturerName__c}</td>
                                 <td className={`${styles.td}`}>{ele.Estee_Lauder_Number__c ?? 'NA'} </td>
                                 <td className={`${styles.td}`}>{ele.Sales_Rep__c}</td>

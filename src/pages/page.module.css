@@ -4,6 +4,8 @@ background: #FFF;
 } */
 .tableBoundary {
   border: 1px dashed #000;
+  table-layout: fixed;
+  width: 100%;
 
   /* overflow: auto; */
 }
@@ -71,6 +73,10 @@ background: #FFF;
   line-height: 22px; /* 150% */
   letter-spacing: 1.6px;
   padding-left: 20px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
 }
 
 /* Styles for the download confirmation modal */

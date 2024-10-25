@@ -28,6 +28,7 @@ export const months = [
   "November",
   "December",
 ];
+export const admins = ["00530000005AdvsAAC", "0053b00000DgEVEAA3", "0051O00000CvAVTQA3", "0053b00000CwOnLAAV" ,  "0053b00000C75e8AAB" , "0053b00000DgEvqAAF"]; //, "0053b00000CwOnLAAV" ,"0053b00000DgEVEAA3"
 
 export function ShareDrive(data, remove = false) {
   if (remove) {
@@ -746,16 +747,14 @@ export async function topProduct({ month, manufacturerId, accountIds }) {
     return data;
   }
 }
-
-export async function getSessionStatus({ key, retailerId }) {
-
+export async function getSessionStatus({ key, salesRepId }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-  let response = await fetch(url + "v3/VQzxx7VoZqQrVKe", {
+  let response = await fetch(url + "v3/XbgheAKvG5EtkXs", {
     method: "POST",
-    body: JSON.stringify({ key, retailerId }),
+    body: JSON.stringify({ key, salesRepId }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -765,6 +764,7 @@ export async function getSessionStatus({ key, retailerId }) {
     return data;
   }
 }
+
 export async function getMarketingCalendar({ key, manufacturerId, year, accountIds }) {
   let headersList = {
     Accept: "*/*",

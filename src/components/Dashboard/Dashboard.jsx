@@ -686,9 +686,9 @@ function Dashboard({ dashboardData }) {
               )}
             </div>
           </div>
-          <div className="col-lg-6">
-            <div className="d-flex">
-              <div className="col-lg-6">
+          <div className="col-lg-6 ">
+            <div className={`${Styles.Maindiv}`}>
+              <div className="col-lg-6" >
                 <p className={Styles.Tabletext}>Purchases Performance</p>
                 <div className={Styles.donuttop1}>
                   {!isLoading ? (
@@ -716,8 +716,8 @@ function Dashboard({ dashboardData }) {
                 </div>
               </div>
               <div className="col-lg-6">
-                <p className={Styles.Tabletext}>Sales Performance</p>
-                <div className={Styles.donuttop1}>
+                <p className={`${Styles.Tabletext1} `}>Sales Performance</p>
+                <div className={Styles.donuttop2}>
                   {!isLoading ? (
                     <ContentLoader />
                   ) : (
