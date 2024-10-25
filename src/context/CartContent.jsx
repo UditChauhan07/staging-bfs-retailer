@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { cartSync, GetAuthData } from '../lib/store';
+import { AuthCheck, cartSync, GetAuthData } from '../lib/store';
 let orderCartKey = "AA0KfX2OoNJvz7x"
 
 // Create the context
@@ -40,27 +40,46 @@ const initialOrder = {
 
 // Cart Provider component
 const CartProvider = ({ children }) => {
-    const [order, setOrder] = useState({});
-    useEffect(() => {
-        const fetchCart = async () => {
-            try {
-                const user = await GetAuthData();
-                const getOrder = { CreatedBy: user.data.retailerId };
-                const cart = await cartSync({ cart: getOrder });
 
-                // Validate if the fetched cart has essential content like Account and Manufacturer
-                if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
-                    setOrder(cart); // Set the fetched cart if valid
-                    localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
-                } else {
-                    setOrder(initialOrder); // Use initial order if no valid cart is found
-                }
-            } catch (err) {
-                console.error('Error fetching cart:', err);
+    const [order, setOrder] = useState({});
+    
+
+    const fetchCart = async () => {
+        try {
+            const user = await GetAuthData();
+            const getOrder = { CreatedBy: user?.data?.retailerId };
+            const cart = await cartSync({ cart: getOrder });
+            console.log({ cart });
+    
+            // Validate if the fetched cart has essential content like Account and Manufacturer
+            if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
+                setOrder(cart); // Set the fetched cart if valid
+                localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
+            } else {
+                setOrder(initialOrder); // Use initial order if no valid cart is found
+            }
+        } catch (err) {
+            console.error('Error fetching cart:', err);
+        }
+    };    
+
+    
+    useEffect(() => {
+        // Add event listener for storage changes
+        const handleStorageChange = (event) => {
+            if (event.key === orderCartKey) {
+                const updatedCart = event.newValue ? JSON.parse(event.newValue) : initialOrder;
+                setOrder(updatedCart); // Update the order state when another tab modifies the cart
             }
         };
+    
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange); // Cleanup listener on unmount
+        };
+    }, []);
 
-        fetchCart();
+    useEffect(() => {
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
                 fetchCart();
@@ -84,18 +103,7 @@ const CartProvider = ({ children }) => {
         window.addEventListener('blur', handleBlur);
 
 
-        // Add event listener for storage changes
-        const handleStorageChange = (event) => {
-            if (event.key === orderCartKey) {
-                const updatedCart = event.newValue ? JSON.parse(event.newValue) : initialOrder;
-                setOrder(updatedCart); // Update the order state when another tab modifies the cart
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-
         return () => {
-            window.removeEventListener('storage', handleStorageChange); // Cleanup listener on unmount
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('focus', handleFocus);
             window.removeEventListener('blur', handleBlur);
@@ -394,12 +402,13 @@ const CartProvider = ({ children }) => {
         setOrder((prevOrder) => {
             const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
             const removedItem = prevOrder.items?.find(item => item.Id === productId);
-
-            // If the cart is empty after removing the item, reset to initialOrder
+    
+            // Check if the cart is empty after removing the item
             if (updatedItems.length === 0) {
+                deleteOrder();  // Call deleteOrder() if items array is empty
                 return initialOrder;
             }
-
+    
             // Otherwise, update the cart normally
             return {
                 ...prevOrder,
@@ -409,6 +418,8 @@ const CartProvider = ({ children }) => {
             };
         });
     };
+    
+
 
     // update order based on data 
     const keyBasedUpdateCart = (data) => {
@@ -506,7 +517,8 @@ const CartProvider = ({ children }) => {
         isProductCarted,
         isCategoryCarted,
         contentApiFunction,
-        keyBasedUpdateCart
+        keyBasedUpdateCart,
+        fetchCart
     };
 
     return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
