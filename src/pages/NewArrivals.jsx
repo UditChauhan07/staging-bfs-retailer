@@ -13,12 +13,12 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep
 const NewArrivals = () => {
   let date = new Date();
   const [productList, setProductList] = useState([]);
-  const [accountDiscount,setAccountDiscount]= useState();
+  const [accountDiscount, setAccountDiscount] = useState();
   const [month, setMonth] = useState("");
   const [selectYear, setSelectYear] = useState(date.getFullYear())
   let yearList = [
     { value: date.getFullYear(), label: date.getFullYear() },
-    { value: date.getFullYear()+1, label: date.getFullYear()+1 }
+    { value: date.getFullYear() + 1, label: date.getFullYear() + 1 }
   ]
   let months = [
     { value: "JAN", label: "JAN" },
@@ -41,7 +41,7 @@ const NewArrivals = () => {
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
   const [isLoaded, setIsloaed] = useState(false);
-  const [filterLoad,setFilterLoad] = useState(false);
+  const [filterLoad, setFilterLoad] = useState(false);
 
   useEffect(() => {
     HandleClear()
@@ -50,10 +50,10 @@ const NewArrivals = () => {
     GetAuthData().then((user) => {
       getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds),year:selectYear }).then((productRes) => {
-          
-          setAccountDiscount(productRes?.discount||{})
-          
+        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds), year: selectYear }).then((productRes) => {
+
+          setAccountDiscount(productRes?.discount || {})
+
           productRes.list.map((month) => {
             month.content.map((element) => {
               element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
@@ -72,8 +72,8 @@ const NewArrivals = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand,selectYear, month, isLoaded])
- 
+  }, [selectBrand, selectYear, month, isLoaded])
+
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();
     setMonth(months[currentMonthIndex].value);
@@ -151,7 +151,7 @@ const NewArrivals = () => {
     <AppLayout
       filterNodes={
         <>
-                          <FilterItem
+          <FilterItem
             label="year"
             name="Year"
             value={selectYear}
@@ -183,22 +183,22 @@ const NewArrivals = () => {
             options={months}
             onChange={(value) => {
               setFilterLoad(true)
-                 let newArrivalsSection = document.getElementById("newArrivalsSection")
-              
-              if (newArrivalsSection) { 
+              let newArrivalsSection = document.getElementById("newArrivalsSection")
+
+              if (newArrivalsSection) {
                 let imgElement = newArrivalsSection.querySelectorAll("img");
                 let keys = Object.keys(imgElement);
-            
+
                 if (keys.length > 0) {
                   keys.map((key) => {
-                    
+
                     imgElement[key].removeAttribute('src');
                   });
                 }
               } else {
                 console.error('Element with id "newArrivalsSection" not found.');
               }
-            
+
               setTimeout(() => {
                 setFilterLoad(false);
                 setMonth(value);
@@ -217,7 +217,7 @@ const NewArrivals = () => {
       }
     >
       {isLoaded ? (
-        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} accountDetails={accountDiscount}/>
+        <NewArrivalsPage selectBrand={selectBrand} brand={brand} isEmpty={isEmpty} isLoaded={filterLoad} month={month} productList={productList} accountDetails={accountDiscount} />
       ) : (
         <LoaderV3 text={"Unveiling Upcoming New Products are loading...."} />
       )}

@@ -40,21 +40,41 @@ const initialOrder = {
 
 // Cart Provider component
 const CartProvider = ({ children }) => {
-    const [order, setOrder] = useState(() => {
-        const savedCart = localStorage.getItem(orderCartKey);
-        return savedCart ? JSON.parse(savedCart) : initialOrder;
-    });
+    const [order, setOrder] = useState({});
 
+    useEffect(() => {
+        // Gets the orders from local storage on initial render
+        const savedCart = localStorage.getItem(orderCartKey);
+        if (savedCart) {
+            setOrder(savedCart ? JSON.parse(savedCart) : initialOrder);
+        }
+    
+        // Add event listener for storage changes
+        const handleStorageChange = (event) => {
+            if (event.key === orderCartKey) {
+                const updatedCart = event.newValue ? JSON.parse(event.newValue) : initialOrder;
+                setOrder(updatedCart);  // Update the order state when another tab modifies the cart
+            }
+        };
+    
+        window.addEventListener('storage', handleStorageChange);
+    
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);  // Cleanup listener on unmount
+        };
+    }, []);
+    
     useEffect(() => {
         const syncCart = async () => {
             try {
+                // Save the updated cart to local storage
                 localStorage.setItem(orderCartKey, JSON.stringify(order));
-
+    
                 const user = await GetAuthData();
                 if (!order.CreatedBy) {
                     order.CreatedBy = user.data.retailerId;
                 }
-
+    
                 order.CreatedAt = order.CreatedAt || new Date();
                 if (order?.Account?.id && order?.Manufacturer?.id) {
                     if (!order.id) {
@@ -63,9 +83,16 @@ const CartProvider = ({ children }) => {
                             keyBasedUpdateCart({ id: uniqueId });
                         }
                     }
+                } else {
+                    let draft = localStorage.getItem(orderCartKey) || {};
+                    if (draft) {
+                        draft = JSON.parse(draft);
+                    }
+                    console.log({ draft });
                 }
-
-                const res = await cartSync({ cart: order });
+    
+                // Uncomment this if you're syncing the cart with a backend
+                // const res = await cartSync({ cart: order });
                 // if (res?.id) {
                 //     setOrder(res);
                 // }
@@ -73,10 +100,10 @@ const CartProvider = ({ children }) => {
                 console.error(err);
             }
         };
-
-
+    
         syncCart();
     }, [order]);
+    
 
 
 
@@ -338,8 +365,8 @@ const CartProvider = ({ children }) => {
     // Remove a product from the cart by productId
     const removeProduct = (productId) => {
         setOrder((prevOrder) => {
-            const updatedItems = prevOrder.items.filter(item => item.Id !== productId);
-            const removedItem = prevOrder.items.find(item => item.Id === productId);
+            const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
+            const removedItem = prevOrder.items?.find(item => item.Id === productId);
 
             // If the cart is empty after removing the item, reset to initialOrder
             if (updatedItems.length === 0) {
@@ -367,7 +394,8 @@ const CartProvider = ({ children }) => {
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
-        const matchingProducts = order.items.filter(item => item.Id === productId);
+        const matchingProducts = order.items?.filter(item => item.Id === productId)||[];
+        
 
         // If found, return the array of matching products; if not, return false
         return matchingProducts.length > 0 ? { ...order, items: matchingProducts[0] } : false;

@@ -47,6 +47,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
     <div className={`${Styles.ButtonControl}w-[85px] h-[27px] flex `}>
       {qtyErrorModalOpen ? (
         <ModalPage
+        styles={{zIndex:1025,}}
           open
           content={
             <div className="d-flex flex-column gap-3">
@@ -103,7 +104,7 @@ const QuantitySelector = ({ onChange, value = 0, min = 0 }) => {
         -
       </button>
 
-      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" onChange={(e) => { (parseInt(e.target.value) >= 0 && parseInt(e.target.value) <= 1000) && qtyChangeHandler({ newQty: parseInt(e.target.value || 0), previous: padWithZero(value) }) }} />
+      <input type="number" value={padWithZero(value)} className="w-[25px] text-center text-[12px] leading-tight appearance-none border-t-[1px] border-b-[1px] border-solid border-black" style={{lineHeight:0}} onChange={(e) => { (parseInt(e.target.value) >= 0 && parseInt(e.target.value) <= 1000) && qtyChangeHandler({ newQty: parseInt(e.target.value || 0), previous: padWithZero(value) }) }} />
       <button
         onClick={() => {
           // functionality for 1 addition

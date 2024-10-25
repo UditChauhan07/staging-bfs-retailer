@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { DestoryAuth } from "../lib/store";
 
 const Logout = () => {
   useEffect(() => {
@@ -11,6 +12,7 @@ const Logout = () => {
     localStorage.removeItem("ManufacturerId__c");
     localStorage.removeItem("Account");
     localStorage.removeItem("address");
+    DestoryAuth();
     
     window.location.href = "/";
   }, []);

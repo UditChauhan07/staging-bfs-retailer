@@ -145,6 +145,10 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         type="text"
         id={title?.replaceAll(/\s+/g, '-')}
         options={list}
+        menuPortalTarget={document.body} // This will render the dropdown outside of the div
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Ensure dropdown appears over everything
+        }}
         onChange={(option) => {
           onChange?.(option)
         }}
@@ -182,7 +186,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             <div className="d-flex flex-column gap-3">
               <h2>Warning</h2>
               <p>
-                Adding this item will replace <br></br> your current cart
+                Adding this item will replace <br></br> your current Bag
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btn} onClick={replaceCart}>
@@ -307,8 +311,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                 <p className={Styles.priceHolder}>
                   <div>
-                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
-                  </div>
+                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:null}
+                  </div>&nbsp;
                   <div>
                     <p>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice}</p>
                   </div>
@@ -349,7 +353,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    Add to Cart
+                    Add to Bag
                   </p>
                 )}
               </div>

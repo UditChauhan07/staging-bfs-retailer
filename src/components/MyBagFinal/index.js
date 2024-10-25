@@ -45,6 +45,7 @@ function MyBagFinal() {
   useEffect(() => {
     setTotal(getOrderTotal())
   }, [order])
+  
   useEffect(() => {
     const FetchPoNumber = async () => {
       try {
@@ -130,9 +131,8 @@ function MyBagFinal() {
   }, [order]);
 
   const orderPlaceHandler = () => {
-console.log({order});
 
-    if (order.Account.SalesRepId) {
+    if (order?.Account?.SalesRepId) {
       setIsOrderPlaced(1);
       setIsDisabled(true)
       GetAuthData()
@@ -188,8 +188,8 @@ console.log({order});
                   } else {
                     setIsDisabled(false)
                     let status = deleteOrder();
-                    // navigate("/order-list");
-                    // setIsOrderPlaced(2);
+                    navigate("/order-list");
+                    setIsOrderPlaced(2);
                   }
                 }
               })
