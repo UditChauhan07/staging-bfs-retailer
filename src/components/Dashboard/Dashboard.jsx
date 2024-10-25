@@ -216,7 +216,7 @@ function Dashboard({ dashboardData }) {
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
-    
+
     // setIsLoaded(true);
     GetAuthData()
       .then((user) => {
