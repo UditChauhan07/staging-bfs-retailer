@@ -126,7 +126,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                 <tbody>
                   {Object.keys(formattedData)?.map((key, index) => {
                     let categoryOrderQuantity  = false;
-                    if(order.Account.id == localStorage.getItem("AccountId__c")&&order.Manufacturer.id==localStorage.getItem("ManufacturerId__c")){
+                    if(order?.Account?.id == localStorage.getItem("AccountId__c")&&order?.Manufacturer?.id==localStorage.getItem("ManufacturerId__c")){
                     categoryOrderQuantity = isCategoryCarted(key);
                     }
                     return (
@@ -135,7 +135,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                           let cartProduct = isProductCarted(value.Id);
 
                           let listPrice = Number(value?.usdRetail__c?.replace('$', '').replace(',', ''));
-                          if (listPrice == 'NaN') {
+                          if (isNaN(listPrice)) {
                             listPrice = 0;
                           }
                           let salesPrice = 0;

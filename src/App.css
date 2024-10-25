@@ -332,6 +332,7 @@ input#searchright {
 }
 .abc{
   display: inline;
+  color: #ccc;
 }
 .search {
   position: absolute;

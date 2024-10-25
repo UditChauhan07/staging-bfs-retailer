@@ -44,7 +44,7 @@ function App() {
   return (
     <UserProvider>
       <CartProvider>
-        <BrowserRouter>  <HubSpotTracker />
+        <BrowserRouter> 
           <CartHover />
           <HubSpotTracker />
           <Routes>
