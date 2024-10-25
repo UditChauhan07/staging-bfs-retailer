@@ -41,40 +41,78 @@ const initialOrder = {
 // Cart Provider component
 const CartProvider = ({ children }) => {
     const [order, setOrder] = useState({});
-
     useEffect(() => {
-        // Gets the orders from local storage on initial render
-        const savedCart = localStorage.getItem(orderCartKey);
-        if (savedCart) {
-            setOrder(savedCart ? JSON.parse(savedCart) : initialOrder);
-        }
-    
+        const fetchCart = async () => {
+            try {
+                const user = await GetAuthData();
+                const getOrder = { CreatedBy: user.data.retailerId };
+                const cart = await cartSync({ cart: getOrder });
+
+                // Validate if the fetched cart has essential content like Account and Manufacturer
+                if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
+                    setOrder(cart); // Set the fetched cart if valid
+                    localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
+                } else {
+                    setOrder(initialOrder); // Use initial order if no valid cart is found
+                }
+            } catch (err) {
+                console.error('Error fetching cart:', err);
+            }
+        };
+
+        fetchCart();
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                fetchCart();
+                // console.log('Page is active');
+                // Check for updates or fetch data
+            }
+        };
+
+        const handleFocus = () => {
+            // console.log('Window is focused');
+            // Maybe refresh data or resume actions
+        };
+
+        const handleBlur = () => {
+            // console.log('Window is blurred');
+            // Pause any ongoing activities
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('focus', handleFocus);
+        window.addEventListener('blur', handleBlur);
+
+
         // Add event listener for storage changes
         const handleStorageChange = (event) => {
             if (event.key === orderCartKey) {
                 const updatedCart = event.newValue ? JSON.parse(event.newValue) : initialOrder;
-                setOrder(updatedCart);  // Update the order state when another tab modifies the cart
+                setOrder(updatedCart); // Update the order state when another tab modifies the cart
             }
         };
-    
+
         window.addEventListener('storage', handleStorageChange);
-    
+
         return () => {
-            window.removeEventListener('storage', handleStorageChange);  // Cleanup listener on unmount
+            window.removeEventListener('storage', handleStorageChange); // Cleanup listener on unmount
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleFocus);
+            window.removeEventListener('blur', handleBlur);
         };
     }, []);
-    
+
     useEffect(() => {
         const syncCart = async () => {
             try {
+
                 // Save the updated cart to local storage
                 localStorage.setItem(orderCartKey, JSON.stringify(order));
-    
                 const user = await GetAuthData();
                 if (!order.CreatedBy) {
                     order.CreatedBy = user.data.retailerId;
                 }
-    
+
                 order.CreatedAt = order.CreatedAt || new Date();
                 if (order?.Account?.id && order?.Manufacturer?.id) {
                     if (!order.id) {
@@ -83,27 +121,16 @@ const CartProvider = ({ children }) => {
                             keyBasedUpdateCart({ id: uniqueId });
                         }
                     }
-                } else {
-                    let draft = localStorage.getItem(orderCartKey) || {};
-                    if (draft) {
-                        draft = JSON.parse(draft);
-                    }
-                    console.log({ draft });
+                    await cartSync({ cart: order });
                 }
-    
-                // Uncomment this if you're syncing the cart with a backend
-                // const res = await cartSync({ cart: order });
-                // if (res?.id) {
-                //     setOrder(res);
-                // }
             } catch (err) {
                 console.error(err);
             }
         };
-    
+
         syncCart();
     }, [order]);
-    
+
 
 
 
@@ -394,8 +421,8 @@ const CartProvider = ({ children }) => {
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
-        const matchingProducts = order.items?.filter(item => item.Id === productId)||[];
-        
+        const matchingProducts = order.items?.filter(item => item.Id === productId) || [];
+
 
         // If found, return the array of matching products; if not, return false
         return matchingProducts.length > 0 ? { ...order, items: matchingProducts[0] } : false;
@@ -444,8 +471,7 @@ const CartProvider = ({ children }) => {
     // Delete the entire cart (reset to initial state)
     const deleteOrder = async () => {
         try {
-            order.delete = true;
-            const res = await cartSync({ cart: order });
+            const res = await cartSync({ cart: { id: order.id, delete: true } });
 
             if (res) {
                 setOrder(initialOrder); // Only reset if deletion was successful

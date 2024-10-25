@@ -9,11 +9,16 @@ const HubSpotTracker = () => {
         if (window.hj) {
           window.hj('stateChange', location.pathname);
           GetAuthData().then((user)=>{
+            
             if(user){
               if(user?.data){
                 window.hj('identify', user.data.retailerId, {
                   userName: user.data.firstName +' '+user.data.lastName ,
-                  email: user.data.email
+                  email: user.data.email,
+                  phone: user.data.phone,
+                  // accounts:accountList.length ? 
+                  // accountList.map(e=>e.Name)
+                  //  :null
                 });
               }
             }
