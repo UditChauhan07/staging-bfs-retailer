@@ -83,6 +83,7 @@ function MyBagOrder(props) {
     if (data?.Tracking__c) finalData.push(trackingumberDetail)
       let productHeaderDetail = { "": "Product Name", " ": "Product Code", "  ": "Product Qty", "   ": "Product Price" }
     if (data?.OpportunityLineItems?.length > 0) finalData.push(productHeaderDetail)
+
       if (data?.OpportunityLineItems?.length) {
         data?.OpportunityLineItems?.map((ele) => {
           

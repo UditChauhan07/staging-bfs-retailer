@@ -75,36 +75,41 @@ export async function POGenerator() {
   try {
 
     let orderDetails = fetchBeg();
-    let date = new Date();
+    if (orderDetails.Manufacturer?.id && orderDetails.Account?.id) {
 
-    //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
-    const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        accountName: orderDetails.Account?.name,
-        manufacturerName: orderDetails.Manufacturer?.name,
-        orderDate: date.toISOString(),
-        accountId: orderDetails.Account?.id,
-        manufacturerId: orderDetails.Manufacturer?.id
-      }),
-    });
+      let date = new Date();
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+      //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
+      const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accountName: orderDetails.Account?.name,
+          manufacturerName: orderDetails.Manufacturer?.name,
+          orderDate: date.toISOString(),
+          accountId: orderDetails.Account?.id,
+          manufacturerId: orderDetails.Manufacturer?.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
 
-    const poData = await response.json();
+      const poData = await response.json();
 
-    if (poData.success) {
-      let generatedPONumber = poData.poNumber;
+      if (poData.success) {
+        let generatedPONumber = poData.poNumber;
 
-      return await generatedPONumber;
+        return await generatedPONumber;
+      } else {
+        console.error('Failed to generate PO number:', poData.message);
+        return null;
+      }
     } else {
-      console.error('Failed to generate PO number:', poData.message);
       return null;
     }
   } catch (error) {
@@ -170,7 +175,11 @@ export function supportClear() {
 
 
 export async function DestoryAuth() {
-  localStorage.clear();
+  for (var key in localStorage) {
+    if (localStorage.hasOwnProperty(key) && (key != "AA0KfX2OoNJvz7x" && key != "passwordB2B" && key != "emailB2B")) {
+      localStorage.removeItem(key);
+    }
+  }
   window.location.href = window.location.origin;
   return true;
 }
@@ -374,8 +383,7 @@ export async function getOrderProduct({ rawData }) {
 }
 
 export async function cartSync({ cart }) {
-  console.log({cart});
-  
+
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -387,12 +395,16 @@ export async function cartSync({ cart }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.log({data});
+  if (data.data) {
+    return data.data;
+  } else {
+    return true;
+  }
 }
 
-export async function OrderPlaced({ order }) {
+export async function OrderPlaced({ order, cartId }) {
   let orderinit = {
-    info: order,
+    info: order, cartId
   };
   let headersList = {
     "Content-Type": "application/json",
@@ -685,7 +697,7 @@ export async function getProductDetails({ rawData }) {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url + "dLobBeDavajtlNa", {
+  let response = await fetch(url2 + "dLobBeDavajtlNa", {
     method: "POST",
     body: JSON.stringify(rawData),
     headers: headersList,
@@ -753,27 +765,27 @@ export async function getSessionStatus({ key, salesRepId }) {
   }
 }
 
-export async function getMarketingCalendar({ key, manufacturerId, year,accountIds }) {
+export async function getMarketingCalendar({ key, manufacturerId, year, accountIds }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url2 + "/eVC3IaiEEz3x7ym", {
+  let response = await fetch(url2 + "eVC3IaiEEz3x7ym", {
     method: "POST",
-    body: JSON.stringify({ key, manufacturerId, year,accountIds }),
+    body: JSON.stringify({ key, manufacturerId, year, accountIds }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  
+
   if (data.status == 300) {
     DestoryAuth();
   } else {
     let discount = {};
-    if(data?.Discount){
+    if (data?.Discount) {
       discount = data.Discount;
     }
-    return {list:data?.data,discount};
+    return { list: data?.data, discount };
   }
 }
 
@@ -1249,6 +1261,19 @@ export const productGuides = {
 
 
 };
+
+export function isDateEqualOrGreaterThanToday(dateString) {
+  // Parse the input date string
+  const inputDate = new Date(dateString);
+  // Get today's date
+  const today = new Date();
+
+  // Set time to 00:00:00 to compare only dates
+  today.setHours(0, 0, 0, 0);
+
+  // Compare the dates
+  return today >= inputDate;
+}
 
 
 export function DateConvert(dateString, timeStamp = false) {

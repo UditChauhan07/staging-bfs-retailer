@@ -151,8 +151,8 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                                           setProductDetailId(product.Id);
                                         }} style={{ cursor: 'pointer' }}>{product.Name}</h3>
                                         <div className="size">
-                                          <p>
-                                            Size <span className="ProductQty">{product.Size_Volume_Weight__c}</span>
+                                        <p>
+                                            Size <span className="ProductQty">{!product.Size_Volume_Weight__c ? 'N/A' : product.Size_Volume_Weight__c }</span>
                                           </p>
                                           <p style={{ marginRight: '10px' }}>Price <span className="ProductQty">{listPrice}</span></p>
                                         </div>

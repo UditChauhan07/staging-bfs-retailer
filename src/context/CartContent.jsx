@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { cartSync } from '../lib/store';
+import { cartSync, GetAuthData } from '../lib/store';
 let orderCartKey = "AA0KfX2OoNJvz7x"
 
 // Create the context
@@ -33,36 +33,78 @@ const initialOrder = {
     items: [], // Cart items
     orderQuantity: 0, // Total quantity of products
     total: 0, // Total price,
-    PaymentDetails: {}
+    PaymentDetails: {},
+    CreatedBy: null,
+    CreatedAt: null
 };
 
 // Cart Provider component
 const CartProvider = ({ children }) => {
-    const [order, setOrder] = useState(() => {
-        const savedCart = localStorage.getItem(orderCartKey);
-        return savedCart ? JSON.parse(savedCart) : initialOrder;
-    });
+    const [order, setOrder] = useState({});
 
     useEffect(() => {
-        localStorage.setItem(orderCartKey, JSON.stringify(order));
-        if (order.Account.id && order.Manufacturer.id) {
-            if (!order.id) {
-               let unquieId = generateUniqueCode();
-               if(unquieId){
-                keyBasedUpdateCart({id:unquieId});
-               }
-            } else {
-
-                cartSync({cart:order}).then((res)=>{
-                    console.log({res});
-                }).catch(
-                    (err)=>{
-                        console.error(err);
-                    }
-                )
-            }
+        // Gets the orders from local storage on initial render
+        const savedCart = localStorage.getItem(orderCartKey);
+        if (savedCart) {
+            setOrder(savedCart ? JSON.parse(savedCart) : initialOrder);
         }
+    
+        // Add event listener for storage changes
+        const handleStorageChange = (event) => {
+            if (event.key === orderCartKey) {
+                const updatedCart = event.newValue ? JSON.parse(event.newValue) : initialOrder;
+                setOrder(updatedCart);  // Update the order state when another tab modifies the cart
+            }
+        };
+    
+        window.addEventListener('storage', handleStorageChange);
+    
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);  // Cleanup listener on unmount
+        };
+    }, []);
+    
+    useEffect(() => {
+        const syncCart = async () => {
+            try {
+                // Save the updated cart to local storage
+                localStorage.setItem(orderCartKey, JSON.stringify(order));
+    
+                const user = await GetAuthData();
+                if (!order.CreatedBy) {
+                    order.CreatedBy = user.data.retailerId;
+                }
+    
+                order.CreatedAt = order.CreatedAt || new Date();
+                if (order?.Account?.id && order?.Manufacturer?.id) {
+                    if (!order.id) {
+                        let uniqueId = generateUniqueCode();
+                        if (uniqueId) {
+                            keyBasedUpdateCart({ id: uniqueId });
+                        }
+                    }
+                } else {
+                    let draft = localStorage.getItem(orderCartKey) || {};
+                    if (draft) {
+                        draft = JSON.parse(draft);
+                    }
+                    console.log({ draft });
+                }
+    
+                // Uncomment this if you're syncing the cart with a backend
+                // const res = await cartSync({ cart: order });
+                // if (res?.id) {
+                //     setOrder(res);
+                // }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+    
+        syncCart();
     }, [order]);
+    
+
 
 
     const generateUniqueCode = () => {
@@ -78,7 +120,7 @@ const CartProvider = ({ children }) => {
 
 
     const confirmReplaceCart = (accountMatch, manufacturerMatch, orderTypeMatch, msg = null) => {
-        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new details?";
+        let message = "Account, Manufacturer, or Order Type do not match the current cart. Do you want to replace the cart with the new cart?";
         if (accountMatch && manufacturerMatch && orderTypeMatch) {
             if (msg) {
                 message = msg;
@@ -86,9 +128,9 @@ const CartProvider = ({ children }) => {
                 message = "The account, manufacturer, and order type match. Do you want to proceed with the cart replacement?";
             }
         } else if (!accountMatch) {
-            message = "The account does not match the current cart. Do you want to replace the cart with the new account details?";
+            message = "The account does not match the current cart. Do you want to replace the cart with the new account order?";
         } else if (!manufacturerMatch) {
-            message = "The manufacturer does not match the current cart. Do you want to replace the cart with the new manufacturer details?";
+            message = "The brand does not match the current cart brand. Do you want to replace the cart with the new brand order?";
         } else if (!orderTypeMatch) {
             message = "The order type does not match the current cart. Do you want to replace the cart with the new order type?";
         }
@@ -323,8 +365,8 @@ const CartProvider = ({ children }) => {
     // Remove a product from the cart by productId
     const removeProduct = (productId) => {
         setOrder((prevOrder) => {
-            const updatedItems = prevOrder.items.filter(item => item.Id !== productId);
-            const removedItem = prevOrder.items.find(item => item.Id === productId);
+            const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
+            const removedItem = prevOrder.items?.find(item => item.Id === productId);
 
             // If the cart is empty after removing the item, reset to initialOrder
             if (updatedItems.length === 0) {
@@ -352,7 +394,8 @@ const CartProvider = ({ children }) => {
 
     const isProductCarted = (productId) => {
         // Check if the product exists in the cart
-        const matchingProducts = order.items.filter(item => item.Id === productId);
+        const matchingProducts = order.items?.filter(item => item.Id === productId)||[];
+        
 
         // If found, return the array of matching products; if not, return false
         return matchingProducts.length > 0 ? { ...order, items: matchingProducts[0] } : false;
@@ -399,9 +442,21 @@ const CartProvider = ({ children }) => {
 
 
     // Delete the entire cart (reset to initial state)
-    const deleteOrder = () => {
-        setOrder(initialOrder);
+    const deleteOrder = async () => {
+        try {
+            order.delete = true;
+            const res = await cartSync({ cart: order });
+
+            if (res) {
+                setOrder(initialOrder); // Only reset if deletion was successful
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     };
+
 
     // Get order total
     const getOrderTotal = () => {

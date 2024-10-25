@@ -465,7 +465,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                     </div>
                                                 </div>
                                                 <div className={Styles1.totalProductPrice} >
-                                                    {(orderId && (!searchPo || searchPo == "")) && <>
+                                                       {(orderId && (!searchPo || searchPo == "")) && <>
                                                         <div className={Styles1.Margitotal}>
                                                             <p className={Styles1.detailsTitleHolder}>Customer Support For</p>
                                                             <p className={Styles1.detailsDescHolder}>Customer Service</p>

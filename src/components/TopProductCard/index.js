@@ -13,7 +13,6 @@ import { useCart } from "../../context/CartContent";
 const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, addToCart = true }) => {
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState(null);
-  // const { orders, setOrders, setOrderQuantity, addOrder, setOrderProductPrice } = useBag();
   const { updateProductQty, addOrder, removeProduct,isProductCarted } = useCart();
   
   const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
@@ -28,33 +27,6 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   const [accountNumber, setAccountNumber] = useState()
   const [dealAccountList, setAccountList] = useState([]);
   const [selectAccount, setSelectAccount] = useState();
-
-  let styles = {
-    holder: {
-      border: '1px dashed #ccc',
-      padding: '10px',
-      width: '100%',
-      marginBottom: '20px'
-    },
-    title: {
-      color: '#000',
-      textAlign: 'left',
-      fontFamily: 'Montserrat',
-      fontSize: '14px',
-      fontStyle: 'normal',
-      fontWeight: 500,
-      lineHeight: '24px',
-      letterSpacing: '2.2px',
-      textTransform: 'uppercase'
-    },
-    field: {
-      width: '100%',
-      minHeight: '40px',
-      borderBottom: '1px solid #ccc',
-      borderRadius: '10px',
-      background: '#f4f4f4'
-    }
-  }
 
   useEffect(() => { }, [productDetailId, productImages]);
 
@@ -141,12 +113,42 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
     setSelectAccount();
   }
   const HtmlFieldSelect = ({ title, list = [], value, onChange }) => {
+    let styles = {
+      holder: {
+        border: '1px dashed #ccc',
+        padding: '10px',
+        width: '100%',
+        marginBottom: '20px'
+      },
+      title: {
+        color: '#000',
+        textAlign: 'left',
+        fontFamily: 'Montserrat',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: '24px',
+        letterSpacing: '2.2px',
+        textTransform: 'uppercase'
+      },
+      field: {
+        width: '100%',
+        minHeight: '40px',
+        borderBottom: '1px solid #ccc',
+        borderRadius: '10px',
+        background: '#f4f4f4'
+      }
+    }
     return (<div style={styles.holder}>
       <p style={styles.title}>{title}</p>
       <Select
         type="text"
         id={title?.replaceAll(/\s+/g, '-')}
         options={list}
+        menuPortalTarget={document.body} // This will render the dropdown outside of the div
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Ensure dropdown appears over everything
+        }}
         onChange={(option) => {
           onChange?.(option)
         }}
@@ -159,12 +161,12 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
       <ModalPage
         open={dealAccountList?.length ? true : false}
         content={
-          <div className="d-flex flex-column gap-3">
-            <h2>Alert!</h2>
+          <div className="d-flex flex-column" style={{width:'400px', height: "215px"}}>
+            <h2>Attention!</h2>
             <p>
-              You have multi store with deal with this Brand.<br /> can you please select you create order for
-              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
+              Please select store you want to order for
             </p>
+              <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
             <div className="d-flex justify-content-around ">
               <button className={Styles.btn} onClick={accountSelectionHandler}>
                 OK
@@ -184,7 +186,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             <div className="d-flex flex-column gap-3">
               <h2>Warning</h2>
               <p>
-                Adding this item will replace <br></br> your current cart
+                Adding this item will replace <br></br> your current Bag
               </p>
               <div className="d-flex justify-content-around ">
                 <button className={Styles.btn} onClick={replaceCart}>
@@ -309,8 +311,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                 {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                 <p className={Styles.priceHolder}>
                   <div>
-                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</p>:null}
-                  </div>
+                    {salesPrice != listPrice ? <p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:ProductInCart?<p className={Styles.priceCrossed}>${listPrice.toFixed(2)}</p>:null}
+                  </div>&nbsp;
                   <div>
                     <p>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice}</p>
                   </div>
@@ -347,13 +349,11 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
                       onQuantityChange(
                         product,
                         product?.Min_Order_QTY__c || 1,
-                        parseFloat(salesPrice),
-                        accountDetails?.[product?.ManufacturerId__c]?.Discount
                       )
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    Add to Cart
+                    Add to Bag
                   </p>
                 )}
               </div>

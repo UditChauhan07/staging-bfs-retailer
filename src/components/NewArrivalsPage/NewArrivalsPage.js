@@ -9,12 +9,13 @@ import Pagination from "../Pagination/Pagination";
 import Loading from "../Loading";
 import LoaderV2 from "../loader/v2";
 import { useNavigate } from "react-router-dom";
-import { GetAuthData } from "../../lib/store";
+import { GetAuthData, isDateEqualOrGreaterThanToday } from "../../lib/store";
 import Select from "react-select";
 import { useCart } from "../../context/CartContent";
 import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails }) {
+  console.log("account Details " , accountDetails)
   const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState();
@@ -179,7 +180,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
         let cartStatus = addOrder(element, account, manufacturer);
       }
     }
-  };
+  }  
   const accountSelectionHandler = () => {
     onQuantityChange(replaceCartProduct.product, replaceCartProduct.quantity, replaceCartProduct.salesPrice)
     accountSelectionCloseHandler();
@@ -188,6 +189,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
     setReplaceCartProduct();
     setAccountList();
     setSelectAccount();
+    setDealAccountList();
   }
 
   const HtmlFieldSelect = ({ title, list = [], value, onChange }) => {
@@ -244,10 +246,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
               <HtmlFieldSelect value={selectAccount} list={dealAccountList} onChange={(value) => setSelectAccount(value)} />
             </p>
             <div className="d-flex justify-content-around ">
-              <button className={Styles.btn} onClick={accountSelectionHandler}>
+              <button className={`${StylesModal.modalButton}`} onClick={accountSelectionHandler}>
                 OK
               </button>
-              <button className={Styles.btn} onClick={accountSelectionCloseHandler}>
+              <button className={`${StylesModal.modalButton}`} onClick={accountSelectionCloseHandler}>
                 Cancel
               </button>
             </div>
@@ -260,9 +262,11 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
         content={
           <>
             <div style={{ maxWidth: "309px" }}>
-              <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Select Store</h1>
-              <p className={` ${StylesModal.ModalContent}`}>Please select Store you want to order for.</p>
-              <Select options={accountList.map((account) => ({ label: account.Name, value: account.Id }))} />
+              <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Attention!</h1>
+              <p>
+              Please select store you want to order for
+            </p>
+              <Select options={accountList?.map((account) => ({ label: account.Name, value: account.Id }))} />
               <div className="d-flex justify-content-center">
                 <button
                   className={`${Styles.modalButton}`}
@@ -270,7 +274,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                     setAccountSelectCheck(false);
                   }}
                 >
-                  Add to Cart
+                  Add to Bag
                 </button>
               </div>
             </div>
@@ -286,7 +290,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
           content={
             <>
               <div style={{ maxWidth: "309px" }}>
-                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Cart</h1>
+                <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Bag</h1>
                 <p className={` ${StylesModal.ModalContent}`}>This product will be available soon. Please check back later</p>
                 <div className="d-flex justify-content-center">
                   <button
@@ -322,6 +326,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                     let ProductInCart = isProductCarted(product.Id);
                     if (true) {
                       let listPrice = Number(product?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+                      if(isNaN(listPrice)){
+                        listPrice = product?.usdRetail__c;
+                      }
                       let salesPrice = 0;
                       let selectProductDealWith = accountDetails?.[product.ManufacturerId__c] || []
                       let listOfAccounts = Object.keys(selectProductDealWith);
@@ -366,8 +373,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           </p>
                           {selAccount?.Name ? <small>Price for <b>{selAccount.Name}</b></small> :ProductInCart?<small>Price for <b>{ProductInCart.Account.name}</b></small> : null}
                           <p className={Styles.priceHolder}> 
-                          {salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice.toFixed(2)}&nbsp;</div>:null}
-                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : salesPrice.toFixed(2) ?? "-- . --"}</div>
+                          {(!isNaN(salesPrice)&&!isNaN(listPrice)) ?salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice.toFixed(2)}</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice.toFixed(2)}</div>:null:null}
+                          &nbsp;
+                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice.toFixed(2):listPrice ?? "-- . --"}</div>
                             </p>
                             <div className={Styles.linkHolder}>
                               {ProductInCart ? (
@@ -396,8 +404,9 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                   </div>
                                 </>
                               ) : (
+                                
                                 <p className={Styles.btnHolder} onClick={() => {
-                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)) {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {
                                     onQuantityChange(
                                       product,
                                       product?.Min_Order_QTY__c || 1,
@@ -405,10 +414,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                                   } else {
                                     setModalShow(true)
                                   }
-
+                                  
                                 }
-                                }>
-                                  add to Cart {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive)?<small className={Styles.soonHolder}>coming soon</small>:null}
+                              }>
+                                  add to Bag {!product.ProductUPC__c || !product.ProductCode || !product.IsActive || (!product?.PricebookEntries?.records?.length || !product?.PricebookEntries?.records?.[0]?.IsActive&&(!isNaN(salesPrice)&&!isNaN(listPrice))||!isDateEqualOrGreaterThanToday(product.Launch_Date__c))?<small className={Styles.soonHolder}>coming soon</small>:null}
                                 </p>)}
                             </div>
                         </div>
