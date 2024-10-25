@@ -126,7 +126,7 @@ const Accordion = ({ data, formattedData, productImage = [], productCartSchema =
                 <tbody>
                   {Object.keys(formattedData)?.map((key, index) => {
                     let categoryOrderQuantity  = false;
-                    if(order.Account.id == localStorage.getItem("AccountId__c")&&order.Manufacturer.id==localStorage.getItem("ManufacturerId__c")){
+                    if(order?.Account?.id == localStorage.getItem("AccountId__c")&&order?.Manufacturer?.id==localStorage.getItem("ManufacturerId__c")){
                     categoryOrderQuantity = isCategoryCarted(key);
                     }
                     return (
