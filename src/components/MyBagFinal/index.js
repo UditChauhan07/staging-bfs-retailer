@@ -167,7 +167,7 @@ function MyBagFinal() {
               ManufacturerId__c: order?.Manufacturer?.id,
               PONumber: PONumber,
               desc: orderDesc,
-              SalesRepId: order.SalesRepId,
+              SalesRepId: order?.Account?.SalesRepId,
               Type: orderType,
               ShippingCity: order?.Account?.address?.city,
               ShippingStreet: order?.Account?.address?.street,
