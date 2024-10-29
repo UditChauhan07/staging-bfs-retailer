@@ -31,6 +31,7 @@ const CartHover = () => {
         localStorage.setItem("address", JSON.stringify(order.Account.address));
         navigate("/orders");
     }
+    if(path == '/'||path == '/login'||path == '/logout') return null;
     return (
         <div className={styles.holder}>
             {path != "/my-bag" ?

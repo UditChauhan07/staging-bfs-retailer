@@ -15,11 +15,10 @@ import { DeleteIcon } from "../../lib/svg";
 
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal,fetchCart } = useCart();
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
   const [alert, setAlert] = useState(0);
-  const [orderDesc, setOrderDesc] = useState(null);
   const [PONumber, setPONumber] = useState();
   const [buttonActive, setButtonActive] = useState(false);
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
@@ -46,7 +45,10 @@ function MyBagFinal() {
     setTotal(getOrderTotal() ?? 0)
   }, [order])
 
+  
+
   useEffect(() => {
+    fetchCart();
     const FetchPoNumber = async () => {
       try {
         const res = await POGenerator();
@@ -166,8 +168,8 @@ function MyBagFinal() {
               Name: order?.Account?.name,
               ManufacturerId__c: order?.Manufacturer?.id,
               PONumber: PONumber,
-              desc: orderDesc,
-              SalesRepId: order.SalesRepId,
+              desc: order?.Note,
+              SalesRepId: order?.Account?.SalesRepId,
               Type: orderType,
               ShippingCity: order?.Account?.address?.city,
               ShippingStreet: order?.Account?.address?.street,
