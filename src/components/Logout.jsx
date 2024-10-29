@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { DestoryAuth } from "../lib/store";
+import AppLayout from "./AppLayout";
+import LoaderV3 from "./loader/v3";
 
 const Logout = () => {
   useEffect(() => {
@@ -16,7 +18,7 @@ const Logout = () => {
     
     window.location.href = "/";
   }, []);
-  return <></>;
+  return <AppLayout><LoaderV3/></AppLayout>;
 };
 
 export default Logout;
