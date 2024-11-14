@@ -214,6 +214,7 @@ const SalesReport = () => {
       setSalesRepList(salesList);
       setSalesReportData(result.data.data);
       setOwnerPermission(result.data.ownerPermission);
+      setIsLoading(false);
     }
     let value = { yearFor, accountIds: strAccountIds };
     const cachedData = await dataStore.retrieve("/purchase-report" + JSON.stringify(value));
@@ -221,7 +222,6 @@ const SalesReport = () => {
     
     if (cachedData) {
       reportReady(cachedData)
-      setIsLoading(false);
     }
     let result = await dataStore.update("/purchase-report" + JSON.stringify(value), () => salesReportApi.salesReportData(value));
     console.log({ result ,value});
