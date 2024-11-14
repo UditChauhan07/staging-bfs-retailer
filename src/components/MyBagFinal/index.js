@@ -183,14 +183,18 @@ function MyBagFinal() {
             OrderPlaced({ order: begToOrder, cartId: order.id })
               .then((response) => {
                 if (response) {
-                  if (response.length) {
+                  console.log({response});
+                  
+                  if (response?.err) {
                     setIsDisabled(false)
                     setIsOrderPlaced(0);
-                    setorderStatus({ status: true, message: response[0].message });
-                  } else {
+                    setorderStatus({ status: true, message: response?.err[0].message });
+                  } 
+                  if(response?.orderId) {
                     setIsDisabled(false)
                     let status = deleteOrder();
-                    navigate("/order-list");
+                    localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
+                    navigate("/orderDetails");
                     setIsOrderPlaced(2);
                   }
                 }
