@@ -7,7 +7,7 @@
     position: absolute;
     right: -10px;
     top: 40px;
-    min-width: 280px;
+    min-width: 250px;
     max-height: 300px;
     z-index: 999;
     background-color: #fff;
@@ -39,51 +39,64 @@
     cursor: pointer;
 }
 
+/* Container for the entire suggestion item */
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
 
-.search-logo {
-    height: 45px;
-    width: auto;
-    
-    object-fit: contain; 
+.suggestion-item:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 /* Container for image */
 .suggested-images {
-    width: 30px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+/* Styling for images in suggestion */
+.search-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
 }
 
 /* Content container */
 .suggested-content {
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-   
 }
 
 /* Main text for name */
 .api-name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: #333;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; 
-    text-align: justify;
-    padding-left: 25px;
-
+    text-overflow: ellipsis;
+    text-align: left;
 }
 
 /* Secondary text for label */
 .suggestion-name {
-    font-size: 10px;
-    color: #888;
+    font-size: 12px;
+    color: #555;
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0.5px;
-    margin: 0;
-    text-align: justify;
-    padding-left: 25px;
+    margin-top: 2px;
+    text-align: left;
 }

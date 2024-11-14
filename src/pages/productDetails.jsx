@@ -27,17 +27,23 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPop
             setIsModalOpen(isPopUp);
             setProduct({ isLoaded: false, data: [], discount: {} });
             GetAuthData()
-                .then((user) => {
+                .then(async (user) => {
                     const rawData = {
                         productId,
                         key: user?.data?.x_access_token,
                         accountIds: JSON.stringify(AccountId || user.data.accountIds),
                     };
-                    getProductDetails({ rawData })
-                        .then((productRes) => {
+                    const cachedData = await dataStore.retrieve("/productPage/" + productId);
+                    if (cachedData) {
+                        setProduct({ isLoaded: true, data: cachedData?.data, discount: cachedData?.discount });
+                    }else{
+                        getProductDetails({ rawData })
+                        .then(async (productRes) => {
+                            let update = await dataStore.updateData("/productPage/" + productId,productRes);
                             setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount });
                         })
                         .catch((proErr) => console.log({ proErr }));
+                    }
                 })
                 .catch((err) => console.log({ err }));
         }

@@ -154,42 +154,43 @@ const LogoHeader = () => {
                   <ul className="dropdown-search">
                     {suggestions.map((suggestion) => (
                       <li key={suggestion.Id} onClick={() => handleSuggestionClick(suggestion.Id, suggestion.ManufacturerId__c, suggestion.type, suggestion.Id)}>
-                        {console.log({suggestion})
-                        }
-                        <div className="suggested-images">
-                          {suggestion.type === "Account_Manufacturer__c" && (
-                            <img className="search-logo" src={`\\assets\\images\\brandImage\\${suggestion.ManufacturerId__c}.png`} onError={(e) => (e.target.src = "\\assets\\images\\dummy.png")} alt="Manufacturer Logo" />
-                          )}
-                          {suggestion.type === "case" && <CustomerServiceIcon width={30} height={30} />}
-                          {suggestion.type === "account" && <FaStore />}
-                          {suggestion.type === "order" && <OrderIcon height={50} width={50} />}
-                          {suggestion.type === "Product2" && (
-                            <img className="search-logo" src={`${suggestion.imageUrl}?oauth_token=${key}`} onError={(e) => (e.target.src = "\\assets\\images\\dummy.png")} alt="" />
-                          )}
-                        </div>
-                        <div className="suggested-content">
-                          <div className="api-name">
-                            {suggestion.type === "Account_Manufacturer__c" && suggestion.ManufacturerName__c}
-                            {suggestion.type === "account" && suggestion.Name}
-                            {suggestion.type === "order" && suggestion.PO_Number__c}
-                            {suggestion.type === "case" && suggestion.CaseNumber}
-                            {suggestion.type === "Product2" && (
-                              <span
-                                className="product-name"
-                                title={suggestion.Name} // This will show the full name in the tooltip
-                              >
-                                {suggestion.Name.length > 18 ? `${suggestion.Name.substring(0, 18)}...` : suggestion.Name}
-                              </span>
-                            )}
-                          </div>
-                          <div className="suggested-name">
-                            {suggestion.type === "Account_Manufacturer__c" ? <p className="suggestion-name">BRAND</p> : null}
-                            {suggestion.type === "account" ? <p className="suggestion-name">STORE</p> : null}
-                            {suggestion.type === "case" ? <p className="suggestion-name">CASE</p> : null}
-                            {suggestion.type === "order" ? <p className="suggestion-name">PLACED ORDER</p> : null}
-                            {suggestion.type === "Product2" && !suggestion.OpportunityId ? <p className="suggestion-name">PRODUCT</p> : null}
-                          </div>
-                        </div>
+                       <div className="suggestion-item">
+  <div className="suggested-images">
+    {suggestion.type === "Account_Manufacturer__c" && (
+      <img className="search-logo" src={`\\assets\\images\\brandImage\\${suggestion.ManufacturerId__c}.png`} onError={(e) => (e.target.src = "\\assets\\images\\dummy.png")} alt="Manufacturer Logo" />
+    )}
+    {suggestion.type === "case" && <CustomerServiceIcon width={30} height={30} />}
+    {suggestion.type === "account" && <FaStore />}
+    {suggestion.type === "order" && <OrderIcon height={50} width={50} />}
+    {suggestion.type === "Product2" && (
+      <img className="search-logo" src={`${suggestion.imageUrl}?oauth_token=${key}`} onError={(e) => (e.target.src = "\\assets\\images\\dummy.png")} alt="" />
+    )}
+  </div>
+  <div className="suggested-content">
+    <div className="api-name">
+      {suggestion.type === "Account_Manufacturer__c" && suggestion.ManufacturerName__c}
+      {suggestion.type === "account" && suggestion.Name}
+      {suggestion.type === "order" && suggestion.PO_Number__c}
+      {suggestion.type === "case" && suggestion.CaseNumber}
+      {suggestion.type === "Product2" && (
+        <span
+          className="product-name"
+          title={suggestion.Name} // Shows full name on hover
+        >
+          {suggestion.Name.length > 18 ? `${suggestion.Name.substring(0, 18)}...` : suggestion.Name}
+        </span>
+      )}
+    </div>
+    <div className="suggested-name">
+      {suggestion.type === "Account_Manufacturer__c" && <p className="suggestion-name">Brand</p>}
+      {suggestion.type === "account" && <p className="suggestion-name">Store</p>}
+      {suggestion.type === "case" && <p className="suggestion-name">Case</p>}
+      {suggestion.type === "order" && <p className="suggestion-name">Placed Order</p>}
+      {suggestion.type === "Product2" && !suggestion.OpportunityId && <p className="suggestion-name">Product</p>}
+    </div>
+  </div>
+</div>
+
                       </li>
                     ))}
                   </ul>
