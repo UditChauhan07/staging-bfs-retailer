@@ -8,6 +8,16 @@ export function CustomerServiceIcon({ width = 25, height = 25,fill='black' }) {
     </svg>
   );
 }
+export function OrderIcon ({ width = 25, height = 25 ,fill="none"}){
+  return(<svg width={width} height={height} viewBox="0 0 24 24" fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10"  stroke-width="2" />
+    <rect x="6" y="7" width="12" height="10" fill="white" stroke="black" stroke-width="1.5" />
+    <line x1="8" y1="9" x2="16" y2="9" stroke="grey" stroke-width="1.5" />
+    <line x1="8" y1="12" x2="16" y2="12" stroke="grey" stroke-width="1.5" />
+    <line x1="8" y1="15" x2="16" y2="15" stroke="grey" stroke-width="1.5" />
+    <path d="M10 16 L12 18 L16 12" fill="none" stroke="black" stroke-width="1.5" />
+  </svg>)
+}
 export function DeleteIcon({ width = 25, height = 25 ,fill="none"}){
   return(<svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 14 19" fill={fill}>
   <path
