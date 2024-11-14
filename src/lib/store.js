@@ -423,13 +423,13 @@ export async function OrderPlaced({ order, cartId }) {
     localStorage.removeItem(accountKey);
     let lastCount = localStorage.getItem(POCount) || 1;
     localStorage.setItem(POCount, parseInt(+lastCount + 1));
-    return data.order;
+    return {orderId:data.order,err:null};
   } else if (data.status == 300) {
     DestoryAuth();
   } else {
     if (data?.data) {
-      return data.data
-    } else {
+      return {err:data.data,orderId:null}
+    }else {
       return false;
     }
   }
