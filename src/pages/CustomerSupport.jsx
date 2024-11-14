@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 
 let PageSize = 10;
@@ -32,10 +33,17 @@ const CustomerSupport = () => {
       .then((user) => {
         if (user) {
           setAccountList(user.data.accountList)
-          getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) }).then((resManu) => {
+          dataStore.getPageData("getAllAccountBrand", () =>getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })).then(async (resManu) => {
             console.log({resManu});
             setManufacturerData(resManu);
-            getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })
+            const cachedData = await dataStore.retrieve("/customer-support");
+            if(cachedData){
+              if (cachedData) {
+                setSupportList(cachedData);
+              }
+              setLoaded(true);
+            }
+            dataStore.getPageData("/customer-support", () =>getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) }))
               .then((supports) => {
                 // console.log({ supports });
                 if (supports) {

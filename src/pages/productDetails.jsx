@@ -7,6 +7,7 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 import { useCart } from "../context/CartContent";
 import Select from "react-select";
+import dataStore from "../lib/dataStore";
 
 
 const ProductDetails = ({ productId, setProductDetailId, AccountId = null }) => {
@@ -22,10 +23,14 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null }) => 
         if (productId) {
             setIsModalOpen(true)
             setProduct({ isLoaded: false, data: [], discount: {} })
-            GetAuthData().then((user) => {
+            GetAuthData().then(async (user) => {
 
                 let rawData = { productId: productId, key: user?.data?.x_access_token, accountIds: JSON.stringify(AccountId || user.data.accountIds) }
-                getProductDetails({ rawData }).then((productRes) => {
+                const cachedData = await dataStore.retrieve("/product" + productId);
+                if (cachedData) {
+                    setProduct({ isLoaded: true, data: cachedData.data, discount: cachedData.discount })
+                }
+                dataStore.getPageData("/product" + productId, () => getProductDetails({ rawData })).then((productRes) => {
 
                     setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount })
                 }).catch((proErr) => {

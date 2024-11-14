@@ -11,9 +11,10 @@ import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
-import { GetAuthData, getAllAccountBrand} from "../../lib/store";
+import { GetAuthData, getAllAccountBrand } from "../../lib/store";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import LoaderV3 from "../../components/loader/v3";
+import dataStore from "../../lib/dataStore";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -184,7 +185,7 @@ const SalesReport = () => {
   const resetFilter = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
-    getSalesData(yearFor,accountIds);
+    getSalesData(yearFor, accountIds);
     setYearFor(2024);
     setSearchBy("");
     setSearchBySalesRep("");
@@ -194,26 +195,38 @@ const SalesReport = () => {
   const getSalesData = async (yearFor, strAccountIds = "[]") => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
-    const result = await salesReportApi.salesReportData({ yearFor, accountIds: strAccountIds });
-    let salesListName = [];
-    let salesList = [];
-    result.data.data.map((manu) => {
-      if (manu.Orders.length) {
-        manu.Orders.map((item) => {
-          if (!salesListName.includes(item.AccountRepo)) {
-            salesListName.push(item.AccountRepo);
-            salesList.push({
-              label: item.AccountRepo,
-              value: item.AccountRepo,
-            });
-          }
-        });
-      }
-    });
-    setSalesRepList(salesList);
-    setSalesReportData(result.data.data);
-    setOwnerPermission(result.data.ownerPermission);
-    setIsLoading(false);
+    const reportReady = (result) => {
+      let salesListName = [];
+      let salesList = [];
+      result.data.data.map((manu) => {
+        if (manu.Orders.length) {
+          manu.Orders.map((item) => {
+            if (!salesListName.includes(item.AccountRepo)) {
+              salesListName.push(item.AccountRepo);
+              salesList.push({
+                label: item.AccountRepo,
+                value: item.AccountRepo,
+              });
+            }
+          });
+        }
+      });
+      setSalesRepList(salesList);
+      setSalesReportData(result.data.data);
+      setOwnerPermission(result.data.ownerPermission);
+    }
+    let value = { yearFor, accountIds: strAccountIds };
+    const cachedData = await dataStore.retrieve("/purchase-report" + JSON.stringify(value));
+    console.log({cachedData,value});
+    
+    if (cachedData) {
+      reportReady(cachedData)
+      setIsLoading(false);
+    }
+    let result = await dataStore.update("/purchase-report" + JSON.stringify(value), () => salesReportApi.salesReportData(value));
+    console.log({ result ,value});
+
+    reportReady(result);
   };
   // console.log("salesReportData", salesReportData);
   const [manufacturerData, setManufacturerData] = useState([]);
@@ -223,9 +236,8 @@ const SalesReport = () => {
     GetAuthData().then((user) => {
       if (user) {
         setAccountids(JSON.stringify(user.data.accountIds))
-        console.log({a:user.data.accountList});
         setAccountList(user.data.accountList)
-        getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+        dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((resManu) => {
           setManufacturerData(resManu);
           getSalesData(yearFor, JSON.stringify(user.data.accountIds));
         }).catch((err) => {
