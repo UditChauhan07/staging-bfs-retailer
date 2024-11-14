@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 import { FilterItem } from "../components/FilterItem";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 let PageSize = 10;
 
@@ -99,13 +100,20 @@ const OrderListPage = () => {
     setAccount(accountIds)
     setLoaded(false);
     GetAuthData()
-      .then((response) => {
+      .then(async (response) => {
         setAccountList(response.data.accountList)
+        const cachedData = await dataStore.retrieve("/getAllAccountOrders");
+        if(cachedData){
+          let sorting = sortingList(cachedData);
+          setOrders(sorting);
+          setLoaded(true);
+        }
+        dataStore.getPageData("/getAllAccountOrders"+accountIds?accountIds:null, () =>
         getAllAccountOrders({
           key: response.data.x_access_token,
           accountIds: JSON.stringify(accountIds||response.data.accountIds),
           month: filterValue.month,
-        })
+        }))
           .then((order) => {
             console.log({ order });
             let sorting = sortingList(order);

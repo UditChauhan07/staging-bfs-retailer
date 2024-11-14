@@ -10,6 +10,7 @@ import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
+import dataStore from "../lib/dataStore.js";
 
 const CustomerService = () => {
   const { state } = useLocation();
@@ -79,13 +80,23 @@ const CustomerService = () => {
     }
     setIsLoad(false)
     GetAuthData()
-      .then((response) => {
+      .then(async (response) => {
         setContactId(response.data.retailerId)
         setContactName(response.data.firstName + " " + response.data.lastName)
-        getAllAccountOrders({
-          key: response.data.x_access_token,
-          accountIds: JSON.stringify(response.data.accountIds)
-        })
+        const cachedData = await dataStore.retrieve("/getAllAccountOrders");
+        if (cachedData) {
+          let sorting = sortingList(cachedData);
+          if (sorting.length) {
+            setDSalesRep(sorting[0].OwnerId)
+          }
+          setIsLoad(true)
+          setOrders(sorting);
+        }
+        dataStore.getPageData("/getAllAccountOrders", () =>
+          getAllAccountOrders({
+            key: response.data.x_access_token,
+            accountIds: JSON.stringify(response.data.accountIds)
+          }))
           .then((order) => {
             let sorting = sortingList(order);
             if (sorting.length) {
@@ -97,7 +108,7 @@ const CustomerService = () => {
           .catch((error) => {
             console.log({ error });
           });
-        getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) }).then((accounts) => {
+        dataStore.getPageData("/getAllAccountLocation", () => getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) })).then((accounts) => {
           setAccountList(accounts)
         }).catch((storeErr) => {
           console.log({ storeErr });

@@ -18,6 +18,7 @@ import SpreadsheetUploader from "./OrderForm";
 import { CSVLink } from "react-csv";
 import LoaderV3 from "../loader/v3";
 import { useCart } from "../../context/CartContent";
+import dataStore from "../../lib/dataStore";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
@@ -173,22 +174,16 @@ function Product() {
         setProductImage({ isLoaded: false, images: {} })
       }
     }
-    GetAuthData().then((user) => {
-      let rawData = {
-        key: user?.data.x_access_token,
-        Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
-        Manufacturer: localStorage.getItem("ManufacturerId__c"),
+    GetAuthData().then(async (user) => {
+      let filtkey = {
         AccountId__c: localStorage.getItem("AccountId__c"),
+        Manufacturer: localStorage.getItem("ManufacturerId__c"),
+        Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
       }
-      getProductList({ rawData }).then((productRes) => {
-        console.log({rawData});
-        
-        let productData = productRes.data.records || []
-        let discount = productRes.discount;
-        
-        setProductCartSchema({testerInclude:discount?.testerInclude||true,sampleInclude:discount?.sampleInclude||true})
-        setProductlist({ data: productData, isLoading: true, discount })
-
+      let rawData = {
+        key: user?.data.x_access_token,...filtkey
+      }
+      const orderProductReady = (productData)=>{
         //version 1
         // productData.map(product => {
         //   let productCode = product?.ProductCode
@@ -223,6 +218,23 @@ function Product() {
         }).catch((err) => {
           console.log({ err });
         })
+      }
+      const cachedData = await dataStore.retrieve("/order" + JSON.stringify(filtkey));
+      if (cachedData) {
+        let productData = cachedData.data.records || []
+        let discount = cachedData.discount;
+        setProductCartSchema({testerInclude:discount?.testerInclude||true,sampleInclude:discount?.sampleInclude||true})
+        setProductlist({ data: productData, isLoading: true, discount })
+        orderProductReady(productData)
+      }
+      dataStore.getPageData("/order" + JSON.stringify(filtkey), () =>getProductList({ rawData })).then((productRes) => {
+        
+        let productData = productRes.data.records || []
+        let discount = productRes.discount;
+        setProductCartSchema({testerInclude:discount?.testerInclude||true,sampleInclude:discount?.sampleInclude||true})
+        setProductlist({ data: productData, isLoading: true, discount })
+        orderProductReady(productData)
+       
       }).catch((errPro) => {
         console.log({ errPro });
       })

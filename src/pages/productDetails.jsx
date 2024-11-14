@@ -7,6 +7,7 @@ import ProductDetailCard from "../components/ProductDetailCard";
 import { CloseButton } from "../lib/svg";
 import { useCart } from "../context/CartContent";
 import Select from "react-select";
+import dataStore from "../lib/dataStore";
 
 
 

@@ -7,6 +7,8 @@ import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import { useLocation } from "react-router-dom";
+import dataStore from "../lib/dataStore";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -48,9 +50,24 @@ const NewArrivals = () => {
   }, [])
   useEffect(() => {
     GetAuthData().then((user) => {
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then(async (resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds), year: selectYear }).then((productRes) => {
+        const cachedData = await dataStore.retrieve("/marketing-calendar"+JSON.stringify(selectYear));
+        if (cachedData) {
+          setAccountDiscount(cachedData?.discount || {})
+
+          cachedData.list.map((month) => {
+            month.content.map((element) => {
+              element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
+              element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
+              return element;
+
+            })
+            return month;
+          })
+          setProductList(cachedData?.list);
+        }
+        dataStore.getPageData("/marketing-calendar"+JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear })).then((productRes) => {
 
           setAccountDiscount(productRes?.discount || {})
 

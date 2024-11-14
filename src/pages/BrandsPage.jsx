@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import BrandCard from "../components/BrandCard";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
 import { GetAuthData, getRetailerBrands } from "../lib/store";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -35,6 +36,7 @@ const brandsImageMap = {
 const defaultImage = "dummy.png";
 
 const BrandsPage = () => {
+  const location = useLocation();
   const [manufacturers, setManufacturers] = useState({ isLoading: false, data: [] });
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState(null);
@@ -49,12 +51,16 @@ const BrandsPage = () => {
       navigate("/");
     }
     GetAuthData()
-      .then((user) => {
+      .then(async (user) => {
         setUserData(user.data);
         if (user?.data?.accountIds.length == 1) {
-          getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } })
+          const cachedData = await dataStore.retrieve(location.pathname);
+          if (cachedData) {
+            setManufacturers({ isLoading: true, data: cachedData });
+          }
+          dataStore.update(location.pathname, () => getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } }))
             .then((prodcut) => {
-              setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
+              setManufacturers({ isLoading: true, data: prodcut });
             })
             .catch((getProductError) => {
               console.log({ getProductError });

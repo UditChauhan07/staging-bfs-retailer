@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 let PageSize = 5;
 
@@ -87,11 +88,18 @@ const OrderStatusIssues = ()=>{
     useEffect(() => {
       setLoaded(false);
       GetAuthData()
-        .then((response) => {
+        .then(async (response) => {
+          const cachedData = await dataStore.retrieve("/getAllAccountOrders");
+          if(cachedData){
+            let sorting = sortingList(cachedData);
+              setOrders(sorting);
+              setLoaded(true);
+          }
+          dataStore.getPageData("/getAllAccountOrders", () =>
           getAllAccountOrders({
             key: response.data.x_access_token,
             accountIds: JSON.stringify(response.data.accountIds)
-          })
+          }))
             .then((order) => {
               console.log({order});
               let sorting = sortingList(order);
