@@ -3,19 +3,31 @@ const dataStore = {
     async getPageData(pageKey, fetchData) {
         try {
             // Check if there's already data in localStorage
-            const cachedData = JSON.parse(localStorage.getItem(pageKey));
-            
-            // If cached data exists, return it immediately
+            const cachedData = localStorage.getItem(pageKey);
+
+            let parsedData = null;
             if (cachedData) {
+                try {
+                    parsedData = JSON.parse(cachedData);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            // If cached data exists, return it immediately
+            if (parsedData) {
                 // Start background update for fresh data
                 this.update(pageKey, fetchData);
-                return cachedData;
+                return parsedData;
             }
 
             // No cached data: fetch fresh data immediately, store it, and return it
             const data = await fetchData();
-            localStorage.setItem(pageKey, JSON.stringify(data));
-            return data;
+            if(data){
+                localStorage.setItem(pageKey, JSON.stringify(data));
+                return data;
+            }
+
 
         } catch (error) {
             console.error('Error in getPageData:', error);
@@ -39,6 +51,18 @@ const dataStore = {
         try {
             // Fetch new data in the background
             const data = await fetchData();
+            if (data) {
+                // Update localStorage with the fresh data
+                localStorage.setItem(pageKey, JSON.stringify(data));
+                return data;
+            }
+        } catch (error) {
+            console.error('Error updating data:', error);
+        }
+    },
+
+    async updateData(pageKey, data) {
+        try {
             if (data) {
                 // Update localStorage with the fresh data
                 localStorage.setItem(pageKey, JSON.stringify(data));
