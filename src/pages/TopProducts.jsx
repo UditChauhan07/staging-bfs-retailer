@@ -5,6 +5,7 @@ import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -16,7 +17,6 @@ const TopProducts = () => {
   let monthIndex = d.getMonth();
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [selectedMonth, setSelectedMonth] = useState();
-  const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   const [accountList, setAccountList] = useState([]);
@@ -65,6 +65,7 @@ const TopProducts = () => {
       if (!data[manufacturerFilter]) {
         data[manufacturerFilter] = {};
       }
+      
       if (Object.values(data[manufacturerFilter]).length > 0) {
         setIsLoaded(true)
         setProductImages({ isLoaded: true, images: data[manufacturerFilter] })
@@ -72,16 +73,15 @@ const TopProducts = () => {
         setProductImages({ isLoaded: false, images: {} })
       }
     }
-    GetAuthData().then((user) => {
+    GetAuthData().then(async (user) => {
       setSelectAccount(accountId || user.data.accountIds[0])
       setAccountList(user.data.accountList);
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      dataStore.getPageData("getAllAccountBrand", () =>getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((resManu) => {
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
-
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
+      const topProductReady = (products)=>{
         let result = [];
         if (products?.data?.length > 0) {
           result = products?.data?.sort(function (a, b) {
@@ -135,6 +135,14 @@ const TopProducts = () => {
             console.log({ aaa111: err });
           })
         }
+      }
+      let value ={ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }
+      const cachedData = await dataStore.retrieve("/top-products"+JSON.stringify(value));
+      if(cachedData){
+        topProductReady(cachedData)
+      }
+      dataStore.update("/top-products"+JSON.stringify(value), () =>topProduct(value)).then((products) => {
+        topProductReady(products)
       }).catch((err) => {
         console.log({ aaa: err });
       })

@@ -9,6 +9,7 @@ import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ContentLoader from "react-content-loader";
 import ProductDetails from "../../pages/productDetails";
+import dataStore from "../../lib/dataStore";
 
 const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
@@ -33,9 +34,8 @@ const BrandDetailCard = ({ brandId }) => {
                 setProductImages({ isLoaded: false, images: {} })
             }
         }
-        GetAuthData().then((user) => {
-            topProduct({ manufacturerId: brandId, accountIds: JSON.stringify([user.data.accountIds[0]]), month: monthIndex + 1 }).then((products) => {
-                setTopProduct({ isLoaded: true, data: products.data })
+        const topProductReady = (products)=>{
+            setTopProduct({ isLoaded: true, data: products.data })
                 let productCode = "";
                 products.data?.map((product, index) => {
                     productCode += `'${product.ProductCode}'`
@@ -56,6 +56,15 @@ const BrandDetailCard = ({ brandId }) => {
                 }).catch((err) => {
                     console.log({ aaa111: err });
                 })
+        }
+        GetAuthData().then(async (user) => {
+            let value = { manufacturerId: brandId, accountIds: JSON.stringify([user.data.accountIds[0]]), month: monthIndex + 1 }
+            const cachedData = await dataStore.retrieve("/top-products"+JSON.stringify(value));
+            if(cachedData){
+              topProductReady(cachedData)
+            }
+            dataStore.getPageData("/top-products"+JSON.stringify(value), () =>topProduct(value)).then((products) => {
+                topProductReady(products)
             }).catch((productErr) => {
                 console.log({ productErr });
             })

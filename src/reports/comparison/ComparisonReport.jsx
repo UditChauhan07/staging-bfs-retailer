@@ -12,6 +12,7 @@ import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import Styles from "./index.module.css";
 import { GetAuthData, sortArrayHandler } from "../../lib/store";
+import dataStore from "../../lib/dataStore";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
@@ -81,13 +82,25 @@ const ComparisonReport = () => {
     setIsLoading(true);
     setFilter(() => initialValues);
     initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
-    const result = await originalApiData.fetchComparisonReportAPI(initialValues);
+    const cachedData = await dataStore.retrieve("/comparison-report" + JSON.stringify(initialValues));
+
+    if (cachedData) {
+      setApiData(cachedData)
+      setIsLoading(false);
+    }
+    let result = await dataStore.update("/comparison-report" + JSON.stringify(initialValues), () => originalApiData.fetchComparisonReportAPI(initialValues));
     setApiData(result);
     setIsLoading(false);
   };
   const sendApiCall = async () => {
     setIsLoading(true);
-    const result = await originalApiData.fetchComparisonReportAPI(filter);
+    const cachedData = await dataStore.retrieve("/comparison-report" + JSON.stringify(filter));
+
+    if (cachedData) {
+      setApiData(cachedData)
+      setIsLoading(false);
+    }
+    let result = await dataStore.update("/comparison-report" + JSON.stringify(filter), () => originalApiData.fetchComparisonReportAPI(filter));
     setApiData(result);
     setIsLoading(false);
   };
