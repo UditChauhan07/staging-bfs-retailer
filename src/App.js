@@ -39,7 +39,7 @@ import HelpSection from "./pages/HelpSection";
 import PortalHelp from "./pages/PortalHelp";
 import { CartProvider } from "./context/CartContent";
 import CartHover from "./components/CartHover";
-
+import ProductPage from "./components/ProductPage/ProductPage";
 function App() {
   return (
     <UserProvider>
@@ -84,6 +84,7 @@ function App() {
             <Route path="/logout" element={<Logout />}></Route>
             <Route path="/store/:id" element={<StoreDetails />} />
             <Route path="/Brand/:id" element={<BrandDetails />} />
+            <Route path = "/productPage/:id" element={<ProductPage/>} />
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>
