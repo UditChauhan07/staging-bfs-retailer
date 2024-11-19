@@ -32,42 +32,12 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
   const [oldSupport, setOldSupport] = useState({});
   const [confirm, setConfirm] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false)
-  useEffect(() => {
-    dataStore.subscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
-    dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
-    getOrderDetails();
-    return () => {
-      dataStore.unsubscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
-      dataStore.unsubscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
-    }
-  }, []);
+
 
 
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json;charset=UTF-8",
-  };
-
-  useBackgroundUpdater(getOrderDetails,defaultLoadTime)
-
-  const getOrderDetails = async () => {
-    let data = ShareDrive();
-    if (!data) {
-      data = {};
-    }
-    GetAuthData().then((user) => {
-      let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
-      dataStore.getPageData(`/orderDetails?id=${OrderId}`,
-        ()=>getOrderDetailId({ rawData })).then((res) => {
-          if (res) {
-            handleOrderDetailReady(res)
-          }
-        }).catch((err1) => {
-          console.log({ err1 });
-        })
-    }).catch((err) => {
-      console.log({ err });
-    })
   };
 
   const handleOrderDetailReady = (data) => {
@@ -120,7 +90,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
           console.log({ err });
         })
       }
-      dataStore.getPageData(`/orderDetails/invoice/?id=${OrderId}`, ()=>getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } })).then((response) => {
+      dataStore.getPageData(`/orderDetails/invoice/?id=${OrderId}`, () => getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } })).then((response) => {
         setInvoice(response?.data)
       }).catch((error) => {
         console.error({ error });
@@ -130,6 +100,37 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
     })
   }
 
+  const getOrderDetails = async () => {
+    let data = ShareDrive();
+    if (!data) {
+      data = {};
+    }
+    GetAuthData().then((user) => {
+      let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
+      dataStore.getPageData(`/orderDetails?id=${OrderId}`,
+        () => getOrderDetailId({ rawData })).then((res) => {
+          if (res) {
+            handleOrderDetailReady(res)
+          }
+        }).catch((err1) => {
+          console.log({ err1 });
+        })
+    }).catch((err) => {
+      console.log({ err });
+    })
+  };
+
+  useBackgroundUpdater(getOrderDetails, defaultLoadTime)
+  
+  useEffect(() => {
+    dataStore.subscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
+    dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
+    getOrderDetails();
+    return () => {
+      dataStore.unsubscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
+      dataStore.unsubscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
+    }
+  }, []);
   const handleback = () => {
     navigate("/order-list");
   };
