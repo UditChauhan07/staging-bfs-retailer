@@ -24,18 +24,6 @@ const MyRetailersPage = ({manufacturerId}) => {
     }
   }, [manufacturerId]);
   const navigate = useNavigate();
-  useEffect(() => {
-    const userData = localStorage.getItem("Name");
-    if (!userData) {
-      navigate("/");
-    }
-    dataStore.subscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
-    getAccountsHandler()
-    return ()=>{
-      dataStore.unsubscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
-    }
-  }, []);
-  useBackgroundUpdater(getAccountsHandler,defaultLoadTime);
   const getAccountsHandler = () => {
     GetAuthData().then(async (user) => {
       // ["0011400001bsBxdAAE"]||
@@ -57,6 +45,19 @@ const MyRetailersPage = ({manufacturerId}) => {
       console.log({ err });
     })
   }
+  useEffect(() => {
+    const userData = localStorage.getItem("Name");
+    if (!userData) {
+      navigate("/");
+    }
+    dataStore.subscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
+    getAccountsHandler()
+    return ()=>{
+      dataStore.unsubscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
+    }
+  }, []);
+  useBackgroundUpdater(getAccountsHandler,defaultLoadTime);
+
   const { isLoading, data } = storeList
   return (
     <AppLayout
