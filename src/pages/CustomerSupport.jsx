@@ -27,21 +27,6 @@ const CustomerSupport = () => {
   const handleSupportUpdates = (data) => {
     setSupportList(data);
   };
-  useEffect(() => {
-    // Register the listener for '/customer-support' updates
-
-    dataStore.subscribe("/customer-support", handleSupportUpdates);
-
-    // Fetch initial data
-    getSupportListHandler();
-
-    // Cleanup the listener on component unmount
-    return () => {
-      dataStore.unsubscribe("/customer-support", handleSupportUpdates);
-    };
-  }, []);
-  useBackgroundUpdater(getSupportListHandler,defaultLoadTime)
-
   const getSupportListHandler = async (accountIds = null) => {
     try {
       setLoaded(false); // Start loading
@@ -85,6 +70,20 @@ const CustomerSupport = () => {
       setLoaded(true); // End loading
     }
   };
+  useEffect(() => {
+    // Register the listener for '/customer-support' updates
+
+    dataStore.subscribe("/customer-support", handleSupportUpdates);
+
+    // Fetch initial data
+    getSupportListHandler();
+
+    // Cleanup the listener on component unmount
+    return () => {
+      dataStore.unsubscribe("/customer-support", handleSupportUpdates);
+    };
+  }, []);
+  useBackgroundUpdater(getSupportListHandler,defaultLoadTime)
 
 
   // Handle unauthenticated user

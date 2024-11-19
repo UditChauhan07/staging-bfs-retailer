@@ -11,6 +11,7 @@ const useBackgroundUpdater = (callback, interval = 300000) => {
     const stopInterval = () => {
         clearInterval(intervalRef.current); // Stop the interval
     };
+    //hello
 
     const handleVisibilityChange = () => {
         if (document.visibilityState === "visible") {
