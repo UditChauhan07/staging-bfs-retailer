@@ -1,6 +1,6 @@
 import AppLayout from "../components/AppLayout";
 import { useEffect, useState } from "react";
-import { GetAuthData, getProductDetails } from "../lib/store";
+import { defaultLoadTime, GetAuthData, getProductDetails } from "../lib/store";
 import Loading from "../components/Loading";
 import ModalPage from "../components/Modal UI";
 import ProductDetailCard from "../components/ProductDetailCard";
@@ -8,6 +8,7 @@ import { CloseButton } from "../lib/svg";
 import { useCart } from "../context/CartContent";
 import Select from "react-select";
 import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 
 
@@ -22,32 +23,37 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPop
     const [selectAccount, setSelectAccount] = useState();
     const [replaceCartProduct, setReplaceCartProduct] = useState({});
 
+    const handlePageData = async () => {
+        setProduct({ isLoaded: false, data: [], discount: {} });
+        GetAuthData()
+            .then(async (user) => {
+                const rawData = {
+                    productId,
+                    key: user?.data?.x_access_token,
+                    accountIds: JSON.stringify(AccountId || user.data.accountIds),
+                };
+                dataStore.getPageData("/productPage/" + productId, () =>
+                    getProductDetails({ rawData }))
+                    .then(async (productRes) => {
+                        setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount });
+                    })
+                    .catch((proErr) => console.log({ proErr }));
+            })
+            .catch((err) => console.log({ err }));
+    }
+
     useEffect(() => {
         if (productId) {
+            dataStore.subscribe("/productPage/" + productId, (data) => setProduct({ isLoaded: true, data: data.data, discount: data.discount }));
             setIsModalOpen(isPopUp);
-            setProduct({ isLoaded: false, data: [], discount: {} });
-            GetAuthData()
-                .then(async (user) => {
-                    const rawData = {
-                        productId,
-                        key: user?.data?.x_access_token,
-                        accountIds: JSON.stringify(AccountId || user.data.accountIds),
-                    };
-                    const cachedData = await dataStore.retrieve("/productPage/" + productId);
-                    if (cachedData) {
-                        setProduct({ isLoaded: true, data: cachedData?.data, discount: cachedData?.discount });
-                    }else{
-                        getProductDetails({ rawData })
-                        .then(async (productRes) => {
-                            let update = await dataStore.updateData("/productPage/" + productId,productRes);
-                            setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount });
-                        })
-                        .catch((proErr) => console.log({ proErr }));
-                    }
-                })
-                .catch((err) => console.log({ err }));
+            handlePageData();
+            return () => {
+                dataStore.unsubscribe("/productPage/" + productId, (data) => setProduct({ isLoaded: true, data: data.data, discount: data.discount }));
+            }
         }
     }, [productId, isPopUp]);
+
+    useBackgroundUpdater(handlePageData,defaultLoadTime)
 
     if (!productId) return null;
 

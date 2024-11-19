@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import Filters from "../components/OrderList/Filters";
 import Styles from "../components/OrderList/style.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getAllAccountOrders } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountOrders } from "../lib/store";
 import Pagination from "../components/Pagination/Pagination";
 import OrderListContent from "../components/OrderList/OrderListContent";
 import { FilterItem } from "../components/FilterItem";
 import LoaderV3 from "../components/loader/v3";
 import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 let PageSize = 10;
 
@@ -88,32 +89,39 @@ const OrderListPage = () => {
   }, [filterValue, orders, searchShipBy]);
 
   useEffect(() => {
+    const handleOrderUppdate = (data) => {
+      console.log({data});
+      
+      let sorting = sortingList(data);
+      setOrders(sorting);
+    }
+    dataStore.subscribe(`/getAllAccountOrders${account??''}`, handleOrderUppdate);
     orderListHandler(account)
+    return () => {
+      dataStore.unsubscribe(`/getAllAccountOrders${account??''}`, handleOrderUppdate);
+    };
 
-  }, [filterValue.month]);
+  }, []);
+
+  useBackgroundUpdater(()=>orderListHandler(account),defaultLoadTime);
 
   useEffect(() => {
     setShipByText(searchShipBy);
   }, [searchShipBy]);
 
-  const orderListHandler = (accountIds=null) => {
+  const orderListHandler = (accountIds = null) => {
     setAccount(accountIds)
     setLoaded(false);
     GetAuthData()
       .then(async (response) => {
         setAccountList(response.data.accountList)
-        const cachedData = await dataStore.retrieve("/getAllAccountOrders");
-        if(cachedData){
-          let sorting = sortingList(cachedData);
-          setOrders(sorting);
-          setLoaded(true);
-        }
-        dataStore.getPageData("/getAllAccountOrders"+accountIds?accountIds:null, () =>
-        getAllAccountOrders({
-          key: response.data.x_access_token,
-          accountIds: JSON.stringify(accountIds||response.data.accountIds),
-          month: filterValue.month,
-        }))
+        
+        dataStore.getPageData(`/getAllAccountOrders${accountIds ? accountIds : ''}`, () =>
+          getAllAccountOrders({
+            key: response.data.x_access_token,
+            accountIds: JSON.stringify(accountIds || response.data.accountIds),
+            month: filterValue.month,
+          }))
           .then((order) => {
             console.log({ order });
             let sorting = sortingList(order);
@@ -137,16 +145,16 @@ const OrderListPage = () => {
             <FilterItem
               minWidth="220px"
               label="All Store"
-              value={account?account.length?account[0]:null:null}
+              value={account ? account.length ? account[0] : null : null}
 
               options={[...accountList.map((month, i) => ({
                 label: month.Name,
                 value: month.Id,
               })), { label: 'All Store', value: null }]}
               onChange={(value) => {
-                if(value){
+                if (value) {
                   orderListHandler([value]);
-                }else{
+                } else {
                   orderListHandler();
                 }
               }}

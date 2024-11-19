@@ -6,7 +6,7 @@ import img2 from "./Images/Vector.png";
 import img3 from "./Images/Group.png";
 import img4 from "./Images/Group1.png";
 import { PieChart, Pie, Cell } from "recharts";
-import { AuthCheck, GetAuthData, formatNumber, getDashboardata, hexabrand, months } from "../../lib/store";
+import { AuthCheck, GetAuthData, defaultLoadTime, formatNumber, getDashboardata, hexabrand, months } from "../../lib/store";
 import { getRandomColors } from "../../lib/color";
 import ContentLoader from "react-content-loader";
 import AppLayout from "../AppLayout";
@@ -15,6 +15,7 @@ import { UserIcon } from "../../lib/svg";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContent";
 import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
@@ -212,238 +213,33 @@ function Dashboard({ dashboardData }) {
     if (!AuthCheck()) {
       // navigate("/");
     }
+    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }),dashBoardReady);
     getDataHandler({ month: currentMonth, year: currentYear });
+    return () => {
+      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }),dashBoardReady);
+    };
   }, []);
+
+  useBackgroundUpdater(()=>getDataHandler({month: PurchaseMonth, year: PurchaseYear}),defaultLoadTime);
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
-
     // setIsLoaded(true);
     GetAuthData()
       .then(async (user) => {
         setSalesRepId(user.Sales_Rep__c);
         if (headers) {
           headers.key = user.data.x_access_token
+
           user.headers = headers;
           if (!headers.accountIds) {
             user.headers = { ...user.headers, accountIds: JSON.stringify(user.data.accountIds) }
           }
         }
-        const dashBoardReady = (dashboard) => {
-          console.log("booo");
-
-          setAccountList(user.data.accountList)
-          setGoalList(dashboard.goalByMonth ?? [])
-          let totalOrder = dashboard?.totalOrder || 0;
-          let totalPrice = dashboard.totalPrice || 0;
-          let totalTarget = 0;
-          let activeBrand = 0;
-          if (dashboard?.monthlyManufactureData) {
-
-            let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
-            activeBrand = monthlyDataKey.length;
-            // let temp = [];
-            monthlyDataKey.map((id) => {
-              // temp.push(dashboard.monthlyManufactureData[id])
-              // totalPrice += dashboard.monthlyManufactureData[id]?.sale
-              // totalOrder += dashboard.monthlyManufactureData[id]?.own
-              totalTarget += dashboard.monthlyManufactureData[id]?.target
-            })
-            // setBrandData({ isLoaded: true, data: temp })
-          }
-          let oldSalesAmount = dashboard?.oldSalesAmount || 0;
-          let currentSalesAmount = totalPrice || 0
-          let growth = parseInt(((currentSalesAmount - oldSalesAmount) / oldSalesAmount) * 100)
-          setBox({ RETAILERS: activeBrand || 0, GROWTH: growth || 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
-          let yearlyPrice = 0
-          let yearlyTarget = 0;
-          if (dashboard?.yearlyManufacturerData) {
-
-            let yearlyDataKey = Object.keys(dashboard?.yearlyManufacturerData)
-            activeBrand = yearlyDataKey.length;
-            // let temp = [];
-
-            //patch
-            yearlyDataKey.map((id) => {
-              // temp.push(dashboard.yearlyManufacturerData[id])'
-              yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[parseInt(headers?.month ?? PurchaseMonth) - 1]]?.sale
-              yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[parseInt(headers?.month ?? PurchaseMonth) - 1]]?.target
-            })
-          }
+        setAccountList(user.data.accountList)
 
 
-          let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
-          setValue(tempValue)
-          setNeedle_data([
-            { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
-            { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
-          ])
-          let tempValue2 = ((dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100) <= 100 ? (dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100 : 100;
-          setRValue(tempValue2)
-          setNeedle_data2([
-            { name: "A", value: parseInt(tempValue2), color: "#16BC4E" },
-            { name: "B", value: parseInt(tempValue2 > 0 ? 100 - tempValue2 : 100), color: "rgb(171 195 203)" },
-          ])
-          setTargetValue(formatNumber(yearlyTarget || 0));
-          setRetailerTarget(formatNumber((yearlyTarget * 2) || 0))
-          setAchievedSales(formatNumber(yearlyPrice || 0));
-          setRetailerNum(formatNumber(dashboard.retailerNumberValue || 0))
-
-          setIsLoading(true)
-          //ownManuFactureData
-          if (dashboard?.monthlyManufactureData) {
-            let colorArray = [];
-            Object.values(dashboard?.monthlyManufactureData).map((value) => {
-              colorArray.push(hexabrand[value.id]);
-            })
-            setDataa({
-              series: [
-                {
-                  name: "Diptyque",
-                  data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-                },
-                {
-                  name: "Byredo",
-                  data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
-                },
-                {
-                  name: "Bobbi Brown",
-                  data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
-                },
-                {
-                  name: "By Terry",
-                  data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
-                },
-                {
-                  name: "Revive",
-                  data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
-                },
-                {
-                  name: "Kevyn Aucoin",
-                  data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
-                },
-                {
-                  name: "Smashbox",
-                  data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
-                },
-              ],
-              options: {
-                chart: {
-                  type: "area",
-                },
-                stroke: {
-                  curve: "smooth",
-                  width: 2,
-                },
-
-                dataLabels: {
-                  enabled: true,
-                },
-                colors: colorArray,
-                fill: {
-                  type: "gradient",
-                  gradient: {
-                    opacityFrom: 0,
-                    opacityTo: 0,
-                  },
-                },
-
-                xaxis: {
-                  categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                },
-                yaxis: {
-                  title: {
-                    text: "$ (Dollar)",
-                  },
-                },
-
-                tooltip: {
-                  y: {
-                    formatter: function (val) {
-                      return "$" + Number(val).toFixed(2) + "";
-                    },
-                  },
-                },
-              },
-            })
-            setSalesByBrandData({
-              series: Object.values(dashboard?.monthlyManufactureData).map((value) => {
-                return value?.own || 0;
-              }),
-              options: {
-                chart: {
-                  type: "donut",
-                },
-                labels: {
-                  show: true,
-                  name: {
-                    show: true,
-                    offsetY: 38,
-                    formatter: () => "out of 553 points",
-                  },
-                },
-                plotOptions: {
-                  pie: {
-                    donut: {
-                      labels: {
-                        show: true,
-
-                        total: {
-                          show: true,
-                          showAlways: true,
-                          label: "Total Orders",
-                          formatter: function (w) {
-                            const t = w.globals.seriesTotals;
-                            const result = t.reduce((a, b) => a + b, 0);
-                            return result;
-                            // return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-
-                responsive: [
-                  {
-                    breakpoint: 100,
-                    options: {
-                      chart: {
-                        width: "100px",
-                      },
-                    },
-                  },
-                ],
-                colors: colorArray,
-                labels: Object.values(dashboard?.monthlyManufactureData).map((value) => {
-                  return value?.name || 0;
-                }),
-              },
-            });
-          }
-          if (dashboard?.yearlyManufacturerData) {
-            let monthlyDataKey = Object.keys(dashboard.yearlyManufacturerData)
-            let temp = [];
-            monthlyDataKey.map((id) => {
-              let indexValue = dashboard.yearlyManufacturerData[id];
-              let raw = {
-                name: indexValue.name,
-                data: []
-              }
-              monthNames.map((month, index) => {
-                raw.data.push(indexValue[month].sale.toFixed(2))
-              })
-              temp.push(raw)
-            })
-            setManufacturerSalesYaer(temp)
-          }
-        }
-        const cachedData = await dataStore.retrieve("dashboard" + JSON.stringify(headers));
-        if (cachedData) {
-          dashBoardReady(cachedData)
-        }
-        dataStore.update("dashboard" + JSON.stringify(headers), () => getDashboardata({ user })).then((dashboard) => {
-          console.log({ dashboard });
+        dataStore.getPageData("/dashboard" + JSON.stringify({ month: headers.month, year: headers.year, accountIds: [account] }), () => getDashboardata({ user })).then((dashboard) => {
 
           dashBoardReady(dashboard)
         })
@@ -455,6 +251,215 @@ function Dashboard({ dashboardData }) {
         console.error({ error });
       });
   };
+  const dashBoardReady = (dashboard) => {
+    console.log({dashboard});
+    
+
+    setGoalList(dashboard.goalByMonth ?? [])
+    let totalOrder = dashboard?.totalOrder || 0;
+    let totalPrice = dashboard.totalPrice || 0;
+    let totalTarget = 0;
+    let activeBrand = 0;
+    if (dashboard?.monthlyManufactureData) {
+
+      let monthlyDataKey = Object.keys(dashboard?.monthlyManufactureData)
+      activeBrand = monthlyDataKey.length;
+      // let temp = [];
+      monthlyDataKey.map((id) => {
+        // temp.push(dashboard.monthlyManufactureData[id])
+        // totalPrice += dashboard.monthlyManufactureData[id]?.sale
+        // totalOrder += dashboard.monthlyManufactureData[id]?.own
+        totalTarget += dashboard.monthlyManufactureData[id]?.target
+      })
+      // setBrandData({ isLoaded: true, data: temp })
+    }
+    let oldSalesAmount = dashboard?.oldSalesAmount || 0;
+    let currentSalesAmount = totalPrice || 0
+    let growth = parseInt(((currentSalesAmount - oldSalesAmount) / oldSalesAmount) * 100)
+    setBox({ RETAILERS: activeBrand || 0, GROWTH: growth || 0, ORDERS: totalOrder || 0, REVENUE: totalPrice || 0, TARGET: totalTarget || 0 })
+    let yearlyPrice = 0
+    let yearlyTarget = 0;
+    if (dashboard?.yearlyManufacturerData) {
+
+      let yearlyDataKey = Object.keys(dashboard?.yearlyManufacturerData)
+      activeBrand = yearlyDataKey.length;
+      // let temp = [];
+
+      //patch
+      yearlyDataKey.map((id) => {
+        // temp.push(dashboard.yearlyManufacturerData[id])'
+        yearlyPrice += dashboard.yearlyManufacturerData[id][monthNames[parseInt(PurchaseMonth) - 1]]?.sale
+        yearlyTarget += dashboard.yearlyManufacturerData[id][monthNames[parseInt(PurchaseMonth) - 1]]?.target
+      })
+    }
+
+
+    let tempValue = (yearlyPrice / yearlyTarget * 100) <= 100 ? yearlyPrice / yearlyTarget * 100 : 100;
+    setValue(tempValue)
+    setNeedle_data([
+      { name: "A", value: parseInt(tempValue), color: "#16BC4E" },
+      { name: "B", value: parseInt(tempValue > 0 ? 100 - tempValue : 100), color: "#C7C7C7" },
+    ])
+    let tempValue2 = ((dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100) <= 100 ? (dashboard.retailerNumberValue || 0) / (yearlyTarget * 2) * 100 : 100;
+    setRValue(tempValue2)
+    setNeedle_data2([
+      { name: "A", value: parseInt(tempValue2), color: "#16BC4E" },
+      { name: "B", value: parseInt(tempValue2 > 0 ? 100 - tempValue2 : 100), color: "rgb(171 195 203)" },
+    ])
+    setTargetValue(formatNumber(yearlyTarget || 0));
+    setRetailerTarget(formatNumber((yearlyTarget * 2) || 0))
+    setAchievedSales(formatNumber(yearlyPrice || 0));
+    setRetailerNum(formatNumber(dashboard.retailerNumberValue || 0))
+
+    setIsLoading(true)
+    //ownManuFactureData
+    if (dashboard?.monthlyManufactureData) {
+      let colorArray = [];
+      Object.values(dashboard?.monthlyManufactureData).map((value) => {
+        colorArray.push(hexabrand[value.id]);
+      })
+      setDataa({
+        series: [
+          {
+            name: "Diptyque",
+            data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+          },
+          {
+            name: "Byredo",
+            data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
+          },
+          {
+            name: "Bobbi Brown",
+            data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
+          },
+          {
+            name: "By Terry",
+            data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
+          },
+          {
+            name: "Revive",
+            data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
+          },
+          {
+            name: "Kevyn Aucoin",
+            data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
+          },
+          {
+            name: "Smashbox",
+            data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
+          },
+        ],
+        options: {
+          chart: {
+            type: "area",
+          },
+          stroke: {
+            curve: "smooth",
+            width: 2,
+          },
+
+          dataLabels: {
+            enabled: true,
+          },
+          colors: colorArray,
+          fill: {
+            type: "gradient",
+            gradient: {
+              opacityFrom: 0,
+              opacityTo: 0,
+            },
+          },
+
+          xaxis: {
+            categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+          },
+          yaxis: {
+            title: {
+              text: "$ (Dollar)",
+            },
+          },
+
+          tooltip: {
+            y: {
+              formatter: function (val) {
+                return "$" + Number(val).toFixed(2) + "";
+              },
+            },
+          },
+        },
+      })
+      setSalesByBrandData({
+        series: Object.values(dashboard?.monthlyManufactureData).map((value) => {
+          return value?.own || 0;
+        }),
+        options: {
+          chart: {
+            type: "donut",
+          },
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              offsetY: 38,
+              formatter: () => "out of 553 points",
+            },
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: true,
+
+                  total: {
+                    show: true,
+                    showAlways: true,
+                    label: "Total Orders",
+                    formatter: function (w) {
+                      const t = w.globals.seriesTotals;
+                      const result = t.reduce((a, b) => a + b, 0);
+                      return result;
+                      // return result < 1000 ? result.toFixed(1) : `${(result / 1000).toFixed(1)}K`;
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          responsive: [
+            {
+              breakpoint: 100,
+              options: {
+                chart: {
+                  width: "100px",
+                },
+              },
+            },
+          ],
+          colors: colorArray,
+          labels: Object.values(dashboard?.monthlyManufactureData).map((value) => {
+            return value?.name || 0;
+          }),
+        },
+      });
+    }
+    if (dashboard?.yearlyManufacturerData) {
+      let monthlyDataKey = Object.keys(dashboard.yearlyManufacturerData)
+      let temp = [];
+      monthlyDataKey.map((id) => {
+        let indexValue = dashboard.yearlyManufacturerData[id];
+        let raw = {
+          name: indexValue.name,
+          data: []
+        }
+        monthNames.map((month, index) => {
+          raw.data.push(indexValue[month].sale.toFixed(2))
+        })
+        temp.push(raw)
+      })
+      setManufacturerSalesYaer(temp)
+    }
+  }
   const [PurchaseYear, setPurchaseYear] = useState(currentYear)
   const [PurchaseMonth, setPurchaseMonth] = useState(currentMonth)
   const [goalList, setGoalList] = useState([]);
@@ -471,12 +476,17 @@ function Dashboard({ dashboardData }) {
 
     setPurchaseMonth(month)
     let accountIds = null;
+    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }), dashBoardReady);
     if (account) {
       accountIds = [account]
       getDataHandler({ month, year, accountIds: JSON.stringify(accountIds) });
+
     } else {
       getDataHandler({ month, year });
     }
+    return () => {
+      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }), dashBoardReady);
+    };
   };
   const changeAccountHandler = (value) => {
     setIsLoading(false);
@@ -484,12 +494,16 @@ function Dashboard({ dashboardData }) {
     setManufacturerSalesYaer([]);
     setBox({ RETAILERS: 0, GROWTH: 0, ORDERS: 0, REVENUE: 0, TARGET: 0 })
     let accountIds = null;
+    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }), dashBoardReady);
     if (value) {
       accountIds = [value]
       getDataHandler({ month: PurchaseMonth, year: PurchaseYear, accountIds: JSON.stringify(accountIds) });
     } else {
       getDataHandler({ month: PurchaseMonth, year: PurchaseYear });
     }
+    return () => {
+      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }), dashBoardReady);
+    };
   };
   const RADIAN = Math.PI / 180;
   const cx = 150;
