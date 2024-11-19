@@ -11,8 +11,9 @@ import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import Styles from "./index.module.css";
-import { GetAuthData, sortArrayHandler } from "../../lib/store";
+import { defaultLoadTime, GetAuthData, sortArrayHandler } from "../../lib/store";
 import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const date = new Date();
@@ -82,28 +83,37 @@ const ComparisonReport = () => {
     setIsLoading(true);
     setFilter(() => initialValues);
     initialValues.accountIds = JSON.stringify(userData?.data?.accountIds)
-    const cachedData = await dataStore.retrieve("/comparison-report" + JSON.stringify(initialValues));
+    dataStore.subscribe("/comparison-report" + JSON.stringify(initialValues), handleComparisonReady);
 
-    if (cachedData) {
-      setApiData(cachedData)
-      setIsLoading(false);
+    let result = await dataStore.getPageData("/comparison-report" + JSON.stringify(initialValues), () => originalApiData.fetchComparisonReportAPI(initialValues));
+    handleComparisonReady(result)
+    return ()=>{
+      dataStore.unsubscribe("/comparison-report" + JSON.stringify(initialValues), handleComparisonReady);
     }
-    let result = await dataStore.update("/comparison-report" + JSON.stringify(initialValues), () => originalApiData.fetchComparisonReportAPI(initialValues));
-    setApiData(result);
-    setIsLoading(false);
   };
   const sendApiCall = async () => {
     setIsLoading(true);
-    const cachedData = await dataStore.retrieve("/comparison-report" + JSON.stringify(filter));
+    dataStore.subscribe("/comparison-report" + JSON.stringify(filter),handleComparisonReady);
+    handlePageData();
+    return ()=>{
+      dataStore.unsubscribe("/comparison-report" + JSON.stringify(filter),handleComparisonReady);
+    }
+  };
+  
+  const handlePageData = async ()=>{
+    let result = await dataStore.getPageData("/comparison-report" + JSON.stringify(filter), () => originalApiData.fetchComparisonReportAPI(filter));
+    
+    handleComparisonReady(result)
+  }
 
-    if (cachedData) {
-      setApiData(cachedData)
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
+  const handleComparisonReady = (data) => {
+    if (data) {
+      setApiData(data);
       setIsLoading(false);
     }
-    let result = await dataStore.update("/comparison-report" + JSON.stringify(filter), () => originalApiData.fetchComparisonReportAPI(filter));
-    setApiData(result);
-    setIsLoading(false);
-  };
+  }
   const { accountIds } = filter
   return (
     <AppLayout

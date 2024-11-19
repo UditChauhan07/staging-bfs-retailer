@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
-import { GetAuthData, getAllAccount, getAllAccountLocation, getAllAccountOrders, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
+import { GetAuthData, defaultLoadTime, getAllAccountLocation, getAllAccountOrders, postSupportAny, uploadFileSupport } from "../lib/store.js";
 import OrderCardHandler from "../components/IssuesHandler/OrderCardHandler.jsx";
 import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
 import dataStore from "../lib/dataStore.js";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater.js";
 
 const CustomerService = () => {
   const { state } = useLocation();
@@ -71,39 +72,19 @@ const CustomerService = () => {
     setActual_Amount__c(null)
     setErrorList({})
   }
-  useEffect(() => {
-    if (Reason) {
-      setReason(Reason)
-    }
-    if (OrderId) {
-      setOrderId(OrderId)
-    }
-    setIsLoad(false)
+
+  const handlePageData = async()=>{
     GetAuthData()
       .then(async (response) => {
         setContactId(response.data.retailerId)
         setContactName(response.data.firstName + " " + response.data.lastName)
-        const cachedData = await dataStore.retrieve("/getAllAccountOrders");
-        if (cachedData) {
-          let sorting = sortingList(cachedData);
-          if (sorting.length) {
-            setDSalesRep(sorting[0].OwnerId)
-          }
-          setIsLoad(true)
-          setOrders(sorting);
-        }
         dataStore.getPageData("/getAllAccountOrders", () =>
           getAllAccountOrders({
             key: response.data.x_access_token,
             accountIds: JSON.stringify(response.data.accountIds)
           }))
           .then((order) => {
-            let sorting = sortingList(order);
-            if (sorting.length) {
-              setDSalesRep(sorting[0].OwnerId)
-            }
-            setIsLoad(true)
-            setOrders(sorting);
+            handleOrderListReady(order)
           })
           .catch((error) => {
             console.log({ error });
@@ -117,7 +98,35 @@ const CustomerService = () => {
       .catch((err) => {
         console.log({ err });
       });
+  }
+
+  useEffect(() => {
+    if (Reason) {
+      setReason(Reason)
+    }
+    if (OrderId) {
+      setOrderId(OrderId)
+    }
+    setIsLoad(false)
+    dataStore.subscribe("/getAllAccountOrders", handleOrderListReady);
+    handlePageData()
+    return () => {
+      dataStore.unsubscribe("/getAllAccountOrders", handleOrderListReady);
+    }
   }, []);
+
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
+  const handleOrderListReady = (data) => {
+    if (data) {
+      let sorting = sortingList(data);
+      if (sorting.length) {
+        setDSalesRep(sorting[0].OwnerId)
+      }
+      setIsLoad(true)
+      setOrders(sorting);
+    }
+  }
 
   const SubmitHandler = () => {
     setIsDisabled(true)

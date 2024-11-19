@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Styles from "./Styles.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, ShareDrive, getOrderDetailId, getOrderDetailsInvoice, getProductImageAll, postSupport, supportShare } from "../../../lib/store";
+import { GetAuthData, ShareDrive, defaultLoadTime, getOrderDetailId, getOrderDetailsInvoice, getProductImageAll, postSupport, supportShare } from "../../../lib/store";
 import { MdOutlineDownload } from "react-icons/md";
 import LoaderV2 from "../../loader/v2";
 import ProductDetails from "../../../pages/productDetails";
@@ -12,6 +12,8 @@ import { RxEyeOpen } from "react-icons/rx";
 import LoaderV3 from "../../loader/v3";
 import ModalPage from "../../Modal UI";
 import { CustomerServiceIcon, OrderStatusIcon } from "../../../lib/svg";
+import dataStore from "../../../lib/dataStore";
+import useBackgroundUpdater from "../../../utilities/Hooks/useBackgroundUpdater";
 
 function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
   const [OrderData, setOrderData] = useState([]);
@@ -31,13 +33,13 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
   const [confirm, setConfirm] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false)
   useEffect(() => {
-    // let rawData = {key:Key.data.access_token,id:OrderId}
-    // getOrderDetailsBasedId({rawData}).then((res)=>{
-    //   console.warn({res});
-    // }).catch((error)=>{
-    //   console.warn({error});
-    // })
+    dataStore.subscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
+    dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
     getOrderDetails();
+    return () => {
+      dataStore.unsubscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
+      dataStore.unsubscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
+    }
   }, []);
 
 
@@ -46,6 +48,8 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
     "Content-Type": "application/json;charset=UTF-8",
   };
 
+  useBackgroundUpdater(getOrderDetails,defaultLoadTime)
+
   const getOrderDetails = async () => {
     let data = ShareDrive();
     if (!data) {
@@ -53,68 +57,79 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
     }
     GetAuthData().then((user) => {
       let rawData = { key: user.data.x_access_token, opportunity_id: OrderId }
-      getOrderDetailId({ rawData }).then((res) => {
-        if (res.support?.length) {
-          let cases = {}
-          res.support.map((support) => {
-            if (!cases[support.RecordTypeId]) {
-              cases[support.RecordTypeId] = {}
-            }
-            if (!cases[support.RecordTypeId][support.Reason]) {
-              cases[support.RecordTypeId][support.Reason] = {}
-            }
-            cases[support.RecordTypeId][support.Reason] = support
-          })
-          setOldSupport(cases)
-        }
-        if (res?.ManufacturerId__c) {
-          if (!data[res?.ManufacturerId__c]) {
-            data[res?.ManufacturerId__c] = {};
+      dataStore.getPageData(`/orderDetails?id=${OrderId}`,
+        ()=>getOrderDetailId({ rawData })).then((res) => {
+          if (res) {
+            handleOrderDetailReady(res)
           }
-          if (Object.values(data[res?.ManufacturerId__c])?.length > 0) {
-            setProductImage({ isLoaded: true, images: data[res?.ManufacturerId__c] })
-          } else {
-            setProductImage({ isLoaded: false, images: {} })
-          }
-        }
-        setOrderData(res);
-        setOrderDetail(res)
-        setIsLoading(true);
-        if (res.OpportunityLineItems?.length > 0) {
-          let productCode = "";
-          res.OpportunityLineItems?.map((element, index) => {
-            productCode += `'${element?.ProductCode}'`
-            if (res.OpportunityLineItems?.length - 1 != index) productCode += ', ';
-          })
-          getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
-            if (res) {
-              if (data[res?.ManufacturerId__c]) {
-                data[res?.ManufacturerId__c] = { ...data[res?.ManufacturerId__c], ...res }
-              } else {
-                data[res?.ManufacturerId__c] = res
-              }
-              ShareDrive(data)
-              setProductImage({ isLoaded: true, images: res });
-            } else {
-              setProductImage({ isLoaded: true, images: {} });
-            }
-          }).catch((err) => {
-            console.log({ err });
-          })
-        }
-        getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } }).then((response) => {
-          console.log({ response });
-          setInvoice(response?.data)
-        }).catch((error) => {
-          console.error({ error });
+        }).catch((err1) => {
+          console.log({ err1 });
         })
-      }).catch((err1) => {
-        console.log({ err1 });
-      })
     }).catch((err) => {
       console.log({ err });
     })
   };
+
+  const handleOrderDetailReady = (data) => {
+    GetAuthData().then((user) => {
+      if (data.support?.length) {
+        let cases = {}
+        data.support.map((support) => {
+          if (!cases[support.RecordTypeId]) {
+            cases[support.RecordTypeId] = {}
+          }
+          if (!cases[support.RecordTypeId][support.Reason]) {
+            cases[support.RecordTypeId][support.Reason] = {}
+          }
+          cases[support.RecordTypeId][support.Reason] = support
+        })
+        setOldSupport(cases)
+      }
+      if (data?.ManufacturerId__c) {
+        if (!data[data?.ManufacturerId__c]) {
+          data[data?.ManufacturerId__c] = {};
+        }
+        if (Object.values(data[data?.ManufacturerId__c])?.length > 0) {
+          setProductImage({ isLoaded: true, images: data[data?.ManufacturerId__c] })
+        } else {
+          setProductImage({ isLoaded: false, images: {} })
+        }
+      }
+      setOrderData(data);
+      setOrderDetail(data)
+      setIsLoading(true);
+      if (data.OpportunityLineItems?.length > 0) {
+        let productCode = "";
+        data.OpportunityLineItems?.map((element, index) => {
+          productCode += `'${element?.ProductCode}'`
+          if (data.OpportunityLineItems?.length - 1 != index) productCode += ', ';
+        })
+        getProductImageAll({ rawData: { codes: productCode } }).then((data) => {
+          if (data) {
+            if (data[data?.ManufacturerId__c]) {
+              data[data?.ManufacturerId__c] = { ...data[data?.ManufacturerId__c], ...data }
+            } else {
+              data[data?.ManufacturerId__c] = data
+            }
+            ShareDrive(data)
+            setProductImage({ isLoaded: true, images: data });
+          } else {
+            setProductImage({ isLoaded: true, images: {} });
+          }
+        }).catch((err) => {
+          console.log({ err });
+        })
+      }
+      dataStore.getPageData(`/orderDetails/invoice/?id=${OrderId}`, ()=>getOrderDetailsInvoice({ rawData: { key: user.data.x_access_token, id: OrderId } })).then((response) => {
+        setInvoice(response?.data)
+      }).catch((error) => {
+        console.error({ error });
+      })
+    }).catch((err) => {
+      console.log({ err });
+    })
+  }
+
   const handleback = () => {
     navigate("/order-list");
   };
@@ -401,7 +416,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                     {showTracking && OrderData.Tracking__c && <>
                       <h2>Tracking Number</h2>
                       <div className={Styles.ShipAdress} style={{ transition: 'all 250s linear' }}>
-                        {OrderData.Tracking_URL__c ? <button role="link" style={{textDecoration:'underline'}}
+                        {OrderData.Tracking_URL__c ? <button role="link" style={{ textDecoration: 'underline' }}
                           onClick={() => openInNewTab(OrderData.Tracking_URL__c)}>{OrderData.Tracking__c}</button> :
                           <p>
                             {OrderData.Tracking__c}

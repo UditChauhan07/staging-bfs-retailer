@@ -3,11 +3,12 @@ import FullQuearyDetail from "../components/CustomerSupportPage/FullQuearyDetail
 import Layout from "../components/Layout/Layout";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { GetAuthData, getSupportDetails } from "../lib/store";
+import { defaultLoadTime, GetAuthData, getSupportDetails } from "../lib/store";
 import Loading from "../components/Loading";
 import AppLayout from "../components/AppLayout";
 import LoaderV3 from "../components/loader/v3";
 import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 const CustomerSupportDetails = () => {
   const navigate = useNavigate();
@@ -17,24 +18,27 @@ const CustomerSupportDetails = () => {
   const [detailsData, setDetailsData] = useState({});
   const [isLoaded, setLoaded] = useState(false);
   const [reset, setRest] = useState(false);
-  useEffect(() => {
+  const handleSupportReady = (data) => {
+    GetAuthData()
+      .then((user) => {
+        data.salesRepName = user.Name;
+        setDetailsData(data);
+        setLoaded(true);
+        setRest(false)
+      }).catch((error) => {
+        console.error({ error });
+      });
+  }
+  const handlePageData = async () => {
     GetAuthData()
       .then(async (user) => {
         let rawData = { key: user?.data?.x_access_token, caseId: deatilsId };
-        const cachedData = await dataStore.retrieve(location.pathname + location.search);
-        if (cachedData) {
-          cachedData.salesRepName = user.Name;
-          setDetailsData(cachedData);
-          setLoaded(true);
-          setRest(false)
-        }
 
         dataStore.getPageData(location.pathname + location.search, () => getSupportDetails({ rawData }))
           .then((deatils) => {
-            deatils.salesRepName = user.Name;
-            setDetailsData(deatils);
-            setLoaded(true);
-            setRest(false)
+            if (deatils) {
+              handleSupportReady(deatils)
+            }
           })
           .catch((err) => {
             console.error({ err });
@@ -43,7 +47,17 @@ const CustomerSupportDetails = () => {
       .catch((error) => {
         console.error({ error });
       });
+  }
+
+  useEffect(() => {
+    dataStore.subscribe(location.pathname + location.search, handleSupportReady);
+    handlePageData();
+    return () => {
+      dataStore.unsubscribe(location.pathname + location.search, handleSupportReady);
+    }
   }, [deatilsId]);
+
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
 
   const setRestHandler = () => {
     GetAuthData()

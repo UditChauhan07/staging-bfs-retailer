@@ -70,7 +70,7 @@ function App() {
             <Route path="/instagram" element={<Instagram />}></Route>
             <Route path="/join-us" element={<JoinUs />}></Route>
             <Route path="/linkdin" element={<Linkdin />}></Route>
-            <Route path="logout" element={<Logout />}></Route>
+            <Route path="/Help-Section" element={<HelpSection />}></Route>
             <Route path="/sign-up" element={<SignUp />}></Route>
             {/* <Route path="/orderStatusForm" element={<OrderStatusForm />}></Route> */}
             <Route path="/orderStatus" element={<OrderStatusIssues />} />
@@ -80,11 +80,10 @@ function App() {
             <Route path="/purchase-report" element={<SalesReport />}></Route>
             <Route path="/comparison-report" element={<ComparisonReport />}></Route>
             <Route path="/Target-Report" element={<TargetRollOver />}></Route>
-            <Route path="/Help-Section" element={<HelpSection />}></Route>
-            <Route path="/logout" element={<Logout />}></Route>
             <Route path="/store/:id" element={<StoreDetails />} />
             <Route path="/Brand/:id" element={<BrandDetails />} />
             <Route path = "/productPage/:id" element={<ProductPage/>} />
+            <Route path="/logout" element={<Logout />}></Route>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>

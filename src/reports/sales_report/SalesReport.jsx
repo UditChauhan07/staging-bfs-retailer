@@ -11,10 +11,11 @@ import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
 import styles from "../../components/Modal UI/Styles.module.css";
-import { GetAuthData, getAllAccountBrand } from "../../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand } from "../../lib/store";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import LoaderV3 from "../../components/loader/v3";
 import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -192,57 +193,64 @@ const SalesReport = () => {
     setYearForTableSort(2024);
   };
   const navigate = useNavigate();
+  const reportReady = (result) => {
+    let salesListName = [];
+    let salesList = [];
+    result.data.data.map((manu) => {
+      if (manu.Orders.length) {
+        manu.Orders.map((item) => {
+          if (!salesListName.includes(item.AccountRepo)) {
+            salesListName.push(item.AccountRepo);
+            salesList.push({
+              label: item.AccountRepo,
+              value: item.AccountRepo,
+            });
+          }
+        });
+      }
+    });
+    setSalesRepList(salesList);
+    setSalesReportData(result.data.data);
+    setOwnerPermission(result.data.ownerPermission);
+    setIsLoading(false);
+  }
   const getSalesData = async (yearFor, strAccountIds = "[]") => {
     setIsLoading(true);
     setYearForTableSort(yearFor);
-    const reportReady = (result) => {
-      let salesListName = [];
-      let salesList = [];
-      result.data.data.map((manu) => {
-        if (manu.Orders.length) {
-          manu.Orders.map((item) => {
-            if (!salesListName.includes(item.AccountRepo)) {
-              salesListName.push(item.AccountRepo);
-              salesList.push({
-                label: item.AccountRepo,
-                value: item.AccountRepo,
-              });
-            }
-          });
-        }
-      });
-      setSalesRepList(salesList);
-      setSalesReportData(result.data.data);
-      setOwnerPermission(result.data.ownerPermission);
-      setIsLoading(false);
-    }
-    let value = { yearFor, accountIds: strAccountIds };
-    const cachedData = await dataStore.retrieve("/purchase-report" + JSON.stringify(value));
-    console.log({cachedData,value});
-    
-    if (cachedData) {
-      reportReady(cachedData)
-    }
-    let result = await dataStore.update("/purchase-report" + JSON.stringify(value), () => salesReportApi.salesReportData(value));
-    console.log({ result ,value});
 
+    let value = { yearFor, accountIds: strAccountIds };
+
+    let result = await dataStore.getPageData("/purchase-report" + JSON.stringify(value), () => salesReportApi.salesReportData(value));
     reportReady(result);
   };
   // console.log("salesReportData", salesReportData);
   const [manufacturerData, setManufacturerData] = useState([]);
   const [accountIds, setAccountids] = useState("[]");
   const [accountList, setAccountList] = useState([]);
+
+  const handlePageData = async () => {
+    GetAuthData().then((user) => {
+      dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((resManu) => {
+        setManufacturerData(resManu);
+        getSalesData(yearFor, JSON.stringify(user.data.accountIds));
+      }).catch((err) => {
+        console.log({ err });
+      })
+    }).catch((error) => {
+      console.log({ error });
+    })
+  }
+
   useEffect(() => {
     GetAuthData().then((user) => {
       if (user) {
+        dataStore.subscribe("/purchase-report" + JSON.stringify({ yearFor, accountIds: JSON.stringify(user.data.accountIds) }), (data) => reportReady(data));
         setAccountids(JSON.stringify(user.data.accountIds))
         setAccountList(user.data.accountList)
-        dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((resManu) => {
-          setManufacturerData(resManu);
-          getSalesData(yearFor, JSON.stringify(user.data.accountIds));
-        }).catch((err) => {
-          console.log({ err });
-        })
+        handlePageData();
+        return () => {
+          dataStore.unsubscribe("/purchase-report" + JSON.stringify({ yearFor, accountIds: JSON.stringify(user.data.accountIds) }), (data) => reportReady(data));
+        }
       } else {
         navigate("/");
       }
@@ -250,6 +258,7 @@ const SalesReport = () => {
       console.log({ error });
     })
   }, []);
+  useBackgroundUpdater(handlePageData, defaultLoadTime)
   const sendApiCall = () => {
     // setManufacturerFilter(null);
     // setHighestOrders(true);

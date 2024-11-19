@@ -4,20 +4,21 @@ import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, originAPi, } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
 import dataStore from "../lib/dataStore";
 import { useLocation } from 'react-router-dom';
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const MarketingCalendar = () => {
   const location = useLocation();
-  
+
   let date = new Date();
   const [isLoaded, setIsloaed] = useState(false);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
@@ -51,18 +52,12 @@ const MarketingCalendar = () => {
   const [brand, setBrand] = useState([]);
   const [selectBrand, setSelectBrand] = useState(null)
 
-  useEffect(() => {
-    setIsloaed(false)
+  const handlePageData = async ()=>{
     GetAuthData().then((user) => {
       dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then(async (resManu) => {
         setBrand(resManu);
-        console.log({aaa:location.pathname+JSON.stringify(selectYear)});
-        
-        const cachedData = await dataStore.retrieve(location.pathname+JSON.stringify(selectYear));
-        if (cachedData) {
-          setProductList(cachedData?.list);
-        }
-        dataStore.getPageData(location.pathname+JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear })).then((productRes) => {
+
+        dataStore.getPageData(location.pathname + JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear })).then((productRes) => {
           setProductList(productRes?.list)
           setIsloaed(true)
           setTimeout(() => {
@@ -79,27 +74,19 @@ const MarketingCalendar = () => {
     }).catch((error) => {
       console.log({ error });
     })
+  }
+
+  useEffect(() => {
+    setIsloaed(false)
+    dataStore.subscribe(location.pathname + JSON.stringify(selectYear), (data) => { setProductList(data?.list); setIsloaed(true); });
+    handlePageData()
+    return () => {
+      dataStore.subscribe(location.pathname + JSON.stringify(selectYear), (data) => { setProductList(data?.list); setIsloaed(true); });
+    }
   }, [selectYear])
 
-  const LoadingEffect = () => {
-    const intervalId = setInterval(() => {
-      if (pdfLoadingText.length > 6) {
-        setPdfLoadingText('.');
-      } else {
-        setPdfLoadingText(prev => prev + '.');
-      }
-      if (pdfLoadingText.length > 12) {
-        setPdfLoadingText('');
-      }
-    }, 1000);
-    const timeoutId = setTimeout(() => {
-      clearInterval(intervalId);
-    }, 10000);
-    return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-    };
-  }
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
   const generatePdfServerSide = (version = 0) => {
     GetAuthData().then((user) => {
       let manufacturerId = null;
