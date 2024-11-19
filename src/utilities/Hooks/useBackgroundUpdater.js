@@ -1,32 +1,43 @@
 import { useEffect, useRef } from "react";
 
-const useBackgroundUpdater = (callback, interval = 300000) => { // 300000 ms = 5 minutes
+const useBackgroundUpdater = (callback, interval = 300000) => {
     const intervalRef = useRef(null);
 
+    const startInterval = () => {
+        clearInterval(intervalRef.current); // Clear any existing intervals
+        intervalRef.current = setInterval(callback, interval); // Start a new interval
+    };
+
+    const stopInterval = () => {
+        clearInterval(intervalRef.current); // Stop the interval
+    };
+
+    const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible") {
+            // Trigger immediate update when tab becomes visible
+            callback();
+            startInterval();
+        } else {
+            stopInterval(); // Stop updates when tab is hidden
+        }
+    };
+
+    const handleFocus = () => {
+        // Immediate update when window or tab gains focus
+        callback();
+    };
+
     useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === "hidden") {
-                clearInterval(intervalRef.current); // Stop updates when tab is inactive
-            } else if (document.visibilityState === "visible") {
-                startInterval(); // Restart updates when tab is active
-            }
-        };
-
-        const startInterval = () => {
-            clearInterval(intervalRef.current); // Clear any existing intervals
-            intervalRef.current = setInterval(callback, interval); // Start new interval
-        };
-
-        // Start interval on component mount
+        // Start interval and listen for visibility/focus changes
         startInterval();
-
-        // Add event listener for tab visibility change
         document.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("focus", handleFocus);
 
         return () => {
-            // Cleanup interval and event listener on unmount
-            clearInterval(intervalRef.current);
+            // Cleanup intervals and event listeners on unmount
+            stopInterval();
             document.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("focus", handleFocus);
         };
     }, [callback, interval]);
 };
