@@ -4,8 +4,9 @@ import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
 import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
 import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 const MyRetailersPage = ({manufacturerId}) => {
   const location = useLocation();
@@ -28,9 +29,13 @@ const MyRetailersPage = ({manufacturerId}) => {
     if (!userData) {
       navigate("/");
     }
+    dataStore.subscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
     getAccountsHandler()
+    return ()=>{
+      dataStore.unsubscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
+    }
   }, []);
-
+  useBackgroundUpdater(getAccountsHandler,defaultLoadTime);
   const getAccountsHandler = () => {
     GetAuthData().then(async (user) => {
       // ["0011400001bsBxdAAE"]||

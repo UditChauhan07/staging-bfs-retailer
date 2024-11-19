@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/AppLayout";
 import Styles from "./index.module.css";
-import { GetAuthData, getAllAccountBrand, getRollOver } from "../../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getRollOver } from "../../lib/store";
 import { FilterItem } from "../../components/FilterItem";
 import { MdOutlineDownload } from "react-icons/md";
 import * as FileSaver from "file-saver";
@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { CloseButton, SearchIcon } from "../../lib/svg";
 import LoaderV3 from "../../components/loader/v3";
 import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
@@ -32,31 +33,26 @@ const TargetRollOver = () => {
     const [accountList, setAccountList] = useState([]);
     const [accountIds, setAccountIds] = useState(null);
 
-    useEffect(() => {
-        const targetReady = (targetRes) => {
-            if (targetRes) {
-                setIsLoaded(true);
-            }
-            let salesRep = [];
-            targetRes.map((tar) => {
-                if (!salesRep.includes(tar.SalesRepName)) {
-                    salesRep.push(tar.SalesRepName);
-                }
-            });
-            setSalesRepList(salesRep);
-            setTarget({ ownerPermission: false, list: targetRes });
-            // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
-            setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null);
+    const targetReady = (targetRes) => {
+        if (targetRes) {
+            setIsLoaded(true);
         }
+        let salesRep = [];
+        targetRes.map((tar) => {
+            if (!salesRep.includes(tar.SalesRepName)) {
+                salesRep.push(tar.SalesRepName);
+            }
+        });
+        setSalesRepList(salesRep);
+        setTarget({ ownerPermission: false, list: targetRes });
+        // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
+        setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null);
+    }
+    const handlePageData = async ()=>{
         GetAuthData()
             .then(async (user) => {
                 setAccountList(user.data.accountList)
-                const cachedData = await dataStore.retrieve("/Target-Report");
-
-                if (cachedData) {
-                    targetReady(cachedData);
-                }
-                dataStore.update("/Target-Report", () => getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }))
+                dataStore.getPageData("/Target-Report", () => getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }))
                     .then((targetRes) => {
                         targetReady(targetRes);
 
@@ -75,7 +71,17 @@ const TargetRollOver = () => {
             .catch((userErr) => {
                 console.error({ userErr });
             });
+    }
+    useEffect(() => {
+        dataStore.subscribe("/Target-Report", targetReady);
+        handlePageData();
+        return () => {
+            dataStore.unsubscribe("/Target-Report", targetReady);
+        }
     }, []);
+
+    useBackgroundUpdater(handlePageData,defaultLoadTime)
+
     const filteredTargetData = useMemo(() => {
         let filtered = target.list.filter((ele) => {
             if (!manufacturerFilter || !ele.ManufacturerId.localeCompare(manufacturerFilter)) {
@@ -99,13 +105,16 @@ const TargetRollOver = () => {
         }
         return filtered;
     }, [manufacturerFilter, searchBy, searchSaleBy, isLoaded]);
-    const resetFilter = () => {
+    const resetFilter = async () => {
         setManufacturerFilter(null);
         setSearchBy("");
         setSearchSaleBy("");
         setYear(currentDate.getFullYear());
         setPreOrder(true);
-        sendApiCall();
+        setAccountIds(null);
+        let data = await dataStore.retrieve("/Target-Report");
+        targetReady(data)
+
     };
     useEffect(() => { }, [])
     const PriceDisplay = (value) => {
@@ -402,25 +411,16 @@ const TargetRollOver = () => {
             diff: 0,
         },
     };
+    useEffect(() => { }, [accountIds]);
     const sendApiCall = () => {
+        dataStore.subscribe(`/Target-Report${accountIds ? JSON.stringify(accountIds) : ''}`, targetReady);
         setIsLoaded(false);
         GetAuthData()
             .then((user) => {
-                getRollOver({ key: user.data.x_access_token, accountIds })
+                dataStore.getPageData(`/Target-Report${accountIds ? JSON.stringify(accountIds) : ''}`,
+                    () => getRollOver({ key: user.data.x_access_token, accountIds: accountIds ?? user.data.accountIds }))
                     .then((targetRes) => {
-                        if (targetRes) {
-                            setIsLoaded(true);
-                        }
-                        let salesRep = [];
-                        targetRes.map((tar) => {
-                            if (!salesRep.includes(tar.SalesRepName)) {
-                                salesRep.push(tar.SalesRepName);
-                            }
-                        });
-                        setSalesRepList(salesRep);
-                        setTarget({ ownerPermission: false, list: targetRes });
-                        // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : manufacturerFilter);
-                        setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : searchSaleBy);
+                        targetReady(targetRes)
                     })
                     .catch((targetErr) => {
                         console.error({ targetErr });
@@ -429,6 +429,9 @@ const TargetRollOver = () => {
             .catch((userErr) => {
                 console.error({ userErr });
             });
+        return () => {
+            dataStore.unsubscribe(`/Target-Report${accountIds ? JSON.stringify(accountIds) : ''}`, targetReady);
+        }
     };
     const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
         return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`

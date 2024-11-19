@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import CustomerSupportPage from "../components/CustomerSupportPage/CustomerSupportPage";
 import { FilterItem, MultiFilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { DestoryAuth, GetAuthData, getAllAccountBrand, getAllAccountSupport, getRetailerBrands, getSupportList } from "../lib/store";
+import { DestoryAuth, GetAuthData, defaultLoadTime, getAllAccountBrand, getAllAccountSupport, getRetailerBrands, getSupportList } from "../lib/store";
 import Pagination from "../components/Pagination/Pagination";
 import AppLayout from "../components/AppLayout";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
 import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 
 let PageSize = 10;
@@ -21,62 +22,87 @@ const CustomerSupport = () => {
   const [manufacturerData, setManufacturerData] = useState([]);
   const [accountList, setAccountList] = useState([]);
   const [account, setAccount] = useState(null);
-  let statusList = ["Open","New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
+  let statusList = ["Open", "New", "Follow up Needed By Brand Customer Service", "Follow up needed by Rep", "Follow up Needed By Brand Accounting", "Follow up needed by Order Processor", "RTV Approved", "Closed"];
   const [status, setStatus] = useState(["Open"]);
+  const handleSupportUpdates = (data) => {
+    setSupportList(data);
+  };
   useEffect(() => {
-    getSupportListHandler()
+    // Register the listener for '/customer-support' updates
+
+    dataStore.subscribe("/customer-support", handleSupportUpdates);
+
+    // Fetch initial data
+    getSupportListHandler();
+
+    // Cleanup the listener on component unmount
+    return () => {
+      dataStore.unsubscribe("/customer-support", handleSupportUpdates);
+    };
   }, []);
-  const getSupportListHandler = (accountIds = null) => {
-    setLoaded(false)
-    setAccount(accountIds)
-    GetAuthData()
-      .then((user) => {
-        if (user) {
-          setAccountList(user.data.accountList)
-          dataStore.getPageData("getAllAccountBrand", () =>getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) })).then(async (resManu) => {
-            console.log({resManu});
-            setManufacturerData(resManu);
-            const cachedData = await dataStore.retrieve("/customer-support");
-            if(cachedData){
-              if (cachedData) {
-                setSupportList(cachedData);
-              }
-              setLoaded(true);
-            }
-            dataStore.getPageData("/customer-support", () =>getAllAccountSupport({ key: user.data.x_access_token, accountIds: JSON.stringify(accountIds || user.data.accountIds) }))
-              .then((supports) => {
-                // console.log({ supports });
-                if (supports) {
-                  setSupportList(supports);
-                }
-                setLoaded(true);
-              })
-              .catch((error) => {
-                console.error({ error });
-              });
-          }).catch((err) => {
-            console.log({ err });
+  useBackgroundUpdater(getSupportListHandler,defaultLoadTime)
+
+  const getSupportListHandler = async (accountIds = null) => {
+    try {
+      setLoaded(false); // Start loading
+      setAccount(accountIds); // Set account ID if provided
+
+      const user = await GetAuthData(); // Fetch authenticated user
+      if (!user) {
+        await handleUnauthenticatedUser();
+        return;
+      }
+
+      setAccountList(user.data.accountList); // Set account list
+
+      // Fetch manufacturer data
+      const manufacturerData = await dataStore.getPageData(
+        "getAllAccountBrand",
+        () =>
+          getAllAccountBrand({
+            key: user.data.x_access_token,
+            accountIds: JSON.stringify(accountIds || user.data.accountIds),
           })
-        } else {
-          DestoryAuth()
-            .then((res) => {
-              console.log({ res });
-            })
-            .catch((err1) => {
-              console.error({ err1 });
-            });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
+      );
+      setManufacturerData(manufacturerData);
+
+      // Fetch support list (cached data will trigger the listener)
+      const supportList = await dataStore.getPageData(
+        "/customer-support",
+        () =>
+          getAllAccountSupport({
+            key: user.data.x_access_token,
+            accountIds: JSON.stringify(accountIds || user.data.accountIds),
+          })
+      );
+
+      if (supportList) {
+        setSupportList(supportList); // Set fresh data
+      }
+    } catch (error) {
+      console.error("Error in getSupportListHandler:", error);
+    } finally {
+      setLoaded(true); // End loading
+    }
+  };
+
+
+  // Handle unauthenticated user
+  const handleUnauthenticatedUser = async () => {
+    try {
+      const res = await DestoryAuth();
+      console.log("User logged out:", res);
+    } catch (err) {
+      console.error("Error during logout:", err);
+    }
+  };
+
   const filteredData = useMemo(() => {
     let newValues = supportList;
     if (status.length > 0) {
-      if(status == "Open"){
-        newValues = newValues.filter((item) => !"Approved".includes(item.Status)&&!"Closed".includes(item.Status));
-      }else{
+      if (status == "Open") {
+        newValues = newValues.filter((item) => !"Approved".includes(item.Status) && !"Closed".includes(item.Status));
+      } else {
         newValues = newValues.filter((item) => status.includes(item.Status));
       }
     }
@@ -106,9 +132,9 @@ const CustomerSupport = () => {
                 value: month.Id,
               })), { label: 'All Store', value: null }]}
               onChange={(value) => {
-                if(value){
+                if (value) {
                   getSupportListHandler([value]);
-                }else{
+                } else {
                   getSupportListHandler(null);
                 }
               }}
@@ -160,7 +186,7 @@ const CustomerSupport = () => {
     >
       <>
         {!loaded ? (
-          <LoaderV3 text={"Loading Support Please wait..."}/>
+          <LoaderV3 text={"Loading Support Please wait..."} />
         ) : (
           <>
             <CustomerSupportPage
