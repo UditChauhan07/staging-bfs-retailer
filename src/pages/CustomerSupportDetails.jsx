@@ -1,89 +1,152 @@
-import { useSearchParams } from "react-router-dom";
 import FullQuearyDetail from "../components/CustomerSupportPage/FullQuearyDetail";
-import Layout from "../components/Layout/Layout";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { defaultLoadTime, GetAuthData, getSupportDetails } from "../lib/store";
-import Loading from "../components/Loading";
+import { useNavigate } from "react-router";
+import { GetAuthData, getSupportDetails, getAttachment } from "../lib/store";
+import { useLocation } from "react-router";
 import AppLayout from "../components/AppLayout";
 import LoaderV3 from "../components/loader/v3";
-import dataStore from "../lib/dataStore";
-import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 const CustomerSupportDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [deatilsId, setDetailsId] = useState(searchParams.get("id"));
-  const [detailsData, setDetailsData] = useState({});
-  const [isLoaded, setLoaded] = useState(false);
   const [reset, setRest] = useState(false);
-  const handleSupportReady = (data) => {
-    GetAuthData()
-      .then((user) => {
-        data.salesRepName = user.Name;
-        setDetailsData(data);
-        setLoaded(true);
-        setRest(false)
-      }).catch((error) => {
-        console.error({ error });
-      });
-  }
-  const handlePageData = async () => {
-    GetAuthData()
-      .then(async (user) => {
-        let rawData = { key: user?.data?.x_access_token, caseId: deatilsId };
-
-        dataStore.getPageData(location.pathname + location.search, () => getSupportDetails({ rawData }))
-          .then((deatils) => {
-            if (deatils) {
-              handleSupportReady(deatils)
-            }
-          })
-          .catch((err) => {
-            console.error({ err });
-          });
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
-  }
+  const queryParams = new URLSearchParams(location.search);
+  const detailsId = queryParams.get("id");
+  const [detailsData, setDetailsData] = useState({});
+  const [attachmentUrls, setAttachmentUrls] = useState([]);
+  const [isLoadingAttachments, setLoadingAttachments] = useState(false);
+  const [isLoaded, setLoaded] = useState(false);
+  const [isAttachmentsLoaded, setAttachmentsLoaded] = useState(false);
 
   useEffect(() => {
-    dataStore.subscribe(location.pathname + location.search, handleSupportReady);
-    handlePageData();
-    return () => {
-      dataStore.unsubscribe(location.pathname + location.search, handleSupportReady);
+    const fetchDetails = async () => {
+      try {
+        const user = await GetAuthData();
+        const rawData = { key: user?.data?.x_access_token, caseId: detailsId };
+        const details = await getSupportDetails({rawData}); 
+        details.salesRepName = user.Name;
+        setDetailsData(details);
+        setLoaded(true);
+        setRest(false);
+      } catch (error) {
+        console.error("Error fetching support details:", error);
+      }
+    };
+
+    if (detailsId) {
+      fetchDetails();
     }
-  }, [deatilsId]);
+  }, [detailsId, reset]); 
 
-  useBackgroundUpdater(handlePageData,defaultLoadTime)
+  // useEffect(() => {
+  //   const fetchAttachmentsWithTimeout = async () => {
+  //     if (!detailsId) return;
 
-  const setRestHandler = () => {
-    GetAuthData()
-      .then((user) => {
-        let rawData = { key: user?.data?.x_access_token, caseId: deatilsId };
-        dataStore.update(location.pathname + location.search, () => getSupportDetails({ rawData }))
-          .then((deatils) => {
-            deatils.salesRepName = user.Name;
-            setDetailsData(deatils);
-            setLoaded(true);
-            // setRest(false)
-          })
-          .catch((err) => {
-            console.error({ err });
-          });
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
-  }
-  if (!deatilsId || deatilsId == "") return navigate("/customer-support");
-  if (!isLoaded) return <AppLayout><LoaderV3 text={"Loading Support Details"} /></AppLayout>;
+  //     const timeout = setTimeout(async () => {
+  //       try {
+  //         setLoadingAttachments(true);
+  //         const user = await GetAuthData();
+  //         const response = await getAttachment(user.data.x_access_token, detailsId);
+
+  //         if (response) {
+  //           const formattedAttachments = response.attachments.map((attachment) => ({
+  //             id: attachment.id,
+  //             formattedId: `${attachment.id}.${attachment.name.split(".").pop().toLowerCase()}`,
+  //             name: attachment.name,
+  //           }));
+  //           setAttachmentUrls(formattedAttachments);
+  //         } else {
+  //           console.warn("No attachments found in response");
+  //           setAttachmentUrls([]);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching attachments:", error);
+  //       } finally {
+  //         setLoadingAttachments(false);
+  //         setAttachmentsLoaded(true);
+  //       }
+  //     }, 3000); 
+
+     
+  //     return () => clearTimeout(timeout);
+  //   };
+
+  //   fetchAttachmentsWithTimeout();
+
+  // }, [detailsId]); 
+
+  useEffect(() => {
+    const fetchAttachmentsWithTimeout = async () => {
+      if (!detailsId) return;
+  
+      const timeout = setTimeout(async () => {
+        try {
+          setLoadingAttachments(true);
+          const user = await GetAuthData();
+  
+          let response;
+          let retries = 0;
+          const maxRetries = 3; // Max retry attempts to fetch the full data
+          const expectedAttachmentCount = 60; // Expected number of attachments
+  
+          while (retries < maxRetries) {
+            response = await getAttachment(user.data.x_access_token, detailsId);
+            
+            if (response && response.attachments && response.attachments.length === expectedAttachmentCount) {
+              break; // Data is complete, break the retry loop
+            }
+  
+            retries += 1;
+            console.log(`Retrying (${retries}/${maxRetries})...`);
+          }
+  
+          // If we get the data, process it
+          if (response && response.attachments) {
+            const formattedAttachments = response.attachments.map((attachment) => ({
+              id: attachment.id,
+              formattedId: `${attachment.id}.${attachment.name.split(".").pop().toLowerCase()}`,
+              name: attachment.name,
+            }));
+            setAttachmentUrls(formattedAttachments);
+          } else {
+            console.warn("Attachments could not be fully fetched after retries");
+            setAttachmentUrls([]);
+          }
+  
+        } catch (error) {
+          console.error("Error fetching attachments:", error);
+        } finally {
+          setLoadingAttachments(false);
+          setAttachmentsLoaded(true);
+        }
+      }, 4000); // Delay to allow any necessary data refresh.
+  
+      return () => clearTimeout(timeout);
+    };
+  
+    fetchAttachmentsWithTimeout();
+  }, [detailsId]);
+  
+
+
+  if (!detailsId || detailsId === "") return navigate("/customer-support");
+
+  if (!isLoaded|| !isAttachmentsLoaded)
+    return (
+      <AppLayout>
+        <LoaderV3 text={"Loading Support Details"} />
+      </AppLayout>
+    );
+
   return (
     <AppLayout>
-      <FullQuearyDetail data={detailsData} setRest={setRestHandler} />
+      {isLoadingAttachments ? (
+        <LoaderV3 text={"Loading Attachments..."} />
+      ) : (
+        <FullQuearyDetail data={detailsData} setRest={setRest} attachmentUrls={attachmentUrls} />
+      )}
     </AppLayout>
   );
 };
+
 export default CustomerSupportDetails;
