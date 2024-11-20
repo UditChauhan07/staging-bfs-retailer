@@ -1,3 +1,4 @@
+import axios from "axios";
 export const originAPi = process.env.REACT_APP_OA_URL || "https://staging.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2611"
@@ -183,6 +184,52 @@ export async function DestoryAuth() {
   }
   window.location.href = window.location.origin;
   return true;
+}
+export async function getAttachment(token, caseId) {
+  try {
+    console.log(token, caseId, "rawData");
+    const response = await axios.post(
+      originAPi + "/wpVvqb9cSF7hnil/getAttachment",
+      {
+        caseId: caseId,
+        key: token,
+      }
+    );
+    const data =await response.data;
+    console.log(data, "backend attachment");
+    if (data.status === 300) {
+      DestoryAuth();
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.log(error, "backend get attachment error");
+    return null;
+  }
+}
+
+export async function DownloadAttachment(token, attachmentId) {
+  console.log(token, "token download", attachmentId, "attachmentID");
+  try {
+    let response = await fetch(
+      `${originAPi}/wpVvqb9cSF7hnil/downloadAttachment/${attachmentId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response) {
+      if (response.status == 300) {
+        DestoryAuth();
+      } else {
+        return response;
+      }
+    }
+  } catch (error) {
+    return error;
+  }
 }
 
 export async function GetAuthData() {
