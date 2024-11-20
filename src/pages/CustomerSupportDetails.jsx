@@ -86,21 +86,19 @@ const CustomerSupportDetails = () => {
   
           let response;
           let retries = 0;
-          const maxRetries = 3; // Max retry attempts to fetch the full data
-          const expectedAttachmentCount = 60; // Expected number of attachments
+          const maxRetries = 3; 
+          const expectedAttachmentCount = 100; 
   
           while (retries < maxRetries) {
             response = await getAttachment(user.data.x_access_token, detailsId);
             
             if (response && response.attachments && response.attachments.length === expectedAttachmentCount) {
-              break; // Data is complete, break the retry loop
+              break; 
             }
   
             retries += 1;
             console.log(`Retrying (${retries}/${maxRetries})...`);
           }
-  
-          // If we get the data, process it
           if (response && response.attachments) {
             const formattedAttachments = response.attachments.map((attachment) => ({
               id: attachment.id,
@@ -119,7 +117,7 @@ const CustomerSupportDetails = () => {
           setLoadingAttachments(false);
           setAttachmentsLoaded(true);
         }
-      }, 4000); // Delay to allow any necessary data refresh.
+      }, 4000); 
   
       return () => clearTimeout(timeout);
     };

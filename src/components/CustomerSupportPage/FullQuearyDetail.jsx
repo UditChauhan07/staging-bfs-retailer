@@ -25,14 +25,14 @@ const monthNames = [
   "December",
 ];
 function FullQuearyDetail({ data, setRest, attachmentUrls }) {
-  const [userData, setUserData] = useState({});
+  console.log(attachmentUrls,"attachmentUrls")
+  const [userData, setUserData] = useState({})
   const [btnAct, setBtnAct] = useState(true);
   const [comment, setComment] = useState("");
   const [token, setUsertoken] = useState(null);
   const [showFullUserDesc, setShowFullUserDesc] = useState(false);
   const [userDesc, setUserDesc] = useState("");
   const [issueDesc, setIssueDesc] = useState("");
-
   useEffect(() => {
     const description = data.Description || "";
     console.log(description,"description")
