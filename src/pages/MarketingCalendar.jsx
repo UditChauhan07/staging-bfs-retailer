@@ -12,6 +12,7 @@ import LoaderV3 from "../components/loader/v3";
 import dataStore from "../lib/dataStore";
 import { useLocation } from 'react-router-dom';
 import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
+import ModalPage from "../components/Modal UI";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -50,6 +51,7 @@ const MarketingCalendar = () => {
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
   const [brand, setBrand] = useState([]);
+  const [isAlert, setIsAlert] = useState(false);
   const [selectBrand, setSelectBrand] = useState(null)
 
   const handlePageData = async ()=>{
@@ -98,6 +100,7 @@ const MarketingCalendar = () => {
         }
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
+      if (manufacturerId) {
       if (version === 1) {
         getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr, year: selectYear }).then((file) => {
           if (file) {
@@ -154,6 +157,10 @@ const MarketingCalendar = () => {
           console.log({ pdfErr });
         })
       }
+    }else{
+      setIsAlert(true);
+      setPDFIsloaed(false);
+    }
     }).catch((userErr) => {
       console.log({ userErr });
     })
@@ -328,6 +335,24 @@ const MarketingCalendar = () => {
         </>
       }
     >
+      <ModalPage
+        open={isAlert}
+        content={
+          <div className="d-flex flex-column gap-3 ">
+            <h2>Internal Server Error</h2>
+            <p className="modalContent">
+            <b>We apologize</b>, Currently the Server is unable to Take the load of Full Marketing Calendar including all brands.<br /><br />
+
+              Kindly select 1 brand at time and try to download again.
+            </p>
+            <div className="d-flex justify-content-around ">
+              <button className="modalButton" onClick={() => setIsAlert(false)}>
+                Go Back
+              </button>
+            </div>
+          </div>
+        }
+        onClose={() => setIsAlert(false)} />
       {isPDFLoaded ? <LoaderV3 text={"Generating Pdf Please wait..."} /> :
         isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand ?? "All Brands"}`} />}
 
