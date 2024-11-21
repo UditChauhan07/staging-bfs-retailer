@@ -5,6 +5,7 @@ import { GetAuthData, getSupportDetails, getAttachment } from "../lib/store";
 import { useLocation } from "react-router";
 import AppLayout from "../components/AppLayout";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 const CustomerSupportDetails = () => {
   const navigate = useNavigate();
@@ -17,24 +18,30 @@ const CustomerSupportDetails = () => {
   const [isLoadingAttachments, setLoadingAttachments] = useState(false);
   const [isLoaded, setLoaded] = useState(false);
   const [isAttachmentsLoaded, setAttachmentsLoaded] = useState(false);
+  const handleCustomerSupportReady = (data)=>{
+    setDetailsData(data);
+    setLoaded(true);
+    setRest(false);
+  }
 
+  const fetchDetails = async () => {
+    try {
+      const user = await GetAuthData();
+      const rawData = { key: user?.data?.x_access_token, caseId: detailsId };
+      const details = await dataStore.getPageData(location.pathname+location.search,()=>getSupportDetails({rawData})); 
+      details.salesRepName = user.Name;
+      handleCustomerSupportReady(details)
+    } catch (error) {
+      console.error("Error fetching support details:", error);
+    }
+  };
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const user = await GetAuthData();
-        const rawData = { key: user?.data?.x_access_token, caseId: detailsId };
-        const details = await getSupportDetails({rawData}); 
-        details.salesRepName = user.Name;
-        setDetailsData(details);
-        setLoaded(true);
-        setRest(false);
-      } catch (error) {
-        console.error("Error fetching support details:", error);
-      }
-    };
-
+    dataStore.subscribe(location.pathname+location.search,handleCustomerSupportReady)
     if (detailsId) {
       fetchDetails();
+    }
+    return ()=>{
+      dataStore.unsubscribe(location.pathname+location.search,handleCustomerSupportReady)
     }
   }, [detailsId, reset]); 
 
@@ -48,20 +55,9 @@ const CustomerSupportDetails = () => {
           const user = await GetAuthData();
   
           let response;
-          let retries = 0;
-          const maxRetries = 3; 
-          const expectedAttachmentCount = 100; 
   
-          while (retries < maxRetries) {
-            response = await getAttachment(user.data.x_access_token, detailsId);
+            response = await dataStore.getPageData(location.pathname+location.search+"&invoice=true",()=>getAttachment(user.data.x_access_token, detailsId));
             
-            if (response && response.attachments && response.attachments.length === expectedAttachmentCount) {
-              break; 
-            }
-  
-            retries += 1;
-            console.log(`Retrying (${retries}/${maxRetries})...`);
-          }
           if (response && response.attachments) {
             const formattedAttachments = response.attachments.map((attachment) => ({
               id: attachment.id,

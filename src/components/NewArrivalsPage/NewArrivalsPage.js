@@ -119,6 +119,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   };
   const onQuantityChange = (element, quantity) => {
     let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+    
     let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
     let listOfAccounts = Object.keys(selectProductDealWith);
     let addProductToAccount = null
@@ -406,7 +407,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               ) : (
                                 
                                 <p className={Styles.btnHolder} onClick={() => {
-                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {                                
                                     onQuantityChange(
                                       product,
                                       product?.Min_Order_QTY__c || 1,

@@ -54,7 +54,9 @@ const NewArrivals = () => {
       dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then(async (resManu) => {
         setBrand(resManu);
 
-        dataStore.getPageData("/marketing-calendar" + JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear })).then((productRes) => {
+        dataStore.getPageData("/marketing-calendar" + JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear,accountIds: JSON.stringify(user.data.accountIds) })).then((productRes) => {
+          console.log({productRes});
+          
           handleNewArrivalReady(productRes)
         }).catch((err) => console.log({ err }))
       }).catch((err) => {
