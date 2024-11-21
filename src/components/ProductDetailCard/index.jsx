@@ -13,6 +13,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
   if (!product) {
     return null;
   }
+// console.log({product});
 
 
   if (!product?.data?.ManufacturerId__c) {
@@ -28,7 +29,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
   let selAccount = {};
   let listPrice = Number(product?.data?.usdRetail__c?.replace("$", "")?.replace(",", ""));
   let salesPrice = 0;
-  let listOfAccounts = Object.keys(product.discount);
+  let listOfAccounts = Object.keys(product?.discount);
   if (listOfAccounts.length) {
     if (listOfAccounts.length == 1) {
       selAccount = product.discount?.[listOfAccounts[0]];

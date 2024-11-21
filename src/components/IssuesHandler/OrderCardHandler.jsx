@@ -333,7 +333,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                     </button></h2>
                     <div>
                         {(productAllList.length && !allProductSold) ? <div><input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '150px', marginBottom: '10px' }} /></div> : null}
-                        <div style={{ maxHeight: '500px', overflow: 'scroll', width: '900px' }}>
+                        <div style={{ maxHeight: '50vh', overflow: 'scroll', width: '900px' }}>
                             {!productLoading ? filteredAndSortedProducts.length ?
                                 <table style={{ width: '100%' }}>
                                     <thead>

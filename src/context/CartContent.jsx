@@ -381,7 +381,6 @@ const CartProvider = ({ children }) => {
             }
             return; // Don't update if qty is invalid
         }
-
         setOrder((prevOrder) => {
             const product = prevOrder.items.find(item => item.Id === productId);
             if (!product) {
