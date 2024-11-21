@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import "./Style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProductDetails from "../../pages/productDetails";
-import { hexabrand, hexabrandText } from "../../lib/store";
 import { useNavigate } from "react-router-dom";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function LaunchCalendar({ productList, selectBrand, brand, month }) {

@@ -173,7 +173,7 @@ const TopProducts = () => {
         />} */}
       <FilterItem
         minWidth="220px"
-        label="Manufacturer"
+        label="All Brand"
         name="Manufacturer1"
         value={manufacturerFilter}
         options={manufacturerData.map((manufacturer) => ({
