@@ -6,6 +6,7 @@ import MobileHeader from "./All Headers/mobileHeader/MobileHeader";
 import HelpSection from "./Footer/HelpSection";
 import Footer from "./Footer/Footer";
 import { GetAuthData, getAllAccountStore } from "../lib/store";
+import { motion } from 'framer-motion';
 
 const AppLayout = ({ children, filterNodes }) => {
   // useEffect(()=>{
@@ -23,7 +24,19 @@ const AppLayout = ({ children, filterNodes }) => {
   //     console.log({userErr});
   //   })
   // },[])
+  const pageVariants = {
+    initial: { opacity: 0, x: "-100vw" },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: "100vw" },
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5,
+  };
   return (
+
     <div className="col-12">
       <div className="container p-0">
         <TopNav />
@@ -34,11 +47,21 @@ const AppLayout = ({ children, filterNodes }) => {
           <MobileHeader />
           <div className="filter-container">{filterNodes}</div>
         </div>
-        <main>{children}</main>
+        <main>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
+            {children}
+          </motion.div>
+        </main>
       </div>
       {/* <HelpSection /> */}
       <Footer />
     </div>
+
   );
 };
 

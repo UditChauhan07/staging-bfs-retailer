@@ -49,17 +49,18 @@ const CartProvider = ({ children }) => {
             const user = await GetAuthData();
             const getOrder = { CreatedBy: user?.data?.retailerId };
             const cart = await cartSync({ cart: getOrder });
-            console.log({ cart });
-
             // Validate if the fetched cart has essential content like Account and Manufacturer
             if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
                 setOrder(cart); // Set the fetched cart if valid
                 localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
+                return true;
             } else {
                 setOrder(initialOrder); // Use initial order if no valid cart is found
+                return false;
             }
         } catch (err) {
             console.error('Error fetching cart:', err);
+            return false;
         }
     };
 
@@ -202,6 +203,8 @@ const CartProvider = ({ children }) => {
 
 
     const addOrder = async (product, account, manufacturer) => {
+        let status = await fetchCart();
+        
         let qty = product.qty || product.Min_Order_QTY__c || 1;
         // If the cart is empty or just initialized, set the orderType based on the first product added
         if (!order.ordertype) {

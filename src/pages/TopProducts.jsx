@@ -107,25 +107,7 @@ const TopProducts = () => {
         result = products?.data?.sort(function (a, b) {
           return b.Sales - a.Sales;
         });
-        localStorage.setItem("address", JSON.stringify(products?.accountDetails[Object.keys(products?.accountDetails)?.[0]]?.ShippingAddress))
-        localStorage.setItem("manufacturer", products?.data?.[0]?.ManufacturerName__c)
-      } else {
-        localStorage.removeItem("manufacturer")
-        localStorage.removeItem("address")
       }
-      user.data.accountList.map((account) => {
-        if (selectAccount) {
-          if (account.Id === selectAccount) {
-            localStorage.setItem("Account", account.Name)
-          }
-        } else {
-          if (account.Id == user.data.accountIds[0]) {
-            localStorage.setItem("Account", account.Name)
-          }
-        }
-      })
-      localStorage.setItem("AccountId__c", selectAccount || user.data.accountIds[0])
-      localStorage.setItem("ManufacturerId__c", manufacturerFilter)
       let message = products?.message
       if (result.length == 0) {
         message = "No Data Found";
@@ -139,14 +121,18 @@ const TopProducts = () => {
         })
         getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
           if (res) {
-            if (data[manufacturerFilter]) {
-              data[manufacturerFilter] = { ...data[manufacturerFilter], ...res }
-            } else {
-              data[manufacturerFilter] = res
+            if(manufacturerFilter){
+              if (data[manufacturerFilter]) {
+                data[manufacturerFilter] = { ...data[manufacturerFilter], ...res }
+              } else {
+                data[manufacturerFilter] = res
+              }
+              setProductImages({ isLoaded: true, images: res });
+            }else{
+              setProductImages({ isLoaded: true, images: [] });
             }
-            ShareDrive(data)
-            setProductImages({ isLoaded: true, images: res });
             setIsLoaded(true)
+            ShareDrive(data)
           } else {
             setIsLoaded(true)
             setProductImages({ isLoaded: true, images: {} });
