@@ -69,6 +69,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             discount: selectAccount?.Discount,
             SalesRepId:selectAccount?.SalesRepId
           }
+          console.log({account});
+          
 
           let manufacturer= {
             name: element.ManufacturerName__c,

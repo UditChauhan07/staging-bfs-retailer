@@ -119,6 +119,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
       console.log({ err });
     })
   };
+  
 
   useBackgroundUpdater(getOrderDetails, defaultLoadTime)
   
@@ -305,7 +306,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                 <h4>
                   {" "}
                   <span> {OrderData.ManufacturerName__c} |&nbsp;</span>
-                  {OrderData.Name}
+                  {OrderData.accountName}
                 </h4>{" "}
               </div>
 
