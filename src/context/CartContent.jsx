@@ -394,7 +394,11 @@ const CartProvider = ({ children }) => {
                     ? { ...item, qty } // Update the product qty
                     : item
             );
-
+            // Check if the cart is empty after removing the item
+            if (updatedItems.length === 0) {
+                deleteOrder();  // Call deleteOrder() if items array is empty
+                return initialOrder;
+            }
             // Directly update the order quantity and total to avoid unnecessary recalculation
             const updatedOrderQuantity = prevOrder.orderQuantity - product.qty + qty;
             const updatedTotal = prevOrder.total - (product.price * product.qty) + (product.price * qty);
@@ -410,26 +414,52 @@ const CartProvider = ({ children }) => {
 
 
     // Remove a product from the cart by productId
-    const removeProduct = (productId) => {
-        setOrder((prevOrder) => {
-            const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
-            const removedItem = prevOrder.items?.find(item => item.Id === productId);
-
-            // Check if the cart is empty after removing the item
-            if (updatedItems.length === 0) {
-                deleteOrder();  // Call deleteOrder() if items array is empty
-                return initialOrder;
-            }
-
-            // Otherwise, update the cart normally
-            return {
-                ...prevOrder,
-                items: updatedItems,
-                orderQuantity: prevOrder.orderQuantity - (removedItem ? removedItem.qty : 0),
-                total: prevOrder.total - (removedItem ? removedItem.price * removedItem.qty : 0),
-            };
+    const removeProduct = async (productId) => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to remove this product from the cart?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#000', // Black
+            cancelButtonColor: '#000', // Red for cancel
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'No, keep it',
+            background: '#f9f9f9',
+            color: '#333',
         });
+
+        if (result.isConfirmed) {
+            setOrder((prevOrder) => {
+                const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
+                const removedItem = prevOrder.items?.find(item => item.Id === productId);
+
+                // Check if the cart is empty after removing the item
+                if (updatedItems.length === 0) {
+                    deleteOrder(); // Call deleteOrder() if items array is empty
+                    return initialOrder;
+                }
+
+                // Otherwise, update the cart normally
+                return {
+                    ...prevOrder,
+                    items: updatedItems,
+                    orderQuantity: prevOrder.orderQuantity - (removedItem ? removedItem.qty : 0),
+                    total: prevOrder.total - (removedItem ? removedItem.price * removedItem.qty : 0),
+                };
+            });
+
+            // Optional: Show success message
+            Swal.fire({
+                title: 'Removed!',
+                text: 'The product has been removed from your cart.',
+                icon: 'success',
+                confirmButtonColor: '#000',
+                background: '#f9f9f9',
+                color: '#333',
+            });
+        }
     };
+
 
 
 

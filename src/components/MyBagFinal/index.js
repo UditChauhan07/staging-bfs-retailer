@@ -32,7 +32,7 @@ function MyBagFinal() {
   // console.log({aa:Object.values(bagValue?.orderList)?.length});
   const [limitInput, setLimitInput] = useState(PONumber);
   const [isLoading, setIsLoading] = useState(true);
-  const [limitCheck, setLimitCheck] = useState(false)
+  const [limitCheck, setLimitCheck] = useState(false);
 
   const fetchBag = fetchBeg({});
   const productLists = fetchBag?.items ?? [];
