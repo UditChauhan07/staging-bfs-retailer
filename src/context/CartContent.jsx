@@ -201,7 +201,7 @@ const CartProvider = ({ children }) => {
         };
     };
 
-console.log({order});
+    console.log({ order });
 
     const addOrder = async (product, account, manufacturer) => {
         // let status = await fetchCart();
@@ -238,7 +238,7 @@ console.log({order});
             // Check if testerInclude or sampleInclude is false and we're adding the wrong type
             const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
             const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
-            console.log({hasTesterInCart ,testerInclude: account.discount.testerInclude ,isTester});
+            console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
 
             // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
             if ((!account.discount.testerInclude && isTester && !hasTesterInCart) || (!account.discount.sampleInclude && isSample && !hasSampleInCart)) {
@@ -247,7 +247,7 @@ console.log({order});
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new tester or sample product
-                    const res = await cartSync({ cart: { id: order.id, delete: true } });
+                    const res = await deleteCartForever();
                     if (res) {
                         setOrder({
                             ...initialOrder,
@@ -271,7 +271,7 @@ console.log({order});
                     };
                 }
             }
-            
+
             // **Fix: Ensure this block is only triggered when testerInclude or sampleInclude is false**
             if ((hasTesterInCart && !account.discount.testerInclude && !isTester) ||
                 (hasSampleInCart && !account.discount.sampleInclude && !isSample)) {
@@ -280,7 +280,7 @@ console.log({order});
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new product
-                    const res = await cartSync({ cart: { id: order.id, delete: true } });
+                    const res = await deleteCartForever();
                     if (res) {
 
                         setOrder({
@@ -345,7 +345,7 @@ console.log({order});
 
             if (status) {
                 // Replace the cart with the new product
-                const res = await cartSync({ cart: { id: order.id, delete: true } });
+                const res = await deleteCartForever();
                 if (res) {
                     setOrder({
                         ...initialOrder,
@@ -504,9 +504,12 @@ console.log({order});
 
         return false;
     };
+    console.log({ order });
 
 
     const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {
+        console.log({ account, manufacturer, ordertype });
+        const res = await deleteOrder();
         // Directly replace the current order with a new one based on the provided product list
         const newOrderTotal = productList.reduce((sum, product) => sum + product.price * (product.qty || 1), 0);
         const newOrderQuantity = productList.reduce((sum, product) => sum + (product.qty || 1), 0);
@@ -537,7 +540,7 @@ console.log({order});
     // Delete the entire cart (reset to initial state)
     const deleteOrder = async () => {
         try {
-            const res = await cartSync({ cart: { id: order.id, delete: true } });
+            const res = await deleteCartForever();
 
             if (res) {
                 setOrder(initialOrder); // Only reset if deletion was successful
@@ -548,6 +551,16 @@ console.log({order});
             return false;
         }
     };
+
+    const deleteCartForever = async () => {
+        try {
+            const res = await cartSync({ cart: { id: order.id, delete: true } });
+            return res
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
 
 
     // Get order total
@@ -573,7 +586,8 @@ console.log({order});
         isCategoryCarted,
         contentApiFunction,
         keyBasedUpdateCart,
-        fetchCart
+        fetchCart,
+        deleteCartForever
     };
 
     return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
