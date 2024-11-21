@@ -1103,9 +1103,9 @@ export const brandDetails =
     desc: '<p class="seti">Everyone has a story. Ours is original and authentic and sets us apart from every other beauty brand. We`re proud of our story, and this is how we tell it: We live for lipstick. We get excited about primers. (No, seriously, we do.) But mostly, we love sharing our makeup secrets with you. Why? Because creativity and collaboration are at the core of our DNA. We are the only brand born out of a legendary photo studio — Smashbox Studios in Los Angeles — where major photographers, celebrities and makeup artists converge to create iconic images every day. Studio-tested, shockingly high-performance. Longwearing and skincaring. Artistry made easy. Hardworking makeup that keeps up with you.</p>'
   },
   a0ORb000000BQ0nMAG: {
-    img: { src: "https://beautyfashionsales.vercel.app/static/media/VictoriaBeckhamBeauty.d9fff66659d48dffd704.png" },
-    tagLine: "PURE EXCELLENCE IN EVERY WAY. THAT'S THE VICTORIA STANDARD.",
-    desc: '<p class="seti">Through the perfume of memory, Victoria Beckham distills the notes of eras and atmospheres into fragrances founded in personal yet universal associations. Drawing on stages of her life and their parallels to a pop culture shared by all, each scent captures her own recollections of distinct times, places, and experiences and mirrors them in our collective and individual reminiscences.</p>'
+    img: { src: "/assets/images/31.jpg" },
+    tagLine: "Good. Better. Best. Beckham. That's the Victoria Standard.",
+    desc: "<p class='seti'>Although Victoria Beckham had experienced the world's best beauty products (often in the hands of the world's best stylists, under the direction of the world's best photographers) she still found herself looking around - and into her makeup bag - and thinking 'This could be better'. Because, despite the array of quality, style, craft and heritage on offer, everything that excelled in one area seemed to sacrifice in another. And so Victoria Beckham Beauty was created to make the products that would finally meet these uncompromising standards: Proven performance and an elevated experience delivered with intentional integrity, transparency and inclusivity. A keenly curated range that only includes items that genuinely add to the best already out there; Shades selected for classical looks and contemporary styles; The feeling of luxury from first sight to last swipe, sweep or dab; The enduring quality required by demanding lifestyles; Fashion-led, female founded, cruelty-free, conscious and clean.</p><p class='seti'>Pure excellence in every way, at all times. Ambitious? Absolutely. Unreasonable? Not one bit.</p>"
   },
   a0O3b00000p7zqKEAQ: {
     img: { src: "https://beautyfashionsales.vercel.app/static/media/bobbi-brown-main.d67c6c3e9732a993f1c2.png" },
@@ -1132,7 +1132,6 @@ export const brandDetails =
     tagLine: "PARISIAN-BORN, SKINCARE-INFUSED MAKEUP.",
     desc: '<p class="seti">Terry de Gunzburg is a trailblazing industry legend who over the course of the past 30 years has changed the face of beauty.</p><p class="seti">Trading a career in medicine for a more creative life, Terry studied at the Carita beauty school in Paris and quickly became an in-demand makeup artist working with some of the biggest names in fashion. Her trademark beauty look has always been distinctive: imperceptible foundation, impeccable lips and thick, separated lashes.</p><p class="seti">As International Makeup Designer of YSL Beauté for 15 years, Terry invented the iconic Touché Eclat in 1992 (as well as countless other products and formulas). Radiance and a healthy complexion has always been key to Terry’s approach to make up, and so she decided to launch her own collection of products in 1998, and BY TERRY was born.</p><p class="seti">In 2004 after a mix up in the lab, double the amount of rose butter was added to a lip balm which would soon become BY TERRY’s most successful product: Baume de Rose. Described as the Rolls Royce of lip balms, it symbolizes everything the brand stands for—luxury, indulgence and a timelessness.</p><p class="seti">Almost 10 years ago, before hyaluronic acid was widely known by households worldwide, Terry created the first clean mattifying setting powder, the Hyaluronic Hydra-Powder. This was the start of Terry’s one of a kind Hyaluronic Range. We remain today pioneers of this ingredient and its applications. </p>'
   },
-
   a0O3b00000p4F4CEAU: {
     img: {},
     tagLine: null,
@@ -1162,6 +1161,11 @@ export const brandDetails =
     img: {},
     tagLine: null,
     desc: null
+  },
+  a0ORb000001KCNpMAO: {
+    img: { src: "/assets/images/29.jpg" },
+    tagLine: "Every. Single. Day.™",
+    desc: "<p>SPF is the #1 thing you can do for your skin, so we put it first in all we do. Founded in 2005 by mom and former elementary school teacher Holly Thaggard, Supergoop! is made with a mission: To change the way the world thinks about sunscreen and end the epidemic of skin cancer. As the Experts in SPF™, we’ve been raising the bar for effective, feel-good sunscreen for nearly 20 years. Discover our 40+ dermatologist-tested formulas for all skin types, tones and routines, and find the SPF you want to wear. Every. Single. Day.™</p>"
   }
 }
 
