@@ -65,9 +65,9 @@ function Product() {
     return groupedData;
   };
   useEffect(() => {
-    if (productTypeFilter === "Pre-order") {
+    // if (productTypeFilter === "Pre-order") {
       setCategoryFilters([])
-    }
+    // }
   }, [productTypeFilter])
 
   const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
