@@ -124,6 +124,8 @@ const CustomerSupportDetails = () => {
   
     fetchAttachmentsWithTimeout();
   }, [detailsId]);
+
+  
   
 
 
