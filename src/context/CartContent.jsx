@@ -203,7 +203,7 @@ const CartProvider = ({ children }) => {
 
 
     const addOrder = async (product, account, manufacturer) => {
-        let status = await fetchCart();
+        // let status = await fetchCart();
 
         let qty = product.qty || product.Min_Order_QTY__c || 1;
         // If the cart is empty or just initialized, set the orderType based on the first product added
