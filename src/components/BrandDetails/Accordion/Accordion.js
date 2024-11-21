@@ -24,7 +24,7 @@ const Accordion = ({
     removeProduct,
     deleteOrder,
     isProductCarted,
-    isCategoryCarted,
+    isCategoryCarted,deleteCartForever
   } = useCart();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   // console.log(productCartSchema)
@@ -86,81 +86,59 @@ const Accordion = ({
 
 
 
-  const onQuantityChange = (element, quantity) => {
+  const onQuantityChange = async (element, quantity) => {
     if (!quantity) {
       quantity = element.Min_Order_QTY__c;
     }
-    let checkProduct = isProductCarted(element.Id);
-    if (order?.Account?.id !== localStorage.getItem("AccountId__c") && checkProduct) {
-      let message = "The order type does not match the current cart. Do you want to replace the cart with the new order type?";
-      
-      Swal.fire({
-        title: 'Replace Cart?',
-        text: message,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#000', 
-        cancelButtonColor: '#000',  
-        confirmButtonText: 'Yes, replace it!',
-        cancelButtonText: 'No, keep current',
-        background: '#f9f9f9',
-        color: '#333',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          quantity = 0;
-          proceedWithOrder(element, quantity);
-          quantity = 1;
-          proceedWithOrder(element, quantity); 
-        } else {
-          proceedWithOrder(element, quantity);
-        }
-      });
-      return; 
-    }
-    proceedWithOrder(element, quantity);
-  };
-  const proceedWithOrder = (element, quantity) => {
-    let checkProduct = isProductCarted(element.Id);
+    console.log({element});
     
+    let checkProduct = isProductCarted(element.Id);
+
     if (checkProduct) {
-      updateProductQty(element.Id, quantity);
-    } else {
-      let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
-      let account = {
-        name: localStorage.getItem("Account"),
-        id: localStorage.getItem("AccountId__c"),
-        address: JSON.parse(localStorage.getItem("address")),
-        shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
-        discount: data.discount,
-        SalesRepId: localStorage.getItem("Sales_Rep__c"),
-      };
-      
-      let manufacturer = {
-        name: element.ManufacturerName__c,
-        id: element.ManufacturerId__c,
-      };
-      
-      let orderType = "wholesale";
-      if (element?.Category__c?.toUpperCase() === "PREORDER" || element?.Category__c?.toUpperCase()?.match("EVENT")) {
-        orderType = "pre-order";
-      }
-      element.orderType = orderType;
-      
-      let discount = 0;
-      if (element?.Category__c === "TESTER") {
-        discount = data.discount?.testerMargin || 0;
-      } else if (element?.Category__c === "Samples") {
-        discount = data.discount?.sample || 0;
-      } else {
-        discount = data.discount?.margin || 0;
-      }
-      
-      let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
-      element.price = salesPrice;
-      element.qty = quantity;
-      addOrder(element, account, manufacturer);
+      if (order?.Account?.id === localStorage.getItem("AccountId__c")) {
+        updateProductQty(element.Id, quantity);
+        return;
+      } 
     }
+
+    let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+    let account = {
+      name: localStorage.getItem("Account"),
+      id: localStorage.getItem("AccountId__c"),
+      address: JSON.parse(localStorage.getItem("address")),
+      shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
+      discount: data.discount,
+      SalesRepId: localStorage.getItem("Sales_Rep__c"),
+    };
+
+    let manufacturer = {
+      name: element.ManufacturerName__c,
+      id: element.ManufacturerId__c,
+    };
+
+    let orderType = "wholesale";
+    if (element?.Category__c?.toUpperCase() === "PREORDER" || element?.Category__c?.toUpperCase()?.match("EVENT")) {
+      orderType = "pre-order";
+    }
+    element.orderType = orderType;
+
+    let discount = 0;
+    if (element?.Category__c === "TESTER") {
+      discount = data.discount?.testerMargin || 0;
+    } else if (element?.Category__c === "Samples") {
+      discount = data.discount?.sample || 0;
+    } else {
+      discount = data.discount?.margin || 0;
+    }
+
+    let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+    element.price = salesPrice;
+    element.qty = quantity;
+    console.log({order});
+
+    addOrder(element, account, manufacturer);
   };
+  
 
   const orderSetting = (product, quantity) => {
     setReplaceCartModalOpen(false);
@@ -243,9 +221,9 @@ const Accordion = ({
                     let categoryOrderQuantity = false;
                     if (
                       order?.Account?.id ==
-                        localStorage.getItem("AccountId__c") &&
+                      localStorage.getItem("AccountId__c") &&
                       order?.Manufacturer?.id ==
-                        localStorage.getItem("ManufacturerId__c")
+                      localStorage.getItem("ManufacturerId__c")
                     ) {
                       categoryOrderQuantity = isCategoryCarted(key);
                     }
@@ -309,8 +287,8 @@ const Accordion = ({
                                   ) : !productImage.isLoaded ? (
                                     <LoaderV2 />
                                   ) : productImage.images?.[
-                                      value?.ProductCode
-                                    ] ? (
+                                    value?.ProductCode
+                                  ] ? (
                                     productImage.images[value?.ProductCode]
                                       ?.ContentDownloadUrl ? (
                                       <img
@@ -333,7 +311,7 @@ const Accordion = ({
                                       <img
                                         src={
                                           productImage.images[
-                                            value?.ProductCode
+                                          value?.ProductCode
                                           ]
                                         }
                                         className="zoomInEffect"
@@ -383,14 +361,14 @@ const Accordion = ({
                                   }
                                 >
                                   {indexed !== showName?.index &&
-                                  value.Name.length >= 23
+                                    value.Name.length >= 23
                                     ? `${value.Name.substring(0, 23)}...`
                                     : value.Name}
                                 </td>
                                 <td>{value.ProductCode}</td>
                                 <td>
                                   {value.ProductUPC__c === null ||
-                                  value.ProductUPC__c === "n/a"
+                                    value.ProductUPC__c === "n/a"
                                     ? "--"
                                     : value.ProductUPC__c}
                                 </td>
@@ -398,8 +376,8 @@ const Accordion = ({
                                   {value?.usdRetail__c?.includes("$")
                                     ? `$${listPrice}`
                                     : `$${Number(value.usdRetail__c).toFixed(
-                                        2
-                                      )}`}
+                                      2
+                                    )}`}
                                 </td>
                                 <td>
                                   <div className="d-flex">${salesPrice}</div>
@@ -417,7 +395,7 @@ const Accordion = ({
                                     }}
                                     value={
                                       order?.Account?.id ===
-                                      localStorage.getItem("AccountId__c")
+                                        localStorage.getItem("AccountId__c")
                                         ? qtyofItem
                                         : 0
                                     }
@@ -426,10 +404,10 @@ const Accordion = ({
                                 <td>
                                   {" "}
                                   {order?.Account?.id ===
-                                  localStorage.getItem("AccountId__c")
+                                    localStorage.getItem("AccountId__c")
                                     ? qtyofItem > 0
                                       ? "$" +
-                                        (inputPrice * qtyofItem).toFixed(2)
+                                      (inputPrice * qtyofItem).toFixed(2)
                                       : "----"
                                     : "----"}
                                 </td>
