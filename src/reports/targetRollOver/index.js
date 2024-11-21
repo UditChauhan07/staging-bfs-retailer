@@ -48,7 +48,7 @@ const TargetRollOver = () => {
         // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
         setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null);
     }
-    const handlePageData = async ()=>{
+    const handlePageData = async () => {
         GetAuthData()
             .then(async (user) => {
                 setAccountList(user.data.accountList)
@@ -80,7 +80,7 @@ const TargetRollOver = () => {
         }
     }, []);
 
-    useBackgroundUpdater(handlePageData,defaultLoadTime)
+    useBackgroundUpdater(handlePageData, defaultLoadTime)
 
     const filteredTargetData = useMemo(() => {
         let filtered = target.list.filter((ele) => {
@@ -436,13 +436,36 @@ const TargetRollOver = () => {
     const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
         return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
     }
+
+    const FilterNodes = () => {
+        return (<><FilterItem
+            minWidth="220px"
+            label="All Brand"
+            value={manufacturerFilter}
+            options={manufacturerData?.map((manufacturer) => ({
+                label: manufacturer.Name,
+                value: manufacturer.Id,
+            }))}
+            onChange={(value) => setManufacturerFilter(value)}
+        />
+            <div className="d-flex gap-3">
+                <button className="border px-2.5 py-1 leading-tight d-grid" onClick={resetFilter}>
+                    <CloseButton crossFill={"#fff"} height={20} width={20} />
+                    <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>clear</small>
+                </button>
+                <button className="border px-2.5 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
+                    <MdOutlineDownload size={16} className="m-auto" />
+                    <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>EXPORT</small>
+                </button>
+            </div></>)
+    }
     return (
         <AppLayout
             filterNodes={
-                <div className="d-flex justify-content-between m-auto" style={{ width: "99%" }}>
-                    <div className="d-flex justify-content-start col-6 gap-4">
-                        {accountList?.length > 1 ?
-                            <>
+                <>
+                    {accountList?.length > 1 ?
+                        <div className="d-flex justify-content-between m-auto" style={{ width: "99%" }}>
+                            <div className="d-flex justify-content-start col-6 gap-4">
                                 <FilterItem
                                     minWidth="220px"
                                     label="All Store"
@@ -464,47 +487,17 @@ const TargetRollOver = () => {
                                 <button onClick={() => sendApiCall()} className="border px-2 d-grid py-1 leading-tight flex justify-center align-center gap-1">
                                     <SearchIcon fill="#fff" width={20} height={20} />
                                     <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>search</small>
-                                </button></> : null}
-                    </div>
-                    <div className="d-flex justify-content-start col-1">
-                        <hr className={Styles.breakHolder} />
-                    </div>
-                    <div className="d-flex justify-content-end col-5 gap-4">
-                        {target.ownerPermission && (
-                            <FilterItem
-                                minWidth="220px"
-                                label="All Sales Rep"
-                                value={searchSaleBy}
-                                options={salesRepList.map((salerep) => ({
-                                    label: salerep,
-                                    value: salerep,
-                                }))}
-                                onChange={(value) => setSearchSaleBy(value)}
-                                name="salesRepSearch"
-                            />
-                        )}
-                        <FilterItem
-                            minWidth="220px"
-                            label="All Manufacturers"
-                            value={manufacturerFilter}
-                            options={manufacturerData?.map((manufacturer) => ({
-                                label: manufacturer.Name,
-                                value: manufacturer.Id,
-                            }))}
-                            onChange={(value) => setManufacturerFilter(value)}
-                        />
-                        <div className="d-flex gap-3">
-                            <button className="border px-2.5 py-1 leading-tight d-grid" onClick={resetFilter}>
-                                <CloseButton crossFill={"#fff"} height={20} width={20} />
-                                <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>clear</small>
-                            </button>
-                            <button className="border px-2.5 py-1 leading-tight d-grid" onClick={handleExportToExcel}>
-                                <MdOutlineDownload size={16} className="m-auto" />
-                                <small style={{ fontSize: "6px", letterSpacing: "0.5px", textTransform: "uppercase" }}>EXPORT</small>
-                            </button>
+                                </button>
+                            </div>
+                            <div className="d-flex justify-content-start col-1">
+                                <hr className={Styles.breakHolder} />
+                            </div>
+                            <div className="d-flex justify-content-end col-5 gap-4">
+                                <FilterNodes />
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        : <FilterNodes />}
+                </>
             }
         >
             {exportToExcelState && (
