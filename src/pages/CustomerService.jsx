@@ -170,6 +170,7 @@ const CustomerService = () => {
     event.preventDefault();
     setIsDisabled(true);
     setLoading(true);
+    setSubmitForm(true);
     document.body.style.overflow = "hidden";
     document.body.style.pointerEvents = "none"; 
     const modalBackdrop = document.getElementById('modal-backdrop');
@@ -228,6 +229,7 @@ const CustomerService = () => {
                     .then((fileUploader) => {
                       setIsDisabled(false);
                       setLoading(false);
+                      setSubmitForm(false);
                       document.body.style.pointerEvents = ""; 
                       document.body.style.overflow = ""; 
                       if (modalBackdrop) modalBackdrop.style.filter = ""; 
@@ -255,6 +257,7 @@ const CustomerService = () => {
             .catch((err) => {
               console.error({ err });
               setLoading(false);
+              setSubmitForm(false); 
               document.body.style.pointerEvents = "";
               document.body.style.overflow = "";
               if (modalBackdrop) modalBackdrop.style.filter = "";
@@ -264,6 +267,7 @@ const CustomerService = () => {
       .catch((error) => {
         console.log(error);
         setLoading(false);
+        setSubmitForm(false); 
         document.body.style.pointerEvents = "";
         document.body.style.overflow = "";
         if (modalBackdrop) modalBackdrop.style.filter = "";
@@ -311,11 +315,7 @@ const CustomerService = () => {
                     SubmitHandler(e);
                   }}
                 >
-                  {loading ? (
-                    <span>Loading...</span> 
-                  ) : (
-                    "Yes"
-                  )}
+                Yes
                 </button>
                 <button
                   style={{
