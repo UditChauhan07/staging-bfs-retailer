@@ -25,6 +25,7 @@ const dataStore = {
 
     // Method to store or update data based on page
     async getPageData(pageKey, fetchData) {
+        
         try {
             // Check if there's already data in localStorage
             const cachedData = localStorage.getItem(pageKey);
