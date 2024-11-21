@@ -359,59 +359,117 @@ const AccountInfo = ({
                     fileName.endsWith(".xls") || fileName.endsWith(".xlsx");
 
                   return (
-                    <div key={index} style={{ position: "relative" }}>
-                      <span
-                        style={{
-                          position: "absolute",
-                          right: "5px",
-                          top: "-5px",
-                          color: "#000",
-                          zIndex: 1,
-                          cursor: "pointer",
-                          fontSize: "18px",
-                        }}
-                        onClick={() => fileRemoveHandler(index)}
-                      >
-                        x
-                      </span>
-                      <a
-                        href={file.preview}
-                        target="_blank"
-                        title="Click to Download"
-                        rel="noreferrer"
-                      >
-                        {isImage ? (
-                          <div className={styles.fileIcon}>
-                            <img
-                              src={file.preview}
-                              alt={file.file.name}
-                              style={{
-                                maxWidth: "100%",
-                                maxHeight: "200px",
-                                objectFit: "contain",
-                              }}
-                              className={styles.imagePreview}
-                            />
-                          </div>
-                        ) : isPDF ? (
-                          <div className={styles.fileIcon}>
-                            <AiOutlineFilePdf size={48} color="#000000" />
-                          </div>
-                        ) : isVideo ? (
-                          <div className={styles.fileIcon}>
-                            <AiOutlineVideoCamera size={48} color="#000000" />
-                          </div>
-                        ) : isExcel ? (
-                          <div className={styles.fileIcon}>
-                            <FaFileExcel size={48} color="#000000" />
-                          </div>
-                        ) : (
-                          <div className={styles.fileIcon}>
-                            <MdImage size={48} color="#000000" />
-                          </div>
-                        )}
-                      </a>
-                    </div>
+                    // <div key={index} style={{ position: "relative" }}>
+                    //   <span
+                    //     style={{
+                    //       position: "absolute",
+                    //       right: "5px",
+                    //       top: "-5px",
+                    //       color: "#000",
+                    //       zIndex: 1,
+                    //       cursor: "pointer",
+                    //       fontSize: "18px",
+                    //     }}
+                    //     onClick={() => fileRemoveHandler(index)}
+                    //   >
+                    //     x
+                    //   </span>
+                    //   <a
+                    //     href={file.preview}
+                    //     target="_blank"
+                    //     title="Click to Download"
+                    //     rel="noreferrer"
+                    //   >
+                    //     {isImage ? (
+                    //       <div className={styles.fileIcon}>
+                    //         <img
+                    //           src={file.preview}
+                    //           alt={file.file.name}
+                    //           style={{
+                    //             maxWidth: "100%",
+                    //             maxHeight: "200px",
+                    //             objectFit: "contain",
+                    //           }}
+                    //           className={styles.imagePreview}
+                    //         />
+                    //       </div>
+                    //     ) : isPDF ? (
+                    //       <div className={styles.fileIcon}>
+                    //         <AiOutlineFilePdf size={48} color="#000000" />
+                    //       </div>
+                    //     ) : isVideo ? (
+                    //       <div className={styles.fileIcon}>
+                    //         <AiOutlineVideoCamera size={48} color="#000000" />
+                    //       </div>
+                    //     ) : isExcel ? (
+                    //       <div className={styles.fileIcon}>
+                    //         <FaFileExcel size={48} color="#000000" />
+                    //       </div>
+                    //     ) : (
+                    //       <div className={styles.fileIcon}>
+                    //         <MdImage size={48} color="#000000" />
+                    //       </div>
+                    //     )}
+                    //   </a>
+                    // </div>
+
+                    <div key={index} style={{position:"relative"}} className={styles.topParent}>
+                    <span
+                      style={{
+                        position: "absolute",
+                        right: "5px",
+                        top: "-5px",
+                        color: "#000",
+                        zIndex: 1,
+                        cursor: "pointer",
+                        fontSize: "18px",
+                      }}
+                      onClick={() => fileRemoveHandler(index)}
+                    >
+                      x
+                    </span>
+                    <a
+                      href={file.preview}
+                      target="_blank"
+                      title="Click to Download"
+                      rel="noreferrer"
+                    >
+                      {isImage ? (
+                        <div className={styles.fileIcon}>
+                          <img
+                            src={file.preview}
+                            alt={file.file.name}
+                            style={{
+                              maxWidth: "100%",
+                              maxHeight: "100px",
+                              minHeight: "100px",
+                              border:"1px solid #ccc",
+                              objectFit: "cover",
+          
+                            }}
+                            className={styles.imagePreview}
+                          />
+                        </div>
+                      ) : isPDF ? (
+                        <div className={styles.fileIcon1}>
+                          <AiOutlineFilePdf size={48} color="#000000" />
+                        </div>
+                      ) : isVideo ? (
+                        <div className={styles.fileIcon1}>
+                          <AiOutlineVideoCamera size={48} color="#000000" />
+                        </div>
+                      ) : isExcel ? (
+                        <div className={styles.fileIcon1}>
+                          <FaFileExcel size={48} color="#000000" />
+                        </div>
+                      ) : (
+                        <div className={styles.fileIcon}>
+                          <MdImage size={48} color="#000000" />{" "}
+                          {/* Default image icon for unknown files */}
+                        </div>
+                      )}
+                    </a>
+                  </div>
                   );
                 })}
               </div>
