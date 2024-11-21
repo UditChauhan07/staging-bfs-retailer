@@ -380,6 +380,7 @@ const CustomerService = () => {
             setDesc={setDesc}
             orderConfirmed={orderConfirmed}
             setConfirm={setConfirm}
+            desc={desc}
           />
         )}
         {reason == "Update Account Info" && (

@@ -11,6 +11,13 @@ import Select from "react-select";
 import { uploadFileSupport } from "../../lib/store";
 import { BiUpload } from "react-icons/bi";
 import ModalPage from "../Modal UI";
+import { AiOutlineFilePdf } from "react-icons/ai";
+import { AiOutlineVideoCamera } from "react-icons/ai";
+import { FaFileExcel } from "react-icons/fa";
+import { MdImage } from "react-icons/md";
+import Swal from 'sweetalert2';
+
+
 const AccountInfo = ({
   reason,
   Accounts,
@@ -38,6 +45,25 @@ const AccountInfo = ({
     let reqfiles = e.target.files;
     if (reqfiles) {
       if (reqfiles.length > 0) {
+        if (tempFile.length + reqfiles.length > 5) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'You can only upload up to 5 files.',
+            customClass: {
+                confirmButton: 'swal-btn-inline'
+            },
+            didOpen: () => {
+                const confirmButton = Swal.getConfirmButton();
+                confirmButton.style.backgroundColor = 'black';
+                confirmButton.style.color = 'white';
+                confirmButton.style.border = 'none';
+                confirmButton.style.padding = '10px 20px'; 
+            }
+        });
+        
+          return; 
+      }
         Object.keys(reqfiles).map((index) => {
           let url = URL.createObjectURL(reqfiles[index]);
           if (url) {
@@ -224,7 +250,7 @@ const AccountInfo = ({
                     }}
                     disabled={isDisabled}
                   >
-                    Yes
+                    {isDisabled ? "Loading..." : "Yes"}
                   </button>
                   <button
                     style={{
@@ -312,43 +338,82 @@ const AccountInfo = ({
               />
               <div>
                 {files.length > 0 && (
-                  <p className={styles.countText}>
+                  <p className={styles.countText} style={{fontFamily:"Montserrat"}}>
                     Selected Items: {files.length}
                   </p>
                 )}
               </div>
               <div className={styles.imgHolder}>
-                {files.map((file, index) => (
-                  <div style={{ position: "relative" }}>
-                    <span
-                      style={{
-                        position: "absolute",
-                        right: "5px",
-                        top: "-5px",
-                        color: "#000",
-                        zIndex: 1,
-                        cursor: "pointer",
-                        fontSize: "18px",
-                      }}
-                      onClick={() => {
-                        fileRemoveHandler(index);
-                      }}
-                    >
-                      x
-                    </span>
-                    <a
-                      href={file?.preview}
-                      target="_blank"
-                      title="Click to Download"
-                    >
-                      <img
-                        src={file?.preview}
-                        key={index}
-                        alt={file?.preview}
-                      />
-                    </a>
-                  </div>
-                ))}
+                {files.map((file, index) => {
+                  const fileType = file.file.type;
+                  const fileName = file.file.name.toLowerCase();
+                  const isImage =
+                    fileType.startsWith("image/") ||
+                    fileName.endsWith(".jpg") ||
+                    fileName.endsWith(".jpeg") ||
+                    fileName.endsWith(".png") ||
+                    fileName.endsWith(".gif");
+                  const isPDF = fileType === "application/pdf";
+                  const isVideo = fileType.startsWith("video/");
+                  const isExcel =
+                    fileName.endsWith(".xls") || fileName.endsWith(".xlsx");
+
+                  return (
+                    <div key={index} style={{ position: "relative" }}>
+                      <span
+                        style={{
+                          position: "absolute",
+                          right: "5px",
+                          top: "-5px",
+                          color: "#000",
+                          zIndex: 1,
+                          cursor: "pointer",
+                          fontSize: "18px",
+                        }}
+                        onClick={() => fileRemoveHandler(index)}
+                      >
+                        x
+                      </span>
+                      <a
+                        href={file.preview}
+                        target="_blank"
+                        title="Click to Download"
+                        rel="noreferrer"
+                      >
+                        {isImage ? (
+                          <div className={styles.fileIcon}>
+                            <img
+                              src={file.preview}
+                              alt={file.file.name}
+                              style={{
+                                maxWidth: "100%",
+                                maxHeight: "200px",
+                                objectFit: "contain",
+                              }}
+                              className={styles.imagePreview}
+                            />
+                          </div>
+                        ) : isPDF ? (
+                          <div className={styles.fileIcon}>
+                            <AiOutlineFilePdf size={48} color="#000000" />
+                          </div>
+                        ) : isVideo ? (
+                          <div className={styles.fileIcon}>
+                            <AiOutlineVideoCamera size={48} color="#000000" />
+                          </div>
+                        ) : isExcel ? (
+                          <div className={styles.fileIcon}>
+                            <FaFileExcel size={48} color="#000000" />
+                          </div>
+                        ) : (
+                          <div className={styles.fileIcon}>
+                            <MdImage size={48} color="#000000" />
+                          </div>
+                        )}
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <div className={styles.dFlex}>

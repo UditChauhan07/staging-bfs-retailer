@@ -40,6 +40,13 @@
   margin-top: 1rem;
   flex-direction: column;  
   align-items: flex-start;
+  height: auto;
+  overflow-y: auto;
+  transition: height 0.3s ease; /* For smooth transition */
+}
+
+.attachHolderActive {
+  max-height: 300px; /* Or any value based on number of files */
 }
 .attachHolder label{
   display: grid;
@@ -49,10 +56,20 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, 100px);
   gap: 5px;
+  justify-content: center;
+
+  
 }
 .imgHolder img{
   width: 100px;
   height: auto;
+  border: 1px solid #ccc !important;
+}
+.imgHolder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
 }
 .subTitle {
   color: #000;
