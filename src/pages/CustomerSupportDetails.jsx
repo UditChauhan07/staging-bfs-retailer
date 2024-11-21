@@ -38,43 +38,6 @@ const CustomerSupportDetails = () => {
     }
   }, [detailsId, reset]); 
 
-  // useEffect(() => {
-  //   const fetchAttachmentsWithTimeout = async () => {
-  //     if (!detailsId) return;
-
-  //     const timeout = setTimeout(async () => {
-  //       try {
-  //         setLoadingAttachments(true);
-  //         const user = await GetAuthData();
-  //         const response = await getAttachment(user.data.x_access_token, detailsId);
-
-  //         if (response) {
-  //           const formattedAttachments = response.attachments.map((attachment) => ({
-  //             id: attachment.id,
-  //             formattedId: `${attachment.id}.${attachment.name.split(".").pop().toLowerCase()}`,
-  //             name: attachment.name,
-  //           }));
-  //           setAttachmentUrls(formattedAttachments);
-  //         } else {
-  //           console.warn("No attachments found in response");
-  //           setAttachmentUrls([]);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching attachments:", error);
-  //       } finally {
-  //         setLoadingAttachments(false);
-  //         setAttachmentsLoaded(true);
-  //       }
-  //     }, 3000); 
-
-     
-  //     return () => clearTimeout(timeout);
-  //   };
-
-  //   fetchAttachmentsWithTimeout();
-
-  // }, [detailsId]); 
-
   useEffect(() => {
     const fetchAttachmentsWithTimeout = async () => {
       if (!detailsId) return;
@@ -124,9 +87,6 @@ const CustomerSupportDetails = () => {
   
     fetchAttachmentsWithTimeout();
   }, [detailsId]);
-
-  
-  
 
 
   if (!detailsId || detailsId === "") return navigate("/customer-support");
