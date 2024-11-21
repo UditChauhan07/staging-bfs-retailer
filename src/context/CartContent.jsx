@@ -504,9 +504,12 @@ console.log({order});
 
         return false;
     };
-
+    console.log({order});
+    
 
     const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {
+        console.log({account,manufacturer,ordertype});
+        const res = await cartSync({ cart: { id: order.id, delete: true } });
         // Directly replace the current order with a new one based on the provided product list
         const newOrderTotal = productList.reduce((sum, product) => sum + product.price * (product.qty || 1), 0);
         const newOrderQuantity = productList.reduce((sum, product) => sum + (product.qty || 1), 0);

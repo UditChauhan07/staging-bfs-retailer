@@ -162,10 +162,14 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
       setAlert('-');
       let productCount = 0;
       let createOrderList = [];
+      let address = null;
+      if (localStorage.getItem("address")) {
+        address = JSON.parse(localStorage.getItem("address"));
+      }
       let account = {
         name: localStorage.getItem("Account"),
         id: localStorage.getItem("AccountId__c"),
-        address: localStorage.getItem("address"),
+        address,
         shippingMethod: JSON.parse(localStorage.getItem("shippingMethod")),
         discount: rawData.discount,
         SalesRepId: localStorage.getItem("Sales_Rep__c"),
@@ -227,7 +231,6 @@ const SpreadsheetUploader = ({ rawData, showTable = false, setOrderFromModal, or
         if (orderType == "preorder") {
           uploadedType = "pre-order"
         }
-
         contentApiFunction(createOrderList, account, manufacturer, uploadedType).then((result) => {
           let currentUrl = window.location.origin;
           // let url = currentUrl + "/my-bag";
