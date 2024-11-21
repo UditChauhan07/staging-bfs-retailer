@@ -3,12 +3,14 @@ import { AiOutlineFilePdf, AiOutlineVideoCamera } from "react-icons/ai";
 import { FaFileExcel } from "react-icons/fa";
 import Styles from "./Attachements.module.css";
 import { MdImage } from "react-icons/md";
+import Swal from "sweetalert2";
 
 const Attachements = ({
   title = true,
   files,
   setFile,
   setDesc,
+  desc,
   orderConfirmed,
   setConfirm,
   children,
@@ -19,6 +21,25 @@ const Attachements = ({
     let reqfiles = e.target.files;
     if (reqfiles) {
       if (reqfiles.length > 0) {
+        if (tempFile.length + reqfiles.length > 5) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'You can only upload up to 5 files.',
+            customClass: {
+                confirmButton: 'swal-btn-inline'
+            },
+            didOpen: () => {
+                const confirmButton = Swal.getConfirmButton();
+                confirmButton.style.backgroundColor = 'black';
+                confirmButton.style.color = 'white';
+                confirmButton.style.border = 'none';
+                confirmButton.style.padding = '10px 20px'; 
+            }
+        });
+        
+          return; 
+      }
         Object.keys(reqfiles).map((index) => {
           let url = URL.createObjectURL(reqfiles[index]);
           if (url) {
@@ -55,7 +76,7 @@ const Attachements = ({
       const isVideo = fileType.startsWith("video/");
       const isExcel = fileName.endsWith(".xls") || fileName.endsWith(".xlsx");
       return (
-        <div key={index} style={{ position: "relative" }}>
+        <div key={index} style={{position:"relative"}} className={Styles.topParent}>
           <span
             style={{
               position: "absolute",
@@ -83,22 +104,25 @@ const Attachements = ({
                   alt={file.file.name}
                   style={{
                     maxWidth: "100%",
-                    maxHeight: "200px",
-                    objectFit: "contain",
+                    maxHeight: "100px",
+                    minHeight: "100px",
+                    border:"1px solid #ccc",
+                    objectFit: "cover",
+
                   }}
                   className={Styles.imagePreview}
                 />
               </div>
             ) : isPDF ? (
-              <div className={Styles.fileIcon}>
+              <div className={Styles.fileIcon1}>
                 <AiOutlineFilePdf size={48} color="#000000" />
               </div>
             ) : isVideo ? (
-              <div className={Styles.fileIcon}>
+              <div className={Styles.fileIcon1}>
                 <AiOutlineVideoCamera size={48} color="#000000" />
               </div>
             ) : isExcel ? (
-              <div className={Styles.fileIcon}>
+              <div className={Styles.fileIcon1}>
                 <FaFileExcel size={48} color="#000000" />
               </div>
             ) : (
@@ -148,6 +172,8 @@ const Attachements = ({
               <textarea
                 name="desc"
                 id="desc"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)} 
                 className={Styles.textAreaPut}
                 onKeyUp={(e) => setDesc(e.target.value)}
               ></textarea>
@@ -180,7 +206,7 @@ const Attachements = ({
           </div>
           <div>
             {files.length > 0 && (
-              <p className={Styles.countText}>Selected Items: {files.length}</p>
+              <p className={Styles.countText} style={{fontFamily:"Montserrat"}}>Selected Items: {files.length}</p>
             )}
             </div>
           <div className={Styles.imgHolder}>
