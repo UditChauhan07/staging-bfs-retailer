@@ -201,6 +201,7 @@ const CartProvider = ({ children }) => {
         };
     };
 
+console.log({order});
 
     const addOrder = async (product, account, manufacturer) => {
         // let status = await fetchCart();
@@ -237,9 +238,10 @@ const CartProvider = ({ children }) => {
             // Check if testerInclude or sampleInclude is false and we're adding the wrong type
             const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
             const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
+            console.log({hasTesterInCart ,testerInclude: account.discount.testerInclude ,isTester});
 
             // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
-            if ((!account.discount.testerInclude && isTester) || (!account.discount.sampleInclude && isSample)) {
+            if ((!account.discount.testerInclude && isTester && !hasTesterInCart) || (!account.discount.sampleInclude && isSample && !hasSampleInCart)) {
                 let msg = `This brand requires you to add ${isTester ? "Tester" : "Sample"} products in a separate order. You cannot mix it with other products.`;
 
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
@@ -269,7 +271,7 @@ const CartProvider = ({ children }) => {
                     };
                 }
             }
-
+            
             // **Fix: Ensure this block is only triggered when testerInclude or sampleInclude is false**
             if ((hasTesterInCart && !account.discount.testerInclude && !isTester) ||
                 (hasSampleInCart && !account.discount.sampleInclude && !isSample)) {
