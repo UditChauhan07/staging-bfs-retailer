@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
 import {
   GetAuthData,
+  defaultLoadTime,
   getAllAccount,
   getAllAccountLocation,
   getAllAccountOrders,
@@ -19,6 +20,8 @@ import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater.js";
+import dataStore from "../lib/dataStore.js";
 const CustomerService = () => {
   const { state } = useLocation();
   let Reason = null;
@@ -106,135 +109,61 @@ const CustomerService = () => {
     setActual_Amount__c(null);
     setErrorList({});
   };
-  useEffect(() => {
-    if (Reason) {
-      setReason(Reason);
-    }
-    if (OrderId) {
-      setOrderId(OrderId);
-    }
-    setIsLoad(false);
+  const handlePageData = async()=>{
     GetAuthData()
-      .then((response) => {
-        setContactId(response.data.retailerId);
-        setContactName(response.data.firstName + " " + response.data.lastName);
-        getAllAccountOrders({
-          key: response.data.x_access_token,
-          accountIds: JSON.stringify(response.data.accountIds),
-        })
+      .then(async (response) => {
+        setContactId(response.data.retailerId)
+        setContactName(response.data.firstName + " " + response.data.lastName)
+        dataStore.getPageData("/getAllAccountOrders", () =>
+          getAllAccountOrders({
+            key: response.data.x_access_token,
+            accountIds: JSON.stringify(response.data.accountIds)
+          }))
           .then((order) => {
-            let sorting = sortingList(order);
-            if (sorting.length) {
-              setDSalesRep(sorting[0].OwnerId);
-            }
-            setIsLoad(true);
-            setOrders(sorting);
+            handleOrderListReady(order)
           })
           .catch((error) => {
             console.log({ error });
           });
-        getAllAccountLocation({
-          key: response.data.x_access_token,
-          accountIds: JSON.stringify(response.data.accountIds),
+        dataStore.getPageData("/getAllAccountLocation", () => getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) })).then((accounts) => {
+          setAccountList(accounts)
+        }).catch((storeErr) => {
+          console.log({ storeErr });
         })
-          .then((accounts) => {
-            setAccountList(accounts);
-          })
-          .catch((storeErr) => {
-            console.log({ storeErr });
-          });
       })
       .catch((err) => {
         console.log({ err });
       });
+  }
+
+  useEffect(() => {
+    if (Reason) {
+      setReason(Reason)
+    }
+    if (OrderId) {
+      setOrderId(OrderId)
+    }
+    setIsLoad(false)
+    dataStore.subscribe("/getAllAccountOrders", handleOrderListReady);
+    handlePageData()
+    return () => {
+      dataStore.unsubscribe("/getAllAccountOrders", handleOrderListReady);
+    }
   }, []);
 
-  // const SubmitHandler = (event) => {
-  //   event.preventDefault();
-  //   setIsDisabled(true);
-  //   setLoading(true);
-  //   GetAuthData()
-  //     .then((user) => {
-  //       if (user) {
-  //         let errorlistObj = Object.keys(errorList);
-  //         let systemStr = "";
-  //         if (errorlistObj.length) {
-  //           errorlistObj.map((id) => {
-  //             systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} for`;
-  //             if (reason != "Charges" && errorList[id]?.Quantity) {
-  //               systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`;
-  //             } else {
-  //               systemStr += ` ${errorList[id].Quantity} Qty.\n`;
-  //             }
-  //           });
-  //         }
-  //         let newDesc = "";
-  //         if (systemStr != "") {
-  //           newDesc = "Issue Desc:" + systemStr;
-  //           if (desc)
-  //             newDesc = "User Desc:" + desc + " \n Issue Desc:" + systemStr;
-  //         } else {
-  //           newDesc = desc;
-  //         }
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
 
-  //         let rawData = {
-  //           orderStatusForm: {
-  //             typeId: "0123b0000007z9pAAA",
-  //             reason: reason,
-  //             salesRepId,
-  //             contactId: user.data.retailerId,
-  //             accountId,
-  //             opportunityId: orderId,
-  //             manufacturerId,
-  //             desc: newDesc,
-  //             priority: "Medium",
-  //             sendEmail,
-  //             subject,
-  //             Actual_Amount__c,
-  //           },
-  //           key: user.data.x_access_token,
-  //         };
-  //          postSupportAny({ rawData })
-  //           .then((response) => {
-  //             if (response) {
-  //               if (response) {
-  //                 if (files.length > 0) {
-  //                   setIsDisabled(false);
-  //                   uploadFileSupport({
-  //                     key: user.x_access_token,
-  //                     supportId: response,
-  //                     files,
-  //                   })
-  //                     .then((fileUploader) => {
-  //                       setIsDisabled(false);
-  //                       setLoading(false);
-  //                       console.log(fileUploader, "fileUploader");
-  //                       if (fileUploader) {
-  //                         navigate("/CustomerSupportDetails?id=" + response);
-  //                       }
-  //                     })
-  //                     .catch((fileErr) => {
-  //                       console.log({ fileErr });
-  //                       setLoading(false);
-  //                     });
-  //                 } else {
-  //                   setIsDisabled(false);
-  //                   navigate("/CustomerSupportDetails?id=" + response);
-  //                 }
-  //               }
-  //             }
-  //           })
-  //           .catch((err) => {
-  //             console.error({ err });
-  //             setLoading(false);
-  //           });
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setLoading(false);
-  //     });
-  // };
+  const handleOrderListReady = (data) => {
+    if (data) {
+      let sorting = sortingList(data);
+      if (sorting.length) {
+        setDSalesRep(sorting[0].OwnerId)
+      }
+      setIsLoad(true)
+      setOrders(sorting);
+    }
+  }
+
 
 
   const SubmitHandler = (event) => {

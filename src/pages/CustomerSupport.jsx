@@ -29,6 +29,7 @@ const CustomerSupport = () => {
   };
   const getSupportListHandler = async (accountIds = null) => {
     try {
+      setCurrentPage(1);
       setLoaded(false); // Start loading
       setAccount(accountIds); // Set account ID if provided
 
@@ -175,6 +176,7 @@ const CustomerSupport = () => {
               setManufacturerFilter(null);
               setRetailerFilter(null);
               setSearchBy("");
+              setCurrentPage(1)
             }}
           >
             <CloseButton crossFill={'#fff'} height={20} width={20} />
