@@ -30,12 +30,14 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPop
                 const rawData = {
                     productId,
                     key: user?.data?.x_access_token,
-                    accountIds: JSON.stringify(AccountId || user.data.accountIds),
+                    accountIds: JSON.stringify(AccountId ? [AccountId] : user.data.accountIds),
                 };
                 dataStore.getPageData("/productPage/" + productId, () =>
                     getProductDetails({ rawData }))
                     .then(async (productRes) => {
-                        setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount });
+                        if (productRes) {
+                            setProduct({ isLoaded: true, data: productRes.data, discount: productRes.discount });
+                        }
                     })
                     .catch((proErr) => console.log({ proErr }));
             })
@@ -53,7 +55,7 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPop
         }
     }, [productId, isPopUp]);
 
-    useBackgroundUpdater(handlePageData,defaultLoadTime)
+    useBackgroundUpdater(handlePageData, defaultLoadTime)
 
     if (!productId) return null;
 

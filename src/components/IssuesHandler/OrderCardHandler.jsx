@@ -585,7 +585,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                     {orders.length != 0 && show == 0 && <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>No Order Found</p>}
                 </div >
             </div >}
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={accountId} ManufacturerId={manufacturerId} />
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={accountId} />
     </section >)
 }
 export default OrderCardHandler;
