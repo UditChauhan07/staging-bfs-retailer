@@ -204,7 +204,7 @@ const CartProvider = ({ children }) => {
 
     const addOrder = async (product, account, manufacturer) => {
         let status = await fetchCart();
-        
+
         let qty = product.qty || product.Min_Order_QTY__c || 1;
         // If the cart is empty or just initialized, set the orderType based on the first product added
         if (!order.ordertype) {
@@ -245,20 +245,22 @@ const CartProvider = ({ children }) => {
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new tester or sample product
-                    setOrder({
-                        ...initialOrder,
-                        ordertype: product.orderType,
-                        Account: account,
-                        Manufacturer: manufacturer,
-                        items: [{ ...product, qty }],
-                        orderQuantity: qty,
-                        total: product.price * qty,
-                    });
-
-                    return {
-                        status: 'success',
-                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
-                    };
+                    const res = await cartSync({ cart: { id: order.id, delete: true } });
+                    if (res) {
+                        setOrder({
+                            ...initialOrder,
+                            ordertype: product.orderType,
+                            Account: account,
+                            Manufacturer: manufacturer,
+                            items: [{ ...product, qty }],
+                            orderQuantity: qty,
+                            total: product.price * qty,
+                        });
+                        return {
+                            status: 'success',
+                            message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                        };
+                    }
                 } else {
                     // User cancels the cart replacement
                     return {
@@ -276,20 +278,24 @@ const CartProvider = ({ children }) => {
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new product
-                    setOrder({
-                        ...initialOrder,
-                        ordertype: product.orderType,
-                        Account: account,
-                        Manufacturer: manufacturer,
-                        items: [{ ...product, qty }],
-                        orderQuantity: qty,
-                        total: product.price * qty,
-                    });
+                    const res = await cartSync({ cart: { id: order.id, delete: true } });
+                    if (res) {
 
-                    return {
-                        status: 'success',
-                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
-                    };
+                        setOrder({
+                            ...initialOrder,
+                            ordertype: product.orderType,
+                            Account: account,
+                            Manufacturer: manufacturer,
+                            items: [{ ...product, qty }],
+                            orderQuantity: qty,
+                            total: product.price * qty,
+                        });
+
+                        return {
+                            status: 'success',
+                            message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                        };
+                    }
                 } else {
                     // User cancels the cart replacement
                     return {
@@ -337,20 +343,23 @@ const CartProvider = ({ children }) => {
 
             if (status) {
                 // Replace the cart with the new product
-                setOrder({
-                    ...initialOrder,
-                    ordertype: product.orderType,
-                    Account: account,
-                    Manufacturer: manufacturer,
-                    items: [{ ...product, qty }],
-                    orderQuantity: qty,
-                    total: product.price * qty,
-                });
+                const res = await cartSync({ cart: { id: order.id, delete: true } });
+                if (res) {
+                    setOrder({
+                        ...initialOrder,
+                        ordertype: product.orderType,
+                        Account: account,
+                        Manufacturer: manufacturer,
+                        items: [{ ...product, qty }],
+                        orderQuantity: qty,
+                        total: product.price * qty,
+                    });
 
-                return {
-                    status: 'success',
-                    message: 'The cart has been replaced with a new one. The product has been added to the new cart.',
-                };
+                    return {
+                        status: 'success',
+                        message: 'The cart has been replaced with a new one. The product has been added to the new cart.',
+                    };
+                }
             } else {
                 return {
                     status: 'warning',
@@ -464,7 +473,7 @@ const CartProvider = ({ children }) => {
 
         return false;
     };
-    
+
 
     const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {
         // Directly replace the current order with a new one based on the provided product list
@@ -512,12 +521,12 @@ const CartProvider = ({ children }) => {
 
     // Get order total
     const getOrderTotal = () => {
-        return order?.total||0;
+        return order?.total || 0;
     };
 
     // Get order quantity
     const getOrderQuantity = () => {
-        return order?.orderQuantity||0;
+        return order?.orderQuantity || 0;
     };
 
     const contextValue = {
