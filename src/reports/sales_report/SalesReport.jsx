@@ -330,7 +330,7 @@ const SalesReport = () => {
             {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
             <FilterItem
               minWidth="220px"
-              label="All Manufacturers"
+              label="All Brand"
               name="AllManufacturers1"
               value={manufacturerFilter}
               options={manufacturerData?.map((manufacturer) => ({
