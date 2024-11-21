@@ -24,8 +24,8 @@ const monthNames = [
   "November",
   "December",
 ];
-function FullQuearyDetail({ data, setRest, attachmentUrls }) {
-  console.log(attachmentUrls,"attachmentUrls")
+function FullQuearyDetail({ data, setRest, attachmentUrls=[] }) {
+  
   const [userData, setUserData] = useState({})
   const [btnAct, setBtnAct] = useState(true);
   const [comment, setComment] = useState("");
@@ -452,7 +452,7 @@ function FullQuearyDetail({ data, setRest, attachmentUrls }) {
                 <p>{data.RecordType.Name}</p>
               </div>
 
-              {attachmentUrls && attachmentUrls.length > 0 && (
+              {attachmentUrls && attachmentUrls?.length > 0 && (
                 <div className={Detail.RecordType}>
                   <h3>Attachments</h3>
 
