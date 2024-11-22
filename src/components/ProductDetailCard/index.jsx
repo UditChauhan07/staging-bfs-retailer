@@ -113,7 +113,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
             {(salesPrice != listPrice&&!isNaN(listPrice)) ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : orders ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : null}
             <b>${orders ? <Link to={"/my-bag"}>{Number(orders?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice:product?.data?.usdRetail__c?.replace("$", "")??'NA'}</b>
           </p>
-          {!product.data.ProductUPC__c || !product.data.ProductCode || !product.data.IsActive || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || !isDateEqualOrGreaterThanToday(product.data.Launch_Date__c)) ? <button
+          {!product.data.ProductUPC__c || !product.data.ProductCode || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || (!isDateEqualOrGreaterThanToday(product.data.Launch_Date__c))||!product.data.IsActive) ? <button
             className={`${Styles.button}`}
             onClick={()=>setModalShow(true)}
           >
