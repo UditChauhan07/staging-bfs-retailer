@@ -125,7 +125,7 @@ const LogoHeader = () => {
           <div className={`${styles.lapSetting} d-none-print`} style={{ minWidth: "300px", justifyContent: "end" }}>
             <p className={`m-0 w-[100px] ${styles.language} flex search-bar`}>
               <div className="search-container" ref={searchRef}>
-                <input className="search expandright" id="searchright" type="search" placeholder="Search..." value={searchTerm} onChange={handleInputChange} />
+                <input className="search expandright" id="searchright" type="search" autoComplete="off" placeholder="Search..." value={searchTerm} onChange={handleInputChange} />
                 <label className="button searchbutton" htmlFor="searchright">
                   <span className="searchCode">Search...</span>
                   <span className="mglass">

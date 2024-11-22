@@ -238,7 +238,7 @@ const CartProvider = ({ children }) => {
             // Check if testerInclude or sampleInclude is false and we're adding the wrong type
             const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
             const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
-            console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
+            // console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
 
             // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
             if ((!account.discount.testerInclude && isTester && !hasTesterInCart) || (!account.discount.sampleInclude && isSample && !hasSampleInCart)) {
