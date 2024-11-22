@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import ProductDetails from "../../pages/productDetails";
 import ModalPage from "../Modal UI";
 import { BiExit, BiSave } from "react-icons/bi";
+import LoaderV3 from "../loader/v3";
 function OrderListContent({ data, hideDetailedShow = false }) {
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
@@ -18,7 +19,8 @@ function OrderListContent({ data, hideDetailedShow = false }) {
   const [manufacturerId, setManufacturerId] = useState();
   const [confirm, setConfirm] = useState({});
   const [modalType, setModalType] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [isGenerated,setIsGenerated] = useState(false)
   const months = [
     "January",
     "February",
@@ -39,7 +41,8 @@ function OrderListContent({ data, hideDetailedShow = false }) {
   };
 
   const generateSuportHandler = ({ data, value }) => {
-    setIsDisabled(true)
+    setIsDisabled(true);
+    setIsGenerated(true);
     GetAuthData().then((user) => {
       if (user.status == 200) {
         let beg = {
@@ -59,8 +62,9 @@ function OrderListContent({ data, hideDetailedShow = false }) {
           },
           key: user?.data?.x_access_token
         };
+        
         postSupport({ rawData: beg })
-          .then((response) => {
+          .then((response) => {            
             setIsDisabled(false)
             if (response) {
               navigate("/CustomerSupportDetails?id=" + response);
@@ -73,6 +77,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
     }).catch((userErr) => {
       console.error({ userErr });
     })
+    setIsGenerated(false);
   };
   function downloadFiles(invoices) {
     GetAuthData().then((user) => {
@@ -113,6 +118,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
         </div>}
         onClose={() => { setConfirm({}) }}
       />
+       {isGenerated?<LoaderV3 text={"Generating you ticket, Please wait..."} />:null}
 
       {data?.length ? (
         data?.map((item, index) => {
