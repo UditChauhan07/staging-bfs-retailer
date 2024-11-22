@@ -429,7 +429,7 @@ const CartProvider = ({ children }) => {
         //     color: '#333',
         // });
 
-        if (true) {
+        if (isProductCarted(productId)) {
             // if (result.isConfirmed) {
             setOrder((prevOrder) => {
                 const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
