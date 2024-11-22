@@ -71,8 +71,8 @@ function MyBagFinal() {
         if (res) {
           let isPreOrder = productLists.some(
             (product) =>
-              product.Category__c?.toUpperCase()?.includes("PREORDER") ||
-              product.Category__c?.toUpperCase()?.includes("EVENT")
+              product?.Category__c?.toUpperCase()?.includes("PREORDER") ||
+              product?.Category__c?.toUpperCase()?.includes("EVENT")
           );
           let poInit = res;
           if (isPreOrder) {
@@ -605,7 +605,7 @@ function MyBagFinal() {
                                   ?.replace("$", "")
                                   .replace(",", "")
                               ).toFixed(2);
-                              if (ele?.usdRetail__c.includes("$")) {
+                              if (ele?.usdRetail__c?.includes("$")) {
                                 if (listPrice == "NaN") {
                                   listPrice = 0;
                                 }
