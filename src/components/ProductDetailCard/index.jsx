@@ -49,6 +49,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
     }
   }
   salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+  console.log({product});
   
   return (
     <div className="container mt-4 product-card-element">
@@ -109,8 +110,8 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
             {selAccount?.Name ? <small>Price for <b>{selAccount?.Name}</b></small> : orders ? <small>Price for <b>{orders.Account.name}</b></small> : null}
           </div>
           <p className={`${Styles.priceHolder} d-flex`}>
-            {salesPrice != listPrice ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : orders ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : null}
-            <b>${orders ? <Link to={"/my-bag"}>{Number(orders?.items?.price).toFixed(2)}</Link> : salesPrice}</b>
+            {(salesPrice != listPrice&&!isNaN(listPrice)) ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : orders ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : null}
+            <b>${orders ? <Link to={"/my-bag"}>{Number(orders?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice:product?.data?.usdRetail__c?.replace("$", "")??'NA'}</b>
           </p>
           {!product.data.ProductUPC__c || !product.data.ProductCode || !product.data.IsActive || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || !isDateEqualOrGreaterThanToday(product.data.Launch_Date__c)) ? <button
             className={`${Styles.button}`}
