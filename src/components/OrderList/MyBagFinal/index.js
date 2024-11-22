@@ -40,11 +40,15 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
     "Content-Type": "application/json;charset=UTF-8",
   };
 
-  const handleOrderDetailReady = (data) => {
+  const handleOrderDetailReady = (orderDetails) => {
+    let data = ShareDrive();
+    if (!data) {
+      data = {};
+    }
     GetAuthData().then((user) => {
-      if (data.support?.length) {
+      if (orderDetails.support?.length) {
         let cases = {}
-        data.support.map((support) => {
+        orderDetails.support.map((support) => {
           if (!cases[support.RecordTypeId]) {
             cases[support.RecordTypeId] = {}
           }
@@ -55,31 +59,32 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
         })
         setOldSupport(cases)
       }
-      if (data?.ManufacturerId__c) {
-        if (!data[data?.ManufacturerId__c]) {
-          data[data?.ManufacturerId__c] = {};
+
+      if (orderDetails?.ManufacturerId__c) {
+        if (!data[orderDetails?.ManufacturerId__c]) {
+          data[orderDetails?.ManufacturerId__c] = {};
         }
-        if (Object.values(data[data?.ManufacturerId__c])?.length > 0) {
-          setProductImage({ isLoaded: true, images: data[data?.ManufacturerId__c] })
+        if (Object.values(data[orderDetails?.ManufacturerId__c])?.length > 0) {
+          setProductImage({ isLoaded: true, images: data[orderDetails?.ManufacturerId__c] })
         } else {
           setProductImage({ isLoaded: false, images: {} })
         }
       }
-      setOrderData(data);
-      setOrderDetail(data)
+      setOrderData(orderDetails);
+      setOrderDetail(orderDetails)
       setIsLoading(true);
-      if (data.OpportunityLineItems?.length > 0) {
+      if (orderDetails.OpportunityLineItems?.length > 0) {
         let productCode = "";
-        data.OpportunityLineItems?.map((element, index) => {
+        orderDetails.OpportunityLineItems?.map((element, index) => {
           productCode += `'${element?.ProductCode}'`
-          if (data.OpportunityLineItems?.length - 1 != index) productCode += ', ';
+          if (orderDetails.OpportunityLineItems?.length - 1 != index) productCode += ', ';
         })
-        getProductImageAll({ rawData: { codes: productCode } }).then((data) => {
-          if (data) {
-            if (data[data?.ManufacturerId__c]) {
-              data[data?.ManufacturerId__c] = { ...data[data?.ManufacturerId__c], ...data }
+        getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+          if (res) {
+            if (data[orderDetails?.ManufacturerId__c]) {
+              data[orderDetails?.ManufacturerId__c] = { ...data[orderDetails?.ManufacturerId__c], ...res }
             } else {
-              data[data?.ManufacturerId__c] = data
+              data[orderDetails?.ManufacturerId__c] = res
             }
             ShareDrive(data)
             setProductImage({ isLoaded: true, images: data });
@@ -119,10 +124,10 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
       console.log({ err });
     })
   };
-  
+
 
   useBackgroundUpdater(getOrderDetails, defaultLoadTime)
-  
+
   useEffect(() => {
     dataStore.subscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
     dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
