@@ -2,7 +2,7 @@ import axios from "axios";
 export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2611"
-export const defaultLoadTime = 300000;
+export const defaultLoadTime = 1800000;
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
