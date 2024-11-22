@@ -130,11 +130,11 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
 
   useEffect(() => {
     dataStore.subscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
-    dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
+    dataStore.subscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data.data) });
     getOrderDetails();
     return () => {
       dataStore.unsubscribe(`/orderDetails?id=${OrderId}`, handleOrderDetailReady);
-      dataStore.unsubscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data) });
+      dataStore.unsubscribe(`/orderDetails/invoice/?id=${OrderId}`, (data) => { setInvoice(data.data) });
     }
   }, []);
   const handleback = () => {
@@ -230,6 +230,8 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
       return null;
     }
   }
+  console.log({invoices});
+  
   return (
     <div>
       <ModalPage
