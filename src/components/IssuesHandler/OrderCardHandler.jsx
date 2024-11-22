@@ -1,7 +1,7 @@
 import { GetAuthData, ShareDrive, getProductImageAll, getProductList, months, sortArrayHandler } from "../../lib/store";
 import Styles from "../OrderList/style.module.css"
 import Styles1 from "./OrderCardHandler.module.css"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductDetails from "../../pages/productDetails";
 import ErrorProductCard from "./ErrorProductCard";
 import { BiCheck, BiLock } from "react-icons/bi";
@@ -10,8 +10,9 @@ import { RxEyeOpen } from "react-icons/rx";
 import Loading from "../Loading";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Swal from "sweetalert2";
+import dataStore from "../../lib/dataStore";
 
-const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj, setSubject, Actual_Amount__cObj, contactName, setSalesRepId,autoSelect=null }) => {
+const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedStatus, files = [], desc, errorListObj, manufacturerIdObj, accountIdObj, accountList, contactIdObj, setSubject, Actual_Amount__cObj, contactName, setSalesRepId, autoSelect = null }) => {
     const { setOrderConfirmed, orderConfirmed } = orderConfirmedStatus || null;
     const { accountId, setAccountId } = accountIdObj || null;
     const { manufacturerId, setManufacturerId } = manufacturerIdObj || null;
@@ -89,14 +90,16 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                         item.OpportunityLineItems?.records?.map((e) => {
                             opcs.push(e.Product2Id)
                         })
-                        GetAuthData().then((user) => {
-                            let rawData = {
-                                key: user?.data.x_access_token,
-                                Sales_Rep__c: item.OwnerId,
-                                Manufacturer: item.ManufacturerId__c,
+                        GetAuthData().then(async (user) => {
+                            let filtkey = {
                                 AccountId__c: item.AccountId,
+                                Manufacturer: item.ManufacturerId__c,
+                                Sales_Rep__c: item.OwnerId,
                             }
-                            getProductList({ rawData }).then((productRes) => {
+                            let rawData = {
+                                key: user?.data.x_access_token, ...filtkey
+                            }
+                            const productListReady = (productRes) => {
                                 let productCode = "";
                                 let temp = []
                                 if (opcs.length == productRes?.data?.records.length) {
@@ -148,6 +151,14 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                 }).catch((err) => {
                                     console.log({ err });
                                 })
+                            }
+                            const cachedData = await dataStore.retrieve("/order" + JSON.stringify(filtkey));
+                            if (cachedData) {
+                                productListReady(cachedData)
+                            }
+
+                            dataStore.getPageData("/order" + JSON.stringify(filtkey), () => getProductList({ rawData })).then((productRes) => {
+                                productListReady(productRes)
                             }).catch((productErr) => {
                                 console.log({ productErr });
                             })
@@ -228,7 +239,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                         confimationStatus = false;
                         const myElement = document.getElementById(`oP${id}`);
                         if (myElement) {
-                            myElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                            // myElement.scrollIntoView({ behavior: "smooth", block: "center" });
                             myElement.style.borderBottom = "1px solid red";
                             shakeHandler(`oP${id}`)
                             Swal.fire({
@@ -280,6 +291,17 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
         }
     }
     let show = 0;
+    const filteredAndSortedProducts = useMemo(() => {
+        if (!searchItem) return productAllList;
+
+        const lowerCaseSearch = searchItem.toLowerCase();
+        return productAllList.filter((ele) =>
+            ele.ProductCode?.toLowerCase()?.includes(lowerCaseSearch) ||
+            ele.Name?.toLowerCase()?.includes(lowerCaseSearch) ||
+            ele.ProductUPC__c?.toLowerCase()?.includes(lowerCaseSearch)
+        );
+    }, [searchItem, productAllList]);
+    
     return (<section style={{ borderBottom: '1px solid #ccc' }}>
         {emptyProduct ? (
             <ModalPage
@@ -306,45 +328,47 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             open={showProductList ?? false}
             content={
                 <div className="d-flex flex-column gap-3">
-                    <h2 className={`${Styles.warning} `}>Select other product of the Brand <button type="button" style={{ float:'right',marginRight:'10px', width: "15px", height: "20px" }} onClick={() => setShowProductList(false)} >
-                    <IoIosCloseCircleOutline size={35} />
-                  </button></h2>
+                    <h2 className={`${Styles.warning} `}>Select other product of the Brand <button type="button" style={{ float: 'right', marginRight: '10px', width: "15px", height: "20px" }} onClick={() => setShowProductList(false)} >
+                        <IoIosCloseCircleOutline size={35} />
+                    </button></h2>
                     <div>
-                    {(productAllList.length && !allProductSold) ? <div><input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '150px', marginBottom: '10px' }} /></div>: null}
-                        <div style={{ maxHeight: '500px', overflow: 'scroll', width: '900px' }}>
-                        {!productLoading ? productAllList.length ?
-                            <table style={{ width: '100%' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ width: '225px' }}>Name</th>
-                                        <th style={{ width: '75px' }}>Code</th>
-                                        <th style={{ width: '75px' }}>Qty</th>
-                                        <th style={{ width: '75px' }}>Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {productAllList.map((ele, index) => {
-                                        if (!searchItem || (ele.ProductCode?.toLowerCase()?.includes(
-                                            searchItem?.toLowerCase()) || ele.Name?.toLowerCase()?.includes(
-                                                searchItem?.toLowerCase()) || ele.ProductUPC__c?.toLowerCase()?.includes(
-                                                    searchItem?.toLowerCase()))) {
-                                            return (
-                                                <ErrorProductCard Styles1={Styles1} productErrorHandler={productSelectHandler} errorList={productList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={""} ErrorProductQtyHandler={ErrorProductQtyHandler}
-                                                    readOnly={orderConfirmed} style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} showQTyHandler={false} />
-                                            )
-                                        }
-                                    })
-                                    }
-                                </tbody>
-                            </table>: allProductSold ? <p style={{ display: 'grid', placeContent: 'center', height: '100px' }} colSpan={4}>Brand's all product are in your order.
-                                </p> : null : <Loading height={'100px'} />
+                        {(productAllList.length && !allProductSold) ? <div><input type="text" placeholder='Search Product' autoComplete="off" className={Styles1.searchBox} title="You can search Product by Name,SKU or UPC" id="poductInput" onKeyUp={(e) => { setSearchItem(e.target.value) }} style={{ width: '150px', marginBottom: '10px' }} /></div> : null}
+                        <div style={{ maxHeight: '50vh', overflow: 'scroll', width: '900px' }}>
+                            {!productLoading ? filteredAndSortedProducts.length ?
+                                <table style={{ width: '100%' }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ width: '225px' }}>Name</th>
+                                            <th style={{ width: '75px' }}>Code</th>
+                                            <th style={{ width: '75px' }}>Qty</th>
+                                            <th style={{ width: '75px' }}>Price</th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            {filteredAndSortedProducts.map((ele, index) => {
+
+                                                return (
+                                                    <ErrorProductCard Styles1={Styles1} productErrorHandler={productSelectHandler} errorList={productList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={""} ErrorProductQtyHandler={ErrorProductQtyHandler}
+                                                        readOnly={orderConfirmed} style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} showQTyHandler={false} />
+                                                )
+                                            })}
+                                        </tbody>
+                                </table> : allProductSold ? <p style={{ display: 'grid', placeContent: 'center', height: '100px' }} colSpan={4}>Brand's all product are in your order.
+                                </p> : <p style={{ display: 'grid', placeContent: 'center', height: '100px' }} colSpan={4}>No Product Found
+                                </p> : <Loading height={'100px'} />
                             }
                         </div>
+                    </div>
+                    <div className="d-flex justify-content-around ">
+                        <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => {setShowProductList(false);setSearchItem(null);}}>
+                            OK
+                        </button>
                     </div>
                 </div>
             }
             onClose={() => {
                 setShowProductList(false);
+                setSearchItem(null);
             }}
         />
         <p className={Styles1.reasonTitle}><span style={{ cursor: "pointer" }} onClick={() => shakeHandler()}>Select the order you would like to inquire about</span> {!orderId && reason && <input type="text" placeholder='Search Order' autoComplete="off" className={Styles1.searchBox} title="You can search by PO Number, Account Name & Brand for last 3 month Orders" onKeyUp={(e) => { setSearchPO(e.target.value) }} id="poSearchInput" style={{ width: '120px' }} />}{reason && orderId ? reason == "Product Overage" && !showProductList && <button className={Styles1.btnHolder} onClick={() => setShowProductList(true)}><RxEyeOpen />&nbsp; Other Products</button> : null} {!reason && <BiLock id="lock1" style={{ float: 'right' }} />}</p>
@@ -363,6 +387,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                     searchPo?.toLowerCase()) || item.ManufacturerName__c?.toLowerCase()?.includes(
                                         searchPo?.toLowerCase())) : !orderId) || orderId == item.Id) {
                                 show++;
+
                                 return (
                                     <div className={` ${Styles.orderStatement} cardHover ${orderId == item.Id ? Styles1.selOrder : ''}`} style={{ paddingBottom: '15px' }} key={index}>
                                         <div style={{ position: 'relative' }} className={(index % 2 == 0) ? Styles1.cardEnterRight : Styles1.cardEnterLeft}>
@@ -398,7 +423,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                         </div>
                                                     </div>
 
-                                                    <div className={Styles.ProtuctInnerBox1} 
+                                                    <div className={Styles.ProtuctInnerBox1}
                                                     // style={{ maxHeight: '400px', overflow: 'scroll', width: '100%' }}
                                                     >
                                                         {item.OpportunityLineItems && item.OpportunityLineItems?.records.length > 0 ? (
@@ -422,7 +447,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                                                                                 }
                                                                             })}
                                                                         {reason == "Product Overage" &&
-                                                                            productList.map((ele, index) => {
+                                                                            productList?.map((ele, index) => {
                                                                                 return (
                                                                                     <ErrorProductCard Styles1={Styles1} productErrorHandler={productErrorHandler} errorList={errorList} setProductDetailId={setProductDetailId} product={ele} productImage={productImage} reason={reason} AccountName={item.AccountName} ErrorProductQtyHandler={ErrorProductQtyHandler}
                                                                                         readOnly={orderConfirmed} style={{ cardHolder: { backgroundColor: '#67f5f533', borderBottom: '1px solid #fff' }, nameHolder: { width: '300px' } }} />
@@ -560,7 +585,7 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
                     {orders.length != 0 && show == 0 && <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>No Order Found</p>}
                 </div >
             </div >}
-        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={accountId} ManufacturerId={manufacturerId} />
+        <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} isAddtoCart={false} AccountId={accountId} />
     </section >)
 }
 export default OrderCardHandler;

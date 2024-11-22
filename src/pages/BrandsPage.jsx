@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import BrandCard from "../components/BrandCard";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import Page from "./page.module.css";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getRetailerBrands } from "../lib/store";
+import { defaultLoadTime, GetAuthData, getRetailerBrands } from "../lib/store";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 const brandsImageMap = {
   Diptyque: "Diptyque.png",
@@ -35,6 +37,7 @@ const brandsImageMap = {
 const defaultImage = "dummy.png";
 
 const BrandsPage = () => {
+  const location = useLocation();
   const [manufacturers, setManufacturers] = useState({ isLoading: false, data: [] });
   const [searchBy, setSearchBy] = useState("");
   const [sortBy, setSortBy] = useState(null);
@@ -43,18 +46,15 @@ const BrandsPage = () => {
   const [label, setLabel] = useState();
 
   const navigate = useNavigate();
-  useEffect(() => {
-    const userData = localStorage.getItem("Name");
-    if (!userData) {
-      navigate("/");
-    }
+
+  const handlePageData = async ()=>{
     GetAuthData()
-      .then((user) => {
+      .then(async (user) => {
         setUserData(user.data);
         if (user?.data?.accountIds.length == 1) {
-          getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } })
+          dataStore.getPageData(location.pathname, () => getRetailerBrands({ rawData: { accountId: user?.data?.accountIds[0], key: user?.data?.x_access_token } }))
             .then((prodcut) => {
-              setManufacturers({ ...manufacturers, isLoading: true, data: prodcut });
+              setManufacturers({ isLoading: true, data: prodcut });
             })
             .catch((getProductError) => {
               console.log({ getProductError });
@@ -64,7 +64,21 @@ const BrandsPage = () => {
       .catch((err) => {
         console.log({ err });
       });
+  }
+
+  useEffect(() => {
+    const userData = localStorage.getItem("Name");
+    if (!userData) {
+      navigate("/");
+    }
+    dataStore.subscribe(location.pathname, (prodcut) => setManufacturers({ isLoading: true, data: prodcut }))
+    handlePageData();
+    return () => {
+      dataStore.unsubscribe(location.pathname, (prodcut) => setManufacturers({ isLoading: true, data: prodcut }))
+    }
   }, []);
+
+  useBackgroundUpdater(handlePageData,defaultLoadTime);
 
   useEffect(() => {
     if (!Array.isArray(manufacturers?.data)) {

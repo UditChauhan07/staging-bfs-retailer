@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FilterItem } from "../FilterItem";
 import FilterSearch from "../FilterSearch";
 import ModalPage from "../Modal UI";
-import { GetAuthData, ShareDrive, fetchBeg, getProductImageAll, getProductList, sortArrayHandler } from "../../lib/store";
+import { GetAuthData, ShareDrive, defaultLoadTime, fetchBeg, getProductImageAll, getProductList, sortArrayHandler } from "../../lib/store";
 import Styles from "../Modal UI/Styles.module.css";
 import { BackArrow, CloseButton } from "../../lib/svg";
 import AppLayout from "../AppLayout";
@@ -18,6 +18,8 @@ import SpreadsheetUploader from "./OrderForm";
 import { CSVLink } from "react-csv";
 import LoaderV3 from "../loader/v3";
 import { useCart } from "../../context/CartContent";
+import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 const groupBy = function (xs, key) {
@@ -41,7 +43,7 @@ function Product() {
   const [orderFormModal, setOrderFromModal] = useState(false);
   const [productList, setProductlist] = useState({ isLoading: false, data: [], discount: {} });
   const brandName = productList?.data?.[0]?.ManufacturerName__c;
-  const [productCartSchema,setProductCartSchema] = useState({
+  const [productCartSchema, setProductCartSchema] = useState({
     testerInclude: true,
     sampleInclude: true,
   })
@@ -63,9 +65,9 @@ function Product() {
     return groupedData;
   };
   useEffect(() => {
-    if (productTypeFilter === "Pre-order") {
+    // if (productTypeFilter === "Pre-order") {
       setCategoryFilters([])
-    }
+    // }
   }, [productTypeFilter])
 
   const formattedData = useMemo(() => groupProductDataByCategory(productList.data), [productList.data]);
@@ -154,11 +156,30 @@ function Product() {
     return finalFilteredProducts;
   }, [formattedData, categoryFilters, productTypeFilter, sortBy, searchBy]);
   const [productImage, setProductImage] = useState({});
-  useEffect(() => {
-    
-    if ((!localStorage.getItem("ManufacturerId__c")||localStorage.getItem("ManufacturerId__c")=="undefined") || (!localStorage.getItem("AccountId__c")||localStorage.getItem("AccountId__c")=="undefined")) {
-      setRedirect(true);
-    }
+
+  const handlePageData = async () => {
+    GetAuthData().then(async (user) => {
+      let filtkey = {
+        AccountId__c: localStorage.getItem("AccountId__c"),
+        Manufacturer: localStorage.getItem("ManufacturerId__c"),
+        Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
+      }
+      let rawData = {
+        key: user?.data.x_access_token, ...filtkey
+      }
+
+      dataStore.getPageData("/order" + JSON.stringify(filtkey), () => getProductList({ rawData })).then((productRes) => {
+
+        handleProductUpdate(productRes)
+
+      }).catch((errPro) => {
+        console.log({ errPro });
+      })
+    }).catch((err) => {
+      console.log({ err });
+    })
+  }
+  const handleProductUpdate = (products) => {
     let data = ShareDrive();
     if (!data) {
       data = {};
@@ -173,63 +194,65 @@ function Product() {
         setProductImage({ isLoaded: false, images: {} })
       }
     }
-    GetAuthData().then((user) => {
-      let rawData = {
-        key: user?.data.x_access_token,
-        Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
-        Manufacturer: localStorage.getItem("ManufacturerId__c"),
-        AccountId__c: localStorage.getItem("AccountId__c"),
+    let productData = products.data.records || []
+    let discount = products.discount;
+    setProductCartSchema({ testerInclude: discount?.testerInclude || true, sampleInclude: discount?.sampleInclude || true })
+    setProductlist({ data: productData, isLoading: true, discount })
+    //version 1
+    // productData.map(product => {
+    //   let productCode = product?.ProductCode
+    //   getProductImage({ rawData: { code: productCode } }).then((res) => {
+    //     setProductImage((prev) => ({
+    //       ...prev,
+    //       [productCode]: res
+    //     }));
+    //   }).catch((err) => {
+    //     console.log({ err });
+    //   })
+    // })
+
+    // version 2
+    let productCode = "";
+    productData.map((product, index) => {
+      productCode += `'${product?.ProductCode}'`
+      if (productData.length - 1 != index) productCode += ', ';
+    })
+    getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+      if (res) {
+        if (data[localStorage.getItem("ManufacturerId__c")]) {
+          data[localStorage.getItem("ManufacturerId__c")] = { ...data[localStorage.getItem("ManufacturerId__c")], ...res }
+        } else {
+          data[localStorage.getItem("ManufacturerId__c")] = res
+        }
+        ShareDrive(data)
+        setProductImage({ isLoaded: true, images: res });
+      } else {
+        setProductImage({ isLoaded: true, images: {} });
       }
-      getProductList({ rawData }).then((productRes) => {
-        console.log({rawData});
-        
-        let productData = productRes.data.records || []
-        let discount = productRes.discount;
-        
-        setProductCartSchema({testerInclude:discount?.testerInclude||true,sampleInclude:discount?.sampleInclude||true})
-        setProductlist({ data: productData, isLoading: true, discount })
-
-        //version 1
-        // productData.map(product => {
-        //   let productCode = product?.ProductCode
-        //   getProductImage({ rawData: { code: productCode } }).then((res) => {
-        //     setProductImage((prev) => ({
-        //       ...prev,
-        //       [productCode]: res
-        //     }));
-        //   }).catch((err) => {
-        //     console.log({ err });
-        //   })
-        // })
-
-        // version 2
-        let productCode = "";
-        productData.map((product, index) => {
-          productCode += `'${product?.ProductCode}'`
-          if (productData.length - 1 != index) productCode += ', ';
-        })
-        getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
-          if (res) {
-            if (data[localStorage.getItem("ManufacturerId__c")]) {
-              data[localStorage.getItem("ManufacturerId__c")] = { ...data[localStorage.getItem("ManufacturerId__c")], ...res }
-            } else {
-              data[localStorage.getItem("ManufacturerId__c")] = res
-            }
-            ShareDrive(data)
-            setProductImage({ isLoaded: true, images: res });
-          } else {
-            setProductImage({ isLoaded: true, images: {} });
-          }
-        }).catch((err) => {
-          console.log({ err });
-        })
-      }).catch((errPro) => {
-        console.log({ errPro });
-      })
     }).catch((err) => {
       console.log({ err });
     })
+  }
+  useEffect(() => {
+
+    if ((!localStorage.getItem("ManufacturerId__c") || localStorage.getItem("ManufacturerId__c") == "undefined") || (!localStorage.getItem("AccountId__c") || localStorage.getItem("AccountId__c") == "undefined")) {
+      setRedirect(true);
+    }
+    let filtkey = {
+      AccountId__c: localStorage.getItem("AccountId__c"),
+      Manufacturer: localStorage.getItem("ManufacturerId__c"),
+      Sales_Rep__c: localStorage.getItem("Sales_Rep__c"),
+    }
+    dataStore.subscribe("/order" + JSON.stringify(filtkey), handleProductUpdate);
+
+    handlePageData();
+
+    return () => {
+      dataStore.unsubscribe("/order" + JSON.stringify(filtkey), handleProductUpdate);
+    }
   }, []);
+
+  useBackgroundUpdater(handlePageData, defaultLoadTime);
   const redirecting = () => {
     setTimeout(() => {
       navigate("/order");
@@ -296,14 +319,14 @@ function Product() {
     return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }
 
-  const OrderQuantity = ()=>{
-    const {getOrderQuantity} = useCart();
+  const OrderQuantity = () => {
+    const { getOrderQuantity } = useCart();
 
-    return getOrderQuantity()||0;
+    return getOrderQuantity() || 0;
   }
-  const OrderPrice = ()=>{
-    const {getOrderTotal} = useCart();
-    return Number(getOrderTotal()||0).toFixed(2);
+  const OrderPrice = () => {
+    const { getOrderTotal } = useCart();
+    return Number(getOrderTotal() || 0).toFixed(2);
   }
   return (
     <>
@@ -500,14 +523,14 @@ function Product() {
                         >
                           <BackArrow />
                         </button>
-                        <Link style={{color:'#000'}} to={`/Brand/${localStorage.getItem("ManufacturerId__c")}`}>{brandName}</Link>
+                        <Link style={{ color: '#000' }} to={`/Brand/${localStorage.getItem("ManufacturerId__c")}`}>{brandName}</Link>
                       </h4>
 
                       <p>
-                        <span>Account</span>: <Link style={{color:'#000'}} to={`/store/${localStorage.getItem("AccountId__c")}`}>{localStorage.getItem("Account")}</Link>
+                        <span>Account</span>: <Link style={{ color: '#000' }} to={`/store/${localStorage.getItem("AccountId__c")}`}>{localStorage.getItem("Account")}</Link>
                       </p>
                     </div>
-                   
+
                     <div className="row">
                       <div className="col-lg-3 col-md-4 col-sm-12">
                         <FilterPage
@@ -530,14 +553,14 @@ function Product() {
                             border: "1px dashed black",
                           }}
                         >
-                         
+
                           <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage} productCartSchema={productCartSchema}></Accordion>
-                        
+
                         </div>
                         <div className={`${styles.TotalSide} `}>
                           <div className="d-flex align-items-start flex-column">
-                          <h4>Total Number of Products : <OrderQuantity/></h4>
-                          <h4>Total Price : $<OrderPrice /></h4>
+                            <h4>Total Number of Products : <OrderQuantity /></h4>
+                            <h4>Total Price : $<OrderPrice /></h4>
                           </div>
                           <button
                             onClick={() => {

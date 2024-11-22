@@ -15,7 +15,6 @@ import { useCart } from "../../context/CartContent";
 import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails }) {
-  console.log("account Details " , accountDetails)
   const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState();
@@ -83,10 +82,10 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
             if (selectBrand) {
               if (selectBrand == item.ManufacturerName__c) {
                 // console.log({aa:item.date.toLowerCase().includes(month.toLowerCase()),})
-                return item.date.toLowerCase()?.includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
+                return item.date?.toLowerCase()?.includes(month.toLowerCase()) && selectBrand === item.ManufacturerName__c;
               }
             } else {
-              return item.date.toLowerCase()?.includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              return item.date?.toLowerCase()?.includes(month.toLowerCase()) && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }
             // return match.includes(month.toUpperCase() )
           } else {
@@ -119,6 +118,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   };
   const onQuantityChange = (element, quantity) => {
     let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
+    
     let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
     let listOfAccounts = Object.keys(selectProductDealWith);
     let addProductToAccount = null
@@ -174,7 +174,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
         } else {
           discount = selectAccount?.Discount?.margin || 0;
         }
-        let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
+        let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice)?.toFixed(2);
         element.price = salesPrice;
         element.qty = element.Min_Order_QTY__c;
         let cartStatus = addOrder(element, account, manufacturer);
@@ -406,7 +406,7 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                               ) : (
                                 
                                 <p className={Styles.btnHolder} onClick={() => {
-                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {
+                                  if (product.ProductUPC__c && product.ProductCode && product.IsActive && (product?.PricebookEntries?.records?.length && product?.PricebookEntries?.records?.[0]?.IsActive)&&(!isNaN(salesPrice)&&!isNaN(listPrice))&&isDateEqualOrGreaterThanToday(product.Launch_Date__c)) {                                
                                     onQuantityChange(
                                       product,
                                       product?.Min_Order_QTY__c || 1,

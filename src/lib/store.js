@@ -1,6 +1,8 @@
+import axios from "axios";
 export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2611"
+export const defaultLoadTime = 1800000;
 
 let url = `${originAPi}/retailer/`;
 let url2 = `${originAPi}/retailerv2/`;
@@ -181,6 +183,52 @@ export async function DestoryAuth() {
   }
   window.location.href = window.location.origin;
   return true;
+}
+export async function getAttachment(token, caseId) {
+  try {
+    console.log(token, caseId, "rawData");
+    const response = await axios.post(
+      originAPi + "/wpVvqb9cSF7hnil/getAttachment",
+      {
+        caseId: caseId,
+        key: token,
+      }
+    );
+    const data =await response.data;
+    console.log(data, "backend attachment");
+    if (data.status === 300) {
+      DestoryAuth();
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.log(error, "backend get attachment error");
+    return null;
+  }
+}
+
+export async function DownloadAttachment(token, attachmentId) {
+  console.log(token, "token download", attachmentId, "attachmentID");
+  try {
+    let response = await fetch(
+      `${originAPi}/wpVvqb9cSF7hnil/downloadAttachment/${attachmentId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response) {
+      if (response.status == 300) {
+        DestoryAuth();
+      } else {
+        return response;
+      }
+    }
+  } catch (error) {
+    return error;
+  }
 }
 
 export async function GetAuthData() {
@@ -423,13 +471,13 @@ export async function OrderPlaced({ order, cartId }) {
     localStorage.removeItem(accountKey);
     let lastCount = localStorage.getItem(POCount) || 1;
     localStorage.setItem(POCount, parseInt(+lastCount + 1));
-    return data.order;
+    return {orderId:data.order,err:null};
   } else if (data.status == 300) {
     DestoryAuth();
   } else {
     if (data?.data) {
-      return data.data
-    } else {
+      return {err:data.data,orderId:null}
+    }else {
       return false;
     }
   }
@@ -981,7 +1029,7 @@ export const hexabrand = {
   a0O3b00000fQrZyEAK: "#9EC1DA",
   a0O1O00000XYBvQUAX: "#f6b6ad",
   a0O3b00000pY2vqEAC: "#ffe3d5",
-  a0O3b00000p80IJEAY: "#fff9ed",
+  a0O3b00000p80IJEAY: "#fdeec8",
   a0O3b00000lCFmREAW: "#a6a0d4",
   a0ORb000000BQ0nMAG: "#206BA1",
   a0O3b00000p7zqKEAQ: "#BEE6DC",
@@ -994,7 +1042,10 @@ export const hexabrand = {
   a0O1O00000XYBvkUAH: "#6D243E",
   a0O1O00000XYBvaUAH: "#4B95DD",
   a0ORb000000nDfFMAU: "#073763",
-  a0ORb000000nDIiMAM: "#7f6000"
+  a0ORb000000nDIiMAM: "#7f6000",
+  a0ORb000001KCNpMAO:"#F7E8D5",
+  a0ORb000001XtrZMAS:"#B8D8BA",
+  a0ORb000001EbK5MAK:"#D0E2EC"
 };
 
 export const hexabrandText = {
@@ -1051,9 +1102,9 @@ export const brandDetails =
     desc: '<p class="seti">Everyone has a story. Ours is original and authentic and sets us apart from every other beauty brand. We`re proud of our story, and this is how we tell it: We live for lipstick. We get excited about primers. (No, seriously, we do.) But mostly, we love sharing our makeup secrets with you. Why? Because creativity and collaboration are at the core of our DNA. We are the only brand born out of a legendary photo studio — Smashbox Studios in Los Angeles — where major photographers, celebrities and makeup artists converge to create iconic images every day. Studio-tested, shockingly high-performance. Longwearing and skincaring. Artistry made easy. Hardworking makeup that keeps up with you.</p>'
   },
   a0ORb000000BQ0nMAG: {
-    img: { src: "https://beautyfashionsales.vercel.app/static/media/VictoriaBeckhamBeauty.d9fff66659d48dffd704.png" },
-    tagLine: "PURE EXCELLENCE IN EVERY WAY. THAT'S THE VICTORIA STANDARD.",
-    desc: '<p class="seti">Through the perfume of memory, Victoria Beckham distills the notes of eras and atmospheres into fragrances founded in personal yet universal associations. Drawing on stages of her life and their parallels to a pop culture shared by all, each scent captures her own recollections of distinct times, places, and experiences and mirrors them in our collective and individual reminiscences.</p>'
+    img: { src: "/assets/images/31.jpg" },
+    tagLine: "Good. Better. Best. Beckham. That's the Victoria Standard.",
+    desc: "<p class='seti'>Although Victoria Beckham had experienced the world's best beauty products (often in the hands of the world's best stylists, under the direction of the world's best photographers) she still found herself looking around - and into her makeup bag - and thinking 'This could be better'. Because, despite the array of quality, style, craft and heritage on offer, everything that excelled in one area seemed to sacrifice in another. And so Victoria Beckham Beauty was created to make the products that would finally meet these uncompromising standards: Proven performance and an elevated experience delivered with intentional integrity, transparency and inclusivity. A keenly curated range that only includes items that genuinely add to the best already out there; Shades selected for classical looks and contemporary styles; The feeling of luxury from first sight to last swipe, sweep or dab; The enduring quality required by demanding lifestyles; Fashion-led, female founded, cruelty-free, conscious and clean.</p><p class='seti'>Pure excellence in every way, at all times. Ambitious? Absolutely. Unreasonable? Not one bit.</p>"
   },
   a0O3b00000p7zqKEAQ: {
     img: { src: "https://beautyfashionsales.vercel.app/static/media/bobbi-brown-main.d67c6c3e9732a993f1c2.png" },
@@ -1080,7 +1131,6 @@ export const brandDetails =
     tagLine: "PARISIAN-BORN, SKINCARE-INFUSED MAKEUP.",
     desc: '<p class="seti">Terry de Gunzburg is a trailblazing industry legend who over the course of the past 30 years has changed the face of beauty.</p><p class="seti">Trading a career in medicine for a more creative life, Terry studied at the Carita beauty school in Paris and quickly became an in-demand makeup artist working with some of the biggest names in fashion. Her trademark beauty look has always been distinctive: imperceptible foundation, impeccable lips and thick, separated lashes.</p><p class="seti">As International Makeup Designer of YSL Beauté for 15 years, Terry invented the iconic Touché Eclat in 1992 (as well as countless other products and formulas). Radiance and a healthy complexion has always been key to Terry’s approach to make up, and so she decided to launch her own collection of products in 1998, and BY TERRY was born.</p><p class="seti">In 2004 after a mix up in the lab, double the amount of rose butter was added to a lip balm which would soon become BY TERRY’s most successful product: Baume de Rose. Described as the Rolls Royce of lip balms, it symbolizes everything the brand stands for—luxury, indulgence and a timelessness.</p><p class="seti">Almost 10 years ago, before hyaluronic acid was widely known by households worldwide, Terry created the first clean mattifying setting powder, the Hyaluronic Hydra-Powder. This was the start of Terry’s one of a kind Hyaluronic Range. We remain today pioneers of this ingredient and its applications. </p>'
   },
-
   a0O3b00000p4F4CEAU: {
     img: {},
     tagLine: null,
@@ -1110,6 +1160,11 @@ export const brandDetails =
     img: {},
     tagLine: null,
     desc: null
+  },
+  a0ORb000001KCNpMAO: {
+    img: { src: "/assets/images/29.jpg" },
+    tagLine: "Every. Single. Day.™",
+    desc: "<p>SPF is the #1 thing you can do for your skin, so we put it first in all we do. Founded in 2005 by mom and former elementary school teacher Holly Thaggard, Supergoop! is made with a mission: To change the way the world thinks about sunscreen and end the epidemic of skin cancer. As the Experts in SPF™, we’ve been raising the bar for effective, feel-good sunscreen for nearly 20 years. Discover our 40+ dermatologist-tested formulas for all skin types, tones and routines, and find the SPF you want to wear. Every. Single. Day.™</p>"
   }
 }
 

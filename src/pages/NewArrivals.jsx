@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import NewArrivalsPage from "../components/NewArrivalsPage/NewArrivalsPage";
 import { FilterItem } from "../components/FilterItem";
-import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getMarketingCalendar, getRetailerBrands } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import { useLocation } from "react-router-dom";
+import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -46,25 +49,15 @@ const NewArrivals = () => {
   useEffect(() => {
     HandleClear()
   }, [])
-  useEffect(() => {
+  const handlePageData = async ()=>{
     GetAuthData().then((user) => {
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then(async (resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds), year: selectYear }).then((productRes) => {
 
-          setAccountDiscount(productRes?.discount || {})
-
-          productRes.list.map((month) => {
-            month.content.map((element) => {
-              element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
-              element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
-              return element;
-
-            })
-            return month;
-          })
-          setProductList(productRes.list)
-          setIsloaed(true)
+        dataStore.getPageData("/marketing-calendar" + JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear,accountIds: JSON.stringify(user.data.accountIds) })).then((productRes) => {
+          console.log({productRes});
+          
+          handleNewArrivalReady(productRes)
         }).catch((err) => console.log({ err }))
       }).catch((err) => {
         console.log({ err });
@@ -72,7 +65,34 @@ const NewArrivals = () => {
     }).catch((error) => {
       console.log({ error });
     })
+  }
+  useEffect(() => {
+    dataStore.subscribe("/marketing-calendar" + JSON.stringify(selectYear), handleNewArrivalReady);
+    handlePageData()
+    return () => {
+      dataStore.unsubscribe("/marketing-calendar" + JSON.stringify(selectYear), handleNewArrivalReady);
+    }
   }, [selectBrand, selectYear, month, isLoaded])
+
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
+  const handleNewArrivalReady = (data) => {
+    if (data) {
+      setAccountDiscount(data?.discount || {})
+
+      data.list.map((month) => {
+        month.content.map((element) => {
+          element.date = element.Ship_Date__c ? (element.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : element.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Ship_Date__c.split("-")[0] : 'NA';
+          element.OCDDate = element.Launch_Date__c ? (element.Launch_Date__c.split("-")[2] == 15 ? 'TBD' : element.Launch_Date__c.split("-")[2]) + '/' + monthNames[parseInt(element.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + element.Launch_Date__c.split("-")[0] : 'NA';
+          return element;
+
+        })
+        return month;
+      })
+      setProductList(data?.list);
+      setIsloaed(true)
+    }
+  }
 
   const HandleClear = () => {
     const currentMonthIndex = new Date().getMonth();

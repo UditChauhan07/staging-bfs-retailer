@@ -31,6 +31,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
   useEffect(() => { }, [productDetailId, productImages]);
 
   const onQuantityChange = (element, quantity) => {
+    
     let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
     let selectProductDealWith = accountDetails?.[element.ManufacturerId__c] || []
     let listOfAccounts = Object.keys(selectProductDealWith);
@@ -69,6 +70,7 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
             discount: selectAccount?.Discount,
             SalesRepId:selectAccount?.SalesRepId
           }
+          
 
           let manufacturer= {
             name: element.ManufacturerName__c,
@@ -92,6 +94,8 @@ const TopProductCard = ({ data, productImages, to = null, accountDetails = {}, a
         element.qty = element.Min_Order_QTY__c;
           let cartStatus = addOrder(element,account, manufacturer);
       }
+    }else{
+      setIsModalOpen(true);
     }
   };
   

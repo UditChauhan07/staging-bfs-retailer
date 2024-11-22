@@ -1,45 +1,122 @@
-import { useSearchParams } from "react-router-dom";
 import FullQuearyDetail from "../components/CustomerSupportPage/FullQuearyDetail";
-import Layout from "../components/Layout/Layout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { GetAuthData, getSupportDetails } from "../lib/store";
-import Loading from "../components/Loading";
+import { GetAuthData, getSupportDetails, getAttachment } from "../lib/store";
+import { useLocation } from "react-router";
 import AppLayout from "../components/AppLayout";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
 
 const CustomerSupportDetails = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [deatilsId, setDetailsId] = useState(searchParams.get("id"));
+  const location = useLocation();
+  const [reset, setRest] = useState(false);
+  const queryParams = new URLSearchParams(location.search);
+  const detailsId = queryParams.get("id");
   const [detailsData, setDetailsData] = useState({});
+  const [attachmentUrls, setAttachmentUrls] = useState([]);
+  const [isLoadingAttachments, setLoadingAttachments] = useState(false);
   const [isLoaded, setLoaded] = useState(false);
-  const [reset,setRest] = useState(false);
+  const [isAttachmentsLoaded, setAttachmentsLoaded] = useState(false);
+  const handleCustomerSupportReady = (data) => {
+    setDetailsData(data);
+    setLoaded(true);
+    setRest(false);
+  };
+
+  const fetchDetails = async () => {
+    try {
+      const user = await GetAuthData();
+      const rawData = { key: user?.data?.x_access_token, caseId: detailsId };
+      const details = await dataStore.getPageData(
+        location.pathname + location.search,
+        () => getSupportDetails({ rawData })
+      );
+      details.salesRepName = user.Name;
+      handleCustomerSupportReady(details);
+    } catch (error) {
+      console.error("Error fetching support details:", error);
+    }
+  };
   useEffect(() => {
-    GetAuthData()
-      .then((user) => {
-        let rawData = { key: user?.data?.x_access_token, caseId: deatilsId };
-        getSupportDetails({ rawData })
-          .then((deatils) => {
-            deatils.salesRepName = user.Name;
-            setDetailsData(deatils);
-            setLoaded(true);
-            setRest(false)
-          })
-          .catch((err) => {
-            console.error({ err });
-          });
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
-  }, [deatilsId,reset]);
-  if (!deatilsId || deatilsId == "") return navigate("/customer-support");
-  if (!isLoaded) return <AppLayout><LoaderV3 text={"Loading Support Details"}/></AppLayout>;
+    dataStore.subscribe(
+      location.pathname + location.search,
+      handleCustomerSupportReady
+    );
+    if (detailsId) {
+      fetchDetails();
+    }
+    return () => {
+      dataStore.unsubscribe(
+        location.pathname + location.search,
+        handleCustomerSupportReady
+      );
+    };
+  }, [detailsId, reset]);
+
+  useEffect(() => {
+    const fetchAttachmentsWithTimeout = async () => {
+      if (!detailsId) return;
+
+      const timeout = setTimeout(async () => {
+        try {
+          // setLoadingAttachments(true);
+          const user = await GetAuthData();
+
+          let response;
+
+          response = await dataStore.getPageData(
+            location.pathname + location.search + "&invoice=true",
+            () => getAttachment(user.data.x_access_token, detailsId)
+          );
+
+          if (response && response.attachments) {
+            const formattedAttachments = response.attachments.map(
+              (attachment) => ({
+                id: attachment.id,
+                formattedId: `${attachment.id}.${attachment.name
+                  .split(".")
+                  .pop()
+                  .toLowerCase()}`,
+                name: attachment.name,
+              })
+            );
+            setAttachmentUrls(formattedAttachments);
+          } else {
+            console.warn(
+              "Attachments could not be fully fetched after retries"
+            );
+            setAttachmentUrls([]);
+          }
+        } catch (error) {
+          console.error("Error fetching attachments:", error);
+        }
+      }, 4000);
+
+      return () => clearTimeout(timeout);
+    };
+
+    fetchAttachmentsWithTimeout();
+  }, [detailsId]);
+
+  if (!detailsId || detailsId === "") return navigate("/customer-support");
+
+  if (!isLoaded)
+    return (
+      <AppLayout>
+        <LoaderV3 text={"Loading Support Details"} />
+      </AppLayout>
+    );
+
   return (
     <AppLayout>
-      <FullQuearyDetail data={detailsData} setRest={setRest}/>
+      <FullQuearyDetail
+        data={detailsData}
+        setRest={setRest}
+        attachmentUrls={attachmentUrls}
+      />
     </AppLayout>
   );
 };
+
 export default CustomerSupportDetails;

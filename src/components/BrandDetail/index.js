@@ -4,11 +4,13 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
-import { GetAuthData, ShareDrive, brandDetails, getProductImageAll, originAPi, topProduct } from "../../lib/store";
+import { GetAuthData, ShareDrive, brandDetails, defaultLoadTime, getProductImageAll, originAPi, topProduct } from "../../lib/store";
 import LoaderV2 from "../loader/v2";
 import { Link } from "react-router-dom";
 import ContentLoader from "react-content-loader";
 import ProductDetails from "../../pages/productDetails";
+import dataStore from "../../lib/dataStore";
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 
 const BrandDetailCard = ({ brandId }) => {
     const brand = brandDetails[brandId];
@@ -19,6 +21,36 @@ const BrandDetailCard = ({ brandId }) => {
     const d = new Date();
     let monthIndex = d.getMonth();
     useEffect(() => {
+        GetAuthData().then((user) => {
+            dataStore.subscribe(`/top-products${JSON.stringify({ month: monthIndex + 1, manufacturerId: brandId })}`, handleTopProductReady);
+            handlePageData();
+            return () => {
+                dataStore.unsubscribe(`/top-products${JSON.stringify({ month: monthIndex + 1, manufacturerId: brandId })}`, handleTopProductReady);
+            }
+        }).catch((userErr) => {
+            console.log({ userErr });
+        })
+    }, [])
+
+
+    const handlePageData = async ()=>{
+        GetAuthData().then((user) => {
+            let value = { manufacturerId: brandId, accountIds: JSON.stringify(user.data.accountIds), month: monthIndex + 1 }
+            dataStore.getPageData(`/top-products${JSON.stringify({ month: monthIndex + 1, manufacturerId: brandId })}`, () => topProduct(value)).then((products) => {
+                console.log({products,brandId});
+                
+                handleTopProductReady(products)
+            }).catch((productErr) => {
+                console.log({ productErr });
+            })
+        }).catch((userErr) => {
+            console.log({ userErr });
+        })
+    }
+    
+    useBackgroundUpdater(handlePageData,defaultLoadTime)
+
+    const handleTopProductReady = (products) => {
         let data = ShareDrive();
         if (!data) {
             data = {};
@@ -33,36 +65,28 @@ const BrandDetailCard = ({ brandId }) => {
                 setProductImages({ isLoaded: false, images: {} })
             }
         }
-        GetAuthData().then((user) => {
-            topProduct({ manufacturerId: brandId, accountIds: JSON.stringify([user.data.accountIds[0]]), month: monthIndex + 1 }).then((products) => {
-                setTopProduct({ isLoaded: true, data: products.data })
-                let productCode = "";
-                products.data?.map((product, index) => {
-                    productCode += `'${product.ProductCode}'`
-                    if (products.data.length - 1 != index) productCode += ', ';
-                })
-                getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
-                    if (res) {
-                        if (data[brandId]) {
-                            data[brandId] = { ...data[brandId], ...res }
-                        } else {
-                            data[brandId] = res
-                        }
-                        ShareDrive(data)
-                        setProductImages({ isLoaded: true, images: res });
-                    } else {
-                        setProductImages({ isLoaded: true, images: {} });
-                    }
-                }).catch((err) => {
-                    console.log({ aaa111: err });
-                })
-            }).catch((productErr) => {
-                console.log({ productErr });
-            })
-        }).catch((userErr) => {
-            console.log({ userErr });
+        setTopProduct({ isLoaded: true, data: products.data })
+        let productCode = "";
+        products.data?.map((product, index) => {
+            productCode += `'${product.ProductCode}'`
+            if (products.data.length - 1 != index) productCode += ', ';
         })
-    }, [])
+        getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+            if (res) {
+                if (data[brandId]) {
+                    data[brandId] = { ...data[brandId], ...res }
+                } else {
+                    data[brandId] = res
+                }
+                ShareDrive(data)
+                setProductImages({ isLoaded: true, images: res });
+            } else {
+                setProductImages({ isLoaded: true, images: {} });
+            }
+        }).catch((err) => {
+            console.log({ aaa111: err });
+        })
+    }
     const options = {
         loop: true,
         margin: 50,
@@ -94,72 +118,72 @@ const BrandDetailCard = ({ brandId }) => {
         <section>
             <div className="container">
                 <div className="mt-5 mb-5"></div>
-                    <div className="row">
-                        <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-auto">
-                            <div className={`${Styles.BnadLogo} w-100`}>
-                                <img className="img-fluid" src={brand?.img?.src || "/assets/images/dummy.png"} />
-                            </div>
-                        </div>
-                        <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
-                            <div className="row">
-                                <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand?.tagLine ? Styles.borderRight : null}`}>
-                                    {errorImage?<p className={Styles.brandTitleHolder}>{topProducts.isLoaded?topProducts.data[0].ManufacturerName__c:null}</p>:
-                                    <img className="img-fluid" src={`${originAPi}/brandImage/${brandId}.png`}  onError={()=>setErrorImg(true)}/>}
-                                </div>
-                                {brand?.tagLine ?
-                                    <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
-                                        <h1 className={Styles.titleWithLogo}>
-                                            {brand.tagLine}
-                                        </h1>
-                                    </div> : null}
-                            </div>
-                            <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand?.desc ??'NA'}} />
+                <div className="row">
+                    <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-auto">
+                        <div className={`${Styles.BnadLogo} w-100`}>
+                            <img className="img-fluid" src={brand?.img?.src || "/assets/images/dummy.png"} />
                         </div>
                     </div>
-                {(topProducts.isLoaded && topProducts?.data.length)||(!topProducts.isLoaded) ?
-                <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
-                    <h3 className="mt-5">Popular selling products</h3>
-                    <OwlCarousel className="owl-theme" {...options}>
-                        {topProducts.isLoaded ?
-                            topProducts.data.map((item) => {
+                    <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 m-auto ">
+                        <div className="row">
+                            <div className={`col-xl-7 col-lg-6 col-md-12 col-sm-12 ${brand?.tagLine ? Styles.borderRight : null}`}>
+                                {errorImage ? <p className={Styles.brandTitleHolder}>{topProducts.isLoaded ? topProducts.data[0].ManufacturerName__c : null}</p> :
+                                    <img className="img-fluid" src={`${originAPi}/brandImage/${brandId}.png`} onError={() => setErrorImg(true)} />}
+                            </div>
+                            {brand?.tagLine ?
+                                <div className="col-xl-5 col-lg-6 col-md-12 col-sm-12 m-auto ">
+                                    <h1 className={Styles.titleWithLogo}>
+                                        {brand.tagLine}
+                                    </h1>
+                                </div> : null}
+                        </div>
+                        <div className={Styles.autoHeight} id="ScrollRight" dangerouslySetInnerHTML={{ __html: brand?.desc ?? 'NA' }} />
+                    </div>
+                </div>
+                {(topProducts.isLoaded && topProducts?.data.length) || (!topProducts.isLoaded) ?
+                    <div className={`${Styles.TopProducts} ${Styles.NewArriavalsList}`}>
+                        <h3 className="mt-5">Popular selling products</h3>
+                        <OwlCarousel className="owl-theme" {...options}>
+                            {topProducts.isLoaded ?
+                                topProducts.data.map((item) => {
 
-                                return (<div class="item">
-                                    <div>
-                                        <div className={Styles.ArriavalsInnerContent}>
-                                            <h4 onClick={() => setProductId(item.Id)}>{item.Name}</h4>
-                                            <p>{item.Description??'NA'}</p>
+                                    return (<div class="item">
+                                        <div>
+                                            <div className={Styles.ArriavalsInnerContent}>
+                                                <h4 onClick={() => setProductId(item.Id)}>{item.Name}</h4>
+                                                <p>{item.Description ?? 'NA'}</p>
 
-                                            <Link to={'/order?manufacturerId='+brandId}>
-                                                Shop The Collection
-                                            </Link>
-                                            <div className="fitContent" onClick={() => setProductId(item.Id)}>
-                                                {productImages?.isLoaded ? (
-                                                    <img className="zoomInEffect"
-                                                        style={{ maxHeight: '320px', width: 'auto', margin: '10px auto' }}
-                                                        src={item.ProductImage ? item.ProductImage : productImages?.images?.[item.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
-                                                    />
-                                                ) : (
-                                                    <div className="d-grid place-content-center" style={{height:'300px',margin:'auto'}}>
-                                                        <LoaderV2 mods={{height:'150px',width:'150px'}}/>
-                                                    </div>
-                                                )}
+                                                <Link to={'/order?manufacturerId=' + brandId}>
+                                                    Shop The Collection
+                                                </Link>
+                                                <div className="fitContent" onClick={() => setProductId(item.Id)}>
+                                                    {productImages?.isLoaded ? (
+                                                        <img className="zoomInEffect"
+                                                            style={{ maxHeight: '320px', width: 'auto', margin: '10px auto' }}
+                                                            src={item.ProductImage ? item.ProductImage : productImages?.images?.[item.ProductCode]?.ContentDownloadUrl ?? "\\assets\\images\\dummy.png"}
+                                                        />
+                                                    ) : (
+                                                        <div className="d-grid place-content-center" style={{ height: '300px', margin: 'auto' }}>
+                                                            <LoaderV2 mods={{ height: '150px', width: '150px' }} />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>)
+                                }) : <>
+                                    <div class="item" style={{ width: '24vw', border: '1px solid #ccc', padding: '10px', borderRadius: '10px' }}>
+                                        <ContentLoader />
                                     </div>
-                                </div>)
-                            }) : <>
-                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px'}}>
-                                    <ContentLoader />
-                                </div>
-                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px'}}>
-                                    <ContentLoader />
-                                </div>
-                                <div class="item" style={{width:'24vw',border:'1px solid #ccc',padding:'10px',borderRadius:'10px',margin:'0 10px'}}>
-                                    <ContentLoader />
-                                </div>
-                            </>}
-                    </OwlCarousel>
-                </div>: null}
+                                    <div class="item" style={{ width: '24vw', border: '1px solid #ccc', padding: '10px', borderRadius: '10px' }}>
+                                        <ContentLoader />
+                                    </div>
+                                    <div class="item" style={{ width: '24vw', border: '1px solid #ccc', padding: '10px', borderRadius: '10px', margin: '0 10px' }}>
+                                        <ContentLoader />
+                                    </div>
+                                </>}
+                        </OwlCarousel>
+                    </div> : null}
             </div>
             <ProductDetails productId={productId} setProductDetailId={setProductId} />
         </section>

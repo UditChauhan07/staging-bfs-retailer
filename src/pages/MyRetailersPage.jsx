@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import MyRetailers from "../components/My Retailers/MyRetailers";
 import { FilterItem } from "../components/FilterItem";
 import FilterSearch from "../components/FilterSearch";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getAllAccountLocation } from "../lib/store";
+import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 const MyRetailersPage = ({manufacturerId}) => {
-
+  const location = useLocation();
 
   const [manufacturerFilter, setManufacturerFilter] = useState(manufacturerId);
   const [sortBy, setSortBy] = useState();
@@ -22,20 +24,16 @@ const MyRetailersPage = ({manufacturerId}) => {
     }
   }, [manufacturerId]);
   const navigate = useNavigate();
-  useEffect(() => {
-    const userData = localStorage.getItem("Name");
-    if (!userData) {
-      navigate("/");
-    }
-    getAccountsHandler()
-  }, []);
-
   const getAccountsHandler = () => {
-    GetAuthData().then((user) => {
+    GetAuthData().then(async (user) => {
       // ["0011400001bsBxdAAE"]||
-      getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((accounts) => {
+      const cachedData = await dataStore.retrieve(location.pathname);
+      if (cachedData) {
+        setStoreList({ isLoading: false, data: cachedData });
+      }
+      dataStore.getPageData(location.pathname, () => getAllAccountLocation({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((accounts) => {
         setStoreList({ isLoading: false, data: accounts });
-        getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((brands)=>{
+        dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((brands)=>{
           setManufacturerList(brands);
         }).catch((brandErr)=>{
           console.log({brandErr});
@@ -47,6 +45,19 @@ const MyRetailersPage = ({manufacturerId}) => {
       console.log({ err });
     })
   }
+  useEffect(() => {
+    const userData = localStorage.getItem("Name");
+    if (!userData) {
+      navigate("/");
+    }
+    dataStore.subscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
+    getAccountsHandler()
+    return ()=>{
+      dataStore.unsubscribe(location.pathname, (accounts)=>setStoreList({ isLoading: false, data: accounts }))
+    }
+  }, []);
+  useBackgroundUpdater(getAccountsHandler,defaultLoadTime);
+
   const { isLoading, data } = storeList
   return (
     <AppLayout
@@ -72,7 +83,7 @@ const MyRetailersPage = ({manufacturerId}) => {
           />
           <FilterItem
             minWidth="220px"
-            label="Manufacturer"
+            label="All Brand"
             name="Manufacturer1"
             value={manufacturerFilter}
             options={manufacturerList.map((manufacturer) => ({

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
-import { GetAuthData, ShareDrive, getAllAccountBrand, getProductImageAll, topProduct } from "../lib/store";
+import { GetAuthData, ShareDrive, defaultLoadTime, getAllAccountBrand, getProductImageAll, topProduct } from "../lib/store";
 import TopProductCard from "../components/TopProductCard";
 import { FilterItem } from "../components/FilterItem";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -16,24 +18,27 @@ const TopProducts = () => {
   let monthIndex = d.getMonth();
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [selectedMonth, setSelectedMonth] = useState();
-  const [searchText, setSearchText] = useState();
   const [productImages, setProductImages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   const [accountList, setAccountList] = useState([]);
   const [selectAccount, setSelectAccount] = useState();
   useEffect(() => {
+    dataStore.subscribe(`/top-products${JSON.stringify({ month: selectedMonth, manufacturerId: manufacturerFilter })}`, topProductReady);
     btnHandler({ manufacturerId: null, month: monthIndex + 1 });
     let indexMonth = [];
     let helperArray = [];
     months.map((month, i) => {
       if (i <= monthIndex) {
-        helperArray.push({ label: `${month}, 2024`, value: i + 1 })
+        helperArray.push({ label: `${month.slice(0,3)}, 2024`, value: i + 1 })
       } else {
-        indexMonth.push({ label: `${month}, 2023`, value: i + 1 })
+        indexMonth.push({ label: `${month.slice(0,3)}, 2023`, value: i + 1 })
       }
     })
     let finalArray = indexMonth.concat(helperArray)
     setMonthList(finalArray.reverse())
+    return () => {
+      dataStore.unsubscribe(`/top-products${JSON.stringify({ month: selectedMonth, manufacturerId: manufacturerFilter })}`, topProductReady);
+    }
   }, [])
 
   // const topProductData = useMemo(() => {
@@ -65,6 +70,7 @@ const TopProducts = () => {
       if (!data[manufacturerFilter]) {
         data[manufacturerFilter] = {};
       }
+
       if (Object.values(data[manufacturerFilter]).length > 0) {
         setIsLoaded(true)
         setProductImages({ isLoaded: true, images: data[manufacturerFilter] })
@@ -72,69 +78,19 @@ const TopProducts = () => {
         setProductImages({ isLoaded: false, images: {} })
       }
     }
-    GetAuthData().then((user) => {
+    GetAuthData().then(async (user) => {
       setSelectAccount(accountId || user.data.accountIds[0])
       setAccountList(user.data.accountList);
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then((resManu) => {
         setManufacturerData(resManu);
       }).catch((err) => {
         console.log({ err });
       })
 
-      topProduct({ month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }).then((products) => {
-        let result = [];
-        if (products?.data?.length > 0) {
-          result = products?.data?.sort(function (a, b) {
-            return b.Sales - a.Sales;
-          });
-          localStorage.setItem("address", JSON.stringify(products?.accountDetails[Object.keys(products?.accountDetails)?.[0]]?.ShippingAddress))
-          localStorage.setItem("manufacturer", products?.data?.[0]?.ManufacturerName__c)
-        } else {
-          localStorage.removeItem("manufacturer")
-          localStorage.removeItem("address")
-        }
-        user.data.accountList.map((account)=>{
-          if(accountId){
-            if(account.Id === accountId){
-              localStorage.setItem("Account", account.Name)
-            }
-          }else{
-            if(account.Id == user.data.accountIds[0]){
-              localStorage.setItem("Account", account.Name)
-            }
-          }
-        })
-        localStorage.setItem("AccountId__c", accountId || user.data.accountIds[0])
-        localStorage.setItem("ManufacturerId__c", manufacturerFilter)
-        let message = products?.message
-        if (result.length == 0) {
-          message = "No Data Found";
-        }
-        setTopProductList({ isLoaded: true, data: result, message, accountDetails: products?.accountDetails })
-        if (result.length > 0) {
-          let productCode = "";
-          result?.map((product, index) => {
-            productCode += `'${product.ProductCode}'`
-            if (result.length - 1 != index) productCode += ', ';
-          })
-          getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
-            if (res) {
-              if (data[manufacturerFilter]) {
-                data[manufacturerFilter] = { ...data[manufacturerFilter], ...res }
-              } else {
-                data[manufacturerFilter] = res
-              }
-              ShareDrive(data)
-              setProductImages({ isLoaded: true, images: res });
-              setIsLoaded(true)
-            } else {
-              setIsLoaded(true)
-              setProductImages({ isLoaded: true, images: {} });
-            }
-          }).catch((err) => {
-            console.log({ aaa111: err });
-          })
-        }
+      let value = { month: selectedMonth, manufacturerId: manufacturerFilter, accountIds: JSON.stringify(user.data.accountIds) }
+
+      dataStore.getPageData(`/top-products${JSON.stringify({ month: selectedMonth, manufacturerId: manufacturerFilter })}`, () => topProduct(value)).then((products) => {
+        topProductReady(products)
       }).catch((err) => {
         console.log({ aaa: err });
       })
@@ -142,6 +98,54 @@ const TopProducts = () => {
       console.log({ error });
     })
   }
+  useBackgroundUpdater(()=>btnHandler({ manufacturerId: manufacturerFilter, month: selectedMonth }),defaultLoadTime);
+  const topProductReady = (products) => {
+    let data = ShareDrive();
+    GetAuthData().then(async (user) => {
+      let result = [];
+      if (products?.data?.length > 0) {
+        result = products?.data?.sort(function (a, b) {
+          return b.Sales - a.Sales;
+        });
+      }
+      let message = products?.message
+      if (result.length == 0) {
+        message = "No Data Found";
+      }
+      setTopProductList({ isLoaded: true, data: result, message, accountDetails: products?.accountDetails })
+      if (result.length > 0) {
+        let productCode = "";
+        result?.map((product, index) => {
+          productCode += `'${product.ProductCode}'`
+          if (result.length - 1 != index) productCode += ', ';
+        })
+        getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+          if (res) {
+            if(manufacturerFilter){
+              if (data[manufacturerFilter]) {
+                data[manufacturerFilter] = { ...data[manufacturerFilter], ...res }
+              } else {
+                data[manufacturerFilter] = res
+              }
+              setProductImages({ isLoaded: true, images: res });
+            }else{
+              setProductImages({ isLoaded: true, images: [] });
+            }
+            setIsLoaded(true)
+            ShareDrive(data)
+          } else {
+            setIsLoaded(true)
+            setProductImages({ isLoaded: true, images: {} });
+          }
+        }).catch((err) => {
+          console.log({ aaa111: err });
+        })
+      }
+    }).catch((error) => {
+      console.log({ error });
+    })
+  }
+
   const btnHandler = ({ month, manufacturerId, accountId = null }) => {
     setIsLoaded(false)
     setManufacturerData([]);
@@ -169,14 +173,14 @@ const TopProducts = () => {
         />} */}
       <FilterItem
         minWidth="220px"
-        label="Manufacturer"
+        label="All Brand"
         name="Manufacturer1"
         value={manufacturerFilter}
         options={manufacturerData.map((manufacturer) => ({
           label: manufacturer.Name,
           value: manufacturer.Id,
         }))}
-        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth,accountId:selectAccount })}
+        onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth, accountId: selectAccount })}
       />
       <FilterItem
         label="Month"
@@ -184,7 +188,7 @@ const TopProducts = () => {
         name="Month"
         value={selectedMonth}
         options={monthList}
-        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value,accountId:selectAccount })}
+        onChange={(value) => btnHandler({ manufacturerId: manufacturerFilter, month: value, accountId: selectAccount })}
       />
       {/* <FilterSearch
         onChange={(e) => setSearchText(e.target.value)}
@@ -201,7 +205,7 @@ const TopProducts = () => {
       </button>
     </>
     }>
-      {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth-1]} ${((selectedMonth-1) <= monthIndex)?2024:2023}`}/> : (topProductList.data.length == 0 && topProductList.message) ?
+      {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth - 1]} ${((selectedMonth - 1) <= monthIndex) ? 2024 : 2023}`} /> : (topProductList.data.length == 0 && topProductList.message) ?
         <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
             <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">

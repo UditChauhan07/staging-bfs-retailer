@@ -49,17 +49,18 @@ const CartProvider = ({ children }) => {
             const user = await GetAuthData();
             const getOrder = { CreatedBy: user?.data?.retailerId };
             const cart = await cartSync({ cart: getOrder });
-            console.log({ cart });
-
             // Validate if the fetched cart has essential content like Account and Manufacturer
             if (cart.id && cart.Account?.id && cart.Manufacturer?.id) {
                 setOrder(cart); // Set the fetched cart if valid
                 localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
+                return true;
             } else {
                 setOrder(initialOrder); // Use initial order if no valid cart is found
+                return false;
             }
         } catch (err) {
             console.error('Error fetching cart:', err);
+            return false;
         }
     };
 
@@ -200,8 +201,11 @@ const CartProvider = ({ children }) => {
         };
     };
 
+    console.log({ order });
 
     const addOrder = async (product, account, manufacturer) => {
+        // let status = await fetchCart();
+
         let qty = product.qty || product.Min_Order_QTY__c || 1;
         // If the cart is empty or just initialized, set the orderType based on the first product added
         if (!order.ordertype) {
@@ -234,28 +238,31 @@ const CartProvider = ({ children }) => {
             // Check if testerInclude or sampleInclude is false and we're adding the wrong type
             const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
             const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
+            console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
 
             // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
-            if ((!account.discount.testerInclude && isTester) || (!account.discount.sampleInclude && isSample)) {
+            if ((!account.discount.testerInclude && isTester && !hasTesterInCart) || (!account.discount.sampleInclude && isSample && !hasSampleInCart)) {
                 let msg = `This brand requires you to add ${isTester ? "Tester" : "Sample"} products in a separate order. You cannot mix it with other products.`;
 
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new tester or sample product
-                    setOrder({
-                        ...initialOrder,
-                        ordertype: product.orderType,
-                        Account: account,
-                        Manufacturer: manufacturer,
-                        items: [{ ...product, qty }],
-                        orderQuantity: qty,
-                        total: product.price * qty,
-                    });
-
-                    return {
-                        status: 'success',
-                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
-                    };
+                    const res = await deleteCartForever();
+                    if (res) {
+                        setOrder({
+                            ...initialOrder,
+                            ordertype: product.orderType,
+                            Account: account,
+                            Manufacturer: manufacturer,
+                            items: [{ ...product, qty }],
+                            orderQuantity: qty,
+                            total: product.price * qty,
+                        });
+                        return {
+                            status: 'success',
+                            message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                        };
+                    }
                 } else {
                     // User cancels the cart replacement
                     return {
@@ -273,20 +280,24 @@ const CartProvider = ({ children }) => {
                 let status = await confirmReplaceCart(isAccountMatch, isManufacturerMatch, isOrderTypeMatch, msg);
                 if (status) {
                     // Replace the cart with the new product
-                    setOrder({
-                        ...initialOrder,
-                        ordertype: product.orderType,
-                        Account: account,
-                        Manufacturer: manufacturer,
-                        items: [{ ...product, qty }],
-                        orderQuantity: qty,
-                        total: product.price * qty,
-                    });
+                    const res = await deleteCartForever();
+                    if (res) {
 
-                    return {
-                        status: 'success',
-                        message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
-                    };
+                        setOrder({
+                            ...initialOrder,
+                            ordertype: product.orderType,
+                            Account: account,
+                            Manufacturer: manufacturer,
+                            items: [{ ...product, qty }],
+                            orderQuantity: qty,
+                            total: product.price * qty,
+                        });
+
+                        return {
+                            status: 'success',
+                            message: `The cart has been replaced with the new ${isTester ? "Tester" : "Sample"} product.`,
+                        };
+                    }
                 } else {
                     // User cancels the cart replacement
                     return {
@@ -334,20 +345,23 @@ const CartProvider = ({ children }) => {
 
             if (status) {
                 // Replace the cart with the new product
-                setOrder({
-                    ...initialOrder,
-                    ordertype: product.orderType,
-                    Account: account,
-                    Manufacturer: manufacturer,
-                    items: [{ ...product, qty }],
-                    orderQuantity: qty,
-                    total: product.price * qty,
-                });
+                const res = await deleteCartForever();
+                if (res) {
+                    setOrder({
+                        ...initialOrder,
+                        ordertype: product.orderType,
+                        Account: account,
+                        Manufacturer: manufacturer,
+                        items: [{ ...product, qty }],
+                        orderQuantity: qty,
+                        total: product.price * qty,
+                    });
 
-                return {
-                    status: 'success',
-                    message: 'The cart has been replaced with a new one. The product has been added to the new cart.',
-                };
+                    return {
+                        status: 'success',
+                        message: 'The cart has been replaced with a new one. The product has been added to the new cart.',
+                    };
+                }
             } else {
                 return {
                     status: 'warning',
@@ -369,7 +383,6 @@ const CartProvider = ({ children }) => {
             }
             return; // Don't update if qty is invalid
         }
-
         setOrder((prevOrder) => {
             const product = prevOrder.items.find(item => item.Id === productId);
             if (!product) {
@@ -382,7 +395,11 @@ const CartProvider = ({ children }) => {
                     ? { ...item, qty } // Update the product qty
                     : item
             );
-
+            // Check if the cart is empty after removing the item
+            if (updatedItems.length === 0) {
+                deleteOrder();  // Call deleteOrder() if items array is empty
+                return initialOrder;
+            }
             // Directly update the order quantity and total to avoid unnecessary recalculation
             const updatedOrderQuantity = prevOrder.orderQuantity - product.qty + qty;
             const updatedTotal = prevOrder.total - (product.price * product.qty) + (product.price * qty);
@@ -398,26 +415,53 @@ const CartProvider = ({ children }) => {
 
 
     // Remove a product from the cart by productId
-    const removeProduct = (productId) => {
-        setOrder((prevOrder) => {
-            const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
-            const removedItem = prevOrder.items?.find(item => item.Id === productId);
+    const removeProduct = async (productId) => {
+        // const result = await Swal.fire({
+        //     title: 'Are you sure?',
+        //     text: 'Do you want to remove this product from the cart?',
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonColor: '#000', // Black
+        //     cancelButtonColor: '#000', // Red for cancel
+        //     confirmButtonText: 'Yes, remove it!',
+        //     cancelButtonText: 'No, keep it',
+        //     background: '#f9f9f9',
+        //     color: '#333',
+        // });
 
-            // Check if the cart is empty after removing the item
-            if (updatedItems.length === 0) {
-                deleteOrder();  // Call deleteOrder() if items array is empty
-                return initialOrder;
-            }
+        if (true) {
+            // if (result.isConfirmed) {
+            setOrder((prevOrder) => {
+                const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
+                const removedItem = prevOrder.items?.find(item => item.Id === productId);
 
-            // Otherwise, update the cart normally
-            return {
-                ...prevOrder,
-                items: updatedItems,
-                orderQuantity: prevOrder.orderQuantity - (removedItem ? removedItem.qty : 0),
-                total: prevOrder.total - (removedItem ? removedItem.price * removedItem.qty : 0),
-            };
-        });
+                // Check if the cart is empty after removing the item
+                if (updatedItems.length === 0) {
+                    deleteOrder(); // Call deleteOrder() if items array is empty
+                    return initialOrder;
+                }
+
+                // Otherwise, update the cart normally
+                return {
+                    ...prevOrder,
+                    items: updatedItems,
+                    orderQuantity: prevOrder.orderQuantity - (removedItem ? removedItem.qty : 0),
+                    total: prevOrder.total - (removedItem ? removedItem.price * removedItem.qty : 0),
+                };
+            });
+
+            // Optional: Show success message
+            Swal.fire({
+                title: 'Removed!',
+                text: 'The product has been removed from your cart.',
+                icon: 'success',
+                confirmButtonColor: '#000',
+                background: '#f9f9f9',
+                color: '#333',
+            });
+        }
     };
+
 
 
 
@@ -461,9 +505,12 @@ const CartProvider = ({ children }) => {
 
         return false;
     };
-    
+    console.log({ order });
+
 
     const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {
+        console.log({ account, manufacturer, ordertype });
+        const res = await deleteOrder();
         // Directly replace the current order with a new one based on the provided product list
         const newOrderTotal = productList.reduce((sum, product) => sum + product.price * (product.qty || 1), 0);
         const newOrderQuantity = productList.reduce((sum, product) => sum + (product.qty || 1), 0);
@@ -494,7 +541,7 @@ const CartProvider = ({ children }) => {
     // Delete the entire cart (reset to initial state)
     const deleteOrder = async () => {
         try {
-            const res = await cartSync({ cart: { id: order.id, delete: true } });
+            const res = await deleteCartForever();
 
             if (res) {
                 setOrder(initialOrder); // Only reset if deletion was successful
@@ -506,15 +553,25 @@ const CartProvider = ({ children }) => {
         }
     };
 
+    const deleteCartForever = async () => {
+        try {
+            const res = await cartSync({ cart: { id: order.id, delete: true } });
+            return res
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+
 
     // Get order total
     const getOrderTotal = () => {
-        return order?.total||0;
+        return order?.total || 0;
     };
 
     // Get order quantity
     const getOrderQuantity = () => {
-        return order?.orderQuantity||0;
+        return order?.orderQuantity || 0;
     };
 
     const contextValue = {
@@ -530,7 +587,8 @@ const CartProvider = ({ children }) => {
         isCategoryCarted,
         contentApiFunction,
         keyBasedUpdateCart,
-        fetchCart
+        fetchCart,
+        deleteCartForever
     };
 
     return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;

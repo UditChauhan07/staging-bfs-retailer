@@ -38,6 +38,15 @@
   padding: 10px;
   background: #fff;
   margin-top: 1rem;
+  flex-direction: column;  
+  align-items: flex-start;
+  height: auto;
+  overflow-y: auto;
+  transition: height 0.3s ease; /* For smooth transition */
+}
+
+.attachHolderActive {
+  max-height: 300px; /* Or any value based on number of files */
 }
 .attachHolder label{
   display: grid;
@@ -47,11 +56,41 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, 100px);
   gap: 5px;
+  justify-content: center;
+
+  
 }
-.imgHolder img{
+/* .imgHolder img{
+  width: 100px;
+  height: auto;
+  border: 1px solid #ccc !important;
+}
+.imgHolder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+} */
+.imgHolder {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+  gap: 5px;
+  justify-content: center;
+}
+.imgHolder img {
   width: 100px;
   height: auto;
 }
+.fileIcon1{
+  background-color: #fff !important;
+  width: 100px !important;
+  height: 100px !important;
+  border: 1px solid #ccc !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .subTitle {
   color: #000;
   text-align: left;

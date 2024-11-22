@@ -44,7 +44,7 @@ const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
         onChange={handleMonthFilter}
       />}
       <FilterItem
-        label="MANUFACTURER"
+        label="All Brand"
         name="MANUFACTURER"
         value={value.manufacturer}
         options={

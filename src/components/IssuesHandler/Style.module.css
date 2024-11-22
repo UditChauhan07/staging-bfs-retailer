@@ -18,6 +18,57 @@
   cursor: pointer;
   height: auto;
 }
+.imgHolder {
+  display: flex;
+  justify-content: center !important; /* Horizontally center the images */     /* Vertically center the images */
+  flex-wrap: wrap;         /* Allow images to wrap if there's too much space */
+  width: 100%; 
+  justify-content: center !important;   
+  margin-top: 10px !important;
+           /* Ensure the parent takes up the full width */
+}
+
+
+.fileIcon {
+  width: 100px;           
+  height: 100px;         
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+
+}
+
+.imagePreview {
+  max-width: 100%;        /* Ensure the image scales within its container */
+  max-height: 100%;       /* Ensure the image scales within its container */
+  /* object-fit: contain;    Maintain aspect ratio */
+}
+
+/* Ensure that images inside the .imgHolder take full space and maintain their aspect ratio */
+.fileIcon img {
+  width: 100%;            /* Let image take the full width of the parent */
+  height: 100%;           /* Let image take the full height of the parent */
+  object-fit: cover;      /* Make sure the image covers the entire div */
+  object-position: center; /* Keep the image centered */
+  border-radius: 8px;     /* Optional: Add rounded corners */
+  max-width: 100%;        /* Ensure the image doesn't overflow horizontally */
+  max-height: 100px;  
+  min-height: 100px;  
+  justify-content: center; /* Centers icons horizontally */
+  align-items: center;     /* Optional: Set a max-height for images */
+}
+
+/* Optional: Styling for the count text */
+.countText {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+  font-family: "Montserrat" !important;
+}
+
+
+
+
 .reasonHolder {
   margin: 20px 0;
   display: grid;

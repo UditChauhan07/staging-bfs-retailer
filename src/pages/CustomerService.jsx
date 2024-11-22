@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
-import { GetAuthData, getAllAccount, getAllAccountLocation, getAllAccountOrders, getOrderCustomerSupport, getOrderList, postSupportAny, uploadFileSupport } from "../lib/store.js";
+import {
+  GetAuthData,
+  defaultLoadTime,
+  getAllAccount,
+  getAllAccountLocation,
+  getAllAccountOrders,
+  getOrderCustomerSupport,
+  getOrderList,
+  postSupportAny,
+  uploadFileSupport,
+} from "../lib/store.js";
 import OrderCardHandler from "../components/IssuesHandler/OrderCardHandler.jsx";
 import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +20,8 @@ import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
-
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater.js";
+import dataStore from "../lib/dataStore.js";
 const CustomerService = () => {
   const { state } = useLocation();
   let Reason = null;
@@ -18,42 +29,70 @@ const CustomerService = () => {
   let SalesRepId = null;
   let PONumber = null;
   if (state) {
-    Reason = state?.Reason
-    OrderId = state?.OrderId
-    SalesRepId = state?.SalesRepId
-    PONumber = state?.PONumber
+    Reason = state?.Reason;
+    OrderId = state?.OrderId;
+    SalesRepId = state?.SalesRepId;
+    PONumber = state?.PONumber;
   }
   const navigate = useNavigate();
   const [reason, setReason] = useState();
   const [accountList, setAccountList] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [isLoad, setIsLoad] = useState(false)
+  const [isLoad, setIsLoad] = useState(false);
   const [orderId, setOrderId] = useState(null);
-  const [orderConfirmed, setOrderConfirmed] = useState(false)
-  const [sendEmail, setSendEmail] = useState(true)
+  const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [sendEmail, setSendEmail] = useState(true);
   const [files, setFile] = useState([]);
   const [desc, setDesc] = useState();
   const [subject, setSubject] = useState();
-  const [accountId, setAccountId] = useState(null)
-  const [contactId, setContactId] = useState(null)
-  const [salesRepId, setSalesRepId] = useState(null)
-  const [contactName, setContactName] = useState(null)
-  const [manufacturerId, setManufacturerId] = useState(null)
-  const [Actual_Amount__c, setActual_Amount__c] = useState(null)
+  const [accountId, setAccountId] = useState(null);
+  const [contactId, setContactId] = useState(null);
+  const [salesRepId, setSalesRepId] = useState(null);
+  const [contactName, setContactName] = useState(null);
+  const [manufacturerId, setManufacturerId] = useState(null);
+  const [Actual_Amount__c, setActual_Amount__c] = useState(null);
   const [errorList, setErrorList] = useState({});
   const [searchPo, setSearchPO] = useState(null);
-  const [sumitForm, setSubmitForm] = useState(false)
+  const [sumitForm, setSubmitForm] = useState(false);
   const [dSalesRepId, setDSalesRep] = useState();
   const [confirm, setConfirm] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
   const reasons = [
-    { name: "Charges", icon: '/assets/Charges.svg', desc: "Extra amount paid for order?" },
-    { name: "Product Missing", icon: '/assets/missing.svg', desc: "Can't find product in Order?" },
-    { name: "Product Overage", icon: '/assets/overage.svg', desc: "Receive something you did not order?" },
-    { name: "Product Damage", icon: '/assets/damage.svg', desc: "Got damaged product in order?" },
-    { name: "Update Account Info", icon: '/assets/account.svg', desc: "Change shipping or billing details" }
+    {
+      name: "Charges",
+      icon: "/assets/Charges.svg",
+      desc: "Extra amount paid for order?",
+    },
+    {
+      name: "Product Missing",
+      icon: "/assets/missing.svg",
+      desc: "Can't find product in Order?",
+    },
+    {
+      name: "Product Overage",
+      icon: "/assets/overage.svg",
+      desc: "Receive something you did not order?",
+    },
+    {
+      name: "Product Damage",
+      icon: "/assets/damage.svg",
+      desc: "Got damaged product in order?",
+    },
+    {
+      name: "Update Account Info",
+      icon: "/assets/account.svg",
+      desc: "Change shipping or billing details",
+    },
   ];
 
+  // useEffect(() => {
+  //   if (confirm) {
+  //     document.body.style.overflow = 'hidden'; 
+  //   } else {
+  //     document.body.style.overflow = 'auto'; 
+  //   }
+  // }, [confirm]); 
   function sortingList(data) {
     data.sort(function (a, b) {
       return new Date(b.CreatedDate) - new Date(a.CreatedDate);
@@ -61,43 +100,32 @@ const CustomerService = () => {
     return data;
   }
   const resetHandler = () => {
-    setOrderId(null)
-    setOrderConfirmed(false)
-    setFile([])
-    setDesc()
-    setAccountId(null)
-    setManufacturerId(null)
-    setActual_Amount__c(null)
-    setErrorList({})
-  }
-  useEffect(() => {
-    if (Reason) {
-      setReason(Reason)
-    }
-    if (OrderId) {
-      setOrderId(OrderId)
-    }
-    setIsLoad(false)
+    setOrderId(null);
+    setOrderConfirmed(false);
+    setFile([]);
+    setDesc();
+    setAccountId(null);
+    setManufacturerId(null);
+    setActual_Amount__c(null);
+    setErrorList({});
+  };
+  const handlePageData = async()=>{
     GetAuthData()
-      .then((response) => {
+      .then(async (response) => {
         setContactId(response.data.retailerId)
         setContactName(response.data.firstName + " " + response.data.lastName)
-        getAllAccountOrders({
-          key: response.data.x_access_token,
-          accountIds: JSON.stringify(response.data.accountIds)
-        })
+        dataStore.getPageData("/getAllAccountOrders", () =>
+          getAllAccountOrders({
+            key: response.data.x_access_token,
+            accountIds: JSON.stringify(response.data.accountIds)
+          }))
           .then((order) => {
-            let sorting = sortingList(order);
-            if (sorting.length) {
-              setDSalesRep(sorting[0].OwnerId)
-            }
-            setIsLoad(true)
-            setOrders(sorting);
+            handleOrderListReady(order)
           })
           .catch((error) => {
             console.log({ error });
           });
-        getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) }).then((accounts) => {
+        dataStore.getPageData("/getAllAccountLocation", () => getAllAccountLocation({ key: response.data.x_access_token, accountIds: JSON.stringify(response.data.accountIds) })).then((accounts) => {
           setAccountList(accounts)
         }).catch((storeErr) => {
           console.log({ storeErr });
@@ -106,10 +134,50 @@ const CustomerService = () => {
       .catch((err) => {
         console.log({ err });
       });
+  }
+
+  useEffect(() => {
+    if (Reason) {
+      setReason(Reason)
+    }
+    if (OrderId) {
+      setOrderId(OrderId)
+    }
+    setIsLoad(false)
+    dataStore.subscribe("/getAllAccountOrders", handleOrderListReady);
+    handlePageData()
+    return () => {
+      dataStore.unsubscribe("/getAllAccountOrders", handleOrderListReady);
+    }
   }, []);
 
-  const SubmitHandler = () => {
-    setIsDisabled(true)
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
+  const handleOrderListReady = (data) => {
+    if (data) {
+      let sorting = sortingList(data);
+      if (sorting.length) {
+        setDSalesRep(sorting[0].OwnerId)
+      }
+      setIsLoad(true)
+      setOrders(sorting);
+    }
+  }
+
+
+
+  const SubmitHandler = (event) => {
+    event.preventDefault();
+    setIsDisabled(true);
+    setLoading(true);
+    setSubmitForm(true);
+    document.body.style.overflow = "hidden";
+    document.body.style.pointerEvents = "none"; 
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    if (modalBackdrop) {
+      modalBackdrop.style.filter = "blur(5px)";
+    }
+
     GetAuthData()
       .then((user) => {
         if (user) {
@@ -117,22 +185,21 @@ const CustomerService = () => {
           let systemStr = "";
           if (errorlistObj.length) {
             errorlistObj.map((id) => {
-              systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} for`
-              if (reason != "Charges" && errorList[id]?.Quantity) {
-                systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`
+              systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} for`;
+              if (reason !== "Charges" && errorList[id]?.Quantity) {
+                systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`;
               } else {
-                systemStr += ` ${errorList[id].Quantity} Qty.\n`
+                systemStr += ` ${errorList[id].Quantity} Qty.\n`;
               }
-            })
+            });
           }
           let newDesc = "";
-          if (systemStr != "") {
-            newDesc = "Issue Desc:" + systemStr
-            if (desc) newDesc = "User Desc:" + desc + " \n Issue Desc:" + systemStr
+          if (systemStr !== "") {
+            newDesc = "Issue Desc:" + systemStr;
+            if (desc) newDesc = "User Desc:" + desc + " \n Issue Desc:" + systemStr;
           } else {
-            newDesc = desc
+            newDesc = desc;
           }
-
           let rawData = {
             orderStatusForm: {
               typeId: "0123b0000007z9pAAA",
@@ -153,64 +220,181 @@ const CustomerService = () => {
           postSupportAny({ rawData })
             .then((response) => {
               if (response) {
-                if (response) {
-                  if (files.length > 0) {
-                    setIsDisabled(false);
-                    uploadFileSupport({ key: user.x_access_token, supportId: response, files }).then((fileUploader) => {
-                      setIsDisabled(false)
+                if (files.length > 0) {
+                  uploadFileSupport({
+                    key: user.x_access_token,
+                    supportId: response,
+                    files,
+                  })
+                    .then((fileUploader) => {
+                      setIsDisabled(false);
+                      setLoading(false);
+                      setSubmitForm(false);
+                      document.body.style.pointerEvents = ""; 
+                      document.body.style.overflow = ""; 
+                      if (modalBackdrop) modalBackdrop.style.filter = ""; 
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }
-                    }).catch((fileErr) => {
-                      console.log({ fileErr });
                     })
-                  } else {
-                    setIsDisabled(false);
-                    navigate("/CustomerSupportDetails?id=" + response);
-                  }
+                    .catch((fileErr) => {
+                      console.error({ fileErr });
+                      setLoading(false);
+                      document.body.style.pointerEvents = "";
+                      document.body.style.overflow = "";
+                      if (modalBackdrop) modalBackdrop.style.filter = "";
+                    });
+                } else {
+                  setIsDisabled(false);
+                  setLoading(false);
+                  document.body.style.pointerEvents = "";
+                  document.body.style.overflow = "";
+                  if (modalBackdrop) modalBackdrop.style.filter = "";
+                  navigate("/CustomerSupportDetails?id=" + response);
                 }
               }
             })
             .catch((err) => {
               console.error({ err });
+              setLoading(false);
+              setSubmitForm(false); 
+              document.body.style.pointerEvents = "";
+              document.body.style.overflow = "";
+              if (modalBackdrop) modalBackdrop.style.filter = "";
             });
         }
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
+        setSubmitForm(false); 
+        document.body.style.pointerEvents = "";
+        document.body.style.overflow = "";
+        if (modalBackdrop) modalBackdrop.style.filter = "";
       });
-  }
-  if (sumitForm) return <AppLayout><LoaderV3 text={"Generating You ticket. Please wait..."} /></AppLayout>;
-  return (<CustomerSupportLayout>
-    <section>
-      <ModalPage
-        open={confirm}
-        content={
-          <div className="d-flex flex-column gap-3" style={{ maxWidth: '700px' }}>
-            <h2 >Please Confirm</h2>
-            <p style={{ lineHeight: '22px' }}>
-              Are you sure you want to generate a ticket?<br /> This action cannot be undone.<br /> You will be redirected to the ticket page after the ticket is generated.
-            </p>
-            <div className="d-flex justify-content-around ">
-              <button disabled={isDisabled} style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => { SubmitHandler() }}>
+  };
+  if (sumitForm)
+    return (
+      <AppLayout>
+        <LoaderV3 text={"Generating You ticket. Please wait..."} />
+      </AppLayout>
+    );
+  return (
+    <CustomerSupportLayout>
+      <section>
+        <ModalPage
+          open={confirm}
+          content={
+            <div
+              className="d-flex flex-column gap-3"
+              style={{ maxWidth: "700px" }}
+            >
+              <h2>Please Confirm</h2>
+              <p style={{ lineHeight: "22px" }}>
+                Are you sure you want to generate a ticket?
+                <br /> This action cannot be undone.
+                <br /> You will be redirected to the ticket page after the
+                ticket is generated.
+              </p>
+              <div className="d-flex justify-content-around ">
+                <button
+                  disabled={isDisabled}
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    fontFamily: "Montserrat-600",
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: "600",
+                    height: "30px",
+                    letterSpacing: "1.4px",
+                    lineHeight: "normal",
+                    width: "100px",
+                  }}
+                  onClick={(e) => {
+                    SubmitHandler(e);
+                  }}
+                >
                 Yes
-              </button>
-              <button style={{ backgroundColor: '#000', color: '#fff', fontFamily: 'Montserrat-600', fontSize: '14px', fontStyle: 'normal', fontWeight: '600', height: '30px', letterSpacing: '1.4px', lineHeight: 'normal', width: '100px' }} onClick={() => setConfirm(false)}>
-                No
-              </button>
+                </button>
+                <button
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    fontFamily: "Montserrat-600",
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: "600",
+                    height: "30px",
+                    letterSpacing: "1.4px",
+                    lineHeight: "normal",
+                    width: "100px",
+                  }}
+                  onClick={() => setConfirm(false)}
+                >
+                  No
+                </button>
+              </div>
             </div>
-          </div>
-        }
-        onClose={() => {
-          setConfirm(false);
-        }}
-      />
-      <BMAIHandler reasons={reasons} setReason={setReason} reason={reason} resetHandler={resetHandler} />
-      {reason != "Update Account Info" ? isLoad ? <OrderCardHandler orders={orders} orderId={orderId} setOrderId={setOrderId} reason={reason} orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }} accountIdObj={{ accountId, setAccountId }} manufacturerIdObj={{ manufacturerId, setManufacturerId }} errorListObj={{ errorList, setErrorList }} contactIdObj={{ contactId, setContactId }} accountList={accountList} setSubject={setSubject} sendEmailObj={{ sendEmail, setSendEmail }} Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }} searchPoOBJ={{ searchPo, setSearchPO }} contactName={contactName} setSalesRepId={setSalesRepId} autoSelect={OrderId} /> : <LoaderV3 text={"Loading Order List..."} /> : null}
-      {/*  files={files} desc={desc} */}
-      {reason != "Update Account Info" && <Attachements setFile={setFile} files={files} setDesc={setDesc} orderConfirmed={orderConfirmed} setConfirm={setConfirm} />}
-      {reason == "Update Account Info" && <AccountInfo reason={reason} accountList={accountList} postSupportAny={postSupportAny} GetAuthData={GetAuthData} dSalesRepId={dSalesRepId} setSubmitForm={setSubmitForm} />}
-    </section>
-  </CustomerSupportLayout>)
-}
-export default CustomerService
+          }
+          onClose={() => {
+            setConfirm(false);
+          }}
+        />
+        <BMAIHandler
+          reasons={reasons}
+          setReason={setReason}
+          reason={reason}
+          resetHandler={resetHandler}
+        />
+        {reason != "Update Account Info" ? (
+          isLoad ? (
+            <OrderCardHandler
+              orders={orders}
+              orderId={orderId}
+              setOrderId={setOrderId}
+              reason={reason}
+              orderConfirmedStatus={{ setOrderConfirmed, orderConfirmed }}
+              accountIdObj={{ accountId, setAccountId }}
+              manufacturerIdObj={{ manufacturerId, setManufacturerId }}
+              errorListObj={{ errorList, setErrorList }}
+              contactIdObj={{ contactId, setContactId }}
+              accountList={accountList}
+              setSubject={setSubject}
+              sendEmailObj={{ sendEmail, setSendEmail }}
+              Actual_Amount__cObj={{ Actual_Amount__c, setActual_Amount__c }}
+              searchPoOBJ={{ searchPo, setSearchPO }}
+              contactName={contactName}
+              setSalesRepId={setSalesRepId}
+              autoSelect={OrderId}
+            />
+          ) : (
+            <LoaderV3 text={"Loading Order List..."} />
+          )
+        ) : null}
+        {/*  files={files} desc={desc} */}
+        {reason != "Update Account Info" && (
+          <Attachements
+            setFile={setFile}
+            files={files}
+            setDesc={setDesc}
+            orderConfirmed={orderConfirmed}
+            setConfirm={setConfirm}
+            desc={desc}
+          />
+        )}
+        {reason == "Update Account Info" && (
+          <AccountInfo
+            reason={reason}
+            accountList={accountList}
+            postSupportAny={postSupportAny}
+            GetAuthData={GetAuthData}
+            dSalesRepId={dSalesRepId}
+            setSubmitForm={setSubmitForm}
+          />
+        )}
+      </section>
+    </CustomerSupportLayout>
+  );
+};
+export default CustomerService;

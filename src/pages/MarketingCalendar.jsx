@@ -4,17 +4,22 @@ import LaunchCalendar from "../components/LaunchCalendar/LaunchCalendar";
 import { FilterItem } from "../components/FilterItem";
 import html2pdf from 'html2pdf.js';
 import { MdOutlineDownload } from "react-icons/md";
-import { GetAuthData, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, originAPi, } from "../lib/store";
+import { GetAuthData, defaultLoadTime, getAllAccountBrand, getMarketingCalendar, getMarketingCalendarPDF, getMarketingCalendarPDFV2, getMarketingCalendarPDFV3, originAPi, } from "../lib/store";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { CloseButton } from "../lib/svg";
 import LoaderV3 from "../components/loader/v3";
+import dataStore from "../lib/dataStore";
+import { useLocation } from 'react-router-dom';
+import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 import ModalPage from "../components/Modal UI";
 const fileExtension = ".xlsx";
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const MarketingCalendar = () => {
+  const location = useLocation();
+
   let date = new Date();
   const [isAlert, setIsAlert] = useState(false);
   const [isLoaded, setIsloaed] = useState(false);
@@ -42,19 +47,20 @@ const MarketingCalendar = () => {
   const [selectYear, setSelectYear] = useState(date.getFullYear())
   let yearList = [
     { value: date.getFullYear(), label: date.getFullYear() },
-    { value: date.getFullYear()+1, label: date.getFullYear()+1 }
+    { value: date.getFullYear() + 1, label: date.getFullYear() + 1 }
   ]
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
   const [brand, setBrand] = useState([]);
+  const [isAlert, setIsAlert] = useState(false);
   const [selectBrand, setSelectBrand] = useState(null)
 
-  useEffect(() => {
-    setIsloaed(false)
+  const handlePageData = async ()=>{
     GetAuthData().then((user) => {
-      getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }).then((resManu) => {
+      dataStore.getPageData("getAllAccountBrand", () => getAllAccountBrand({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) })).then(async (resManu) => {
         setBrand(resManu);
-        getMarketingCalendar({ key: user.data.x_access_token,year:selectYear }).then((productRes) => {
+
+        dataStore.getPageData(location.pathname + JSON.stringify(selectYear), () => getMarketingCalendar({ key: user.data.x_access_token, year: selectYear })).then((productRes) => {
           setProductList(productRes?.list)
           setIsloaed(true)
           setTimeout(() => {
@@ -71,28 +77,21 @@ const MarketingCalendar = () => {
     }).catch((error) => {
       console.log({ error });
     })
-  }, [selectBrand, month,selectYear])
-
-  const LoadingEffect = () => {
-    const intervalId = setInterval(() => {
-      if (pdfLoadingText.length > 6) {
-        setPdfLoadingText('.');
-      } else {
-        setPdfLoadingText(prev => prev + '.');
-      }
-      if (pdfLoadingText.length > 12) {
-        setPdfLoadingText('');
-      }
-    }, 1000);
-    const timeoutId = setTimeout(() => {
-      clearInterval(intervalId);
-    }, 10000);
-    return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-    };
   }
+
+  useEffect(() => {
+    setIsloaed(false)
+    dataStore.subscribe(location.pathname + JSON.stringify(selectYear), (data) => { setProductList(data?.list); setIsloaed(true); });
+    handlePageData()
+    return () => {
+      dataStore.subscribe(location.pathname + JSON.stringify(selectYear), (data) => { setProductList(data?.list); setIsloaed(true); });
+    }
+  }, [selectYear])
+
+  useBackgroundUpdater(handlePageData,defaultLoadTime)
+
   const generatePdfServerSide = (version = 0) => {
+    
     GetAuthData().then((user) => {
       let manufacturerId = null;
       let manufacturerStr = "";
@@ -104,8 +103,9 @@ const MarketingCalendar = () => {
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
       if (manufacturerId) {
-      if(version === 1){
-        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
+        setPDFIsloaed(true);
+      if (version === 1) {
+        getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr, year: selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -122,10 +122,10 @@ const MarketingCalendar = () => {
         }).catch((pdfErr) => {
           console.log({ pdfErr });
         })
-      }else if(version === 2){
-        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId , month , manufacturerStr , year:selectYear }).then((file) => {
-        if (file) {
-          
+      } else if (version === 2) {
+        getMarketingCalendarPDFV2({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr, year: selectYear }).then((file) => {
+          if (file) {
+
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
             // a.target = '_blank'
@@ -141,8 +141,8 @@ const MarketingCalendar = () => {
         }).catch((pdfErr) => {
           console.log({ pdfErr });
         })
-      }else{
-        getMarketingCalendarPDF({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr,year:selectYear }).then((file) => {
+      } else {
+        getMarketingCalendarPDF({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr, year: selectYear }).then((file) => {
           if (file) {
             const a = document.createElement('a');
             a.href = originAPi + "/download/" + file + "/1/index";
@@ -241,7 +241,7 @@ const MarketingCalendar = () => {
             temp["Product Ship Date"] = item.Ship_Date__c;
             temp["Product OCD Date"] = item.Launch_Date__c;
             temp["Product Brand"] = item.ManufacturerName__c;
-            temp["Product Price"] = !item.usdRetail__c  ? "TBH" : item.usdRetail__c ;
+            temp["Product Price"] = !item.usdRetail__c ? "TBH" : item.usdRetail__c;
             finalData.push(temp);
           })
         }
@@ -265,7 +265,7 @@ const MarketingCalendar = () => {
     <AppLayout
       filterNodes={
         <>
-                  <FilterItem
+          <FilterItem
             label="year"
             name="Year"
             value={selectYear}
@@ -322,13 +322,13 @@ const MarketingCalendar = () => {
             </div>
             <ul className="dropdown-menu">
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide()}}>&nbsp;Pdf</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide() }}>&nbsp;Pdf</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide(1)}}>&nbsp;PDF Quickview 1</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide(1) }}>&nbsp;PDF Quickview 1</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true);generatePdfServerSide(2)}}>&nbsp;PDF Quickview 2</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide(2) }}>&nbsp;PDF Quickview 2</div>
               </li>
               <li>
                 <div className="dropdown-item text-start" onClick={() => generateXLSX()}>&nbsp;XLSX</div>
@@ -338,7 +338,7 @@ const MarketingCalendar = () => {
         </>
       }
     >
-    <ModalPage
+      <ModalPage
         open={isAlert}
         content={
           <div className="d-flex flex-column gap-3 ">
@@ -356,8 +356,9 @@ const MarketingCalendar = () => {
           </div>
         }
         onClose={() => setIsAlert(false)} />
-       {isPDFLoaded ? <LoaderV3  text={"Generating Pdf Please wait..."} /> :
-        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand??"All Brands"}`} />}
+      {isPDFLoaded ? <LoaderV3 text={"Generating Pdf Please wait..."} /> :
+        isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand ?? "All Brands"}`} />}
+
 
     </AppLayout>
   );
