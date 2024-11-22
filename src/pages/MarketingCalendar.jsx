@@ -90,6 +90,7 @@ const MarketingCalendar = () => {
   useBackgroundUpdater(handlePageData,defaultLoadTime)
 
   const generatePdfServerSide = (version = 0) => {
+    
     GetAuthData().then((user) => {
       let manufacturerId = null;
       let manufacturerStr = "";
@@ -101,6 +102,7 @@ const MarketingCalendar = () => {
         if (item?.Name?.toLowerCase() == selectBrand?.toLowerCase()) { manufacturerId = item.Id }
       })
       if (manufacturerId) {
+        setPDFIsloaed(true);
       if (version === 1) {
         getMarketingCalendarPDFV3({ key: user.data.x_access_token, manufacturerId, month, manufacturerStr, year: selectYear }).then((file) => {
           if (file) {
@@ -319,13 +321,13 @@ const MarketingCalendar = () => {
             </div>
             <ul className="dropdown-menu">
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true); generatePdfServerSide() }}>&nbsp;Pdf</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide() }}>&nbsp;Pdf</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true); generatePdfServerSide(1) }}>&nbsp;PDF Quickview 1</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide(1) }}>&nbsp;PDF Quickview 1</div>
               </li>
               <li>
-                <div className="dropdown-item text-start" onClick={() => { setPDFIsloaed(true); generatePdfServerSide(2) }}>&nbsp;PDF Quickview 2</div>
+                <div className="dropdown-item text-start" onClick={() => { generatePdfServerSide(2) }}>&nbsp;PDF Quickview 2</div>
               </li>
               <li>
                 <div className="dropdown-item text-start" onClick={() => generateXLSX()}>&nbsp;XLSX</div>
