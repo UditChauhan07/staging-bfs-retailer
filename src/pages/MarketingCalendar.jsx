@@ -24,7 +24,6 @@ const MarketingCalendar = () => {
   const [isAlert, setIsAlert] = useState(false);
   const [isLoaded, setIsloaed] = useState(false);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
-  const [pdfLoadingText, setPdfLoadingText] = useState(".");
   const [productList, setProductList] = useState([]);
   const [month, setMonth] = useState("");
   let months = [
@@ -52,7 +51,6 @@ const MarketingCalendar = () => {
   // ...............
   const [isEmpty, setIsEmpty] = useState(false);
   const [brand, setBrand] = useState([]);
-  const [isAlert, setIsAlert] = useState(false);
   const [selectBrand, setSelectBrand] = useState(null)
 
   const handlePageData = async ()=>{
