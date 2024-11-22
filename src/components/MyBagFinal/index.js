@@ -539,7 +539,7 @@ function MyBagFinal() {
                       <b>
                         {buttonActive
                           ? // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                            PONumber
+                          PONumber
                           : "---"}
                       </b>
                     ) : (
@@ -650,8 +650,8 @@ function MyBagFinal() {
                                       ) : !productImage.isLoaded ? (
                                         <LoaderV2 />
                                       ) : productImage.images?.[
-                                          ele?.ProductCode
-                                        ] ? (
+                                        ele?.ProductCode
+                                      ] ? (
                                         productImage.images[ele?.ProductCode]
                                           ?.ContentDownloadUrl ? (
                                           <img
@@ -670,7 +670,7 @@ function MyBagFinal() {
                                           <img
                                             src={
                                               productImage.images[
-                                                ele?.ProductCode
+                                              ele?.ProductCode
                                               ]
                                             }
                                             alt="img"
@@ -723,7 +723,13 @@ function MyBagFinal() {
                                   <div className={Styles.Mainbox2M}>
                                     <div
                                       className={Styles.Mainbox4}
-                                      onClick={() => removeProduct(ele.Id)}
+                                      onClick={() => {
+                                        if (order.items.length == 1) {
+                                          setClearConfim(true);
+                                        } else {
+                                          removeProduct(ele.Id)
+                                        }
+                                      }}
                                     >
                                       <DeleteIcon fill="red" />
                                     </div>

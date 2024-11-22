@@ -238,7 +238,7 @@ const CartProvider = ({ children }) => {
             // Check if testerInclude or sampleInclude is false and we're adding the wrong type
             const hasTesterInCart = order.items.some(item => item.Category__c === "TESTER");
             const hasSampleInCart = order.items.some(item => item.Category__c?.toUpperCase() === "SAMPLES");
-            // console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
+            console.log({ hasTesterInCart, testerInclude: account.discount.testerInclude, isTester });
 
             // **Fix: Only trigger alert when testerInclude or sampleInclude is false**
             if ((!account.discount.testerInclude && isTester && !hasTesterInCart) || (!account.discount.sampleInclude && isSample && !hasSampleInCart)) {
@@ -416,20 +416,21 @@ const CartProvider = ({ children }) => {
 
     // Remove a product from the cart by productId
     const removeProduct = async (productId) => {
-        const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you want to remove this product from the cart?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#000', // Black
-            cancelButtonColor: '#000', // Red for cancel
-            confirmButtonText: 'Yes, remove it!',
-            cancelButtonText: 'No, keep it',
-            background: '#f9f9f9',
-            color: '#333',
-        });
+        // const result = await Swal.fire({
+        //     title: 'Are you sure?',
+        //     text: 'Do you want to remove this product from the cart?',
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonColor: '#000', // Black
+        //     cancelButtonColor: '#000', // Red for cancel
+        //     confirmButtonText: 'Yes, remove it!',
+        //     cancelButtonText: 'No, keep it',
+        //     background: '#f9f9f9',
+        //     color: '#333',
+        // });
 
-        if (result.isConfirmed) {
+        if (true) {
+            // if (result.isConfirmed) {
             setOrder((prevOrder) => {
                 const updatedItems = prevOrder.items?.filter(item => item.Id !== productId);
                 const removedItem = prevOrder.items?.find(item => item.Id === productId);
