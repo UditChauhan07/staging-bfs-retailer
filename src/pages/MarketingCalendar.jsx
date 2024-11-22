@@ -21,6 +21,7 @@ const MarketingCalendar = () => {
   const location = useLocation();
 
   let date = new Date();
+  const [isAlert, setIsAlert] = useState(false);
   const [isLoaded, setIsloaed] = useState(false);
   const [isPDFLoaded, setPDFIsloaed] = useState(false);
   const [pdfLoadingText, setPdfLoadingText] = useState(".");
@@ -357,6 +358,7 @@ const MarketingCalendar = () => {
         onClose={() => setIsAlert(false)} />
       {isPDFLoaded ? <LoaderV3 text={"Generating Pdf Please wait..."} /> :
         isLoaded ? <LaunchCalendar brand={brand} selectBrand={selectBrand} month={month} productList={productList} /> : <LoaderV3 text={`Loading Upcoming New Product for ${selectBrand ?? "All Brands"}`} />}
+
 
     </AppLayout>
   );
