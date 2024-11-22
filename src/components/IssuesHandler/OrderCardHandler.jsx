@@ -235,16 +235,24 @@ const OrderCardHandler = ({ orders, setOrderId, orderId, reason, orderConfirmedS
             let confimationStatus = true;
             if (reason != "Charges") {
                 error.map((id) => {
+                    
                     if ((errorList[id].issue == 0 || !errorList[id].issue) || (reason != "Product Overage" && errorList[id].issue > errorList[id].Quantity)) {
                         confimationStatus = false;
                         const myElement = document.getElementById(`oP${id}`);
                         if (myElement) {
                             // myElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                            let msg
+                            if(errorList[id].issue == 0){
+                                msg = `Please enter issue quantity`;
+                            }else{
+                                msg = `You have entered more than the allowed quantity`;
+                            }
                             myElement.style.borderBottom = "1px solid red";
                             shakeHandler(`oP${id}`)
                             Swal.fire({
-                                title: `${reason}!`,
-                                text: `You have entered more than the allowed quantity`,
+                                // title: `${reason}!`,
+                                title:"Error",
+                                text: msg,
                                 icon: 'error',
                                 confirmButtonText: 'Ok',
                                 confirmButtonColor: '#000'
