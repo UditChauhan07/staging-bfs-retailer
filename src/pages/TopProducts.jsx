@@ -29,9 +29,9 @@ const TopProducts = () => {
     let helperArray = [];
     months.map((month, i) => {
       if (i <= monthIndex) {
-        helperArray.push({ label: `${month}, 2024`, value: i + 1 })
+        helperArray.push({ label: `${month.slice(0,3)}, 2024`, value: i + 1 })
       } else {
-        indexMonth.push({ label: `${month}, 2023`, value: i + 1 })
+        indexMonth.push({ label: `${month.slice(0,3)}, 2023`, value: i + 1 })
       }
     })
     let finalArray = indexMonth.concat(helperArray)
