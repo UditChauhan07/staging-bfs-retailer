@@ -13,6 +13,16 @@
   padding: 38px 30px 30px 10px;
   margin: 10px 0 0 0;
 }
+.PaymentType{
+  margin-top: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.089);
+  padding: 10px 5px;
+}
+.PaymentType span{
+ font-weight: 470;
+ letter-spacing: 1px;
+ text-transform: uppercase;
+}
 .ClearBag {
   background-color: #f1f0f0;
 }

@@ -1,7 +1,8 @@
 import axios from "axios";
-export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
+// export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2611"
+export const originAPi =  "https://sandbox.beautyfashionsales.com"
 export const defaultLoadTime = 1800000;
 
 let url = `${originAPi}/retailer/`;
@@ -71,6 +72,23 @@ export function fetchBeg() {
   }
 }
 
+export async function getBrandPaymentDetails({ key, Id , AccountId }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+  let response = await fetch(originAPi + "/stripe/e8IZytvGI1IJX74", {
+    method: "POST",
+    body: JSON.stringify({ key, Id , AccountId}),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  if (data.status == 300) {
+    DestoryAuth();
+  } else {
+    return data.data || {};
+  }
+}
 
 export async function POGenerator() {
   try {

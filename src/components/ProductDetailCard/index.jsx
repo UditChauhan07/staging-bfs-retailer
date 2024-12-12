@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContent";
 import ModalPage from "../Modal UI";
 
-const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
+const ProductDetailCard = ({ product, orders, onQuantityChange = null , qunatityChange }) => {
+  console.log(qunatityChange , "quantity")
   const { updateProductQty, removeProduct } = useCart();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState();
   const [modalShow,setModalShow]= useState(false);
@@ -123,7 +124,20 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
             <>
               {orders ? (
                 <div className="d-flex flex-column  h-[5rem]">
-                  <div className="d-flex gap-1">
+                  {qunatityChange ? 
+                  <div className="d-flex gap-1" style={{opacity: '0.3'}}>
+                  <QuantitySelector
+                    min={product?.data?.Min_Order_QTY__c || 0}
+                    value={orders?.items?.qty}
+                   
+                  />
+                  <button
+                    className="ml-4"
+                  >
+                    <DeleteIcon fill="red" />
+                  </button>
+                </div>
+                  :   <div className="d-flex gap-1">
                     <QuantitySelector
                       min={product?.data?.Min_Order_QTY__c || 0}
                       value={orders?.items?.qty}
@@ -137,7 +151,8 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
                     >
                       <DeleteIcon fill="red" />
                     </button>
-                  </div>
+                  </div> }
+                  
                   <p className="mt-3" style={{ textAlign: "start" }}>
                     {/* Total: <b>{(inputPrice * orders[product?.data?.Id]?.quantity).toFixed(2)}</b> */}
                   </p>
