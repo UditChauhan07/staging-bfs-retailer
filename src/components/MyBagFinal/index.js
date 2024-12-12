@@ -378,7 +378,7 @@ function MyBagFinal() {
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
-    {alert === 5 && (
+    {/* {alert === 5 && (
   <ModalPage
     open
     content={
@@ -400,7 +400,7 @@ function MyBagFinal() {
       setAlert(0);
     }}
   />
-)}
+)} */}
       {isLoading ? (
         <Loading height={"50vh"} /> // Display full-page loader while data is loading
       ) : (
