@@ -110,8 +110,8 @@ function MyBagFinal() {
   };
   const fetchBrandPaymentDetails = async () => {
     try {
-      let id = localStorage.getItem("ManufacturerId__c");
-      let AccountID = localStorage.getItem("AccountId__c");
+      let id = order?.Manufacturer?.id;
+      let AccountID = order?.Account?.id;
       const user = await GetAuthData();
   
       const brandRes = await getBrandPaymentDetails({
