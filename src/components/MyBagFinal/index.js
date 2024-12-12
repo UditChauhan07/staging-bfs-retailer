@@ -55,7 +55,7 @@ function MyBagFinal() {
   console.log(paymentDetails, "payment details");
   useEffect(() => {
     console.log(paymentDetails, "paymentdetails");
-    const nonCreditCardPaymentTypeExists = intentRes?.accountManufacturerData.some((item) => item.Payment_Type__c && item.Payment_Type__c !== null);
+    const nonCreditCardPaymentTypeExists = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c && item.Payment_Type__c !== null);
 
     if (nonCreditCardPaymentTypeExists) {
       setIsPlayAble(0);
