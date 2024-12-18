@@ -82,7 +82,7 @@ const CartProvider = ({ children }) => {
 
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
+            if (document.visibilityState === 'visible') {                
                 fetchCart();
                 // console.log('Page is active');
                 // Check for updates or fetch data
@@ -200,8 +200,6 @@ const CartProvider = ({ children }) => {
             message: 'New cart initialized with provided account and manufacturer.',
         };
     };
-
-    console.log({ order });
 
     const addOrder = async (product, account, manufacturer) => {
         // let status = await fetchCart();

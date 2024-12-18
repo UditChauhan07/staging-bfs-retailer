@@ -2,7 +2,7 @@ import axios from "axios";
 // export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
 // export const originAPi = "https://dev.beautyfashionsales.com"
 // export const originAPi = "http://localhost:2611"
-export const originAPi =  "https://sandbox.beautyfashionsales.com"
+export const originAPi = "https://sandbox.beautyfashionsales.com"
 export const defaultLoadTime = 1800000;
 
 let url = `${originAPi}/retailer/`;
@@ -72,14 +72,14 @@ export function fetchBeg() {
   }
 }
 
-export async function getBrandPaymentDetails({ key, Id , AccountId }) {
+export async function getBrandPaymentDetails({ key, Id, AccountId }) {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
   let response = await fetch(originAPi + "/stripe/e8IZytvGI1IJX74", {
     method: "POST",
-    body: JSON.stringify({ key, Id , AccountId}),
+    body: JSON.stringify({ key, Id, AccountId }),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
@@ -90,10 +90,9 @@ export async function getBrandPaymentDetails({ key, Id , AccountId }) {
   }
 }
 
-export async function POGenerator() {
-  try {
+export async function POGenerator({ orderDetails }) {
 
-    let orderDetails = fetchBeg();
+  try {
     if (orderDetails.Manufacturer?.id && orderDetails.Account?.id) {
 
       let date = new Date();
@@ -118,14 +117,18 @@ export async function POGenerator() {
       }
 
 
-      const poData = await response.json();
+      const res = await response.json();
 
-      if (poData.success) {
-        let generatedPONumber = poData.poNumber;
+      if (res.success) {
+        let poNumber = res.poNumber;
+        let address = res.address;
+        let brandShipping = res?.brandShipping;
+        let shippingMethod = res?.shippingMethod;
+        let checkBrandAllow = res?.checkBrandAllow;
 
-        return await generatedPONumber;
+        return { poNumber, address, brandShipping, shippingMethod, checkBrandAllow };
       } else {
-        console.error('Failed to generate PO number:', poData.message);
+        console.error('Failed to generate PO number:', res.message);
         return null;
       }
     } else {
@@ -212,7 +215,7 @@ export async function getAttachment(token, caseId) {
         key: token,
       }
     );
-    const data =await response.data;
+    const data = await response.data;
     console.log(data, "backend attachment");
     if (data.status === 300) {
       DestoryAuth();
@@ -448,22 +451,27 @@ export async function getOrderProduct({ rawData }) {
 }
 
 export async function cartSync({ cart }) {
+  console.warn("Cart size:", JSON.stringify(cart).length);
 
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-
-  let response = await fetch(url2 + "/SQ26OYkaaEAGNnK", {
-    method: "POST",
-    body: JSON.stringify(cart),
-    headers: headersList,
-  });
-  let data = JSON.parse(await response.text());
-  if (data.data) {
-    return data.data;
-  } else {
-    return true;
+  try {
+    let response = await fetch(url2 + "SQ26OYkaaEAGNnK", {
+      method: "POST",
+      body: JSON.stringify(cart),
+      headers: headersList,
+    });
+    let data = JSON.parse(await response.text());
+    if (data.data) {
+      return data.data;
+    } else {
+      return true;
+    }
+  } catch (error) {
+    console.error("Error in cartSync:", error);
+    throw error; // Rethrow the error if needed
   }
 }
 
@@ -489,13 +497,13 @@ export async function OrderPlaced({ order, cartId }) {
     localStorage.removeItem(accountKey);
     let lastCount = localStorage.getItem(POCount) || 1;
     localStorage.setItem(POCount, parseInt(+lastCount + 1));
-    return {orderId:data.order,err:null};
+    return { orderId: data.order, err: null };
   } else if (data.status == 300) {
     DestoryAuth();
   } else {
     if (data?.data) {
-      return {err:data.data,orderId:null}
-    }else {
+      return { err: data.data, orderId: null }
+    } else {
       return false;
     }
   }
@@ -1061,9 +1069,9 @@ export const hexabrand = {
   a0O1O00000XYBvaUAH: "#4B95DD",
   a0ORb000000nDfFMAU: "#073763",
   a0ORb000000nDIiMAM: "#7f6000",
-  a0ORb000001KCNpMAO:"#F7E8D5",
-  a0ORb000001XtrZMAS:"#B8D8BA",
-  a0ORb000001EbK5MAK:"#D0E2EC"
+  a0ORb000001KCNpMAO: "#F7E8D5",
+  a0ORb000001XtrZMAS: "#B8D8BA",
+  a0ORb000001EbK5MAK: "#D0E2EC"
 };
 
 export const hexabrandText = {

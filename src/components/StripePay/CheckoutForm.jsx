@@ -22,7 +22,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
     const handleCardInput = (event) => {
         const { error, elementType } = event;
 
-      
+
         if (error && error.message !== "Your card number is incomplete") {
             setCardErrors(prevErrors => ({
                 ...prevErrors,
@@ -75,9 +75,9 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                 text: 'Your payment is successful and order has been placed.',
                 icon: 'success',
                 confirmButtonText: 'OK',
-    customClass: {
-        confirmButton: 'swal2-confirm'
-    }
+                customClass: {
+                    confirmButton: 'swal2-confirm'
+                }
             }).then(() => {
                 deleteBag();
                 navigate('/orderDetails');
@@ -87,7 +87,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
         }
 
         setLoading(false);
-        
+
     };
 
     const orderPlaceHandler = async (paymentStatus, paymentId) => {
@@ -125,19 +125,19 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                         list: orderItems,
                         key: user.data.x_access_token,
                         shippingMethod: order.Account.shippingMethod,
-                        Payment_Status__c : paymentStatus , 
-                        Transaction_ID__c : paymentId
+                        Payment_Status__c: paymentStatus,
+                        Transaction_ID__c: paymentId
                     };
 
                     const response = await OrderPlaced({ order: orderData, cartId: order.id });
                     if (response?.orderId) {
-                       
+
                         localStorage.setItem(
-                          "OpportunityId",
-                          JSON.stringify(response.orderId)
+                            "OpportunityId",
+                            JSON.stringify(response.orderId)
                         );
-                        
-                      }
+
+                    }
                     if (response?.length) {
                         setErrorMessage(response[0].message);
                     } else {

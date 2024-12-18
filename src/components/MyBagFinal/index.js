@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
-
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, fetchBeg, getProductImageAll, getBrandPaymentDetails } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -15,16 +14,28 @@ import { DeleteIcon } from "../../lib/svg";
 import CustomAccordion from "../CustomAccordian/CustomAccordain";
 import StripePay from "../StripePay";
 import { originAPi } from "../../lib/store";
+import Swal from "sweetalert2";
+import ShipmentHandler from "./ShipmentHandler";
+const usePrevious = (value) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+};
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
+  const previousAccountId = usePrevious(order?.Account?.id);
+  const previousManufacturerId = usePrevious(order?.Manufacturer?.id);
+
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
   const [alert, setAlert] = useState(0);
   const [PONumber, setPONumber] = useState();
   const [buttonActive, setButtonActive] = useState(false);
   const [isOrderPlaced, setIsOrderPlaced] = useState(0);
-  
+
   const [orderStatus, setorderStatus] = useState({
     status: false,
     message: "",
@@ -45,13 +56,11 @@ function MyBagFinal() {
   const [detailsAccordian, setDetailsAccordian] = useState(true);
   const [paymentAccordian, setPaymentAccordian] = useState(false);
   const [intentRes, setIntentRes] = useState();
-  const [selectedPaymentType, setSelectedPaymentType] = useState(null);
-  const [selectedPaymentTypes, setSelectedPaymentTypes] = useState([]);
   const [isAccordianOpen, setIsAccordianOpen] = useState(false);
   const [paymentValue, setPaymentValue] = useState(false);
-  const [ qunatityChange  , setQuantityChange] = useState()
-  const [paymentType , setPaymentType] = useState()
-  const fetchBag = fetchBeg({});
+  const [qunatityChange, setQuantityChange] = useState()
+  const [paymentType, setPaymentType] = useState();
+  const [orderShipment, setOrderShipment] = useState([]);
   console.log(paymentDetails, "payment details");
   useEffect(() => {
     console.log(paymentDetails, "paymentdetails");
@@ -66,22 +75,24 @@ function MyBagFinal() {
     }
   }, [intentRes?.accountManufacturerData, paymentDetails]);
   const handleAccordian = () => {
-   
+
     if (order?.items?.length) {
       if (PONumber.length) {
         if (order?.items?.length > 100) {
           setLimitCheck(true);
         } else {
-          if (order.Account.discount.MinOrderAmount > total) {
-            setAlert(1);
+          if (!order?.Account?.shippingMethod?.method && orderShipment?.length > 0) {
+            setAlert(3);
+            return;
           } else {
-            setQuantityChange(true)
-            setIsAccordianOpen(true);
-            setDetailsAccordian(false);
-            setPaymentAccordian(true);
-            console.log({isAccordianOpen})
-            
-          
+            if (order.Account.discount.MinOrderAmount > total) {
+              setAlert(1);
+            } else {
+              setQuantityChange(true)
+              setIsAccordianOpen(true);
+              setDetailsAccordian(false);
+              setPaymentAccordian(true);
+            }
           }
         }
       } else {
@@ -90,10 +101,10 @@ function MyBagFinal() {
     }
   };
   const onToggle = () => {
-    
+
     setQuantityChange(false)
-    if(isAccordianOpen== true) setIsAccordianOpen(false)
-      if(isAccordianOpen== false) setIsAccordianOpen(true)
+    if (isAccordianOpen == true) setIsAccordianOpen(false)
+    if (isAccordianOpen == false) setIsAccordianOpen(true)
     if (detailsAccordian == true) {
       setDetailsAccordian(false);
       setPaymentAccordian(true);
@@ -103,33 +114,32 @@ function MyBagFinal() {
     }
   };
 
-  const productLists = fetchBag?.items ?? [];
   const handleNameChange = (event) => {
     const limit = 20;
     setLimitInput(event.target.value.slice(0, limit));
   };
   const fetchBrandPaymentDetails = async () => {
     try {
-    
-  
+
+
       let id = order?.Manufacturer?.id;
       let AccountID = order?.Account?.id;
       const user = await GetAuthData();
-  
+
       const brandRes = await getBrandPaymentDetails({
         key: user.data.x_access_token,
         Id: id,
         AccountId: AccountID,
       });
-  
+
       setIntentRes(brandRes);
-      console.log({brandRes})
-  
+      console.log({ brandRes })
+
       intentRes.accountManufacturerData.map((item) =>
         setPaymentType(item.Payment_Type__c)
       );
       console.log({ paymentType });
-  
+
       // Check for null keys
       if (
         !brandRes?.brandDetails.Stripe_Secret_key_test__c ||
@@ -142,7 +152,7 @@ function MyBagFinal() {
           SK_KEY: null,
         };
       }
-  
+
       let paymentIntent = await fetch(`${originAPi}/stripe/payment-intent`, {
         method: "POST",
         headers: {
@@ -153,9 +163,9 @@ function MyBagFinal() {
           paymentId: brandRes?.brandDetails.Stripe_Secret_key_test__c,
         }),
       });
-  
+
       console.log({ hasPaymentType });
-  
+
       if (paymentIntent.status === 200 && hasPaymentType == false) {
         setIsPlayAble(1);
       } else if (paymentIntent.status === 400 && hasPaymentType == false) {
@@ -163,12 +173,12 @@ function MyBagFinal() {
         setAlert(5);
         console.log(isPlayAble, "is play able ");
       }
-  
+
       setPaymentDetails({
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
         SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
       });
-  
+
       return {
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
         SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
@@ -177,10 +187,10 @@ function MyBagFinal() {
       console.log("Error fetching brand payment details:", error);
       return null;
     } finally {
-      setTimeout(()=>{
+      setTimeout(() => {
         setIsLoading(false)
-      },2500)
-    
+      }, 2500)
+
     }
   };
   useEffect(() => {
@@ -196,33 +206,47 @@ function MyBagFinal() {
     fetchCart();
     const FetchPoNumber = async () => {
       try {
-        const res = await POGenerator();
+        await order?.Account?.id;
+        const res = await POGenerator({ orderDetails: order });
+
         if (res) {
-          let isPreOrder = productLists?.some((product) => product?.Category__c?.toUpperCase()?.includes("PREORDER") || product?.Category__c?.toUpperCase()?.includes("EVENT"));
-          let poInit = res;
+          if (res?.address || res?.brandShipping) {
+            let tempOrder = order.Account;
+            if (res?.address) {
+              tempOrder = { ...tempOrder, address: res?.address }
+            }
+            if (res.checkBrandAllow) {
+              if (res?.shippingMethod) {
+                tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod }
+              } else {
+                tempOrder = { ...tempOrder, shippingMethod: null }
+              }
+            } else {
+              tempOrder = { ...tempOrder, shippingMethod: null }
+            }
+            keyBasedUpdateCart({ Account: tempOrder })
+            if (res?.brandShipping) {
+              if (res?.brandShipping.length) {
+                setOrderShipment(res?.brandShipping)
+              }
+            }
+          }
+          let isPreOrder = order?.items?.some((product) => product?.Category__c?.toUpperCase()?.includes("PREORDER") || product?.Category__c?.toUpperCase()?.includes("EVENT"));
+          let poInit = res?.poNumber;
           if (isPreOrder) {
             poInit = `PRE-${poInit}`;
           }
-          keyBasedUpdateCart({ PoNumber: poInit });
           setPONumber(poInit);
         }
         // setIsLoading(false);
       } catch (error) {
         console.error("Error fetching PO number:", error);
         // setIsLoading(false);
-      } finally {
-        
       }
     };
-
     FetchPoNumber();
-  }, []);
+  }, [buttonActive]);
 
-  useEffect(() => {
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
-      setButtonActive(true);
-    }
-  }, []);
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
@@ -281,7 +305,7 @@ function MyBagFinal() {
         }
       }
     }
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0 && total > 0) {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
     }
   }, [order]);
@@ -347,9 +371,9 @@ function MyBagFinal() {
                     });
                   }
                   if (response?.orderId) {
-                    
+
                     setIsDisabled(false);
-                  
+
                     let status = deleteOrder();
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
                     navigate("/orderDetails");
@@ -390,7 +414,7 @@ function MyBagFinal() {
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
-    {/* {alert === 5 && (
+      {/* {alert === 5 && (
   <ModalPage
     open
     content={
@@ -445,6 +469,27 @@ function MyBagFinal() {
                   <div style={{ maxWidth: "309px" }}>
                     <h1 className={`fs-5 ${Styles.ModalHeader}`}>Warning</h1>
                     <p className={` ${Styles.ModalContent}`}>Please Select Tester Product of Minimum Order Amount</p>
+                    <div className="d-flex justify-content-center">
+                      <button className={Styles.btnHolder} onClick={() => setAlert(0)}>
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </>
+              }
+              onClose={() => {
+                setAlert(0);
+              }}
+            />
+          )}
+          {alert == 3 && (
+            <ModalPage
+              open
+              content={
+                <>
+                  <div style={{ maxWidth: "309px" }}>
+                    <h1 className={`fs-5 ${Styles.ModalHeader}`}>Alert!!</h1>
+                    <p className={` ${Styles.ModalContent}`}>Please Select Shipping Method for this order</p>
                     <div className="d-flex justify-content-center">
                       <button className={Styles.btnHolder} onClick={() => setAlert(0)}>
                         OK
@@ -626,7 +671,7 @@ function MyBagFinal() {
                       <b>
                         {buttonActive
                           ? // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                            PONumber
+                          PONumber
                           : "---"}
                       </b>
                     ) : (
@@ -639,7 +684,7 @@ function MyBagFinal() {
                         id="limit_input"
                         name="limit_input"
                         value={limitInput}
-                        onChange={qunatityChange ? null : handleNameChange   }
+                        onChange={qunatityChange ? null : handleNameChange}
                         onKeyPress={(e) => {
                           if (e.key === " ") {
                             e.preventDefault(); // Prevent space character from being entered
@@ -650,15 +695,15 @@ function MyBagFinal() {
                   </h5>
                   {qunatityChange ? null : <>
                     {!isPOEditable && (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
-                      <path
-                        d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
-                        fill="black"
-                      />
-                    </svg>
-                  )}
-                  </> }
-                  
+                      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
+                        <path
+                          d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
+                          fill="black"
+                        />
+                      </svg>
+                    )}
+                  </>}
+
                 </div>
               </div>
 
@@ -777,45 +822,45 @@ function MyBagFinal() {
                                   </div>
 
                                   <div className={Styles.Mainbox2M}>
-                                  
-                                    {qunatityChange  ? (
+
+                                    {qunatityChange ? (
                                       <>
                                         <div
-                                      className={Styles.Mainbox4}
-                                     style={{opacity:'0.3'}}
-                                    >
-                                      <DeleteIcon fill="red" />
-                                    </div>
-                                      <div style={{ opacity: "0.3" }} className={Styles.Mainbox5}>
-                                       
-                                        <QuantitySelector min={ele?.Min_Order_QTY__c || 0} value={ele.qty} />
-                                      </div>
+                                          className={Styles.Mainbox4}
+                                          style={{ opacity: '0.3' }}
+                                        >
+                                          <DeleteIcon fill="red" />
+                                        </div>
+                                        <div style={{ opacity: "0.3" }} className={Styles.Mainbox5}>
+
+                                          <QuantitySelector min={ele?.Min_Order_QTY__c || 0} value={ele.qty} />
+                                        </div>
                                       </>
                                     ) : (
                                       <>
                                         <div
-                                      className={Styles.Mainbox4}
-                                      onClick={() => {
-                                        if (order.items.length == 1) {
-                                          setClearConfim(true);
-                                        } else {
-                                          removeProduct(ele.Id);
-                                        }
-                                      }}
-                                    >
-                                      <DeleteIcon fill="red" />
-                                    </div>
-                                      <div className={Styles.Mainbox5}>
-                                        <QuantitySelector
-                                          min={ele?.Min_Order_QTY__c || 0}
-                                          onChange={(quantity) => {
-                                            updateProductQty(ele.Id, quantity);
+                                          className={Styles.Mainbox4}
+                                          onClick={() => {
+                                            if (order.items.length == 1) {
+                                              setClearConfim(true);
+                                            } else {
+                                              removeProduct(ele.Id);
+                                            }
                                           }}
-                                          value={ele.qty}
-                                        />
-                                      </div>
+                                        >
+                                          <DeleteIcon fill="red" />
+                                        </div>
+                                        <div className={Styles.Mainbox5}>
+                                          <QuantitySelector
+                                            min={ele?.Min_Order_QTY__c || 0}
+                                            onChange={(quantity) => {
+                                              updateProductQty(ele.Id, quantity);
+                                            }}
+                                            value={ele.qty}
+                                          />
+                                        </div>
                                       </>
-                                      
+
                                     )}
                                   </div>
                                 </div>
@@ -837,6 +882,42 @@ function MyBagFinal() {
                             <h2>${Number(total).toFixed(2)}</h2>
                           </div>
                         </div>
+                        {order.Account?.shippingMethod?.cal ?
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h2 className="text-capitalize">Shipping ({order.Account.shippingMethod?.name})</h2>
+                            </div>
+                            <div>
+                              <h2>${order.Account.shippingMethod?.cal ? Number(total * order.Account.shippingMethod?.cal).toFixed(2) : 0}</h2>
+                            </div>
+                          </div> : null}
+                        {order.Account?.shippingMethod?.cal ?
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h2>Total</h2>
+                            </div>
+                            <div>
+                              <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
+                            </div>
+                          </div> : null}{order.Account?.shippingMethod?.cal ?
+                            <div className="d-flex justify-content-between">
+                              <div>
+                                <h2 className="text-capitalize">Shipping ({order.Account.shippingMethod?.name})</h2>
+                              </div>
+                              <div>
+                                <h2>${order.Account.shippingMethod?.cal ? Number(total * order.Account.shippingMethod?.cal).toFixed(2) : 0}</h2>
+                              </div>
+                            </div> : null}
+                        {order.Account?.shippingMethod?.cal ?
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h2>Total</h2>
+                            </div>
+                            <div>
+                              <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
+                            </div>
+                          </div> : null}
+
                       </div>
                     </div>
                   </div>
@@ -858,8 +939,14 @@ function MyBagFinal() {
                         </div>
                         {hasPaymentType ? (
                           <>{intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                            <div classNama={Styles.PaymentType}> <label  key={item.Id}>Payment Type: &nbsp; {item.Payment_Type__c}</label></div> : null))}</>
+                            <div classNama={Styles.PaymentType}> <label key={item.Id}>Payment Type: &nbsp; {item.Payment_Type__c}</label></div> : null))}</>
                         ) : null}
+                        {orderShipment.length > 0 ?
+                          <div className={Styles.PaymentType}>
+                            <p className={Styles.shipLabelHolder}>Select Shipping method:</p>
+                            <ShipmentHandler data={orderShipment} total={total} />
+                          </div>
+                          : null}
                         <div className={Styles.ShipAdress2}>
                           <textarea
                             onKeyUp={(e) => {
@@ -918,8 +1005,14 @@ function MyBagFinal() {
                           )}
                         </div>
                         {hasPaymentType ? (
-                          <div className={Styles.PaymentType}>{intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ? <label  key={item.Id}> <span> Payment Type :</span>  {item.Payment_Type__c}</label> : null))}</div>
+                          <div className={Styles.PaymentType}>{intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ? <label key={item.Id}> <span> Payment Type :</span>  {item.Payment_Type__c}</label> : null))}</div>
                         ) : null}
+                        {orderShipment.length > 0 ?
+                          <div className={Styles.ShipAdress}>
+                            <div className={Styles.shipLabelHolder}>Select Shipping method</div>
+                            <ShipmentHandler data={orderShipment} total={total} />
+                          </div>
+                          : null}
                         <div className={Styles.ShipAdress2}>
                           <textarea
                             onKeyUp={(e) => {
@@ -968,11 +1061,17 @@ function MyBagFinal() {
                                     if (order.Account.discount.MinOrderAmount > total) {
                                       setAlert(1);
                                     } else {
-                                      // if (testerInBag && order.Account.discount.testerproductLimit > total) {
-                                      //   setAlert(2);
-                                      // } else {
-                                      setConfirm(true);
-                                      // }
+                                      if (!order?.Account?.shippingMethod?.method && orderShipment?.length > 0) {
+                                        setAlert(3);
+                                        return;
+                                      } else {
+
+                                        // if (testerInBag && order.Account.discount.testerproductLimit > total) {
+                                        //   setAlert(2);
+                                        // } else {
+                                        setConfirm(true);
+                                        // }
+                                      }
                                     }
                                   }
                                 } else {
@@ -1027,12 +1126,12 @@ function MyBagFinal() {
                         }}
                         disabled={!buttonActive}
                       >
-                        {paymentAccordian ?  null  :  "Clear Bag" }
-                       
+                        {paymentAccordian ? null : "Clear Bag"}
+
                       </p>
                     ) : null}
                     {paymentAccordian ? <p className={`${Styles.ClearBag}`}
-                        style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>Edit Bag</p> : null}
+                      style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>Edit Bag</p> : null}
                   </div>
                 </div>
               </div>
@@ -1041,7 +1140,7 @@ function MyBagFinal() {
         </section>
       )}
 
-      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[order?.Account?.id]} qunatityChangeState = {qunatityChange} />
+      <ProductDetails productId={productDetailId} setProductDetailId={setProductDetailId} AccountId={[order?.Account?.id]} qunatityChangeState={qunatityChange} />
     </div>
   );
 }

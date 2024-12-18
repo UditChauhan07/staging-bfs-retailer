@@ -13,15 +13,15 @@
   padding: 38px 30px 30px 10px;
   margin: 10px 0 0 0;
 }
-.PaymentType{
+.PaymentType {
   margin-top: 20px;
   border: 1px solid rgba(0, 0, 0, 0.089);
   padding: 10px 5px;
 }
-.PaymentType span{
- font-weight: 470;
- letter-spacing: 1px;
- text-transform: uppercase;
+.PaymentType span {
+  font-weight: 470;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .ClearBag {
   background-color: #f1f0f0;
@@ -216,6 +216,8 @@
   position: sticky;
   bottom: -10px;
   background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .TotalPricer h2 {
@@ -226,6 +228,7 @@
   font-weight: 700;
   line-height: 32px; /* 177.778% */
   letter-spacing: 1.12px;
+  margin: 0;
 }
 .Mainbox5 {
   margin: 0 0 0 20px;
@@ -296,7 +299,17 @@
   background-color: transparent;
   /* text-transform: uppercase; */
 }
-
+.shipLabelHolder {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px; /* 228.571% */
+  letter-spacing: 1.12px;
+  text-transform: uppercase;
+  margin: 0;
+  margin-left: 5px;
+}
 .ShipAdress2 label {
   color: #000;
   font-family: Arial, Helvetica, sans-serif;
