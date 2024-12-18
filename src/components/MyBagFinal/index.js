@@ -875,31 +875,15 @@ function MyBagFinal() {
                           )}
                         </div>
                         <div className={Styles.TotalPricer}>
-                          <div>
-                            <h2>Total</h2>
-                          </div>
-                          <div>
-                            <h2>${Number(total).toFixed(2)}</h2>
-                          </div>
-                        </div>
-                        {order.Account?.shippingMethod?.cal ?
                           <div className="d-flex justify-content-between">
                             <div>
-                              <h2 className="text-capitalize">Shipping ({order.Account.shippingMethod?.name})</h2>
+                              <h2>Sub-Total</h2>
                             </div>
                             <div>
-                              <h2>${order.Account.shippingMethod?.cal ? Number(total * order.Account.shippingMethod?.cal).toFixed(2) : 0}</h2>
+                              <h2>${Number(total).toFixed(2)}</h2>
                             </div>
-                          </div> : null}
-                        {order.Account?.shippingMethod?.cal ?
-                          <div className="d-flex justify-content-between">
-                            <div>
-                              <h2>Total</h2>
-                            </div>
-                            <div>
-                              <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
-                            </div>
-                          </div> : null}{order.Account?.shippingMethod?.cal ?
+                          </div>
+                          {order.Account?.shippingMethod?.cal ?
                             <div className="d-flex justify-content-between">
                               <div>
                                 <h2 className="text-capitalize">Shipping ({order.Account.shippingMethod?.name})</h2>
@@ -908,16 +892,16 @@ function MyBagFinal() {
                                 <h2>${order.Account.shippingMethod?.cal ? Number(total * order.Account.shippingMethod?.cal).toFixed(2) : 0}</h2>
                               </div>
                             </div> : null}
-                        {order.Account?.shippingMethod?.cal ?
-                          <div className="d-flex justify-content-between">
-                            <div>
-                              <h2>Total</h2>
-                            </div>
-                            <div>
-                              <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
-                            </div>
-                          </div> : null}
-
+                          {order.Account?.shippingMethod?.cal ?
+                            <div className="d-flex justify-content-between">
+                              <div>
+                                <h2>Total</h2>
+                              </div>
+                              <div>
+                                <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
+                              </div>
+                            </div> : null}
+                        </div>
                       </div>
                     </div>
                   </div>
