@@ -77,7 +77,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                 }
             }).then( () => {
                  deleteOrder();
-                navigate('/orderDetails');
+                window.location.href = window.location.origin+'/orderDetails';
             });
         } else {
             setErrorMessage("Payment failed. Please try again.");

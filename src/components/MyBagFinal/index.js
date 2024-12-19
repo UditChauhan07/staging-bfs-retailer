@@ -364,7 +364,7 @@ function MyBagFinal() {
 
                     let status = deleteOrder();
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
-                    navigate("/orderDetails");
+                    window.location.href = window.location.origin+'/orderDetails';
                     setIsOrderPlaced(2);
                   }
                 }
