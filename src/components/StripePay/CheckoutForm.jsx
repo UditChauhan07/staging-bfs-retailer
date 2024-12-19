@@ -112,7 +112,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                         ManufacturerId__c: order?.Manufacturer?.id,
                         PONumber,
                         desc: orderDes,
-                        SalesRepId: order.SalesRepId,
+                        SalesRepId: order?.Account?.SalesRepId,
                         Type: orderType,
                         ShippingCity: order?.Account?.address?.city,
                         ShippingStreet: order?.Account?.address?.street,
