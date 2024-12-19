@@ -363,8 +363,9 @@ function MyBagFinal() {
                     setIsDisabled(false);
 
                     let status = deleteOrder();
+                    setConfirm(false)
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
-                    window.location.href = window.location.origin+'/orderDetails';
+                    window.location.href = window.location.origin + '/orderDetails';
                     setIsOrderPlaced(2);
                   }
                 }
@@ -1082,7 +1083,7 @@ function MyBagFinal() {
                             }}
                             disabled={!buttonActive}
                           >
-                            ${Number(total).toFixed(2)} PLACE ORDER
+                            ${Number(total + (total * (order?.Account?.shippingMethod?.cal || 0))).toFixed(2)} PLACE ORDER
                           </button>
                           <p
                             className={`${Styles.ClearBag}`}
@@ -1108,7 +1109,7 @@ function MyBagFinal() {
                           PO_Number={PONumber}
                           PK_KEY={paymentDetails.PK_KEY}
                           SK_KEY={paymentDetails.SK_KEY}
-                          amount={total}
+                          amount={total + (total * (order?.Account?.shippingMethod?.cal || 0))}
                           order={order}
                           PONumber={PONumber}
                           orderDesc={orderDesc}
