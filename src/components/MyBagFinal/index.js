@@ -400,6 +400,33 @@ function MyBagFinal() {
 
     return getOrderQuantity() || 0;
   };
+  const getMinHeight = () => {
+    const hasPayment = hasPaymentType;
+    const hasShipments = orderShipment.length > 0;
+    const hasPKKey = paymentDetails.PK_KEY != null;
+    const hasSKKey = paymentDetails.SK_KEY != null;
+
+    // Check conditions
+    if (hasPayment && (hasPKKey && hasSKKey)&&hasShipments) {
+      return '700px'; // Payment type and one payment detail key
+    }
+    if (hasPayment && hasShipments) {
+      return '500px'; // Both conditions true
+    }
+    if (hasPayment && (hasPKKey && hasSKKey)) {
+      return '600px'; // Only payment type
+    }
+    if (hasShipments && (hasPKKey && hasSKKey)) {
+      return '500px'; // Only shipments
+    }
+    if (hasPKKey && hasSKKey) {
+      return '650px'; // One of the payment details keys is present
+    }
+    if (hasPayment || hasShipments) {
+      return '400px'; // One of the conditions true
+    }
+    return 'null'; // All conditions false
+  };
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -704,7 +731,7 @@ function MyBagFinal() {
                         SHOPPING BAG (<OrderQuantity />)
                       </h3>
                       <div className={Styles.scrollP}>
-                        <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: "400px" }}>
+                        <div className={`${Styles.MainInner} overflow-auto`} style={{ minHeight: getMinHeight() }}>
                           {order && order.items?.length > 0 ? (
                             order.items?.map((ele) => {
                               let salesPrice = ele?.price;
@@ -866,7 +893,7 @@ function MyBagFinal() {
                         <div className={Styles.TotalPricer}>
                           <div className="d-flex justify-content-between">
                             <div>
-                              <h2>Sub-Total</h2>
+                              <h2>{order?.Account?.shippingMethod?.cal ? 'Sub-' : null}Total</h2>
                             </div>
                             <div>
                               <h2>${Number(total).toFixed(2)}</h2>

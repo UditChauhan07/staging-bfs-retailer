@@ -230,8 +230,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
       return null;
     }
   }
-  console.log({invoices});
-  
+
   return (
     <div>
       <ModalPage
@@ -381,13 +380,41 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                         </div>
                       </div>
 
-                      <div className={Styles.TotalPricer}>
+                      {/* <div className={Styles.TotalPricer}>
                         <div>
                           <h2>Total</h2>
                         </div>
                         <div>
                           <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
                         </div>
+                      </div> */}
+                      <div className={Styles.TotalPricer}>
+                        <div className="d-flex justify-content-between">
+                          <div>
+                            <h2>Sub-Total</h2>
+                          </div>
+                          <div>
+                            <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
+                          </div>
+                        </div>
+                        {OrderData?.Shipment_cost__c ?
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h2 className="text-capitalize">Shipping by ({OrderData?.Shipping_method__c})</h2>
+                            </div>
+                            <div>
+                              <h2>${OrderData?.Shipment_cost__c ? Number(OrderData?.Shipment_cost__c).toFixed(2) : 0}</h2>
+                            </div>
+                          </div> : null}
+                        {OrderData?.Shipment_cost__c ?
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h2>Total</h2>
+                            </div>
+                            <div>
+                              <h2>${Number(OrderData.Amount + Number(OrderData?.Shipment_cost__c)).toFixed(2)}</h2>
+                            </div>
+                          </div> : null}
                       </div>
                     </div>
                   </div>

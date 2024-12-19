@@ -1,8 +1,6 @@
 .scrollP {
   border: 1px solid #e4e4e4;
   padding: 10px 20px;
-  height: 50vh;
-  overflow: auto;
 }
 .Mainbox4:hover {
   cursor: pointer;
@@ -35,7 +33,8 @@
 .MainInner {
   background: #fff;
   padding: 17px 27px;
-  min-height: 400px;
+  min-height: 350px;
+  max-height: 50vh;
   overflow: auto;
 }
 
@@ -220,9 +219,8 @@
   justify-content: space-between;
   padding: 10px 5px 0 5px;
   position: sticky;
-  bottom: -10px;
+  bottom: 20px;
   background: #fff;
-  display: flex;
   flex-direction: column;
 }
 
