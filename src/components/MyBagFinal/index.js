@@ -61,19 +61,11 @@ function MyBagFinal() {
   const [qunatityChange, setQuantityChange] = useState()
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
-  console.log(paymentDetails, "payment details");
   useEffect(() => {
-    console.log(paymentDetails, "paymentdetails");
-    const nonCreditCardPaymentTypeExists = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c && item.Payment_Type__c !== null);
-
-    if (nonCreditCardPaymentTypeExists) {
-      setIsPlayAble(0);
-    } else if (nonCreditCardPaymentTypeExists === false && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null) {
-      // setIsPlayAble(1);
-    } else if (nonCreditCardPaymentTypeExists === false && paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
+    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
       setIsPlayAble(0);
     }
-  }, [intentRes?.accountManufacturerData, paymentDetails]);
+  }, [paymentDetails]);
   const handleAccordian = () => {
 
     if (order?.items?.length) {
@@ -133,12 +125,10 @@ function MyBagFinal() {
       });
 
       setIntentRes(brandRes);
-      console.log({ brandRes })
 
-      intentRes.accountManufacturerData.map((item) =>
+      brandRes.accountManufacturerData.map((item) =>
         setPaymentType(item.Payment_Type__c)
       );
-      console.log({ paymentType });
 
       // Check for null keys
       if (
@@ -164,11 +154,10 @@ function MyBagFinal() {
         }),
       });
 
-      console.log({ hasPaymentType });
 
-      if (paymentIntent.status === 200 && hasPaymentType == false) {
+      if (paymentIntent.status === 200) {
         setIsPlayAble(1);
-      } else if (paymentIntent.status === 400 && hasPaymentType == false) {
+      } else if (paymentIntent.status === 400) {
         setIsPlayAble(0);
         setAlert(5);
         console.log(isPlayAble, "is play able ");
@@ -186,17 +175,10 @@ function MyBagFinal() {
     } catch (error) {
       console.log("Error fetching brand payment details:", error);
       return null;
-    } finally {
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 2500)
-
     }
   };
-  useEffect(() => {
-    fetchBrandPaymentDetails();
-  }, [order]);
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
+
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
@@ -208,6 +190,8 @@ function MyBagFinal() {
       try {
         await order?.Account?.id;
         const res = await POGenerator({ orderDetails: order });
+        let data = await fetchBrandPaymentDetails();
+        console.warn({ data });
 
         if (res) {
           if (res?.address || res?.brandShipping) {
@@ -239,11 +223,15 @@ function MyBagFinal() {
           setPONumber(poInit);
         }
         // setIsLoading(false);
+        setIsLoading(false)
       } catch (error) {
         console.error("Error fetching PO number:", error);
         // setIsLoading(false);
+        setIsLoading(false)
       }
     };
+
+
     FetchPoNumber();
   }, [buttonActive]);
 
@@ -909,7 +897,9 @@ function MyBagFinal() {
                   <div className="col-lg-5 col-md-4 col-sm-12">
                     {isPlayAble === 1 ? (
                       <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
+
                         <div className={Styles.ShipAdress}>
+
                           {buttonActive ? (
                             <p>
                               {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
@@ -921,13 +911,26 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType ? (
-                          <>{intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                            <div classNama={Styles.PaymentType}> <label key={item.Id}>Payment Type: &nbsp; {item.Payment_Type__c}</label></div> : null))}</>
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null) ? (
+                          <div className={Styles.PaymentType}>
+                            <label className={Styles.shipLabelHolder}>Payment Type:</label>
+                            <div className={Styles.PaymentTypeHolder}>
+                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                                  <div className={Styles.labelHolder} >
+                                    {item.Payment_Type__c}
+                                  </div>
+                                </div>
+                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder} >
+                                  Pay now
+                                </div>
+                              </div>
+                            </div></div>
                         ) : null}
                         {orderShipment.length > 0 ?
                           <div className={Styles.PaymentType}>
-                            <p className={Styles.shipLabelHolder}>Select Shipping method:</p>
+                            <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
                             <ShipmentHandler data={orderShipment} total={total} />
                           </div>
                           : null}
@@ -973,7 +976,7 @@ function MyBagFinal() {
                         </div>
                       </CustomAccordion>
                     ) : (
-                      <div className={Styles.ShippControl}>
+                      <div className={Styles.ShippControl} style={{ padding: '5px 10px' }}>
                         <h2>Shipping Address</h2>
 
                         <div className={Styles.ShipAdress}>
@@ -988,8 +991,22 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType ? (
-                          <div className={Styles.PaymentType}>{intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ? <label key={item.Id}> <span> Payment Type :</span>  {item.Payment_Type__c}</label> : null))}</div>
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null) ? (
+                          <div className={Styles.PaymentType}>
+                            <label className={Styles.shipLabelHolder}>Payment Type:</label>
+                            <div className={Styles.PaymentTypeHolder}>
+                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                                  <div className={Styles.labelHolder} >
+                                    {item.Payment_Type__c}
+                                  </div>
+                                </div>
+                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder} >
+                                  Pay now
+                                </div>
+                              </div>
+                            </div></div>
                         ) : null}
                         {orderShipment.length > 0 ?
                           <div className={Styles.ShipAdress}>

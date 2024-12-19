@@ -16,12 +16,18 @@
 .PaymentType {
   margin-top: 20px;
   border: 1px solid rgba(0, 0, 0, 0.089);
-  padding: 10px 5px;
+  padding: 15px;
 }
 .PaymentType span {
   font-weight: 470;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+.PaymentTypeHolder{
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap;
+  gap: 25px;
 }
 .ClearBag {
   background-color: #f1f0f0;
@@ -327,7 +333,38 @@
 .warning {
   text-decoration: underline;
 }
+.templateHolder {
+  width: 47%;
+  min-width: 100px;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  padding: 10px;
+  border-radius: 8px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+  background-color: #fff; /* Default background color */
+  display: grid;
+  place-content: center;
+  border: 1px solid #ccc;
+}
 
+.templateHolder:hover {
+  box-shadow: 0 0 10px rgba(13, 41, 71, 0.5);
+  /* transform: scale(1.05); */
+}
+.templateHolder .labelHolder {
+  margin: 0;
+  text-align: start;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-bottom: 0;
+  padding: 0;
+  font-weight: bold;
+}
+.selected {
+  border-color: #000; /* Black border for selected templates */
+  /* transform: scale(1.05); */
+}
 .ShipBut {
   width: 100%;
 }
@@ -350,6 +387,8 @@
   text-transform: uppercase;
   background-color: #000;
   margin: 0 0 28px 0;
+  position: sticky;
+  bottom: 50px;
 }
 
 .ClearBag {

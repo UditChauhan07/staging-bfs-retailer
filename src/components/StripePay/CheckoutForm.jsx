@@ -15,9 +15,6 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
     const [cardErrors, setCardErrors] = useState({});
     const { order, deleteOrder } = useCart();
     const [orderDesc, setOrderDesc] = useState(null);
-    const deleteBag = () => {
-        deleteOrder().catch(err => console.error({ err }));
-    };
 
     const handleCardInput = (event) => {
         const { error, elementType } = event;
@@ -70,18 +67,23 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
-            Swal.fire({
-                title: 'Payment Successful!',
-                text: 'Your payment is successful and order has been placed.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'swal2-confirm'
-                }
-            }).then(() => {
-                deleteBag();
-                navigate('/orderDetails');
-            });
+            deleteOrder()
+                .then((res) => {
+                    if (res) {
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            text: 'Your payment is successful and order has been placed.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                confirmButton: 'swal2-confirm'
+                            }
+                        }).then(() => {
+                            navigate('/orderDetails');
+                        });
+                    }
+                })
+                .catch((err) => console.error({ err }));
         } else {
             setErrorMessage("Payment failed. Please try again.");
         }
