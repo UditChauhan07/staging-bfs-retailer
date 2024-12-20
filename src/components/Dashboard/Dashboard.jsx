@@ -68,40 +68,11 @@ const monthList = [
   },
 ];
 
-function Dashboard({ dashboardData }) {
+function Dashboard() {
   const { fetchCart } = useCart();
   const navigate = useNavigate();
   const [dataa, setDataa] = useState({
-    series: [
-      {
-        name: "Diptyque",
-        data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-      },
-      {
-        name: "Byredo",
-        data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
-      },
-      {
-        name: "Bobbi Brown",
-        data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
-      },
-      {
-        name: "By Terry",
-        data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
-      },
-      {
-        name: "Revive",
-        data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
-      },
-      {
-        name: "Kevyn Aucoin",
-        data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
-      },
-      {
-        name: "Smashbox",
-        data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
-      },
-    ],
+    series: [],
     options: {
       chart: {
         type: "area",
@@ -213,14 +184,13 @@ function Dashboard({ dashboardData }) {
     if (!AuthCheck()) {
       // navigate("/");
     }
-    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }),dashBoardReady);
+    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }), dashBoardReady);
     getDataHandler({ month: currentMonth, year: currentYear });
     return () => {
-      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }),dashBoardReady);
+      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }), dashBoardReady);
     };
   }, []);
-
-  useBackgroundUpdater(()=>getDataHandler({month: PurchaseMonth, year: PurchaseYear}),defaultLoadTime);
+  useBackgroundUpdater(() => getDataHandler({ month: PurchaseMonth, year: PurchaseYear,accountIds: JSON.stringify([account]) }), defaultLoadTime);
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
@@ -252,8 +222,6 @@ function Dashboard({ dashboardData }) {
       });
   };
   const dashBoardReady = (dashboard) => {
-    console.log({dashboard});
-    
 
     setGoalList(dashboard.goalByMonth ?? [])
     let totalOrder = dashboard?.totalOrder || 0;
@@ -319,36 +287,7 @@ function Dashboard({ dashboardData }) {
         colorArray.push(hexabrand[value.id]);
       })
       setDataa({
-        series: [
-          {
-            name: "Diptyque",
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-          },
-          {
-            name: "Byredo",
-            data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
-          },
-          {
-            name: "Bobbi Brown",
-            data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
-          },
-          {
-            name: "By Terry",
-            data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
-          },
-          {
-            name: "Revive",
-            data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
-          },
-          {
-            name: "Kevyn Aucoin",
-            data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
-          },
-          {
-            name: "Smashbox",
-            data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
-          },
-        ],
+        series: [],
         options: {
           chart: {
             type: "area",
