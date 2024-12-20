@@ -61,6 +61,7 @@ function MyBagFinal() {
   const [qunatityChange, setQuantityChange] = useState()
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
+  
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
       setIsPlayAble(0);
@@ -159,7 +160,7 @@ function MyBagFinal() {
         setIsPlayAble(1);
       } else if (paymentIntent.status === 400) {
         setIsPlayAble(0);
-        setAlert(5);
+      
         console.log(isPlayAble, "is play able ");
       }
 
@@ -178,7 +179,9 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-
+useEffect(()=>{
+  fetchBrandPaymentDetails()
+} , [])
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);

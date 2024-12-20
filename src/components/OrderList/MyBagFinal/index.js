@@ -458,6 +458,10 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                             {OrderData.Tracking__c}
                           </p>}
                       </div></>}
+                      <div className={Styles.paymentCheck}> 
+                      {OrderData?.Payment_Status__c   ? <p>Payment Status : {OrderData?.Payment_Status__c} </p>   : null}
+                      {OrderData?.Transaction_ID__c   ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p>   : null}
+                      </div>
 
                     <div className={Styles.ShipAdress2}>
                       {/* <label>NOTE</label> */}
@@ -465,6 +469,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                         className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0"
                         style={{ minHeight: "119px" }}
                       >
+                     
                         {OrderData.Description}
                       </p>
                     </div>
