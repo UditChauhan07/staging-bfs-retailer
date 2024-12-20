@@ -639,14 +639,14 @@ function Dashboard() {
         <div className="row my-3">
           <div className="col-lg-6">
             <p className={Styles.Tabletext}>Your Purchases by brand {monthNames[parseInt(PurchaseMonth) - 1] + '-' + PurchaseYear}</p>
-            <div className={Styles.donuttop} style={{ height: '635px' }}>
+            <div className={Styles.donuttop} style={{ height: '635px',display:'grid' }}>
               {/* <p className={` text-center mt-3  ${Styles.Tabletextt}`}>Sum of Order</p> */}
               <p className={`text-end ${Styles.main_heading}`}>MANUFACTURER</p>
               {!isLoading ? (
                 <ContentLoader />
               ) : (
                 <>
-                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="95%" height="600px" />
+                  <Chart options={salesByBrandData.options} series={salesByBrandData.series} type="donut" className={Styles.donutchart} width="99%" height="600px" />
                 </>
               )}
             </div>
