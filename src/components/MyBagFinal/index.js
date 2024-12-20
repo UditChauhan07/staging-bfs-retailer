@@ -61,7 +61,6 @@ function MyBagFinal() {
   const [qunatityChange, setQuantityChange] = useState()
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
-  
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
       setIsPlayAble(0);
@@ -160,7 +159,7 @@ function MyBagFinal() {
         setIsPlayAble(1);
       } else if (paymentIntent.status === 400) {
         setIsPlayAble(0);
-      
+        setAlert(5);
         console.log(isPlayAble, "is play able ");
       }
 
@@ -179,9 +178,7 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-useEffect(()=>{
-  fetchBrandPaymentDetails()
-} , [])
+
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
@@ -299,7 +296,7 @@ useEffect(()=>{
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
     }
-  }, []);
+  }, [order]);
 
   const orderPlaceHandler = () => {
     if (order?.Account?.SalesRepId) {
@@ -410,7 +407,7 @@ useEffect(()=>{
     const hasSKKey = paymentDetails.SK_KEY != null;
 
     // Check conditions
-    if (hasPayment && (hasPKKey && hasSKKey) && hasShipments) {
+    if (hasPayment && (hasPKKey && hasSKKey)&&hasShipments) {
       return '700px'; // Payment type and one payment detail key
     }
     if (hasPayment && hasShipments) {
@@ -926,7 +923,7 @@ useEffect(()=>{
                   </div>
 
                   <div className="col-lg-5 col-md-4 col-sm-12">
-                    {isPlayAble === 1 ? (
+                    {isPlayAble === 1  && total>0? (
                       <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
 
                         <div className={Styles.ShipAdress}>
@@ -942,7 +939,7 @@ useEffect(()=>{
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null) ? (
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total>0) ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
@@ -1022,7 +1019,7 @@ useEffect(()=>{
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null) ? (
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total>0) ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
@@ -1132,7 +1129,7 @@ useEffect(()=>{
                       </div>
                     )}
 
-                    {isPlayAble === 1 ? (
+                    {isPlayAble === 1  && total>0? (
                       <CustomAccordion title="Payment Details" isOpen={paymentAccordian} onToggle={onToggle}>
                         <StripePay
                           description={order?.Note}
@@ -1147,7 +1144,7 @@ useEffect(()=>{
                       </CustomAccordion>
                     ) : null}
 
-                    {isPlayAble == 1 ? (
+                    {isPlayAble == 1 && total>0 ? (
                       <p
                         className={`${Styles.ClearBag}`}
                         style={{ textAlign: "center", cursor: "pointer" }}
