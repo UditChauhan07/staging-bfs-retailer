@@ -5,6 +5,8 @@ import { useCart } from "../../context/CartContent";
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './style.css'
+import { originAPi } from '../../lib/store';
+import axios from 'axios';
 const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
     const stripe = useStripe();
     const elements = useElements();
@@ -125,7 +127,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                         Payment_Status__c: paymentStatus,
                         Transaction_ID__c: paymentId
                     };
-
+                   
                     const response = await OrderPlaced({ order: orderData, cartId: order.id });
                     if (response?.orderId) {
 
