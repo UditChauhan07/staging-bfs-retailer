@@ -17,18 +17,9 @@ import { originAPi } from "../../lib/store";
 import Swal from "sweetalert2";
 import ShipmentHandler from "./ShipmentHandler";
 import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
-const usePrevious = (value) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
-};
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
-  const previousAccountId = usePrevious(order?.Account?.id);
-  const previousManufacturerId = usePrevious(order?.Manufacturer?.id);
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -259,7 +250,11 @@ function MyBagFinal() {
 
     FetchPoNumber();
   }, [buttonActive]);
-
+const bgUpdateHandler=()=>{
+  FetchPoNumber();
+  fetchBrandPaymentDetails()
+}
+  useBackgroundUpdater(bgUpdateHandler,defaultLoadTime)
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
