@@ -390,30 +390,18 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                       </div> */}
                       <div className={Styles.TotalPricer}>
                         <div className="d-flex justify-content-between">
-                          <div>
-                            <h2>Sub-Total</h2>
-                          </div>
-                          <div>
-                            <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
-                          </div>
+                          <h2>Sub-Total</h2>
+                          <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
                         </div>
                         {OrderData?.Shipment_cost__c ?
                           <div className="d-flex justify-content-between">
-                            <div>
-                              <h2 className="text-capitalize">Shipping by ({OrderData?.Shipping_method__c})</h2>
-                            </div>
-                            <div>
-                              <h2>${OrderData?.Shipment_cost__c ? Number(OrderData?.Shipment_cost__c).toFixed(2) : 0}</h2>
-                            </div>
+                            <h2 className="text-capitalize">Shipping by ({OrderData?.Shipping_method__c})</h2>
+                            <h2>${OrderData?.Shipment_cost__c ? Number(OrderData?.Shipment_cost__c).toFixed(2) : 0}</h2>
                           </div> : null}
                         {OrderData?.Shipment_cost__c ?
                           <div className="d-flex justify-content-between">
-                            <div>
-                              <h2>Total</h2>
-                            </div>
-                            <div>
-                              <h2>${Number(OrderData.Amount + Number(OrderData?.Shipment_cost__c)).toFixed(2)}</h2>
-                            </div>
+                            <h2>Total</h2>
+                            <h2>${Number(OrderData.Amount + Number(OrderData?.Shipment_cost__c)).toFixed(2)}</h2>
                           </div> : null}
                       </div>
                     </div>
@@ -458,10 +446,10 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                             {OrderData.Tracking__c}
                           </p>}
                       </div></>}
-                      <div className={Styles.paymentCheck}> 
-                      {OrderData?.Payment_Status__c   ? <p>Payment Status : {OrderData?.Payment_Status__c} </p>   : null}
-                      {OrderData?.Transaction_ID__c   ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p>   : null}
-                      </div>
+                    <div className={Styles.paymentCheck}>
+                      {OrderData?.Payment_Status__c ? <p>Payment Status : {OrderData?.Payment_Status__c} </p> : null}
+                      {OrderData?.Transaction_ID__c ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p> : null}
+                    </div>
 
                     <div className={Styles.ShipAdress2}>
                       {/* <label>NOTE</label> */}
@@ -469,7 +457,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                         className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] m-0"
                         style={{ minHeight: "119px" }}
                       >
-                     
+
                         {OrderData.Description}
                       </p>
                     </div>

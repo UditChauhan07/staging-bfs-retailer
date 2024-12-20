@@ -77,7 +77,7 @@ const ShipmentHandler = ({ data = [], total = 0 }) => {
                             className={Styles.hiddenRadio} />
                         <p className={Styles.labelHolder}>{element.name}</p>
                         <small className={Styles.descHolder}>
-                            {element?.desc?`${element?.desc}.`:null} For this order, shipping cost will be <b>${Number(total * element?.cal).toFixed(2) || 0}</b>
+                            {element?.desc?<span dangerouslySetInnerHTML={{__html:element?.desc}}/>:null} For this order, shipping cost will be <b>${Number(total * element?.cal).toFixed(2) || 0}</b>
                         </small>
                     </div>
                 );

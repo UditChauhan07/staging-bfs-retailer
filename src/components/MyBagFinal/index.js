@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -16,18 +16,10 @@ import StripePay from "../StripePay";
 import { originAPi } from "../../lib/store";
 import Swal from "sweetalert2";
 import ShipmentHandler from "./ShipmentHandler";
-const usePrevious = (value) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
-};
+import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
-  const previousAccountId = usePrevious(order?.Account?.id);
-  const previousManufacturerId = usePrevious(order?.Manufacturer?.id);
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -61,6 +53,13 @@ function MyBagFinal() {
   const [qunatityChange, setQuantityChange] = useState()
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
+  const [bag, setBag] = useState();
+
+  useEffect(() => {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
+      setButtonActive(true);
+    }
+  }, [order, buttonActive])
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
       setIsPlayAble(0);
@@ -159,7 +158,6 @@ function MyBagFinal() {
         setIsPlayAble(1);
       } else if (paymentIntent.status === 400) {
         setIsPlayAble(0);
-        setAlert(5);
         console.log(isPlayAble, "is play able ");
       }
 
@@ -179,62 +177,83 @@ function MyBagFinal() {
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
 
+  useEffect(() => {
+    fetchBrandPaymentDetails()
+  }, [buttonActive])
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
 
-  useEffect(() => {
-    fetchCart();
-    const FetchPoNumber = async () => {
-      try {
-        await order?.Account?.id;
-        const res = await POGenerator({ orderDetails: order });
-        let data = await fetchBrandPaymentDetails();
-        console.warn({ data });
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     // Check if the tab is active
+  //     if (document.visibilityState === 'visible') {
+  //       // Reload the page when the tab becomes active
+  //       window.location.reload();
+  //     }
+  //   };
 
-        if (res) {
-          if (res?.address || res?.brandShipping) {
-            let tempOrder = order.Account;
-            if (res?.address) {
-              tempOrder = { ...tempOrder, address: res?.address }
-            }
-            if (res.checkBrandAllow) {
-              if (res?.shippingMethod) {
-                tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod }
-              } else {
-                tempOrder = { ...tempOrder, shippingMethod: null }
-              }
+  //   // Add event listener for visibilitychange
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  //   // Cleanup the event listener when the component unmounts
+  //   return () => {
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, []);
+  const FetchPoNumber = async () => {
+    try {
+      await order?.Account?.id;
+      const res = await POGenerator({ orderDetails: order });
+      let data = await fetchBrandPaymentDetails();
+
+      if (res) {
+        if (res?.address || res?.brandShipping) {
+          let tempOrder = order.Account;
+          if (res?.address) {
+            tempOrder = { ...tempOrder, address: res?.address }
+          }
+          if (res.checkBrandAllow) {
+            if (res?.shippingMethod) {
+              tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod }
             } else {
               tempOrder = { ...tempOrder, shippingMethod: null }
             }
-            keyBasedUpdateCart({ Account: tempOrder })
-            if (res?.brandShipping) {
-              if (res?.brandShipping.length) {
-                setOrderShipment(res?.brandShipping)
-              }
+          } else {
+            tempOrder = { ...tempOrder, shippingMethod: null }
+          }
+          keyBasedUpdateCart({ Account: tempOrder })
+          if (res?.brandShipping) {
+            if (res?.brandShipping.length) {
+              setOrderShipment(res?.brandShipping)
             }
           }
-          let isPreOrder = order?.items?.some((product) => product?.Category__c?.toUpperCase()?.includes("PREORDER") || product?.Category__c?.toUpperCase()?.includes("EVENT"));
-          let poInit = res?.poNumber;
-          if (isPreOrder) {
-            poInit = `PRE-${poInit}`;
-          }
-          setPONumber(poInit);
         }
-        // setIsLoading(false);
-        setIsLoading(false)
-      } catch (error) {
-        console.error("Error fetching PO number:", error);
-        // setIsLoading(false);
-        setIsLoading(false)
+        let isPreOrder = order?.items?.some((product) => product?.Category__c?.toUpperCase()?.includes("PREORDER") || product?.Category__c?.toUpperCase()?.includes("EVENT"));
+        let poInit = res?.poNumber;
+        if (isPreOrder) {
+          poInit = `PRE-${poInit}`;
+        }
+        setPONumber(poInit);
       }
-    };
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Error fetching PO number:", error);
+      setIsLoading(false)
+    }
+  };
 
+  useEffect(() => {
+    fetchCart();
 
     FetchPoNumber();
   }, [buttonActive]);
-
+  const bgUpdateHandler = () => {
+    FetchPoNumber();
+    fetchBrandPaymentDetails()
+  }
+  useBackgroundUpdater(bgUpdateHandler, defaultLoadTime)
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
@@ -293,10 +312,7 @@ function MyBagFinal() {
         }
       }
     }
-    if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
-      setButtonActive(true);
-    }
-  }, [order]);
+  }, []);
 
   const orderPlaceHandler = () => {
     if (order?.Account?.SalesRepId) {
@@ -427,6 +443,7 @@ function MyBagFinal() {
     }
     return 'null'; // All conditions false
   };
+
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -943,13 +960,15 @@ function MyBagFinal() {
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
-                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                            {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); setPaymentValue(item);
+                                }}>
                                   <div className={Styles.labelHolder} >
-                                    {item.Payment_Type__c}
+                                    {item}
                                   </div>
                                 </div>
-                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
                                 <div className={Styles.labelHolder} >
                                   Pay now
                                 </div>
@@ -1023,13 +1042,15 @@ function MyBagFinal() {
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
-                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                              {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); setPaymentValue(item);
+                                }}>
                                   <div className={Styles.labelHolder} >
-                                    {item.Payment_Type__c}
+                                    {item}
                                   </div>
                                 </div>
-                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
                                 <div className={Styles.labelHolder} >
                                   Pay now
                                 </div>

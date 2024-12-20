@@ -219,7 +219,7 @@
   justify-content: space-between;
   padding: 10px 5px 0 5px;
   position: sticky;
-  bottom: 20px;
+  bottom: 5px;
   background: #fff;
   flex-direction: column;
 }
