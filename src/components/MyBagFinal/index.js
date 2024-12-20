@@ -250,11 +250,11 @@ function MyBagFinal() {
 
     FetchPoNumber();
   }, [buttonActive]);
-const bgUpdateHandler=()=>{
-  FetchPoNumber();
-  fetchBrandPaymentDetails()
-}
-  useBackgroundUpdater(bgUpdateHandler,defaultLoadTime)
+  const bgUpdateHandler = () => {
+    FetchPoNumber();
+    fetchBrandPaymentDetails()
+  }
+  useBackgroundUpdater(bgUpdateHandler, defaultLoadTime)
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
@@ -444,6 +444,7 @@ const bgUpdateHandler=()=>{
     }
     return 'null'; // All conditions false
   };
+
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -960,13 +961,16 @@ const bgUpdateHandler=()=>{
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
-                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                            {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? order?.Account?.PaymentTerm ? order?.Account?.PaymentTerm == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); const tempOrder = { ...order.Account, PaymentTerm: item };
+                                  keyBasedUpdateCart({ Account: tempOrder });
+                                }}>
                                   <div className={Styles.labelHolder} >
-                                    {item.Payment_Type__c}
+                                    {item}
                                   </div>
                                 </div>
-                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
                                 <div className={Styles.labelHolder} >
                                   Pay now
                                 </div>
@@ -1040,13 +1044,16 @@ const bgUpdateHandler=()=>{
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
-                              {intentRes.accountManufacturerData.map((item) => (item.Payment_Type__c ?
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(0)}>
+                              {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? order?.Account?.PaymentTerm ? order?.Account?.PaymentTerm == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); const tempOrder = { ...order.Account, PaymentTerm: item };
+                                  keyBasedUpdateCart({ Account: tempOrder });
+                                }}>
                                   <div className={Styles.labelHolder} >
-                                    {item.Payment_Type__c}
+                                    {item}
                                   </div>
                                 </div>
-                                : null))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
+                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
                                 <div className={Styles.labelHolder} >
                                   Pay now
                                 </div>
