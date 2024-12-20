@@ -962,9 +962,8 @@ function MyBagFinal() {
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                             {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? order?.Account?.PaymentTerm ? order?.Account?.PaymentTerm == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
-                                  setIsPlayAble(0); const tempOrder = { ...order.Account, PaymentTerm: item };
-                                  keyBasedUpdateCart({ Account: tempOrder });
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); setPaymentValue(item);
                                 }}>
                                   <div className={Styles.labelHolder} >
                                     {item}
@@ -1045,9 +1044,8 @@ function MyBagFinal() {
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                               {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? order?.Account?.PaymentTerm ? order?.Account?.PaymentTerm == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
-                                  setIsPlayAble(0); const tempOrder = { ...order.Account, PaymentTerm: item };
-                                  keyBasedUpdateCart({ Account: tempOrder });
+                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
+                                  setIsPlayAble(0); setPaymentValue(item);
                                 }}>
                                   <div className={Styles.labelHolder} >
                                     {item}
