@@ -296,7 +296,7 @@ function MyBagFinal() {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
     }
-  }, [order]);
+  }, []);
 
   const orderPlaceHandler = () => {
     if (order?.Account?.SalesRepId) {
@@ -407,7 +407,7 @@ function MyBagFinal() {
     const hasSKKey = paymentDetails.SK_KEY != null;
 
     // Check conditions
-    if (hasPayment && (hasPKKey && hasSKKey)&&hasShipments) {
+    if (hasPayment && (hasPKKey && hasSKKey) && hasShipments) {
       return '700px'; // Payment type and one payment detail key
     }
     if (hasPayment && hasShipments) {
