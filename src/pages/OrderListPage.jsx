@@ -25,14 +25,16 @@ const OrderListPage = () => {
     manufacturer: null,
     search: "",
   });
-
+  useEffect(() => { }, [filterValue])
   const handleFilterChange = (filterType, value) => {
+    orderListHandler(account, filterType == 'month' ? value : filterValue.month)
     onFilterChange((prev) => {
       const newData = { ...prev };
       newData[filterType] = value;
       return newData;
     });
     setCurrentPage(1);
+
   };
 
   function sortingList(data) {
@@ -90,40 +92,40 @@ const OrderListPage = () => {
 
   useEffect(() => {
     const handleOrderUppdate = (data) => {
-      console.log({data});
-      
+      ;
       let sorting = sortingList(data);
       setOrders(sorting);
     }
-    dataStore.subscribe(`/getAllAccountOrders${account??''}`, handleOrderUppdate);
-    orderListHandler(account)
+    dataStore.subscribe(`/getAllAccountOrders${account ?? ''}${filterValue.month}`, handleOrderUppdate);
+    orderListHandler(account, filterValue.month)
     return () => {
-      dataStore.unsubscribe(`/getAllAccountOrders${account??''}`, handleOrderUppdate);
+      dataStore.unsubscribe(`/getAllAccountOrders${account ?? ''}${filterValue.month}`, handleOrderUppdate);
     };
 
   }, []);
 
-  useBackgroundUpdater(()=>orderListHandler(account),defaultLoadTime);
+  useBackgroundUpdater(() => orderListHandler(account, filterValue.month), defaultLoadTime);
 
   useEffect(() => {
     setShipByText(searchShipBy);
   }, [searchShipBy]);
 
-  const orderListHandler = (accountIds = null) => {
+  const orderListHandler = (accountIds = null, month = null) => {
     setAccount(accountIds)
     setLoaded(false);
+    setOrders([]);
     GetAuthData()
       .then(async (response) => {
         setAccountList(response.data.accountList)
-        
-        dataStore.getPageData(`/getAllAccountOrders${accountIds ? accountIds : ''}`, () =>
+
+        dataStore.getPageData(`/getAllAccountOrders${accountIds ? accountIds : ''}${month}`, () =>
           getAllAccountOrders({
             key: response.data.x_access_token,
             accountIds: JSON.stringify(accountIds || response.data.accountIds),
-            month: filterValue.month,
+            month: month,
           }))
           .then((order) => {
-            console.log({ order });
+
             let sorting = sortingList(order);
             setOrders(sorting);
             setLoaded(true);
@@ -135,7 +137,8 @@ const OrderListPage = () => {
       .catch((err) => {
         console.log({ err });
       });
-  }
+  };
+
 
   return (
     <AppLayout
@@ -153,9 +156,9 @@ const OrderListPage = () => {
               })), { label: 'All Store', value: null }]}
               onChange={(value) => {
                 if (value) {
-                  orderListHandler([value]);
+                  orderListHandler([value], filterValue.month);
                 } else {
-                  orderListHandler();
+                  orderListHandler(null, filterValue.month);
                 }
               }}
               name={"Account-menu"}
@@ -164,6 +167,7 @@ const OrderListPage = () => {
             onChange={handleFilterChange}
             value={filterValue}
             resetFilter={() => {
+              orderListHandler();
               onFilterChange({
                 manufacturer: null,
                 month: "",
