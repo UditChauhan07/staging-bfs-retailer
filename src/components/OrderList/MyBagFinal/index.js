@@ -390,7 +390,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                       </div> */}
                       <div className={Styles.TotalPricer}>
                         <div className="d-flex justify-content-between">
-                          <h2>{OrderData?.Shipment_cost__c?'Sub-':null}Total</h2>
+                          <h2>{OrderData?.Shipment_cost__c ? 'Sub-' : null}Total</h2>
                           <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
                         </div>
                         {OrderData?.Shipment_cost__c ?
@@ -446,10 +446,14 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                             {OrderData.Tracking__c}
                           </p>}
                       </div></>}
-                    <div className={Styles.paymentCheck}>
-                      {OrderData?.Payment_Status__c ? <p>Payment Status : {OrderData?.Payment_Status__c} </p> : null}
-                      {OrderData?.Transaction_ID__c ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p> : null}
-                    </div>
+                    {OrderData?.Payment_Status__c || OrderData?.Transaction_ID__c ?
+                      <>
+                        <h2 style={{marginTop:'10px'}}>Payment Details</h2>
+                        <div className={Styles.paymentCheck}>
+                          {OrderData?.Payment_Status__c ? <p>Payment Status : {OrderData?.Payment_Status__c} </p> : null}
+                          {OrderData?.Transaction_ID__c ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p> : null}
+                        </div>
+                      </> : null}
 
                     <div className={Styles.ShipAdress2}>
                       {/* <label>NOTE</label> */}
