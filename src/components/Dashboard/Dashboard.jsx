@@ -190,7 +190,19 @@ function Dashboard() {
       dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }), dashBoardReady);
     };
   }, []);
-  useBackgroundUpdater(() => getDataHandler({ month: PurchaseMonth, year: PurchaseYear,accountIds: JSON.stringify([account]) }), defaultLoadTime);
+  useBackgroundUpdater(() => {
+    const params = {
+      month: PurchaseMonth,
+      year: PurchaseYear,
+    };
+
+    // Only add accountIds if account is not null
+    if (account) {
+      params.accountIds = JSON.stringify([account]);
+    }
+
+    return getDataHandler(params);
+  }, defaultLoadTime);
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
