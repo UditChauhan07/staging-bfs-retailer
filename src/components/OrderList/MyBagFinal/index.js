@@ -390,7 +390,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                       </div> */}
                       <div className={Styles.TotalPricer}>
                         <div className="d-flex justify-content-between">
-                          <h2>Sub-Total</h2>
+                          <h2>{OrderData?.Shipment_cost__c?'Sub-':null}Total</h2>
                           <h2>${Number(OrderData.Amount).toFixed(2)}</h2>
                         </div>
                         {OrderData?.Shipment_cost__c ?

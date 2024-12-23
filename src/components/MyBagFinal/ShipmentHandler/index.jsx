@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useCart } from '../../../context/CartContent';
 import Styles from './Styles.module.css';
+import { BiInfoCircle } from 'react-icons/bi';
 
 const ShipmentHandler = ({ data = [], total = 0 }) => {
     const { order, keyBasedUpdateCart } = useCart();
@@ -75,9 +76,9 @@ const ShipmentHandler = ({ data = [], total = 0 }) => {
                             checked={isSelected}
                             value={element?.Id || index}
                             className={Styles.hiddenRadio} />
-                        <p className={Styles.labelHolder}>{element.name}</p>
+                        <p className={Styles.labelHolder}>{element.name} <BiInfoCircle title={element?.desc?<span dangerouslySetInnerHTML={{__html:element?.desc}}/>:null} /></p>
                         <small className={Styles.descHolder}>
-                            {element?.desc?<span dangerouslySetInnerHTML={{__html:element?.desc}}/>:null} For this order, shipping cost will be <b>${Number(total * element?.cal).toFixed(2) || 0}</b>
+                            For this order, shipping cost will be <b>${Number(total * element?.cal).toFixed(2) || 0}</b>
                         </small>
                     </div>
                 );

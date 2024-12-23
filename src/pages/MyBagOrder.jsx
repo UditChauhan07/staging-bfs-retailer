@@ -67,35 +67,39 @@ function MyBagOrder(props) {
     let totalQtyCount = 0;
     if (data?.OpportunityLineItems?.length) {
       data?.OpportunityLineItems?.map((ele) => {
-        totalQtyCount+=ele.Quantity;
+        totalQtyCount += ele.Quantity;
       })
     }
     let totalQty = { "": "Total Order Qty", " ": totalQtyCount }
-    let totalPrice = { "": "Total Product Price", " ": `$${Number(data.Amount).toFixed(2)}`}
+    let totalPrice = { "": "Total Product Price", " ": `$${Number(data.Amount).toFixed(2)}` }
+    let Shipmentcost = { "": "Shipment Cost", " ": `$${Number(data?.Shipment_cost__c || 0).toFixed(2)}` }
+    let totalOrder = { "": "Total", " ": `$${Number(data.Amount + Number(data?.Shipment_cost__c || 0)).toFixed(2)}` }
     finalData.push(accountDetails)
     finalData.push(brandDetail)
     finalData.push(poDetail)
     finalData.push(orderdateDetails)
     finalData.push(totalQty)
     finalData.push(totalPrice)
-    finalData.push({"":""," ":""})
+    if (data?.Shipment_cost__c) finalData.push(Shipmentcost);
+    finalData.push(totalOrder)
+    finalData.push({ "": "", " ": "" })
     if (data?.Order_Number__c) finalData.push(orderNumberDetail)
     if (data?.Tracking__c) finalData.push(trackingumberDetail)
-      let productHeaderDetail = { "": "Product Name", " ": "Product Code", "  ": "Product Qty", "   ": "Product Price" }
+    let productHeaderDetail = { "": "Product Name", " ": "Product Code", "  ": "Product Qty", "   ": "Product Price" }
     if (data?.OpportunityLineItems?.length > 0) finalData.push(productHeaderDetail)
 
-      if (data?.OpportunityLineItems?.length) {
-        data?.OpportunityLineItems?.map((ele) => {
-          
-          let temp = {};
+    if (data?.OpportunityLineItems?.length) {
+      data?.OpportunityLineItems?.map((ele) => {
+
+        let temp = {};
         temp[""] = ele.Name.split(data.Name)[1];
         temp[" "] = ele.ProductCode;
         temp["  "] = ele.Quantity;
         temp["   "] = ele.UnitPrice;
         finalData.push(temp);
       });
-      console.log({finalData});
-      
+      console.log({ finalData });
+
     }
     return finalData;
   };
@@ -110,7 +114,7 @@ function MyBagOrder(props) {
     FileSaver.saveAs(data, `${filename} ${new Date()}` + fileExtension);
     setPDFIsloaed(false);
   };
-  
+
   return (
     <AppLayout filterNodes1={
       orderDetail?.Id &&
@@ -137,8 +141,8 @@ function MyBagOrder(props) {
       </div>
     }>
       <div className="col-12">
-      {isPDFLoaded ? <LoaderV3 text={"Generating Pdf. Please wait..."} /> :
-        <MyBagFinal setOrderDetail={setOrderDetail} generatePdfServerSide={generatePdfServerSide} generateXLSX={generateXLSX}/>}
+        {isPDFLoaded ? <LoaderV3 text={"Generating Pdf. Please wait..."} /> :
+          <MyBagFinal setOrderDetail={setOrderDetail} generatePdfServerSide={generatePdfServerSide} generateXLSX={generateXLSX} />}
       </div>
     </AppLayout>
   );
