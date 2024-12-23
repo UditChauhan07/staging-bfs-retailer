@@ -185,12 +185,15 @@ const CustomerService = () => {
           let systemStr = "";
           if (errorlistObj.length) {
             errorlistObj.map((id) => {
-              systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} `;
+              systemStr += `${errorList[id].Name}(${errorList[id].ProductCode}) having ${reason} for`;
               if (reason !== "Charges" && errorList[id]?.Quantity) {
-                systemStr += ` for ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`;
+                systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`;
               } else {
                 if (errorList[id]?.Quantity) {
-                  systemStr += ` for ${errorList[id].Quantity} Qty.\n`;
+                  systemStr += ` ${errorList[id].Quantity} Qty.\n`;
+                }
+                if (reason === "Product Overage" && errorList[id].issue) {
+                  systemStr += ` ${errorList[id].issue} Qty.\n`;
                 }
               }
             });
@@ -220,6 +223,7 @@ const CustomerService = () => {
             },
             key: user.data.x_access_token,
           };
+
           postSupportAny({ rawData })
             .then((response) => {
               if (response) {
