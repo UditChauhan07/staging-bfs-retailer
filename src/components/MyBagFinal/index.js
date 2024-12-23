@@ -17,6 +17,7 @@ import { originAPi } from "../../lib/store";
 import Swal from "sweetalert2";
 import ShipmentHandler from "./ShipmentHandler";
 import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
+import { PaymentElement } from "@stripe/react-stripe-js";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
   const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
@@ -54,6 +55,7 @@ function MyBagFinal() {
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
+  const [greenStatus , setGreenStatus] = useState()
 
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
@@ -153,7 +155,7 @@ function MyBagFinal() {
         }),
       });
 
-
+setGreenStatus(paymentIntent.status)
       if (paymentIntent.status === 200) {
         setIsPlayAble(1);
       } else if (paymentIntent.status === 400) {
@@ -958,7 +960,7 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0) ? (
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total>0 && greenStatus === 200) ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
@@ -1040,7 +1042,7 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0) ? (
+                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total>0 && greenStatus === 200) ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
