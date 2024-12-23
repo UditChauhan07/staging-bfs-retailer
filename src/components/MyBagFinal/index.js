@@ -54,8 +54,8 @@ function MyBagFinal() {
   const [qunatityChange, setQuantityChange] = useState()
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
+  const [isSelect, setIsSelect] = useState(false);
   const [greenStatus , setGreenStatus] = useState()
-  const [bag, setBag] = useState();
 
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
@@ -220,10 +220,14 @@ setGreenStatus(paymentIntent.status)
             if (res?.shippingMethod) {
               tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod }
             } else {
-              tempOrder = { ...tempOrder, shippingMethod: null }
+              if (!isSelect) {
+                tempOrder = { ...tempOrder, shippingMethod: null }
+              }
             }
           } else {
-            tempOrder = { ...tempOrder, shippingMethod: null }
+            if (!isSelect) {
+              tempOrder = { ...tempOrder, shippingMethod: null }
+            }
           }
           keyBasedUpdateCart({ Account: tempOrder })
           if (res?.brandShipping) {
@@ -250,7 +254,7 @@ setGreenStatus(paymentIntent.status)
     fetchCart();
 
     FetchPoNumber();
-  }, [buttonActive]);
+  }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
     FetchPoNumber();
     fetchBrandPaymentDetails()
@@ -293,7 +297,6 @@ setGreenStatus(paymentIntent.status)
           getProductImageAll({ rawData: { codes: productCode } })
             .then((res) => {
               if (res) {
-                console.log({ res });
                 if (data[order.Manufacturer.id]) {
                   data[order.Manufacturer.id] = {
                     ...data[order.Manufacturer.id],
@@ -366,7 +369,6 @@ setGreenStatus(paymentIntent.status)
             OrderPlaced({ order: begToOrder, cartId: order.id })
               .then((response) => {
                 if (response) {
-                  console.log({ response });
 
                   if (response?.err) {
                     setIsDisabled(false);
@@ -425,7 +427,7 @@ setGreenStatus(paymentIntent.status)
     const hasSKKey = paymentDetails.SK_KEY != null;
 
     // Check conditions
-    if (hasPayment && (hasPKKey && hasSKKey)&&hasShipments) {
+    if (hasPayment && (hasPKKey && hasSKKey) && hasShipments) {
       return '700px'; // Payment type and one payment detail key
     }
     if (hasPayment && hasShipments) {
@@ -942,7 +944,7 @@ setGreenStatus(paymentIntent.status)
                   </div>
 
                   <div className="col-lg-5 col-md-4 col-sm-12">
-                    {isPlayAble === 1  && total>0? (
+                    {isPlayAble === 1 && total > 0 ? (
                       <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
 
                         <div className={Styles.ShipAdress}>
@@ -962,7 +964,7 @@ setGreenStatus(paymentIntent.status)
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
-                            {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                              {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
                                 <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
                                   setIsPlayAble(0); setPaymentValue(item);
                                 }}>
@@ -980,7 +982,7 @@ setGreenStatus(paymentIntent.status)
                         {orderShipment.length > 0 ?
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
-                            <ShipmentHandler data={orderShipment} total={total} />
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
                           </div>
                           : null}
                         <div className={Styles.ShipAdress2}>
@@ -1062,7 +1064,7 @@ setGreenStatus(paymentIntent.status)
                         {orderShipment.length > 0 ?
                           <div className={Styles.ShipAdress}>
                             <div className={Styles.shipLabelHolder}>Select Shipping method</div>
-                            <ShipmentHandler data={orderShipment} total={total} />
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
                           </div>
                           : null}
                         <div className={Styles.ShipAdress2}>
@@ -1152,7 +1154,7 @@ setGreenStatus(paymentIntent.status)
                       </div>
                     )}
 
-                    {isPlayAble === 1  && total>0? (
+                    {isPlayAble === 1 && total > 0 ? (
                       <CustomAccordion title="Payment Details" isOpen={paymentAccordian} onToggle={onToggle}>
                         <StripePay
                           description={order?.Note}
@@ -1167,7 +1169,7 @@ setGreenStatus(paymentIntent.status)
                       </CustomAccordion>
                     ) : null}
 
-                    {isPlayAble == 1 && total>0 ? (
+                    {isPlayAble == 1 && total > 0 ? (
                       <p
                         className={`${Styles.ClearBag}`}
                         style={{ textAlign: "center", cursor: "pointer" }}

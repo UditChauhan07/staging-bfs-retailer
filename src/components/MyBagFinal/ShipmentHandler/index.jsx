@@ -3,7 +3,7 @@ import { useCart } from '../../../context/CartContent';
 import Styles from './Styles.module.css';
 import { BiInfoCircle } from 'react-icons/bi';
 
-const ShipmentHandler = ({ data = [], total = 0 }) => {
+const ShipmentHandler = ({ data = [], total = 0,setIsSelect }) => {
     const { order, keyBasedUpdateCart } = useCart();
 
     // Function to determine the initial selected shipping method
@@ -48,12 +48,14 @@ const ShipmentHandler = ({ data = [], total = 0 }) => {
         if (initialSelectedMethod) {
             const tempOrder = { ...order.Account, shippingMethod: initialSelectedMethod };
             keyBasedUpdateCart({ Account: tempOrder });
+            setIsSelect?.(true);
         }
     }, [initialSelectedMethod]);
 
     const onChangeHandler = (element) => {
         const tempOrder = { ...order.Account, shippingMethod: element };
-        keyBasedUpdateCart({ Account: tempOrder });
+        keyBasedUpdateCart({ Account: tempOrder });      
+        setIsSelect?.(true);
     };
 
     if (data.length === 0) return null;
@@ -88,46 +90,3 @@ const ShipmentHandler = ({ data = [], total = 0 }) => {
 };
 
 export default ShipmentHandler;
-// import { useEffect } from 'react';
-// import { useCart } from '../../../context/CartContent';
-// import Styles from './Styles.module.css';
-
-
-// const ShipmentHandler = ({ data = [], total = 0 }) => {
-//     console.log({data});
-    
-//     const { order, keyBasedUpdateCart } = useCart();
-//     useEffect(() => { }, [data])
-//     if (data.length == 0) return null
-
-//     const onChangeHandler = (element) => {
-//         let tempOrder = order?.Account;
-//         if (tempOrder) {
-//             tempOrder = { ...tempOrder, shippingMethod: element }
-//         }
-//         keyBasedUpdateCart({ Account: tempOrder })
-//     }
-//     return (
-//         <div className={`${Styles.dFlex} ${Styles.gap10} mt-4`}>
-//             {data.length ?
-//                 data.map((element, index) => (
-//                     <div
-//                         key={element?.Id || index}
-//                         className={`${Styles.templateHolder} ${(order?.Account?.shippingMethod?.id == element.id || order?.Account?.shippingMethod?.own ? order?.Account?.shippingMethod?.own == element?.own : false || (element?.number ? order?.Account?.shippingMethod?.number == element?.number : false && order?.Account?.shippingMethod?.method == element?.method)) ? Styles.selected : ''}`}
-//                         onClick={() => { onChangeHandler(element) }}>
-//                         <input
-//                             type="radio"
-//                             name="brand"
-//                             checked={(order?.Account?.shippingMethod?.id == element.id || order?.Account?.shippingMethod?.own ? order?.Account?.shippingMethod?.own == element?.own : false || (element?.number ? order?.Account?.shippingMethod?.number == element?.number : false && order?.Account?.shippingMethod?.method == element?.method))}
-//                             value={element?.Id || index}
-//                             className={Styles.hiddenRadio} />
-//                         <p className={Styles.labelHolder}>{element.name}</p>
-//                         <small className={Styles.descHolder}>{element?.desc}. for this order, shipping cost will be <b>${Number(total * element?.cal).toFixed(2) || 0}</b>
-//                         </small>
-//                     </div>
-//                 ))
-//                 : null}
-//         </div>
-//     )
-// }
-// export default ShipmentHandler; 
