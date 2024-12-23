@@ -3,11 +3,8 @@ import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
 import {
   GetAuthData,
   defaultLoadTime,
-  getAllAccount,
   getAllAccountLocation,
   getAllAccountOrders,
-  getOrderCustomerSupport,
-  getOrderList,
   postSupportAny,
   uploadFileSupport,
 } from "../lib/store.js";
@@ -16,7 +13,6 @@ import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomerSupportLayout from "../components/customerSupportLayout/index.js";
 import AccountInfo from "../components/IssuesHandler/AccountInfo.jsx";
-import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
