@@ -84,7 +84,7 @@ const CustomerSupport = () => {
       dataStore.unsubscribe("/customer-support", handleSupportUpdates);
     };
   }, []);
-  useBackgroundUpdater(getSupportListHandler,defaultLoadTime)
+  useBackgroundUpdater(()=>getSupportListHandler(account),defaultLoadTime)
 
 
   // Handle unauthenticated user

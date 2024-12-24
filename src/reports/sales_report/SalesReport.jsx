@@ -6,7 +6,6 @@ import { FilterItem } from "../../components/FilterItem";
 import * as XLSX from "xlsx";
 import * as FileSaver from "file-saver";
 import SalesReportTable from "../../components/sales report table/SalesReportTable";
-import Loading from "../../components/Loading";
 import Styles from "./index.module.css";
 import { MdOutlineDownload } from "react-icons/md";
 import ModalPage from "../../components/Modal UI";
@@ -258,7 +257,7 @@ const SalesReport = () => {
       console.log({ error });
     })
   }, []);
-  useBackgroundUpdater(handlePageData, defaultLoadTime)
+  useBackgroundUpdater(() => getSalesData(yearFor, accountIds), defaultLoadTime)
   const sendApiCall = () => {
     // setManufacturerFilter(null);
     // setHighestOrders(true);

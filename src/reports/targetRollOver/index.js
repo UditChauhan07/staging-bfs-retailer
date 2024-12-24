@@ -48,10 +48,10 @@ const TargetRollOver = () => {
         // setManufacturerFilter(targetRes.ownerPermission ? state?.manufacturerId : null);
         setSearchSaleBy(targetRes.ownerPermission ? state?.salesRepId : null);
     }
-    const handlePageData = async () => {
+    const handlePageData = async (accountId=[]) => {
         GetAuthData()
             .then(async (user) => {
-                setAccountList(user.data.accountList)
+                if(!accountId || accountId.length==0) setAccountList(user.data.accountList);
                 dataStore.getPageData("/Target-Report", () => getRollOver({ key: user.data.x_access_token, accountIds: JSON.stringify(user.data.accountIds) }))
                     .then((targetRes) => {
                         targetReady(targetRes);
@@ -74,13 +74,12 @@ const TargetRollOver = () => {
     }
     useEffect(() => {
         dataStore.subscribe("/Target-Report", targetReady);
-        handlePageData();
+        handlePageData(accountList);
         return () => {
             dataStore.unsubscribe("/Target-Report", targetReady);
         }
     }, []);
 
-    useBackgroundUpdater(handlePageData, defaultLoadTime)
 
     const filteredTargetData = useMemo(() => {
         let filtered = target.list.filter((ele) => {
@@ -420,6 +419,7 @@ const TargetRollOver = () => {
                 dataStore.getPageData(`/Target-Report${accountIds ? JSON.stringify(accountIds) : ''}`,
                     () => getRollOver({ key: user.data.x_access_token, accountIds: accountIds ?? user.data.accountIds }))
                     .then((targetRes) => {
+                        
                         targetReady(targetRes)
                     })
                     .catch((targetErr) => {
@@ -436,6 +436,8 @@ const TargetRollOver = () => {
     const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
         return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
     }
+    
+    useBackgroundUpdater(sendApiCall, defaultLoadTime)
 
     const FilterNodes = () => {
         return (<><FilterItem

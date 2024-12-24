@@ -20,11 +20,10 @@ const TopNav = () => {
   // },[])
 
   useEffect(()=>{
-    GetAuthData().then((user)=>{
-      console.log(user)
+    GetAuthData().then((user)=>{      
+      setUserName(user?.data?.firstName +" "+ user?.data?.lastName)
       getSessionStatus({key:user.data?.x_access_token,retailerId:user.data?.retailerId}).then((status)=>{
 
-        setUserName(status?.data?.FirstName +" "+ status?.data?.LastName)
       }).catch((statusErr)=>{
         console.log({statusErr});
       })

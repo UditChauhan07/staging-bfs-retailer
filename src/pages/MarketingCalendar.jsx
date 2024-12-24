@@ -347,7 +347,7 @@ const MarketingCalendar = () => {
               Kindly select 1 brand at time and try to download again.
             </p>
             <div className="d-flex justify-content-around ">
-              <button className="modalButton" onClick={() => setIsAlert(false)}>
+              <button className="modalButton" style={{width:'max-content'}} onClick={() => setIsAlert(false)}>
                 Go Back
               </button>
             </div>
