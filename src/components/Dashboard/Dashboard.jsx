@@ -19,52 +19,52 @@ import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
-    name: "January - 2024",
-    value: "2024|1",
+    name: "January - 2025",
+    value: "2025|1",
   },
   {
-    name: "February - 2024",
-    value: "2024|2",
+    name: "February - 2025",
+    value: "2025|2",
   },
   {
-    name: "March - 2024",
-    value: "2024|3",
+    name: "March - 2025",
+    value: "2025|3",
   },
   {
-    name: "April - 2024",
-    value: "2024|4",
+    name: "April - 2025",
+    value: "2025|4",
   },
   {
-    name: "May - 2024",
-    value: "2024|5",
+    name: "May - 2025",
+    value: "2025|5",
   },
   {
-    name: "June - 2024",
-    value: "2024|6",
+    name: "June - 2025",
+    value: "2025|6",
   },
   {
-    name: "July - 2024",
-    value: "2024|7",
+    name: "July - 2025",
+    value: "2025|7",
   },
   {
-    name: "August - 2024",
-    value: "2024|8",
+    name: "August - 2025",
+    value: "2025|8",
   },
   {
-    name: "September - 2024",
-    value: "2024|9",
+    name: "September - 2025",
+    value: "2025|9",
   },
   {
-    name: "October - 2024",
-    value: "2024|10",
+    name: "October - 2025",
+    value: "2025|10",
   },
   {
-    name: "November - 2024",
-    value: "2024|11",
+    name: "November - 2025",
+    value: "2025|11",
   },
   {
-    name: "December - 2024",
-    value: "2024|12",
+    name: "December - 2025",
+    value: "2025|12",
   },
 ];
 
@@ -567,7 +567,7 @@ function Dashboard() {
             />}
           <FilterItem
             minWidth="220px"
-            label="Month-Year"
+            label="Month"
             value={selMonth}
             options={monthList.map((month) => ({
               label: month.name,

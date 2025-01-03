@@ -373,7 +373,22 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           <p className={Styles.priceHolder}> 
                           {(!isNaN(salesPrice)&&!isNaN(listPrice)) ?salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice?.toFixed(2)}</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice?.toFixed(2)}</div>:null:null}
                           &nbsp;
-                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice.toFixed(2):listPrice ?? "-- . --"}</div>
+                          <div>
+  {ProductInCart ? (
+    <Link to={"/my-bag"}>
+      {ProductInCart?.items?.price
+        ? `$${Number(ProductInCart?.items?.price).toFixed(2)}`
+        : "-- . --"}
+    </Link>
+  ) : !isNaN(salesPrice) ? (
+    `$${Number(salesPrice).toFixed(2)}`
+  ) : listPrice && !listPrice.startsWith('$') ? (
+    `$${listPrice}`
+  ) : (
+    listPrice || "-- . --"
+  )}
+</div>
+
                             </p>
                             <div className={Styles.linkHolder}>
                               {ProductInCart ? (

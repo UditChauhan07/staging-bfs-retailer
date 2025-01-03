@@ -16,6 +16,8 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null , qunatity
   if (!product) {
     return null;
   }
+  console.log({product})
+  console.log({orders})
   if (!product?.data?.Id) {
     return null;
   }
@@ -34,6 +36,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null , qunatity
 
   let discount = 0;
   let selAccount = {};
+  
   let listPrice = Number(product?.data?.usdRetail__c?.replace("$", "")?.replace(",", ""));
   let salesPrice = 0;
   let listOfAccounts = Object.keys(product?.discount);
@@ -114,7 +117,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null , qunatity
             {(salesPrice != listPrice&&!isNaN(listPrice)) ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : orders ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : null}
             <b>${orders ? <Link to={"/my-bag"}>{Number(orders?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice:product?.data?.usdRetail__c?.replace("$", "")??'NA'}</b>
           </p>
-          {!product.data.ProductUPC__c || !product.data.ProductCode || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || (!isDateEqualOrGreaterThanToday(product.data.Launch_Date__c))||!product.data.IsActive) ? <button
+          {( !product.data.ProductCode) || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || (!isDateEqualOrGreaterThanToday(product.data.Launch_Date__c))||!product.data.IsActive) ? <button
             className={`${Styles.button}`}
             onClick={()=>setModalShow(true)}
           >
