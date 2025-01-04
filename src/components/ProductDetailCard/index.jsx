@@ -8,13 +8,16 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContent";
 import ModalPage from "../Modal UI";
 
-const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
+const ProductDetailCard = ({ product, orders, onQuantityChange = null , qunatityChange }) => {
+  console.log(qunatityChange , "quantity")
   const { updateProductQty, removeProduct } = useCart();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState();
   const [modalShow,setModalShow]= useState(false);
   if (!product) {
     return null;
   }
+  console.log({product})
+  console.log({orders})
   if (!product?.data?.Id) {
     return null;
   }
@@ -33,6 +36,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
 
   let discount = 0;
   let selAccount = {};
+  
   let listPrice = Number(product?.data?.usdRetail__c?.replace("$", "")?.replace(",", ""));
   let salesPrice = 0;
   let listOfAccounts = Object.keys(product?.discount);
@@ -113,7 +117,7 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
             {(salesPrice != listPrice&&!isNaN(listPrice)) ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : orders ? <p className={Styles.crossed}>${listPrice.toFixed(2)}&nbsp;</p> : null}
             <b>${orders ? <Link to={"/my-bag"}>{Number(orders?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice:product?.data?.usdRetail__c?.replace("$", "")??'NA'}</b>
           </p>
-          {!product.data.ProductUPC__c || !product.data.ProductCode || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || (!isDateEqualOrGreaterThanToday(product.data.Launch_Date__c))||!product.data.IsActive) ? <button
+          {( !product.data.ProductCode) || (!product.data?.PricebookEntries?.length || !product?.data?.PricebookEntries?.[0]?.IsActive && (!isNaN(salesPrice) && !isNaN(listPrice)) || (!isDateEqualOrGreaterThanToday(product.data.Launch_Date__c))||!product.data.IsActive) ? <button
             className={`${Styles.button}`}
             onClick={()=>setModalShow(true)}
           >
@@ -123,7 +127,20 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
             <>
               {orders ? (
                 <div className="d-flex flex-column  h-[5rem]">
-                  <div className="d-flex gap-1">
+                  {qunatityChange ? 
+                  <div className="d-flex gap-1" style={{opacity: '0.3'}}>
+                  <QuantitySelector
+                    min={product?.data?.Min_Order_QTY__c || 0}
+                    value={orders?.items?.qty}
+                   
+                  />
+                  <button
+                    className="ml-4"
+                  >
+                    <DeleteIcon fill="red" />
+                  </button>
+                </div>
+                  :   <div className="d-flex gap-1">
                     <QuantitySelector
                       min={product?.data?.Min_Order_QTY__c || 0}
                       value={orders?.items?.qty}
@@ -137,7 +154,8 @@ const ProductDetailCard = ({ product, orders, onQuantityChange = null }) => {
                     >
                       <DeleteIcon fill="red" />
                     </button>
-                  </div>
+                  </div> }
+                  
                   <p className="mt-3" style={{ textAlign: "start" }}>
                     {/* Total: <b>{(inputPrice * orders[product?.data?.Id]?.quantity).toFixed(2)}</b> */}
                   </p>

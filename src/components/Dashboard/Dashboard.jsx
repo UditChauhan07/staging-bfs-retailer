@@ -19,89 +19,60 @@ import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
-    name: "January - 2024",
-    value: "2024|1",
+    name: "January - 2025",
+    value: "2025|1",
   },
   {
-    name: "February - 2024",
-    value: "2024|2",
+    name: "February - 2025",
+    value: "2025|2",
   },
   {
-    name: "March - 2024",
-    value: "2024|3",
+    name: "March - 2025",
+    value: "2025|3",
   },
   {
-    name: "April - 2024",
-    value: "2024|4",
+    name: "April - 2025",
+    value: "2025|4",
   },
   {
-    name: "May - 2024",
-    value: "2024|5",
+    name: "May - 2025",
+    value: "2025|5",
   },
   {
-    name: "June - 2024",
-    value: "2024|6",
+    name: "June - 2025",
+    value: "2025|6",
   },
   {
-    name: "July - 2024",
-    value: "2024|7",
+    name: "July - 2025",
+    value: "2025|7",
   },
   {
-    name: "August - 2024",
-    value: "2024|8",
+    name: "August - 2025",
+    value: "2025|8",
   },
   {
-    name: "September - 2024",
-    value: "2024|9",
+    name: "September - 2025",
+    value: "2025|9",
   },
   {
-    name: "October - 2024",
-    value: "2024|10",
+    name: "October - 2025",
+    value: "2025|10",
   },
   {
-    name: "November - 2024",
-    value: "2024|11",
+    name: "November - 2025",
+    value: "2025|11",
   },
   {
-    name: "December - 2024",
-    value: "2024|12",
+    name: "December - 2025",
+    value: "2025|12",
   },
 ];
 
-function Dashboard({ dashboardData }) {
+function Dashboard() {
   const { fetchCart } = useCart();
   const navigate = useNavigate();
   const [dataa, setDataa] = useState({
-    series: [
-      {
-        name: "Diptyque",
-        data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-      },
-      {
-        name: "Byredo",
-        data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
-      },
-      {
-        name: "Bobbi Brown",
-        data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
-      },
-      {
-        name: "By Terry",
-        data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
-      },
-      {
-        name: "Revive",
-        data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
-      },
-      {
-        name: "Kevyn Aucoin",
-        data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
-      },
-      {
-        name: "Smashbox",
-        data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
-      },
-    ],
+    series: [],
     options: {
       chart: {
         type: "area",
@@ -213,14 +184,25 @@ function Dashboard({ dashboardData }) {
     if (!AuthCheck()) {
       // navigate("/");
     }
-    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }),dashBoardReady);
+    dataStore.subscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseYear, accountIds: [account] }), dashBoardReady);
     getDataHandler({ month: currentMonth, year: currentYear });
     return () => {
-      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }),dashBoardReady);
+      dataStore.unsubscribe("/dashboard" + JSON.stringify({ month: PurchaseMonth, year: PurchaseMonth, accountIds: [account] }), dashBoardReady);
     };
   }, []);
+  useBackgroundUpdater(() => {
+    const params = {
+      month: PurchaseMonth,
+      year: PurchaseYear,
+    };
 
-  useBackgroundUpdater(()=>getDataHandler({month: PurchaseMonth, year: PurchaseYear}),defaultLoadTime);
+    // Only add accountIds if account is not null
+    if (account) {
+      params.accountIds = JSON.stringify([account]);
+    }
+
+    return getDataHandler(params);
+  }, defaultLoadTime);
   const [salesRepId, setSalesRepId] = useState();
 
   const getDataHandler = (headers = null) => {
@@ -252,8 +234,6 @@ function Dashboard({ dashboardData }) {
       });
   };
   const dashBoardReady = (dashboard) => {
-    console.log({dashboard});
-    
 
     setGoalList(dashboard.goalByMonth ?? [])
     let totalOrder = dashboard?.totalOrder || 0;
@@ -319,36 +299,7 @@ function Dashboard({ dashboardData }) {
         colorArray.push(hexabrand[value.id]);
       })
       setDataa({
-        series: [
-          {
-            name: "Diptyque",
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-          },
-          {
-            name: "Byredo",
-            data: [76, 85, 87, 98, 87, 97, 91, 74, 94],
-          },
-          {
-            name: "Bobbi Brown",
-            data: [16, 25, 37, 48, 57, 67, 73, 84, 94],
-          },
-          {
-            name: "By Terry",
-            data: [6, 15, 23, 35, 41, 53, 66, 74, 87],
-          },
-          {
-            name: "Revive",
-            data: [2, 12, 21, 30, 33, 42, 37, 41, 54],
-          },
-          {
-            name: "Kevyn Aucoin",
-            data: [71, 88, 83, 91, 82, 99, 61, 70, 98],
-          },
-          {
-            name: "Smashbox",
-            data: [10, 12, 14, 11, 16, 20, 24, 29, 32],
-          },
-        ],
+        series: [],
         options: {
           chart: {
             type: "area",
@@ -616,7 +567,7 @@ function Dashboard({ dashboardData }) {
             />}
           <FilterItem
             minWidth="220px"
-            label="Month-Year"
+            label="Month"
             value={selMonth}
             options={monthList.map((month) => ({
               label: month.name,

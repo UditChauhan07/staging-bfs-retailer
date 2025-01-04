@@ -111,32 +111,32 @@ const CartProvider = ({ children }) => {
         };
     }, []);
 
-    useEffect(() => {
-        const syncCart = async () => {
-            try {
+    const syncCart = async () => {
+        try {
 
-                // Save the updated cart to local storage
-                localStorage.setItem(orderCartKey, JSON.stringify(order));
-                const user = await GetAuthData();
-                if (!order.CreatedBy) {
-                    order.CreatedBy = user.data.retailerId;
-                }
-
-                order.CreatedAt = order.CreatedAt || new Date();
-                if (order?.Account?.id && order?.Manufacturer?.id) {
-                    if (!order.id) {
-                        let uniqueId = generateUniqueCode();
-                        if (uniqueId) {
-                            keyBasedUpdateCart({ id: uniqueId });
-                        }
-                    }
-                    await cartSync({ cart: order });
-                }
-            } catch (err) {
-                console.error(err);
+            // Save the updated cart to local storage
+            localStorage.setItem(orderCartKey, JSON.stringify(order));
+            const user = await GetAuthData();
+            if (!order.CreatedBy) {
+                order.CreatedBy = user.data.retailerId;
             }
-        };
 
+            order.CreatedAt = order.CreatedAt || new Date();
+            if (order?.Account?.id && order?.Manufacturer?.id) {
+                if (!order.id) {
+                    let uniqueId = generateUniqueCode();
+                    if (uniqueId) {
+                        keyBasedUpdateCart({ id: uniqueId });
+                    }
+                }
+                await cartSync({ cart: order });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
         syncCart();
     }, [order]);
 
@@ -200,8 +200,6 @@ const CartProvider = ({ children }) => {
             message: 'New cart initialized with provided account and manufacturer.',
         };
     };
-
-    console.log({ order });
 
     const addOrder = async (product, account, manufacturer) => {
         // let status = await fetchCart();
@@ -468,6 +466,7 @@ const CartProvider = ({ children }) => {
     // update order based on data 
     const keyBasedUpdateCart = (data) => {
         setOrder((prevOrder) => {
+            cartSync({ cart: { ...prevOrder, ...data } });
             return {
                 ...prevOrder, ...data
             };
@@ -505,7 +504,6 @@ const CartProvider = ({ children }) => {
 
         return false;
     };
-    console.log({ order });
 
 
     const contentApiFunction = async (productList, account, manufacturer, ordertype = 'wholesale') => {

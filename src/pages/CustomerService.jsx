@@ -3,11 +3,8 @@ import BMAIHandler from "../components/IssuesHandler/BMAIHandler.jsx";
 import {
   GetAuthData,
   defaultLoadTime,
-  getAllAccount,
   getAllAccountLocation,
   getAllAccountOrders,
-  getOrderCustomerSupport,
-  getOrderList,
   postSupportAny,
   uploadFileSupport,
 } from "../lib/store.js";
@@ -16,7 +13,6 @@ import Attachements from "../components/IssuesHandler/Attachements.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomerSupportLayout from "../components/customerSupportLayout/index.js";
 import AccountInfo from "../components/IssuesHandler/AccountInfo.jsx";
-import Loading from "../components/Loading.jsx";
 import ModalPage from "../components/Modal UI/index.js";
 import LoaderV3 from "../components/loader/v3.js";
 import AppLayout from "../components/AppLayout.jsx";
@@ -109,7 +105,7 @@ const CustomerService = () => {
     setActual_Amount__c(null);
     setErrorList({});
   };
-  const handlePageData = async()=>{
+  const handlePageData = async () => {
     GetAuthData()
       .then(async (response) => {
         setContactId(response.data.retailerId)
@@ -151,7 +147,7 @@ const CustomerService = () => {
     }
   }, []);
 
-  useBackgroundUpdater(handlePageData,defaultLoadTime)
+  useBackgroundUpdater(handlePageData, defaultLoadTime)
 
   const handleOrderListReady = (data) => {
     if (data) {
@@ -172,7 +168,7 @@ const CustomerService = () => {
     setLoading(true);
     setSubmitForm(true);
     document.body.style.overflow = "hidden";
-    document.body.style.pointerEvents = "none"; 
+    document.body.style.pointerEvents = "none";
     const modalBackdrop = document.getElementById('modal-backdrop');
     if (modalBackdrop) {
       modalBackdrop.style.filter = "blur(5px)";
@@ -189,10 +185,16 @@ const CustomerService = () => {
               if (reason !== "Charges" && errorList[id]?.Quantity) {
                 systemStr += ` ${errorList[id].issue} out of ${errorList[id].Quantity} Qty.\n`;
               } else {
-                systemStr += ` ${errorList[id].Quantity} Qty.\n`;
+                if (errorList[id]?.Quantity) {
+                  systemStr += ` ${errorList[id].Quantity} Qty.\n`;
+                }
+                if (reason === "Product Overage" && errorList[id].issue) {
+                  systemStr += ` ${errorList[id].issue} Qty.\n`;
+                }
               }
             });
           }
+
           let newDesc = "";
           if (systemStr !== "") {
             newDesc = "Issue Desc:" + systemStr;
@@ -217,6 +219,7 @@ const CustomerService = () => {
             },
             key: user.data.x_access_token,
           };
+
           postSupportAny({ rawData })
             .then((response) => {
               if (response) {
@@ -230,9 +233,9 @@ const CustomerService = () => {
                       setIsDisabled(false);
                       setLoading(false);
                       setSubmitForm(false);
-                      document.body.style.pointerEvents = ""; 
-                      document.body.style.overflow = ""; 
-                      if (modalBackdrop) modalBackdrop.style.filter = ""; 
+                      document.body.style.pointerEvents = "";
+                      document.body.style.overflow = "";
+                      if (modalBackdrop) modalBackdrop.style.filter = "";
                       if (fileUploader) {
                         navigate("/CustomerSupportDetails?id=" + response);
                       }
@@ -257,7 +260,7 @@ const CustomerService = () => {
             .catch((err) => {
               console.error({ err });
               setLoading(false);
-              setSubmitForm(false); 
+              setSubmitForm(false);
               document.body.style.pointerEvents = "";
               document.body.style.overflow = "";
               if (modalBackdrop) modalBackdrop.style.filter = "";
@@ -267,7 +270,7 @@ const CustomerService = () => {
       .catch((error) => {
         console.log(error);
         setLoading(false);
-        setSubmitForm(false); 
+        setSubmitForm(false);
         document.body.style.pointerEvents = "";
         document.body.style.overflow = "";
         if (modalBackdrop) modalBackdrop.style.filter = "";
@@ -315,7 +318,7 @@ const CustomerService = () => {
                     SubmitHandler(e);
                   }}
                 >
-                Yes
+                  Yes
                 </button>
                 <button
                   style={{

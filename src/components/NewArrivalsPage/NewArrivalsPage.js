@@ -14,7 +14,7 @@ import Select from "react-select";
 import { useCart } from "../../context/CartContent";
 import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
-function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails }) {
+function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails,currentPage,setCurrentPage }) {
   const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState();
@@ -28,8 +28,6 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
   const [accountList, setAccountList] = useState([]);
   const [accountSelectCheck, setAccountSelectCheck] = useState(false)
   const [replaceCartProduct, setReplaceCartProduct] = useState({});
-
-  const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState([]);
   let PageSize = 10;
   const [pagination, setpagination] = useState([]);
@@ -375,7 +373,22 @@ function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to 
                           <p className={Styles.priceHolder}> 
                           {(!isNaN(salesPrice)&&!isNaN(listPrice)) ?salesPrice != listPrice ? <div className={Styles.priceCrossed}>${listPrice?.toFixed(2)}</div>:ProductInCart?<div className={Styles.priceCrossed}>${listPrice?.toFixed(2)}</div>:null:null}
                           &nbsp;
-                            <div>${ProductInCart ? <Link to={"/my-bag"}>{Number(ProductInCart?.items?.price).toFixed(2)}</Link> : !isNaN(salesPrice)?salesPrice.toFixed(2):listPrice ?? "-- . --"}</div>
+                          <div>
+  {ProductInCart ? (
+    <Link to={"/my-bag"}>
+      {ProductInCart?.items?.price
+        ? `$${Number(ProductInCart?.items?.price).toFixed(2)}`
+        : "-- . --"}
+    </Link>
+  ) : !isNaN(salesPrice) ? (
+    `$${Number(salesPrice).toFixed(2)}`
+  ) : listPrice && !listPrice.startsWith('$') ? (
+    `$${listPrice}`
+  ) : (
+    listPrice || "-- . --"
+  )}
+</div>
+
                             </p>
                             <div className={Styles.linkHolder}>
                               {ProductInCart ? (

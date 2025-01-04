@@ -5,8 +5,13 @@ import Header from "./All Headers/header/Header";
 import MobileHeader from "./All Headers/mobileHeader/MobileHeader";
 import Footer from "./Footer/Footer";
 import { motion } from 'framer-motion';
+import { useCart } from "../context/CartContent";
 
 const AppLayout = ({ children, filterNodes }) => {
+  const { fetchCart } = useCart();
+  useEffect(() => {
+    fetchCart();
+  }, [])
   // useEffect(()=>{
   //   GetAuthData().then((user)=>{
   //     console.log({user});

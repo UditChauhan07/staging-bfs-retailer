@@ -13,7 +13,7 @@ import useBackgroundUpdater from "../utilities/Hooks/useBackgroundUpdater";
 
 
 
-const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPopUp = true }) => {
+const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPopUp = true , qunatityChangeState }) => {
     const { addOrder, isProductCarted } = useCart();
     const [product, setProduct] = useState({ isLoaded: false, data: [], discount: {} });
     const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
@@ -188,6 +188,7 @@ const ProductDetails = ({ productId, setProductDetailId, AccountId = null, isPop
                                     product={product}
                                     orders={isProductCarted(productId)}
                                     onQuantityChange={onQuantityChange}
+                                    qunatityChange={qunatityChangeState} 
                                 />
                             )}
                         </div>

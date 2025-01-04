@@ -11,6 +11,7 @@ import ModalPage from "../Modal UI";
 import { BiExit, BiSave } from "react-icons/bi";
 import LoaderV3 from "../loader/v3";
 function OrderListContent({ data, hideDetailedShow = false }) {
+  console.log({data})
   const navigate = useNavigate();
   const [Viewmore, setviewmore] = useState(false);
   const [modalData, setModalData] = useState({});
@@ -93,6 +94,7 @@ function OrderListContent({ data, hideDetailedShow = false }) {
       console.log({ userErr });
     })
   }
+
 
   return (
     <>
