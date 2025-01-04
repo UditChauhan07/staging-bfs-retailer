@@ -107,7 +107,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
-              {!isEmpty ? (
+              {productList.length >0 ? (
                 filterData?.map((month, index) => {
                   if (month.content.length) {
                     return (
@@ -174,7 +174,11 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
                   }
                 })
               ) : (
-                <div>No data found</div>
+                <div className="col-4">
+                <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
+                  No data found
+                </p>
+              </div>
               )}
             </ul>
           </div>

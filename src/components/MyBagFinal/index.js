@@ -63,7 +63,10 @@ function MyBagFinal() {
     }
   }, [order, buttonActive]);
   useEffect(() => {
-    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
+    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
+      setIsPlayAble(0);
+    }
+    else if (paymentDetails.PK_KEY ===  paymentDetails.SK_KEY){
       setIsPlayAble(0);
     }
   }, [paymentDetails]);
@@ -163,9 +166,9 @@ function MyBagFinal() {
       });
 
       setGreenStatus(paymentIntent.status);
-      if (paymentIntent.status === 200) {
+      if (paymentIntent.status === 200 && paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
         setIsPlayAble(1);
-      } else if (paymentIntent.status === 400) {
+      } else if (paymentIntent.status === 400 ||  paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
         setIsPlayAble(0);
         console.log(isPlayAble, "is play able ");
       }
@@ -174,6 +177,7 @@ function MyBagFinal() {
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
         SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
       });
+      console.log({paymentDetails})
 
       return {
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,

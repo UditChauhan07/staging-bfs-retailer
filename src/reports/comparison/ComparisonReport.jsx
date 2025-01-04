@@ -112,6 +112,7 @@ const ComparisonReport = () => {
     if (data) {
       setApiData(data);
       setIsLoading(false);
+      console.log({apiData})
     }
   }
   const { accountIds } = filter
