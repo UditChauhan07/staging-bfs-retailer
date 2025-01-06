@@ -82,28 +82,46 @@ const TargetRollOver = () => {
 
 
     const filteredTargetData = useMemo(() => {
+        // Step 1: Filter by ManufacturerId if provided
         let filtered = target.list.filter((ele) => {
-            if (!manufacturerFilter || !ele.ManufacturerId.localeCompare(manufacturerFilter)) {
-                return ele;
+            // Find the manufacturer in manufacturerData
+            const manufacturer = manufacturerData.find(
+                (m) => m.Id === ele.ManufacturerId
+            );
+    
+            // Match ManufacturerId or ManufacturerName
+            if (manufacturer) {
+                // If manufacturerFilter is set, match with Id or Name
+                if (
+                    !manufacturerFilter || 
+                    manufacturer.Id === manufacturerFilter || 
+                    manufacturer.Name.toLowerCase().includes(manufacturerFilter.toLowerCase())
+                ) {
+                    return true; // Include in filtered results
+                }
             }
+            return false; // Exclude from results
         });
+    
+        // Step 2: Apply AccountName filter
         if (searchBy) {
-            console.log({ searchBy });
-            filtered = filtered.filter((item) => {
-                if (item.AccountName?.toLowerCase().includes(searchBy?.toLowerCase())) {
-                    return item;
-                }
-            });
+            filtered = filtered.filter((item) =>
+                item.AccountName?.toLowerCase().includes(searchBy.toLowerCase())
+            );
         }
+    
+        // Step 3: Apply SalesRepName filter
         if (searchSaleBy) {
-            filtered = filtered.filter((item) => {
-                if (item.SalesRepName?.toLowerCase().includes(searchSaleBy?.toLowerCase())) {
-                    return item;
-                }
-            });
+            filtered = filtered.filter((item) =>
+                item.salesRepName?.toLowerCase().includes(searchSaleBy.toLowerCase())
+            );
         }
-        return filtered;
-    }, [manufacturerFilter, searchBy, searchSaleBy, isLoaded]);
+    
+        return filtered; // Final filtered data
+    }, [manufacturerFilter, searchBy, searchSaleBy, manufacturerData, target.list]);
+    
+    
+    console.log({filteredTargetData})
     const resetFilter = async () => {
         setManufacturerFilter(null);
         setSearchBy("");
@@ -467,6 +485,7 @@ const TargetRollOver = () => {
                 </button>
             </div></>)
     }
+    console.log({manufacturerData})
     return (
         <AppLayout
             filterNodes={
