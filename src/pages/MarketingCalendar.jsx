@@ -270,23 +270,26 @@ const MarketingCalendar = () => {
             options={yearList}
             onChange={(value) => setSelectYear(value)}
           />
-          <FilterItem
-            minWidth="220px"
-            label="All Brand"
-            name="All-Brand"
-            value={selectBrand}
-            options={
-              Array.isArray(brand)
-                ? brand?.map((brands) => ({
-                  label: brands.Name,
-                  value: brands.Name,
-                }))
-                : []
-            }
-            onChange={(value) => {
-              setSelectBrand(value);
-            }}
-          />
+          {brand?.length > 0 ?
+              <FilterItem
+              minWidth="220px"
+              label="All Brand"
+              name="All-Brand"
+              value={selectBrand}
+              options={
+                Array.isArray(brand)
+                  ? brand?.map((brands) => ({
+                    label: brands.Name,
+                    value: brands.Name,
+                  }))
+                  : []
+              }
+              onChange={(value) => {
+                setSelectBrand(value);
+              }}
+            />
+          : null }
+      
           <FilterItem
             minWidth="220px"
             label="JAN-DEC"

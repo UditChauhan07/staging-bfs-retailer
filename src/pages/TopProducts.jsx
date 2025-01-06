@@ -173,7 +173,9 @@ const TopProducts = () => {
           }}
           name={"Account-menu"}
         />} */}
-      <FilterItem
+        {manufacturerData.length >  0  ?
+        
+        <FilterItem
         minWidth="220px"
         label="All Brand"
         name="Manufacturer1"
@@ -184,6 +186,8 @@ const TopProducts = () => {
         }))}
         onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth, accountId: selectAccount })}
       />
+        : null }
+   
       <FilterItem
         label="Month"
         minWidth="220px"

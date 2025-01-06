@@ -22,7 +22,7 @@ const SalesReport = () => {
   let currentYear = new Date().getFullYear()
   const [yearFor, setYearFor] = useState(currentYear);
   const salesReportApi = useSalesReport();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [highestOrders, setHighestOrders] = useState(true);
   const [salesReportData, setSalesReportData] = useState([]);
@@ -329,17 +329,23 @@ const SalesReport = () => {
           <div className="d-flex justify-content-end col-1"><hr className={Styles.breakHolder} /></div>
           <div className="d-flex justify-content-end gap-4 col-6">
             {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
-            <FilterItem
-              minWidth="220px"
-              label="All Brand"
-              name="AllManufacturers1"
-              value={manufacturerFilter}
-              options={manufacturerData?.map((manufacturer) => ({
-                label: manufacturer.Name,
-                value: manufacturer.Name,
-              }))}
-              onChange={(value) => setManufacturerFilter(value)}
-            />
+         
+         {manufacturerData?.length > 0 ?
+           <FilterItem
+           minWidth="220px"
+           label="All Brand"
+           name="AllManufacturers1"
+           value={manufacturerFilter}
+           options={manufacturerData?.map((manufacturer) => ({
+             label: manufacturer.Name,
+             value: manufacturer.Name,
+           }))}
+           onChange={(value) => setManufacturerFilter(value)}
+         />
+         
+         : null }
+         
+          
             <FilterItem
               minWidth="220px"
               label="Lowest Orders"
@@ -407,13 +413,23 @@ const SalesReport = () => {
         <div>
         </div>
       </div>
-      {filteredSalesReportData?.length && !isLoading ? (
-        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort} ownerPermission={ownerPermission} />
-      ) : salesReportData.length && !isLoading ? (
-        <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
-      ) : (
-        <LoaderV3 text={"Loading Purchase Report, Please wait..."} />
-      )}
+      {isLoading || !filteredSalesReportData ? (
+  // Jab tak data load ho raha hai ya filter apply ho raha hai, loader dikhaye
+  <LoaderV3 text={"Loading Purchase Report, Please wait..."} />
+) : filteredSalesReportData.length > 0 ? (
+  // Filtered data available hai to table dikhaye
+  <SalesReportTable
+    salesData={filteredSalesReportData}
+    year={yearForTableSort}
+    ownerPermission={ownerPermission}
+  />
+) : (
+  // Filter hone ke baad agar length 0 hai to "No data found" dikhaye
+  <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
+    No data found
+  </div>
+)}
+
     </AppLayout>
   );
 };

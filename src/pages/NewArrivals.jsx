@@ -179,7 +179,8 @@ const NewArrivals = () => {
             options={yearList}
             onChange={(value) => {setCurrentPage(1);setSelectYear(value);}}
           />
-          <FilterItem
+          {brand?.length > 0 ?
+            <FilterItem
             minWidth="220px"
             label="All Brand"
             name="All-Brand"
@@ -197,6 +198,8 @@ const NewArrivals = () => {
               setSelectBrand(value);
             }}
           />
+          : null}
+        
           <FilterItem
             minWidth="220px"
             label="JAN-DEC"

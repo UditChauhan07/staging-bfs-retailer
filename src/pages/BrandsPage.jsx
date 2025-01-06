@@ -177,12 +177,13 @@ const BrandsPage = () => {
           <LoaderV3 text={"Loading Brands Details"} />
         ) : (
           <div>
-            <div
+             {!filteredPageData?.length ? null:<div
               className="uppercase text-center flex justify-center items-center tracking-[1.8px] my-[48px]"
               style={{ fontFamily: "Montserrat-500" }}
             >
               Below are the Brands available with “Beauty Fashions Sales Group”
-            </div>
+            </div> }
+            
             {/* <div className="widthGivenBrandDetailPage grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4  m-auto">    */}
             <div className={` ${Page.widthGivenBrandDetailPage}`}>
               {filteredPageData?.length ? (
@@ -194,11 +195,15 @@ const BrandsPage = () => {
               ) : null}
             </div>
             {!filteredPageData?.length && (
-              <div className="lg:min-h-[300px] xl:min-h-[380px]">
-                <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
-              </div>
+ <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
+ <div className="col-4">
+   <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">
+     No data found
+   </p>
+ </div>
+</div>
             )}
-          </div>
+          </div>  
         )}
       </AppLayout>
     </>

@@ -1,7 +1,7 @@
 import React from "react";
 import Loading from "../Loading";
 import styles from "./table.module.css";
-const ComparisonReportTable = ({ comparisonData }) => {
+const ComparisonReportTable = ({ comparisonData }) => {console.log({comparisonData})
   const formentAcmount = (amount, totalorderPrice, monthTotalAmount) => {
     return `${Number(amount, totalorderPrice, monthTotalAmount).toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }

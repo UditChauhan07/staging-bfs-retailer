@@ -439,17 +439,23 @@ const TargetRollOver = () => {
     
     useBackgroundUpdater(sendApiCall, defaultLoadTime)
 
+    console.log("target data" , target)
+
     const FilterNodes = () => {
-        return (<><FilterItem
-            minWidth="220px"
-            label="All Brand"
-            value={manufacturerFilter}
-            options={manufacturerData?.map((manufacturer) => ({
-                label: manufacturer.Name,
-                value: manufacturer.Id,
-            }))}
-            onChange={(value) => setManufacturerFilter(value)}
-        />
+        return (<>
+        {manufacturerData.length > 0 ?
+             <FilterItem
+             minWidth="220px"
+             label="All Brand"
+             value={manufacturerFilter}
+             options={manufacturerData?.map((manufacturer) => ({
+                 label: manufacturer.Name,
+                 value: manufacturer.Id,
+             }))}
+             onChange={(value) => setManufacturerFilter(value)}
+         />
+        : null}
+   
             <div className="d-flex gap-3">
                 <button className="border px-2.5 py-1 leading-tight d-grid" onClick={resetFilter}>
                     <CloseButton crossFill={"#fff"} height={20} width={20} />
