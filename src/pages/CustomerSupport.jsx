@@ -140,17 +140,20 @@ const CustomerSupport = () => {
               }}
               name={"Account-menu"}
             />}
-          <FilterItem
-            minWidth="220px"
-            label="All Brand"
-            name="Manufacturer"
-            value={manufacturerFilter}
-            options={manufacturerData?.map((manufacturer) => ({
-              label: manufacturer.Name,
-              value: manufacturer.Id,
-            }))}
-            onChange={(value) => setManufacturerFilter(value)}
-          />
+            {manufacturerData?.length > 0 ? 
+               <FilterItem
+               minWidth="220px"
+               label="All Brand"
+               name="Manufacturer"
+               value={manufacturerFilter}
+               options={manufacturerData?.map((manufacturer) => ({
+                 label: manufacturer.Name,
+                 value: manufacturer.Id,
+               }))}
+               onChange={(value) => setManufacturerFilter(value)}
+             />
+            : null}
+       
           <FilterItem
             label="Status"
             name="Status"

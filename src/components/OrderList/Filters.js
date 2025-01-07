@@ -24,8 +24,8 @@ const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
   return (
     <>
       {monthHide&&<FilterItem
-        label="Months"
-        name="Months"
+        label="Last 6 months"
+        name="Last 6 months"
         value={value.month}
         options={[
           {
@@ -37,7 +37,7 @@ const Filters = ({ value, onChange, resetFilter,monthHide=true }) => {
             value: `${new Date().getFullYear()}`,
           },
           {
-            label: `${new Date().getFullYear() - 1}`,
+            label: `Previous Year`,
             value: `${new Date().getFullYear() - 1}`,
           },
         ]}

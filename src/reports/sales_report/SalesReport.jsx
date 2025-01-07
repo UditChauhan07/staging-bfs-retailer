@@ -19,9 +19,10 @@ const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sh
 const fileExtension = ".xlsx";
 
 const SalesReport = () => {
-  const [yearFor, setYearFor] = useState(2024);
+  let currentYear = new Date().getFullYear()
+  const [yearFor, setYearFor] = useState(currentYear);
   const salesReportApi = useSalesReport();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [manufacturerFilter, setManufacturerFilter] = useState();
   const [highestOrders, setHighestOrders] = useState(true);
   const [salesReportData, setSalesReportData] = useState([]);
@@ -29,9 +30,10 @@ const SalesReport = () => {
   const [searchBy, setSearchBy] = useState("");
   const [searchBySalesRep, setSearchBySalesRep] = useState("");
   const [salesRepList, setSalesRepList] = useState([]);
-  const [yearForTableSort, setYearForTableSort] = useState(2024);
+  const [yearForTableSort, setYearForTableSort] = useState(currentYear);
   const [exportToExcelState, setExportToExcelState] = useState(false);
   const filteredSalesReportData = useMemo(() => {
+    
     let filtered = salesReportData.filter((ele) => {
       return !manufacturerFilter || !ele.ManufacturerName__c.localeCompare(manufacturerFilter);
     });
@@ -186,10 +188,10 @@ const SalesReport = () => {
     setManufacturerFilter(null);
     setHighestOrders(true);
     getSalesData(yearFor, accountIds);
-    setYearFor(2024);
+    setYearFor(currentYear);
     setSearchBy("");
     setSearchBySalesRep("");
-    setYearForTableSort(2024);
+    setYearForTableSort(currentYear);
   };
   const navigate = useNavigate();
   const reportReady = (result) => {
@@ -278,16 +280,16 @@ const SalesReport = () => {
     }
   };
   let yearList = [
-    { value: 2024, label: 2024 },
-    { value: 2023, label: 2023 },
-    { value: 2022, label: 2022 },
-    { value: 2021, label: 2021 },
-    { value: 2020, label: 2020 },
-    { value: 2019, label: 2019 },
-    { value: 2018, label: 2018 },
-    { value: 2017, label: 2017 },
-    { value: 2016, label: 2016 },
-    { value: 2015, label: 2015 },
+    { value: currentYear, label: currentYear },
+    { value: currentYear -1 , label: currentYear -1 },
+    { value: currentYear -2, label: currentYear -2 },
+    { value: currentYear -3 , label: currentYear -3  },
+    { value: currentYear -4 , label: currentYear -4 },
+    { value: currentYear -5  , label: currentYear -5 },
+    { value: currentYear -6, label: currentYear -6 },
+    { value: currentYear -7 , label: currentYear -7 },
+    { value: currentYear -8 , label: currentYear  -8},
+    { value: currentYear -9 , label: currentYear -9 },
   ]
   return (
     <AppLayout
@@ -327,17 +329,23 @@ const SalesReport = () => {
           <div className="d-flex justify-content-end col-1"><hr className={Styles.breakHolder} /></div>
           <div className="d-flex justify-content-end gap-4 col-6">
             {ownerPermission && <FilterItem minWidth="220px" label="All Sales Rep" name="AllSalesRep" value={searchBySalesRep} options={salesRepList} onChange={(value) => setSearchBySalesRep(value)} />}
-            <FilterItem
-              minWidth="220px"
-              label="All Brand"
-              name="AllManufacturers1"
-              value={manufacturerFilter}
-              options={manufacturerData?.map((manufacturer) => ({
-                label: manufacturer.Name,
-                value: manufacturer.Name,
-              }))}
-              onChange={(value) => setManufacturerFilter(value)}
-            />
+         
+         {manufacturerData?.length > 0 ?
+           <FilterItem
+           minWidth="220px"
+           label="All Brand"
+           name="AllManufacturers1"
+           value={manufacturerFilter}
+           options={manufacturerData?.map((manufacturer) => ({
+             label: manufacturer.Name,
+             value: manufacturer.Name,
+           }))}
+           onChange={(value) => setManufacturerFilter(value)}
+         />
+         
+         : null }
+         
+          
             <FilterItem
               minWidth="220px"
               label="Lowest Orders"
@@ -397,7 +405,7 @@ const SalesReport = () => {
       <div className={Styles.inorderflex}>
         <div>
           <h2>
-            {/* ${(yearFor<2024)?("-"+yearFor):''} */}
+            {/* ${(yearFor<currentYear)?("-"+yearFor):''} */}
             {ownerPermission ? `${searchBySalesRep ? searchBySalesRep + "`s" : "All"} Purchase Report` : `Your Purchase Report`}
             {manufacturerFilter && " for " + manufacturerFilter}
           </h2>
@@ -405,13 +413,23 @@ const SalesReport = () => {
         <div>
         </div>
       </div>
-      {filteredSalesReportData?.length && !isLoading ? (
-        <SalesReportTable salesData={filteredSalesReportData} year={yearForTableSort} ownerPermission={ownerPermission} />
-      ) : salesReportData.length && !isLoading ? (
-        <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">No data found</div>
-      ) : (
-        <LoaderV3 text={"Loading Purchase Report, Please wait..."} />
-      )}
+      {isLoading || !filteredSalesReportData ? (
+  // Jab tak data load ho raha hai ya filter apply ho raha hai, loader dikhaye
+  <LoaderV3 text={"Loading Purchase Report, Please wait..."} />
+) : filteredSalesReportData.length > 0 ? (
+  // Filtered data available hai to table dikhaye
+  <SalesReportTable
+    salesData={filteredSalesReportData}
+    year={yearForTableSort}
+    ownerPermission={ownerPermission}
+  />
+) : (
+  // Filter hone ke baad agar length 0 hai to "No data found" dikhaye
+  <div className="flex justify-center items-center py-4 w-full lg:min-h-[300px] xl:min-h-[380px]">
+    No data found
+  </div>
+)}
+
     </AppLayout>
   );
 };

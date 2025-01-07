@@ -135,7 +135,19 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                             "OpportunityId",
                             JSON.stringify(response.orderId)
                         );
+                     
 
+                    }
+                    else{
+                        Swal.fire({
+                            title: 'Order Creation fail',
+                            text: 'Your payment is successful and order has not been placed.',
+                            icon: 'fail',
+                            confirmButtonText: 'view',
+                            customClass: {
+                                confirmButton: 'swal2-confirm'
+                            }
+                        })
                     }
                     if (response?.length) {
                         setErrorMessage(response[0].message);

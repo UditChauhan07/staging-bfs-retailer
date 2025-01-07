@@ -158,7 +158,8 @@ const MarketingCalendar = () => {
           console.log({ pdfErr });
         })
       }
-    }else{
+    }
+    else{
       setIsAlert(true);
       setPDFIsloaed(false);
     }
@@ -166,6 +167,73 @@ const MarketingCalendar = () => {
       console.log({ userErr });
     })
   }
+
+//     setPDFIsloaed(true);  // Show loader when the PDF generation starts
+
+//     GetAuthData().then((user) => {
+   
+//       const uniqueIds = new Set();
+//       productList.forEach(monthly => {
+//           monthly.content.forEach(product => {
+//               uniqueIds.add(product.ManufacturerId__c);
+//           });
+//       });
+      
+//       // Format as quoted string
+//       const manufacturerStr = Array.from(uniqueIds)
+//           .map(id => `'${id}'`)
+//           .join(", ");
+        
+       
+
+//         const payload = {
+//             key: user.x_access_token,
+//             manufacturerId : brand ,
+//             month,
+//             manufacturerStr,
+//             year: selectYear,
+//         };
+
+//         fetch(`${originAPi}/mIRX7B9FlQjmOaf/Finmh4OvrI0Yc467`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(payload),
+//         })
+//         .then(response => {
+//             if (response.ok) {
+//                 // Trigger the file download directly
+//                 response.blob().then(blob => {
+//                     // Create a new Date object to get the current timestamp
+//                     const currentDate = new Date();
+//                     const formattedDate = currentDate.toUTCString().replace(/ /g, "_").replace(/,/g, "").split("GMT")[0];
+
+//                     // Create a download link
+//                     const a = document.createElement('a');
+//                     const url = URL.createObjectURL(blob);
+//                     a.href = url;
+//                     a.download = `Marketing_Calendar_${formattedDate}.pdf`;  // Set dynamic file name with date/time
+//                     a.click();  // Trigger the download
+//                     URL.revokeObjectURL(url);  // Release the object URL to clean up
+//                     setPDFIsloaed(false);  // Hide loader after the action is done
+//                 });
+//             } else {
+//                 throw new Error('PDF generation failed');
+//             }
+//         })
+//         .catch((error) => {
+//             console.error('Error:', error);
+//             setPDFIsloaed(false);  // Hide loader in case of error
+//             // alert('Failed to generate the PDF');
+//         });
+//     }).catch((userErr) => {
+//         console.log('User Error:', userErr);
+//         setPDFIsloaed(false);  // Hide loader in case of authentication error
+//         alert('Failed to authenticate user');
+//     });
+// };
+
 
   // ...............................
   const generatePdf = () => {
@@ -270,23 +338,26 @@ const MarketingCalendar = () => {
             options={yearList}
             onChange={(value) => setSelectYear(value)}
           />
-          <FilterItem
-            minWidth="220px"
-            label="All Brand"
-            name="All-Brand"
-            value={selectBrand}
-            options={
-              Array.isArray(brand)
-                ? brand?.map((brands) => ({
-                  label: brands.Name,
-                  value: brands.Name,
-                }))
-                : []
-            }
-            onChange={(value) => {
-              setSelectBrand(value);
-            }}
-          />
+          {brand?.length > 0 ?
+              <FilterItem
+              minWidth="220px"
+              label="All Brand"
+              name="All-Brand"
+              value={selectBrand}
+              options={
+                Array.isArray(brand)
+                  ? brand?.map((brands) => ({
+                    label: brands.Name,
+                    value: brands.Name,
+                  }))
+                  : []
+              }
+              onChange={(value) => {
+                setSelectBrand(value);
+              }}
+            />
+          : null }
+      
           <FilterItem
             minWidth="220px"
             label="JAN-DEC"

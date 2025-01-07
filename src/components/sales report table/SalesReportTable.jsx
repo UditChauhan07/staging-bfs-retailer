@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./table.module.css";
 import Loading from "../Loading";
 const SalesReportTable = ({ salesData, year,ownerPermission }) => {
+  console.log({salesData})
   const allOrdersEmpty = salesData.every(item => item.Orders.length <= 0);
   const d = new Date();
   let month = d.getMonth();
@@ -23,6 +24,8 @@ const SalesReportTable = ({ salesData, year,ownerPermission }) => {
     Nov: 0,
     Dec: 0,
   };
+
+  console.log(allOrdersEmpty)
   const formentAcmount =(amount,totalorderPrice,monthTotalAmount)=>{
     return `${Number(amount,totalorderPrice,monthTotalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
   }

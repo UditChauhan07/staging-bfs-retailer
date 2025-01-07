@@ -22,6 +22,8 @@ const TopProducts = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [accountList, setAccountList] = useState([]);
   const [selectAccount, setSelectAccount] = useState();
+  const currentYear = new Date().getFullYear() 
+  const previousYear = new Date().getFullYear() -1
   useEffect(() => {
     dataStore.subscribe(`/top-products${JSON.stringify({ month: selectedMonth, manufacturerId: manufacturerFilter })}`, topProductReady);
     btnHandler({ manufacturerId: null, month: monthIndex + 1 });
@@ -29,9 +31,9 @@ const TopProducts = () => {
     let helperArray = [];
     months.map((month, i) => {
       if (i <= monthIndex) {
-        helperArray.push({ label: `${month.slice(0,3)}, 2024`, value: i + 1 })
+        helperArray.push({ label: `${month.slice(0,3)}, ${currentYear}`, value: i + 1 })
       } else {
-        indexMonth.push({ label: `${month.slice(0,3)}, 2023`, value: i + 1 })
+        indexMonth.push({ label: `${month.slice(0,3)}, ${previousYear}`, value: i + 1 })
       }
     })
     let finalArray = indexMonth.concat(helperArray)
@@ -171,7 +173,9 @@ const TopProducts = () => {
           }}
           name={"Account-menu"}
         />} */}
-      <FilterItem
+        {manufacturerData.length >  0  ?
+        
+        <FilterItem
         minWidth="220px"
         label="All Brand"
         name="Manufacturer1"
@@ -182,6 +186,8 @@ const TopProducts = () => {
         }))}
         onChange={(value) => btnHandler({ manufacturerId: value, month: selectedMonth, accountId: selectAccount })}
       />
+        : null }
+   
       <FilterItem
         label="Month"
         minWidth="220px"
@@ -205,7 +211,7 @@ const TopProducts = () => {
       </button>
     </>
     }>
-      {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth - 1]} ${((selectedMonth - 1) <= monthIndex) ? 2024 : 2023}`} /> : (topProductList.data.length == 0 && topProductList.message) ?
+      {!topProductList.isLoaded ? <LoaderV3 text={`loading Top product of ${months[selectedMonth - 1]} ${((selectedMonth - 1) <= monthIndex) ? currentYear : previousYear}`} /> : (topProductList.data.length == 0 && topProductList.message) ?
         <div className="row d-flex flex-column justify-content-center align-items-center lg:min-h-[300px] xl:min-h-[400px]">
           <div className="col-4">
             <p className="m-0 fs-2 text-center font-[Montserrat-400] text-[14px] tracking-[2.20px] text-center">

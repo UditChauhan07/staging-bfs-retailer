@@ -19,52 +19,52 @@ import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthList = [
   {
-    name: "January - 2024",
-    value: "2024|1",
+    name: "January - 2025",
+    value: "2025|1",
   },
   {
-    name: "February - 2024",
-    value: "2024|2",
+    name: "February - 2025",
+    value: "2025|2",
   },
   {
-    name: "March - 2024",
-    value: "2024|3",
+    name: "March - 2025",
+    value: "2025|3",
   },
   {
-    name: "April - 2024",
-    value: "2024|4",
+    name: "April - 2025",
+    value: "2025|4",
   },
   {
-    name: "May - 2024",
-    value: "2024|5",
+    name: "May - 2025",
+    value: "2025|5",
   },
   {
-    name: "June - 2024",
-    value: "2024|6",
+    name: "June - 2025",
+    value: "2025|6",
   },
   {
-    name: "July - 2024",
-    value: "2024|7",
+    name: "July - 2025",
+    value: "2025|7",
   },
   {
-    name: "August - 2024",
-    value: "2024|8",
+    name: "August - 2025",
+    value: "2025|8",
   },
   {
-    name: "September - 2024",
-    value: "2024|9",
+    name: "September - 2025",
+    value: "2025|9",
   },
   {
-    name: "October - 2024",
-    value: "2024|10",
+    name: "October - 2025",
+    value: "2025|10",
   },
   {
-    name: "November - 2024",
-    value: "2024|11",
+    name: "November - 2025",
+    value: "2025|11",
   },
   {
-    name: "December - 2024",
-    value: "2024|12",
+    name: "December - 2025",
+    value: "2025|12",
   },
 ];
 
@@ -233,6 +233,26 @@ function Dashboard() {
         console.error({ error });
       });
   };
+
+
+  function generateUniqueLightColor() {
+    // Function to generate a random light color (RGB values between 128 and 255)
+    const generateRandomLightHexColor = () => {
+      const getRandomLightValue = () => Math.floor(Math.random() * 128) + 128; // Random value between 128 and 255
+
+      const r = getRandomLightValue();
+      const g = getRandomLightValue();
+      const b = getRandomLightValue();
+
+      // Convert RGB to hex and return it as a string
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    };
+
+    let newColor = generateRandomLightHexColor();
+
+    return newColor;
+  }
+
   const dashBoardReady = (dashboard) => {
 
     setGoalList(dashboard.goalByMonth ?? [])
@@ -296,7 +316,7 @@ function Dashboard() {
     if (dashboard?.monthlyManufactureData) {
       let colorArray = [];
       Object.values(dashboard?.monthlyManufactureData).map((value) => {
-        colorArray.push(hexabrand[value.id]);
+        colorArray.push(hexabrand[value.id]||"#ED8A61");
       })
       setDataa({
         series: [],
@@ -567,7 +587,7 @@ function Dashboard() {
             />}
           <FilterItem
             minWidth="220px"
-            label="Month-Year"
+            label="Month"
             value={selMonth}
             options={monthList.map((month) => ({
               label: month.name,

@@ -51,40 +51,42 @@ function MyBagFinal() {
   const [intentRes, setIntentRes] = useState();
   const [isAccordianOpen, setIsAccordianOpen] = useState(false);
   const [paymentValue, setPaymentValue] = useState(false);
-  const [qunatityChange, setQuantityChange] = useState()
+  const [qunatityChange, setQuantityChange] = useState();
   const [paymentType, setPaymentType] = useState();
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
-  const [greenStatus, setGreenStatus] = useState()
+  const [greenStatus, setGreenStatus] = useState();
 
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
     }
-  }, [order, buttonActive])
+  }, [order, buttonActive]);
   useEffect(() => {
-    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
+    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
+      setIsPlayAble(0);
+    }
+    else if (paymentDetails.PK_KEY ===  paymentDetails.SK_KEY){
       setIsPlayAble(0);
     }
   }, [paymentDetails]);
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        setQuantityChange(false)
+      if (document.visibilityState === "hidden") {
+        setQuantityChange(false);
         setIsAccordianOpen(false);
         setDetailsAccordian(true);
         setPaymentAccordian(false);
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
   const handleAccordian = () => {
-
     if (order?.items?.length) {
       if (PONumber.length) {
         if (order?.items?.length > 100) {
@@ -97,7 +99,7 @@ function MyBagFinal() {
             if (order.Account.discount.MinOrderAmount > total) {
               setAlert(1);
             } else {
-              setQuantityChange(true)
+              setQuantityChange(true);
               setIsAccordianOpen(true);
               setDetailsAccordian(false);
               setPaymentAccordian(true);
@@ -110,10 +112,9 @@ function MyBagFinal() {
     }
   };
   const onToggle = () => {
-
-    setQuantityChange(false)
-    if (isAccordianOpen == true) setIsAccordianOpen(false)
-    if (isAccordianOpen == false) setIsAccordianOpen(true)
+    setQuantityChange(false);
+    if (isAccordianOpen == true) setIsAccordianOpen(false);
+    if (isAccordianOpen == false) setIsAccordianOpen(true);
     if (detailsAccordian == true) {
       setDetailsAccordian(false);
       setPaymentAccordian(true);
@@ -129,8 +130,6 @@ function MyBagFinal() {
   };
   const fetchBrandPaymentDetails = async () => {
     try {
-
-
       let id = order?.Manufacturer?.id;
       let AccountID = order?.Account?.id;
       const user = await GetAuthData();
@@ -143,15 +142,10 @@ function MyBagFinal() {
 
       setIntentRes(brandRes);
 
-      brandRes.accountManufacturerData.map((item) =>
-        setPaymentType(item.Payment_Type__c)
-      );
+      brandRes.accountManufacturerData.map((item) => setPaymentType(item.Payment_Type__c));
 
       // Check for null keys
-      if (
-        !brandRes?.brandDetails.Stripe_Secret_key_test__c ||
-        !brandRes?.brandDetails.Stripe_Publishable_key_test__c
-      ) {
+      if (!brandRes?.brandDetails.Stripe_Secret_key_test__c || !brandRes?.brandDetails.Stripe_Publishable_key_test__c) {
         setIsPlayAble(0);
         console.log("Brand payment details are missing, skipping payment processing.");
         return {
@@ -171,10 +165,10 @@ function MyBagFinal() {
         }),
       });
 
-      setGreenStatus(paymentIntent.status)
-      if (paymentIntent.status === 200) {
+      setGreenStatus(paymentIntent.status);
+      if (paymentIntent.status === 200 && paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
         setIsPlayAble(1);
-      } else if (paymentIntent.status === 400) {
+      } else if (paymentIntent.status === 400 ||  paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
         setIsPlayAble(0);
         console.log(isPlayAble, "is play able ");
       }
@@ -183,6 +177,7 @@ function MyBagFinal() {
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
         SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
       });
+      console.log({paymentDetails})
 
       return {
         PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
@@ -196,8 +191,8 @@ function MyBagFinal() {
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
 
   useEffect(() => {
-    fetchBrandPaymentDetails()
-  }, [buttonActive])
+    fetchBrandPaymentDetails();
+  }, [buttonActive]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
@@ -230,25 +225,25 @@ function MyBagFinal() {
         if (res?.address || res?.brandShipping) {
           let tempOrder = order.Account;
           if (res?.address) {
-            tempOrder = { ...tempOrder, address: res?.address }
+            tempOrder = { ...tempOrder, address: res?.address };
           }
           if (res.checkBrandAllow) {
             if (res?.shippingMethod) {
-              tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod }
+              tempOrder = { ...tempOrder, shippingMethod: res?.shippingMethod };
             } else {
               if (!isSelect) {
-                tempOrder = { ...tempOrder, shippingMethod: null }
+                tempOrder = { ...tempOrder, shippingMethod: null };
               }
             }
           } else {
             if (!isSelect) {
-              tempOrder = { ...tempOrder, shippingMethod: null }
+              tempOrder = { ...tempOrder, shippingMethod: null };
             }
           }
-          keyBasedUpdateCart({ Account: tempOrder })
+          keyBasedUpdateCart({ Account: tempOrder });
           if (res?.brandShipping) {
             if (res?.brandShipping.length) {
-              setOrderShipment(res?.brandShipping)
+              setOrderShipment(res?.brandShipping);
             }
           }
         }
@@ -259,10 +254,10 @@ function MyBagFinal() {
         }
         setPONumber(poInit);
       }
-      setIsLoading(false)
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching PO number:", error);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -273,9 +268,9 @@ function MyBagFinal() {
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
     FetchPoNumber();
-    fetchBrandPaymentDetails()
-  }
-  useBackgroundUpdater(bgUpdateHandler, defaultLoadTime)
+    fetchBrandPaymentDetails();
+  };
+  useBackgroundUpdater(bgUpdateHandler, defaultLoadTime);
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
@@ -385,7 +380,6 @@ function MyBagFinal() {
             OrderPlaced({ order: begToOrder, cartId: order.id })
               .then((response) => {
                 if (response) {
-
                   if (response?.err) {
                     setIsDisabled(false);
                     setIsOrderPlaced(0);
@@ -394,14 +388,14 @@ function MyBagFinal() {
                       message: response?.err[0].message,
                     });
                   }
+                  console.log({orderStatus})
                   if (response?.orderId) {
-
                     setIsDisabled(false);
 
                     let status = deleteOrder();
-                    setConfirm(false)
+                    setConfirm(false);
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
-                    window.location.href = window.location.origin + '/orderDetails';
+                    window.location.href = window.location.origin + "/orderDetails";
                     setIsOrderPlaced(2);
                   }
                 }
@@ -443,25 +437,25 @@ function MyBagFinal() {
     const hasSKKey = paymentDetails.SK_KEY != null;
 
     // Check conditions
-    if (hasPayment && (hasPKKey && hasSKKey) && hasShipments) {
-      return '700px'; // Payment type and one payment detail key
+    if (hasPayment && hasPKKey && hasSKKey && hasShipments) {
+      return "700px"; // Payment type and one payment detail key
     }
     if (hasPayment && hasShipments) {
-      return '500px'; // Both conditions true
+      return "500px"; // Both conditions true
     }
-    if (hasPayment && (hasPKKey && hasSKKey)) {
-      return '600px'; // Only payment type
+    if (hasPayment && hasPKKey && hasSKKey) {
+      return "600px"; // Only payment type
     }
-    if (hasShipments && (hasPKKey && hasSKKey)) {
-      return '500px'; // Only shipments
+    if (hasShipments && hasPKKey && hasSKKey) {
+      return "500px"; // Only shipments
     }
     if (hasPKKey && hasSKKey) {
-      return '650px'; // One of the payment details keys is present
+      return "650px"; // One of the payment details keys is present
     }
     if (hasPayment || hasShipments) {
-      return '400px'; // One of the conditions true
+      return "400px"; // One of the conditions true
     }
-    return 'null'; // All conditions false
+    return "null"; // All conditions false
   };
 
   if (isOrderPlaced === 1) return <OrderLoader />;
@@ -724,7 +718,7 @@ function MyBagFinal() {
                       <b>
                         {buttonActive
                           ? // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                          PONumber
+                            PONumber
                           : "---"}
                       </b>
                     ) : (
@@ -746,17 +740,18 @@ function MyBagFinal() {
                       />
                     )}
                   </h5>
-                  {qunatityChange ? null : <>
-                    {!isPOEditable && (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
-                        <path
-                          d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
-                          fill="black"
-                        />
-                      </svg>
-                    )}
-                  </>}
-
+                  {qunatityChange ? null : (
+                    <>
+                      {!isPOEditable && (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none" onClick={() => setIsPOEditable(true)} style={{ cursor: "pointer" }}>
+                          <path
+                            d="M19.3078 10.6932V19.2841C19.3078 19.6794 18.9753 20 18.5652 20H0.742642C0.332504 20 0 19.6794 0 19.2841V2.10217C0 1.70682 0.332504 1.38627 0.742642 1.38627H9.65389C10.064 1.38627 10.3965 1.70682 10.3965 2.10217C10.3965 2.49754 10.064 2.81809 9.65389 2.81809H1.48519V18.5682H17.8226V10.6932C17.8226 10.2979 18.1551 9.97731 18.5652 9.97731C18.9753 9.97731 19.3078 10.2979 19.3078 10.6932ZM17.9926 5.11422L15.6952 2.89943L7.72487 10.5832L7.09297 13.4072L10.0223 12.7981L17.9926 5.11422ZM21 2.2148L18.7027 0L16.8541 1.78215L19.1515 3.99692L21 2.2148Z"
+                            fill="black"
+                          />
+                        </svg>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -875,17 +870,12 @@ function MyBagFinal() {
                                   </div>
 
                                   <div className={Styles.Mainbox2M}>
-
                                     {qunatityChange ? (
                                       <>
-                                        <div
-                                          className={Styles.Mainbox4}
-                                          style={{ opacity: '0.3' }}
-                                        >
+                                        <div className={Styles.Mainbox4} style={{ opacity: "0.3" }}>
                                           <DeleteIcon fill="red" />
                                         </div>
                                         <div style={{ opacity: "0.3" }} className={Styles.Mainbox5}>
-
                                           <QuantitySelector min={ele?.Min_Order_QTY__c || 0} value={ele.qty} />
                                         </div>
                                       </>
@@ -913,7 +903,6 @@ function MyBagFinal() {
                                           />
                                         </div>
                                       </>
-
                                     )}
                                   </div>
                                 </div>
@@ -930,13 +919,13 @@ function MyBagFinal() {
                         <div className={Styles.TotalPricer}>
                           <div className="d-flex justify-content-between">
                             <div>
-                              <h2>{order?.Account?.shippingMethod?.cal ? 'Sub-' : null}Total</h2>
+                              <h2>{order?.Account?.shippingMethod?.cal ? "Sub-" : null}Total</h2>
                             </div>
                             <div>
                               <h2>${Number(total).toFixed(2)}</h2>
                             </div>
                           </div>
-                          {order.Account?.shippingMethod?.cal ?
+                          {order.Account?.shippingMethod?.cal ? (
                             <div className="d-flex justify-content-between">
                               <div>
                                 <h2 className="text-capitalize">Shipping ({order.Account.shippingMethod?.name})</h2>
@@ -944,16 +933,18 @@ function MyBagFinal() {
                               <div>
                                 <h2>${order.Account.shippingMethod?.cal ? Number(total * order.Account.shippingMethod?.cal).toFixed(2) : 0}</h2>
                               </div>
-                            </div> : null}
-                          {order.Account?.shippingMethod?.cal ?
+                            </div>
+                          ) : null}
+                          {order.Account?.shippingMethod?.cal ? (
                             <div className="d-flex justify-content-between">
                               <div>
                                 <h2>Total</h2>
                               </div>
                               <div>
-                                <h2>${Number(total + (total * order.Account.shippingMethod?.cal)).toFixed(2)}</h2>
+                                <h2>${Number(total + total * order.Account.shippingMethod?.cal).toFixed(2)}</h2>
                               </div>
-                            </div> : null}
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     </div>
@@ -962,9 +953,7 @@ function MyBagFinal() {
                   <div className="col-lg-5 col-md-4 col-sm-12">
                     {isPlayAble === 1 && total > 0 ? (
                       <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
-
                         <div className={Styles.ShipAdress}>
-
                           {buttonActive ? (
                             <p>
                               {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
@@ -976,31 +965,33 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200) ? (
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                               {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
-                                  setIsPlayAble(0); setPaymentValue(item);
-                                }}>
-                                  <div className={Styles.labelHolder} >
-                                    {item}
-                                  </div>
+                                <div
+                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  onClick={() => {
+                                    setIsPlayAble(0);
+                                    setPaymentValue(item);
+                                  }}
+                                >
+                                  <div className={Styles.labelHolder}>{item}</div>
                                 </div>
-                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
-                                <div className={Styles.labelHolder} >
-                                  Pay now
-                                </div>
+                              ))}{" "}
+                              <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder}>Pay now</div>
                               </div>
-                            </div></div>
+                            </div>
+                          </div>
                         ) : null}
-                        {orderShipment.length > 0 ?
+                        {orderShipment.length > 0 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
                             <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
                           </div>
-                          : null}
+                        ) : null}
                         <div className={Styles.ShipAdress2}>
                           <textarea
                             onKeyUp={(e) => {
@@ -1043,7 +1034,7 @@ function MyBagFinal() {
                         </div>
                       </CustomAccordion>
                     ) : (
-                      <div className={Styles.ShippControl} style={{ padding: '5px 10px' }}>
+                      <div className={Styles.ShippControl} style={{ padding: "5px 10px" }}>
                         <h2>Shipping Address</h2>
 
                         <div className={Styles.ShipAdress}>
@@ -1058,31 +1049,33 @@ function MyBagFinal() {
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {(hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200) ? (
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                               {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                                <div className={`${Styles.templateHolder} ${isPlayAble == 0 ? paymentValue ? paymentValue == item ? Styles.selected : '' : Styles.selected : ''}`} onClick={() => {
-                                  setIsPlayAble(0); setPaymentValue(item);
-                                }}>
-                                  <div className={Styles.labelHolder} >
-                                    {item}
-                                  </div>
+                                <div
+                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  onClick={() => {
+                                    setIsPlayAble(0);
+                                    setPaymentValue(item);
+                                  }}
+                                >
+                                  <div className={Styles.labelHolder}>{item}</div>
                                 </div>
-                              ))} <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ''}`} onClick={() => setIsPlayAble(1)}>
-                                <div className={Styles.labelHolder} >
-                                  Pay now
-                                </div>
+                              ))}{" "}
+                              <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder}>Pay now</div>
                               </div>
-                            </div></div>
+                            </div>
+                          </div>
                         ) : null}
-                        {orderShipment.length > 0 ?
+                        {orderShipment.length > 0 ? (
                           <div className={Styles.ShipAdress}>
                             <div className={Styles.shipLabelHolder}>Select Shipping method</div>
                             <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
                           </div>
-                          : null}
+                        ) : null}
                         <div className={Styles.ShipAdress2}>
                           <textarea
                             onKeyUp={(e) => {
@@ -1135,7 +1128,6 @@ function MyBagFinal() {
                                         setAlert(3);
                                         return;
                                       } else {
-
                                         // if (testerInBag && order.Account.discount.testerproductLimit > total) {
                                         //   setAlert(2);
                                         // } else {
@@ -1151,7 +1143,7 @@ function MyBagFinal() {
                             }}
                             disabled={!buttonActive}
                           >
-                            ${Number(total + (total * (order?.Account?.shippingMethod?.cal || 0))).toFixed(2)} PLACE ORDER
+                            ${Number(total + total * (order?.Account?.shippingMethod?.cal || 0)).toFixed(2)} PLACE ORDER
                           </button>
                           <p
                             className={`${Styles.ClearBag}`}
@@ -1177,7 +1169,7 @@ function MyBagFinal() {
                           PO_Number={PONumber}
                           PK_KEY={paymentDetails.PK_KEY}
                           SK_KEY={paymentDetails.SK_KEY}
-                          amount={total + (total * (order?.Account?.shippingMethod?.cal || 0))}
+                          amount={total + total * (order?.Account?.shippingMethod?.cal || 0)}
                           order={order}
                           PONumber={PONumber}
                           orderDesc={orderDesc}
@@ -1197,11 +1189,13 @@ function MyBagFinal() {
                         disabled={!buttonActive}
                       >
                         {paymentAccordian ? null : "Clear Bag"}
-
                       </p>
                     ) : null}
-                    {paymentAccordian ? <p className={`${Styles.ClearBag}`}
-                      style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>Edit Bag</p> : null}
+                    {paymentAccordian ? (
+                      <p className={`${Styles.ClearBag}`} style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>
+                        Edit Bag
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
