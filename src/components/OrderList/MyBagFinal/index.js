@@ -446,12 +446,17 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                             {OrderData.Tracking__c}
                           </p>}
                       </div></>}
-                    {OrderData?.Payment_Status__c || OrderData?.Transaction_ID__c ?
+                    {OrderData?.Payment_Status__c || OrderData?.Transaction_ID__c|| OrderData?.PBL_Status__c ?
                       <>
-                        <h2 style={{marginTop:'10px'}}>Payment Details</h2>
+                        <h2 style={{ marginTop: '10px' }}>Payment Details</h2>
                         <div className={Styles.paymentCheck}>
                           {OrderData?.Payment_Status__c ? <p>Payment Status : {OrderData?.Payment_Status__c} </p> : null}
                           {OrderData?.Transaction_ID__c ? <p>Transaction ID : {OrderData?.Transaction_ID__c} </p> : null}
+                          {OrderData?.PBL_Status__c && ((!OrderData?.Payment_Status__c || OrderData?.Payment_Status__c != 'succeeded') && !OrderData?.Transaction_ID__c) ?
+                            <div className={Styles.ShipBut}>
+                              <button role="link"
+                                onClick={() => openInNewTab(OrderData.PBL_Status__c)}>Payment Link</button></div>
+                            : null}
                         </div>
                       </> : null}
 
