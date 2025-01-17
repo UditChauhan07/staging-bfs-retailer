@@ -89,6 +89,34 @@ export async function getBrandPaymentDetails({ key, Id, AccountId }) {
     return data.data || {};
   }
 }
+export async function checkPaymentKey({ paymentId }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  try {
+    let response = await fetch(originAPi + "/stripe/payment-intent", {
+      method: "POST",
+      body: JSON.stringify({
+        amount: "100",
+        paymentId,
+      }),
+      headers: headersList,
+    });
+
+    // Check if the response is ok (status in the range 200-299)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Return the status code
+    return response.status;
+  } catch (error) {
+    console.error("Error checking payment key:", error);
+    throw error; // Rethrow the error for further handling if needed
+  }
+}
 
 export async function POGenerator({ orderDetails }) {
 
