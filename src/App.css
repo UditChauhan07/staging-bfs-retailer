@@ -27,20 +27,20 @@ p.seti {
   margin-bottom: 1rem;
 }
 
-.modalButton{
+.modalButton {
   font-family: Montserrat;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    height: 30px;
-    letter-spacing: 1.4px;
-    line-height: normal;
-    text-transform: uppercase;
-    width: 100px;
-    background-color: #000;
-    color: #fff;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  height: 30px;
+  letter-spacing: 1.4px;
+  line-height: normal;
+  text-transform: uppercase;
+  width: 100px;
+  background-color: #000;
+  color: #fff;
 }
-.modalContent{
+.modalContent {
   color: #000;
   font-family: Arial-400;
   font-size: 16px;

@@ -21,10 +21,8 @@
     font-family: "Montserrat-500";
     gap: 60px;
 
-    @media(max-width:768.98px){
+    @media (max-width: 768.98px) {
       display: none;
-
+    }
   }
 }
-}
-
