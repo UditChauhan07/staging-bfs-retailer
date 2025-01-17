@@ -88,8 +88,8 @@ function App() {
               <Route path="/Brand/:id" element={<BrandDetails />} />
               <Route path="/productPage/:id" element={<ProductPage />} />
               <Route path="/logout" element={<Logout />}></Route>
-              <Route path="/thank-you" element={<ThankYou/>}></Route>
-              <Route path="/payment-failed" element={<Failed/>}></Route>
+              <Route path="/thank-you" element={<ThankYou />}></Route>
+              <Route path="/payment-failed" element={<Failed />}></Route>
               <Route path="*" element={<PageNotFound />}></Route>
             </Routes>
           </BrowserRouter>
