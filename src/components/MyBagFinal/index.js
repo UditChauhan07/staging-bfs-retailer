@@ -62,6 +62,10 @@ function MyBagFinal() {
       setButtonActive(true);
     }
   }, [order, buttonActive]);
+
+  console.log({order});
+  
+
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
       setIsPlayAble(0);
@@ -388,10 +392,8 @@ function MyBagFinal() {
                       message: response?.err[0].message,
                     });
                   }
-                  console.log({orderStatus})
                   if (response?.orderId) {
                     setIsDisabled(false);
-
                     let status = deleteOrder();
                     setConfirm(false);
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
@@ -1173,6 +1175,7 @@ function MyBagFinal() {
                           order={order}
                           PONumber={PONumber}
                           orderDesc={orderDesc}
+                          setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}
                         />
                       </CustomAccordion>
                     ) : null}

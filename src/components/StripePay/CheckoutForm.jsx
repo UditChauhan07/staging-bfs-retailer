@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import './style.css'
 import { originAPi } from '../../lib/store';
 import axios from 'axios';
-const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
+const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisabled = null, setorderStatus = null }) => {
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
@@ -69,18 +69,6 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
-            Swal.fire({
-                title: 'Payment Successful!',
-                text: 'Your payment is successful and order has been placed.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'swal2-confirm'
-                }
-            }).then( () => {
-                 deleteOrder();
-                window.location.href = window.location.origin+'/orderDetails';
-            });
         } else {
             setErrorMessage("Payment failed. Please try again.");
         }
@@ -127,18 +115,36 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                         Payment_Status__c: paymentStatus,
                         Transaction_ID__c: paymentId
                     };
-                   
+
                     const response = await OrderPlaced({ order: orderData, cartId: order.id });
-                    if (response?.orderId) {
-
-                        localStorage.setItem(
-                            "OpportunityId",
-                            JSON.stringify(response.orderId)
-                        );
-                     
-
+                    if (response) {
+                        if (response?.err) {
+                            setIsDisabled?.(false);
+                            setorderStatus?.({
+                                status: true,
+                                message: response?.err[0].message,
+                            });
+                        }
+                        if (response?.orderId) {
+                            localStorage.setItem(
+                                "OpportunityId",
+                                JSON.stringify(response.orderId)
+                            );
+                            Swal.fire({
+                                title: 'Payment Successful!',
+                                text: 'Your payment is successful and order has been placed.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'swal2-confirm'
+                                }
+                            }).then(() => {
+                                deleteOrder();
+                                window.location.href = window.location.origin + '/orderDetails';
+                            });
+                        }
                     }
-                    else{
+                    else {
                         Swal.fire({
                             title: 'Order Creation fail',
                             text: 'Your payment is successful and order has not been placed.',

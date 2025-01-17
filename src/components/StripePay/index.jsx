@@ -6,7 +6,7 @@ import CheckoutForm from './CheckoutForm';
 import { originAPi } from '../../lib/store';
 import Loading from '../Loading';
 
-const StripePay = ({ PK_KEY, SK_KEY, amount  , PO_Number , description , uniqueId , order , }) => {
+const StripePay = ({ PK_KEY, SK_KEY, amount  , PO_Number , description , uniqueId , order ,setIsDisabled=null,setorderStatus=null }) => {
     const stripePromise = loadStripe(PK_KEY);
     const [clientSecret, setClientSecret] = useState('');
     const [orderDes , setOrderDes] = useState(description)
@@ -42,7 +42,7 @@ const StripePay = ({ PK_KEY, SK_KEY, amount  , PO_Number , description , uniqueI
         <Elements stripe={stripePromise} options={options}>
             <CheckoutForm clientSecretkKey={clientSecret} orderDes = {orderDes} PONumber = {PO_num} 
             amount = {amount}
-            uniqueId = {uniqueId} order = {order} />
+            uniqueId = {uniqueId} order = {order} setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}/>
         </Elements>
     ) : (
         <Loading height={'50vh'} />
