@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails , checkPaymentKey } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -56,14 +56,14 @@ function MyBagFinal() {
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
   const [greenStatus, setGreenStatus] = useState();
-
+const [otherPayment , setOtherPayment] = useState(0)
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
     }
   }, [order, buttonActive]);
 
-  console.log({order});
+  // console.log({order});
   
 
   useEffect(() => {
@@ -158,20 +158,23 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else {
-            setIsPlayAble(1);
+          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && otherPayment ===0){
+            setIsPlayAble(1)
+
+
           }
+          
 
-          // let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
+          let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
 
-          // setGreenStatus(paymentIntent);
+          setGreenStatus(paymentIntent);
 
-          // if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-          //   setIsPlayAble(1);
-          // } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-          //   setIsPlayAble(0);
-          //   console.log(isPlayAble, "is play able ");
-          // }
+          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+            setIsPlayAble(1);
+          } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+            setIsPlayAble(0);
+            console.log(isPlayAble, "is play able ");
+          }
 
           setPaymentDetails({
             PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
@@ -197,11 +200,14 @@ if(brandDetails){
 }, [])
   useEffect(() => {
     fetchBrandPaymentDetails();
-  }, [buttonActive , brandDetails , isPlayAble]);
+  }, [buttonActive  ]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
+  console.log({hasPaymentType})
+  console.log({paymentDetails})
+  console.log({greenStatus})
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -461,6 +467,8 @@ if(brandDetails){
     return "null"; // All conditions false
   };
 
+
+  
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -968,16 +976,17 @@ if(brandDetails){
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200  ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                               {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
                                 <div
-                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  className={`${Styles.templateHolder} ${isPlayAble === 0 ? (paymentValue ? (paymentValue === item ? Styles.selected : "") : Styles.selected) : ""}`}
                                   onClick={() => {
                                     setIsPlayAble(0);
                                     setPaymentValue(item);
+                                    setOtherPayment(1)
                                   }}
                                 >
                                   <div className={Styles.labelHolder}>{item}</div>
@@ -1052,16 +1061,17 @@ if(brandDetails){
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus===200 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
                               {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
                                 <div
-                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue === item ? Styles.selected : "") : Styles.selected) : ""}`}
                                   onClick={() => {
                                     setIsPlayAble(0);
                                     setPaymentValue(item);
+                                    setOtherPayment(1)
                                   }}
                                 >
                                   <div className={Styles.labelHolder}>{item}</div>
