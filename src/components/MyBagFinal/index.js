@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, checkPaymentKey } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails , checkPaymentKey } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -63,17 +63,14 @@ function MyBagFinal() {
     }
   }, [order, buttonActive]);
 
-  useEffect(() => {
-    fetchBrandPaymentDetails();
-  }, [buttonActive]);
-
-  console.log({ paymentDetails });
+  // console.log({order});
+  
 
   useEffect(() => {
-    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
+    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
       setIsPlayAble(0);
     }
-    else if (paymentDetails.PK_KEY === paymentDetails.SK_KEY) {
+    else if (paymentDetails.PK_KEY ===  paymentDetails.SK_KEY){
       setIsPlayAble(0);
     }
   }, [paymentDetails]);
@@ -161,20 +158,23 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else {
-            setIsPlayAble(1);
+          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null ){
+            setIsPlayAble(1)
+
+
           }
+          
 
-          // let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
+          let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
 
-          // setGreenStatus(paymentIntent);
+          setGreenStatus(paymentIntent);
 
-          // if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-          //   setIsPlayAble(1);
-          // } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-          //   setIsPlayAble(0);
-          //   console.log(isPlayAble, "is play able ");
-          // }
+          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+            setIsPlayAble(1);
+          } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+            setIsPlayAble(0);
+            console.log(isPlayAble, "is play able ");
+          }
 
           setPaymentDetails({
             PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
@@ -193,11 +193,19 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-  console.log({ isPlayAble });
+useEffect(()=>{
+if(brandDetails){
+
+}
+}, [])
+  useEffect(() => {
+    fetchBrandPaymentDetails();
+  }, [buttonActive  ]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
+console.log({order})
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -261,12 +269,17 @@ function MyBagFinal() {
     }
   };
 
+
   useEffect(() => {
     fetchCart();
 
     FetchPoNumber();
   }, [buttonActive, isSelect]);
-
+  const bgUpdateHandler = () => {
+    FetchPoNumber();
+    fetchBrandPaymentDetails();
+  };
+  useBackgroundUpdater(bgUpdateHandler, defaultLoadTime);
 
   const [productImage, setProductImage] = useState({
     isLoaded: false,
@@ -452,260 +465,8 @@ function MyBagFinal() {
     return "null"; // All conditions false
   };
 
-  const PaymentSelectionHandler = ({ isPlayAble }) => {
 
-    useEffect(() => { }, [isPlayAble])
-
-    return (<div className="col-lg-5 col-md-4 col-sm-12">
-      {isPlayAble === 1 && total > 0 ? (
-        <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
-          <div className={Styles.ShipAdress}>
-            {buttonActive ? (
-              <p>
-                {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
-                {order?.Account?.address?.state}, {order?.Account?.address?.country} {order?.Account?.address?.postalCode}
-                <br />
-                {order?.Account?.address?.email} {order?.Account?.address?.contact && `{ |  ${order?.Account?.address?.contact}}`}
-              </p>
-            ) : (
-              <p>No Shipping Address</p>
-            )}
-          </div>
-          {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
-            <div className={Styles.PaymentType}>
-              <label className={Styles.shipLabelHolder}>Payment Type:</label>
-              <div className={Styles.PaymentTypeHolder}>
-                {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                  <div
-                    className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
-                    onClick={() => {
-                      setIsPlayAble(0);
-                      setPaymentValue(item);
-                    }}
-                  >
-                    <div className={Styles.labelHolder}>{item}</div>
-                  </div>
-                ))}{" "}
-                <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
-                  <div className={Styles.labelHolder}>Pay now</div>
-                </div>
-              </div>
-            </div>
-          ) : null}
-          {orderShipment.length > 0 ? (
-            <div className={Styles.PaymentType}>
-              <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
-              <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
-            </div>
-          ) : null}
-          <div className={Styles.ShipAdress2}>
-            <textarea
-              onKeyUp={(e) => {
-                keyBasedUpdateCart({ Note: e.target.value });
-              }}
-              placeholder="NOTE"
-              className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] "
-            >
-              {order?.Note}
-            </textarea>
-          </div>
-          {!PONumberFilled ? (
-            <ModalPage
-              open
-              content={
-                <>
-                  <div style={{ maxWidth: "309px" }}>
-                    <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
-                    <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
-                    <div className="d-flex justify-content-center">
-                      <button
-                        className={`${StylesModal.modalButton}`}
-                        onClick={() => {
-                          setPONumberFilled(true);
-                        }}
-                      >
-                        OK
-                      </button>
-                    </div>
-                  </div>
-                </>
-              }
-              onClose={() => {
-                setPONumberFilled(true);
-              }}
-            />
-          ) : null}
-          <div className={Styles.ShipBut}>
-            <button onClick={handleAccordian}>PROCEED TO PAY</button>
-          </div>
-        </CustomAccordion>
-      ) : (
-        <div className={Styles.ShippControl} style={{ padding: "5px 10px" }}>
-          <h2>Shipping Address</h2>
-
-          <div className={Styles.ShipAdress}>
-            {buttonActive ? (
-              <p>
-                {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
-                {order?.Account?.address?.state}, {order?.Account?.address?.country} {order?.Account?.address?.postalCode}
-                <br />
-                {order?.Account?.address?.email} {order?.Account?.address?.contact && `{ |  ${order?.Account?.address?.contact}}`}
-              </p>
-            ) : (
-              <p>No Shipping Address</p>
-            )}
-          </div>
-          {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200 ? (
-            <div className={Styles.PaymentType}>
-              <label className={Styles.shipLabelHolder}>Payment Type:</label>
-              <div className={Styles.PaymentTypeHolder}>
-                {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
-                  <div
-                    className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue == item ? Styles.selected : "") : Styles.selected) : ""}`}
-                    onClick={() => {
-                      setIsPlayAble(0);
-                      setPaymentValue(item);
-                    }}
-                  >
-                    <div className={Styles.labelHolder}>{item}</div>
-                  </div>
-                ))}{" "}
-                <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
-                  <div className={Styles.labelHolder}>Pay now</div>
-                </div>
-              </div>
-            </div>
-          ) : null}
-          {orderShipment.length > 0 ? (
-            <div className={Styles.ShipAdress}>
-              <div className={Styles.shipLabelHolder}>Select Shipping method</div>
-              <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
-            </div>
-          ) : null}
-          <div className={Styles.ShipAdress2}>
-            <textarea
-              onKeyUp={(e) => {
-                keyBasedUpdateCart({ Note: e.target.value });
-              }}
-              placeholder="NOTE"
-              className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] "
-            >
-              {order?.Note}
-            </textarea>
-          </div>
-          {!PONumberFilled ? (
-            <ModalPage
-              open
-              content={
-                <>
-                  <div style={{ maxWidth: "309px" }}>
-                    <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
-                    <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
-                    <div className="d-flex justify-content-center">
-                      <button
-                        className={`${StylesModal.modalButton}`}
-                        onClick={() => {
-                          setPONumberFilled(true);
-                        }}
-                      >
-                        OK
-                      </button>
-                    </div>
-                  </div>
-                </>
-              }
-              onClose={() => {
-                setPONumberFilled(true);
-              }}
-            />
-          ) : null}
-          <div className={Styles.ShipBut}>
-            <button
-              onClick={() => {
-                if (order?.items?.length) {
-                  if (PONumber.length) {
-                    if (order?.items?.length > 100) {
-                      setLimitCheck(true);
-                    } else {
-                      if (order.Account.discount.MinOrderAmount > total) {
-                        setAlert(1);
-                      } else {
-                        if (!order?.Account?.shippingMethod?.method && orderShipment?.length > 0) {
-                          setAlert(3);
-                          return;
-                        } else {
-                          // if (testerInBag && order.Account.discount.testerproductLimit > total) {
-                          //   setAlert(2);
-                          // } else {
-                          setConfirm(true);
-                          // }
-                        }
-                      }
-                    }
-                  } else {
-                    setPONumberFilled(false);
-                  }
-                }
-              }}
-              disabled={!buttonActive}
-            >
-              ${Number(total + total * (order?.Account?.shippingMethod?.cal || 0)).toFixed(2)} PLACE ORDER
-            </button>
-            <p
-              className={`${Styles.ClearBag}`}
-              style={{ textAlign: "center", cursor: "pointer" }}
-              onClick={() => {
-                if (buttonActive) {
-                  setClearConfim(true);
-                }
-              }}
-              disabled={!buttonActive}
-            >
-              Clear Bag
-            </p>
-            {/* {Number(total) ? null : window.location.reload()} */}
-          </div>
-        </div>
-      )}
-
-      {isPlayAble === 1 && total > 0 ? (
-        <CustomAccordion title="Payment Details" isOpen={paymentAccordian} onToggle={onToggle}>
-          <StripePay
-            description={order?.Note}
-            PO_Number={PONumber}
-            PK_KEY={paymentDetails.PK_KEY}
-            SK_KEY={paymentDetails.SK_KEY}
-            amount={total + total * (order?.Account?.shippingMethod?.cal || 0)}
-            order={order}
-            PONumber={PONumber}
-            orderDesc={orderDesc}
-            setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}
-          />
-        </CustomAccordion>
-      ) : null}
-
-      {isPlayAble == 1 && total > 0 ? (
-        <p
-          className={`${Styles.ClearBag}`}
-          style={{ textAlign: "center", cursor: "pointer" }}
-          onClick={() => {
-            if (buttonActive) {
-              setClearConfim(true);
-            }
-          }}
-          disabled={!buttonActive}
-        >
-          {paymentAccordian ? null : "Clear Bag"}
-        </p>
-      ) : null}
-      {paymentAccordian ? (
-        <p className={`${Styles.ClearBag}`} style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>
-          Edit Bag
-        </p>
-      ) : null}
-    </div>)
-  }
-
+  
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -966,7 +727,7 @@ function MyBagFinal() {
                       <b>
                         {buttonActive
                           ? // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                          PONumber
+                            PONumber
                           : "---"}
                       </b>
                     ) : (
@@ -1198,7 +959,256 @@ function MyBagFinal() {
                     </div>
                   </div>
 
-                  <PaymentSelectionHandler isPlayAble={isPlayAble} />
+                  <div className="col-lg-5 col-md-4 col-sm-12">
+                    {isPlayAble === 1 && total > 0 ? (
+                      <CustomAccordion title="Shipping Address" isOpen={detailsAccordian} onToggle={onToggle} isModalOpen={isAccordianOpen}>
+                        <div className={Styles.ShipAdress}>
+                          {buttonActive ? (
+                            <p>
+                              {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
+                              {order?.Account?.address?.state}, {order?.Account?.address?.country} {order?.Account?.address?.postalCode}
+                              <br />
+                              {order?.Account?.address?.email} {order?.Account?.address?.contact && `{ |  ${order?.Account?.address?.contact}}`}
+                            </p>
+                          ) : (
+                            <p>No Shipping Address</p>
+                          )}
+                        </div>
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200  ? (
+                          <div className={Styles.PaymentType}>
+                            <label className={Styles.shipLabelHolder}>Payment Type:</label>
+                            <div className={Styles.PaymentTypeHolder}>
+                              {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div
+                                  className={`${Styles.templateHolder} ${isPlayAble === 0 ? (paymentValue ? (paymentValue === item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  onClick={() => {
+                                    setIsPlayAble(0);
+                                    setPaymentValue(item);
+                                   
+                                  }}
+                                >
+                                  <div className={Styles.labelHolder}>{item}</div>
+                                </div>
+                              ))}{" "}
+                              <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder}>Pay now</div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+                        {orderShipment.length > 0 ? (
+                          <div className={Styles.PaymentType}>
+                            <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
+                          </div>
+                        ) : null}
+                        <div className={Styles.ShipAdress2}>
+                          <textarea
+                            onKeyUp={(e) => {
+                              keyBasedUpdateCart({ Note: e.target.value });
+                            }}
+                            placeholder="NOTE"
+                            className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] "
+                          >
+                            {order?.Note}
+                          </textarea>
+                        </div>
+                        {!PONumberFilled ? (
+                          <ModalPage
+                            open
+                            content={
+                              <>
+                                <div style={{ maxWidth: "309px" }}>
+                                  <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
+                                  <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
+                                  <div className="d-flex justify-content-center">
+                                    <button
+                                      className={`${StylesModal.modalButton}`}
+                                      onClick={() => {
+                                        setPONumberFilled(true);
+                                      }}
+                                    >
+                                      OK
+                                    </button>
+                                  </div>
+                                </div>
+                              </>
+                            }
+                            onClose={() => {
+                              setPONumberFilled(true);
+                            }}
+                          />
+                        ) : null}
+                        <div className={Styles.ShipBut}>
+                          <button onClick={handleAccordian}>PROCEED TO PAY</button>
+                        </div>
+                      </CustomAccordion>
+                    ) : (
+                      <div className={Styles.ShippControl} style={{ padding: "5px 10px" }}>
+                        <h2>Shipping Address</h2>
+
+                        <div className={Styles.ShipAdress}>
+                          {buttonActive ? (
+                            <p>
+                              {order?.Account?.address?.street}, {order?.Account?.address?.city} <br />
+                              {order?.Account?.address?.state}, {order?.Account?.address?.country} {order?.Account?.address?.postalCode}
+                              <br />
+                              {order?.Account?.address?.email} {order?.Account?.address?.contact && `{ |  ${order?.Account?.address?.contact}}`}
+                            </p>
+                          ) : (
+                            <p>No Shipping Address</p>
+                          )}
+                        </div>
+                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus===200 ? (
+                          <div className={Styles.PaymentType}>
+                            <label className={Styles.shipLabelHolder}>Payment Type:</label>
+                            <div className={Styles.PaymentTypeHolder}>
+                              {intentRes.accountManufacturerData?.[0]?.Payment_Type__c?.split(";")?.map((item) => (
+                                <div
+                                  className={`${Styles.templateHolder} ${isPlayAble == 0 ? (paymentValue ? (paymentValue === item ? Styles.selected : "") : Styles.selected) : ""}`}
+                                  onClick={() => {
+                                    setIsPlayAble(0);
+                                    setPaymentValue(item);
+                                  
+                                  }}
+                                >
+                                  <div className={Styles.labelHolder}>{item}</div>
+                                </div>
+                              ))}{" "}
+                              <div className={`${Styles.templateHolder} ${isPlayAble == 1 ? Styles.selected : ""}`} onClick={() => setIsPlayAble(1)}>
+                                <div className={Styles.labelHolder}>Pay now</div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+                        {orderShipment.length > 0 ? (
+                          <div className={Styles.ShipAdress}>
+                            <div className={Styles.shipLabelHolder}>Select Shipping method</div>
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
+                          </div>
+                        ) : null}
+                        <div className={Styles.ShipAdress2}>
+                          <textarea
+                            onKeyUp={(e) => {
+                              keyBasedUpdateCart({ Note: e.target.value });
+                            }}
+                            placeholder="NOTE"
+                            className="placeholder:font-[Arial-500] text-[14px] tracking-[1.12px] "
+                          >
+                            {order?.Note}
+                          </textarea>
+                        </div>
+                        {!PONumberFilled ? (
+                          <ModalPage
+                            open
+                            content={
+                              <>
+                                <div style={{ maxWidth: "309px" }}>
+                                  <h1 className={`fs-5 ${StylesModal.ModalHeader}`}>Warning</h1>
+                                  <p className={` ${StylesModal.ModalContent}`}> Please Enter PO Number</p>
+                                  <div className="d-flex justify-content-center">
+                                    <button
+                                      className={`${StylesModal.modalButton}`}
+                                      onClick={() => {
+                                        setPONumberFilled(true);
+                                      }}
+                                    >
+                                      OK
+                                    </button>
+                                  </div>
+                                </div>
+                              </>
+                            }
+                            onClose={() => {
+                              setPONumberFilled(true);
+                            }}
+                          />
+                        ) : null}
+                        <div className={Styles.ShipBut}>
+                          <button
+                            onClick={() => {
+                              if (order?.items?.length) {
+                                if (PONumber.length) {
+                                  if (order?.items?.length > 100) {
+                                    setLimitCheck(true);
+                                  } else {
+                                    if (order.Account.discount.MinOrderAmount > total) {
+                                      setAlert(1);
+                                    } else {
+                                      if (!order?.Account?.shippingMethod?.method && orderShipment?.length > 0) {
+                                        setAlert(3);
+                                        return;
+                                      } else {
+                                        // if (testerInBag && order.Account.discount.testerproductLimit > total) {
+                                        //   setAlert(2);
+                                        // } else {
+                                        setConfirm(true);
+                                        // }
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  setPONumberFilled(false);
+                                }
+                              }
+                            }}
+                            disabled={!buttonActive}
+                          >
+                            ${Number(total + total * (order?.Account?.shippingMethod?.cal || 0)).toFixed(2)} PLACE ORDER
+                          </button>
+                          <p
+                            className={`${Styles.ClearBag}`}
+                            style={{ textAlign: "center", cursor: "pointer" }}
+                            onClick={() => {
+                              if (buttonActive) {
+                                setClearConfim(true);
+                              }
+                            }}
+                            disabled={!buttonActive}
+                          >
+                            Clear Bag
+                          </p>
+                          {/* {Number(total) ? null : window.location.reload()} */}
+                        </div>
+                      </div>
+                    )}
+
+                    {isPlayAble === 1 && total > 0 ? (
+                      <CustomAccordion title="Payment Details" isOpen={paymentAccordian} onToggle={onToggle}>
+                        <StripePay
+                          description={order?.Note}
+                          PO_Number={PONumber}
+                          PK_KEY={paymentDetails.PK_KEY}
+                          SK_KEY={paymentDetails.SK_KEY}
+                          amount={total + total * (order?.Account?.shippingMethod?.cal || 0)}
+                          order={order}
+                          PONumber={PONumber}
+                          orderDesc={orderDesc}
+                          setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}
+                        />
+                      </CustomAccordion>
+                    ) : null}
+
+                    {isPlayAble == 1 && total > 0 ? (
+                      <p
+                        className={`${Styles.ClearBag}`}
+                        style={{ textAlign: "center", cursor: "pointer" }}
+                        onClick={() => {
+                          if (buttonActive) {
+                            setClearConfim(true);
+                          }
+                        }}
+                        disabled={!buttonActive}
+                      >
+                        {paymentAccordian ? null : "Clear Bag"}
+                      </p>
+                    ) : null}
+                    {paymentAccordian ? (
+                      <p className={`${Styles.ClearBag}`} style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>
+                        Edit Bag
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
