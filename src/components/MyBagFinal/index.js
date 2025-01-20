@@ -56,7 +56,7 @@ function MyBagFinal() {
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
   const [greenStatus, setGreenStatus] = useState();
-const [otherPayment , setOtherPayment] = useState(0)
+
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
@@ -158,7 +158,7 @@ const [otherPayment , setOtherPayment] = useState(0)
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && otherPayment ===0){
+          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null ){
             setIsPlayAble(1)
 
 
@@ -205,9 +205,7 @@ if(brandDetails){
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
-  console.log({hasPaymentType})
-  console.log({paymentDetails})
-  console.log({greenStatus})
+console.log({order})
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -986,7 +984,7 @@ if(brandDetails){
                                   onClick={() => {
                                     setIsPlayAble(0);
                                     setPaymentValue(item);
-                                    setOtherPayment(1)
+                                   
                                   }}
                                 >
                                   <div className={Styles.labelHolder}>{item}</div>
@@ -1071,7 +1069,7 @@ if(brandDetails){
                                   onClick={() => {
                                     setIsPlayAble(0);
                                     setPaymentValue(item);
-                                    setOtherPayment(1)
+                                  
                                   }}
                                 >
                                   <div className={Styles.labelHolder}>{item}</div>
