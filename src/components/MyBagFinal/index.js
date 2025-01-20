@@ -133,69 +133,62 @@ function MyBagFinal() {
     setLimitInput(event.target.value.slice(0, limit));
   };
   const fetchBrandPaymentDetails = async () => {
- 
     try {
       let id = order?.Manufacturer?.id;
       let AccountID = order?.Account?.id;
-      const user = await GetAuthData();
+      if (id && AccountID) {
+        const user = await GetAuthData();
 
-      const brandRes = await getBrandPaymentDetails({
-        key: user.data.x_access_token,
-        Id: id,
-        AccountId: AccountID,
-      });
+        const brandRes = await getBrandPaymentDetails({
+          key: user.data.x_access_token,
+          Id: id,
+          AccountId: AccountID,
+        }).then(async (brandRes) => {
+          console.log({ brandRes });
 
-      setIntentRes(brandRes);
+          setIntentRes(brandRes);
 
-      brandRes.accountManufacturerData.map((item) => setPaymentType(item.Payment_Type__c));
+          brandRes.accountManufacturerData.map((item) => setPaymentType(item.Payment_Type__c));
 
-      // Check for null keys
-      if (!brandRes?.brandDetails.Stripe_Secret_key_test__c || !brandRes?.brandDetails.Stripe_Publishable_key_test__c) {
-        setIsPlayAble(0);
-        console.log("Brand payment details are missing, skipping payment processing.");
-        return {
-          PK_KEY: null,
-          SK_KEY: null,
-        };
+          // Check for null keys
+          if (!brandRes?.brandDetails.Stripe_Secret_key_test__c || !brandRes?.brandDetails.Stripe_Publishable_key_test__c) {
+            setIsPlayAble(0);
+            console.log("Brand payment details are missing, skipping payment processing.");
+            return {
+              PK_KEY: null,
+              SK_KEY: null,
+            };
+          } else {
+            setIsPlayAble(1);
+          }
+
+          // let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
+
+          // setGreenStatus(paymentIntent);
+
+          // if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+          //   setIsPlayAble(1);
+          // } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+          //   setIsPlayAble(0);
+          //   console.log(isPlayAble, "is play able ");
+          // }
+
+          setPaymentDetails({
+            PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
+            SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
+          });
+
+          return {
+            PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
+            SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
+          };
+        })
       }
-
-      let paymentIntent = await fetch(`${originAPi}/stripe/payment-intent`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: "100",
-          paymentId: brandRes?.brandDetails.Stripe_Secret_key_test__c,
-        }),
-      });
-
-      setGreenStatus(paymentIntent.status);
-      if (paymentIntent.status === 200 && paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
-        setIsPlayAble(1);
-      } else if (paymentIntent.status === 400 ||  paymentDetails.PK_KEY !==  paymentDetails.SK_KEY) {
-        setIsPlayAble(0);
-        console.log(isPlayAble, "is play able ");
-      }
-
-      setPaymentDetails({
-        PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
-        SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
-      });
-      
-
-      return {
-        PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
-        SK_KEY: brandRes?.brandDetails.Stripe_Secret_key_test__c,
-      };
     } catch (error) {
       console.log("Error fetching brand payment details:", error);
       return null;
     }
-    finally{
-      
-     }
-  }
+  };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
 useEffect(()=>{
 if(brandDetails){
@@ -231,7 +224,6 @@ if(brandDetails){
     try {
       await order?.Account?.id;
       const res = await POGenerator({ orderDetails: order });
-      let data = await fetchBrandPaymentDetails();
 
       if (res) {
         if (res?.address || res?.brandShipping) {
@@ -265,15 +257,14 @@ if(brandDetails){
           poInit = `PRE-${poInit}`;
         }
         setPONumber(poInit);
-        setIsLoading(false);
       }
-     ;
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching PO number:", error);
       setIsLoading(false);
-      
     }
   };
+
 
   useEffect(() => {
     fetchCart();
