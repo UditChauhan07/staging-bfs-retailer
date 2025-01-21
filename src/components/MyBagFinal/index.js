@@ -63,7 +63,8 @@ function MyBagFinal() {
     }
   }, [order, buttonActive]);
 
-  // console.log({order});
+  let data = localStorage.getItem("Api Data")
+  console.log(data.email)
   
 
   useEffect(() => {
@@ -158,7 +159,8 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null ){
+          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
+!== "pre-order"          ){
             setIsPlayAble(1)
 
 

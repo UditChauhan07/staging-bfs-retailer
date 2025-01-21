@@ -42,12 +42,13 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
         setLoading(true);
         setErrorMessage('');
         setCardErrors({});
-
+        var user = await GetAuthData()
+       
         const cardElement = elements.getElement(CardNumberElement);
         const { paymentMethod, error } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardElement,
-            billing_details: { name: cardHolderName },
+            billing_details: { name: cardHolderName , email : user?.data?.email  },
         });
 
         if (error) {
