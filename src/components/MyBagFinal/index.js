@@ -276,9 +276,9 @@ if(brandDetails){
     fetchCart();
 
     FetchPoNumber();
-  }, [isSelect]);
+  }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
-    FetchPoNumber();
+    // FetchPoNumber();
     fetchBrandPaymentDetails();
   };
   useBackgroundUpdater(bgUpdateHandler, defaultLoadTime);
