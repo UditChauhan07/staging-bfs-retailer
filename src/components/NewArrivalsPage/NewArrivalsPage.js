@@ -16,6 +16,8 @@ import { DeleteIcon } from "../../lib/svg";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 function NewArrivalsPage({ productList, selectBrand, brand, month, isLoaded, to = null, accountDetails,currentPage,setCurrentPage }) {
   const { updateProductQty, addOrder, removeProduct, isProductCarted } = useCart();
+  console.log({productList})
+
   const navigate = useNavigate();
   const [productDetailId, setProductDetailId] = useState();
   const [modalShow, setModalShow] = useState(false);
