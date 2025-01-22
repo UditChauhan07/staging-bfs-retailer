@@ -207,7 +207,7 @@ if(brandDetails){
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
-console.log({order})
+
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -278,7 +278,7 @@ console.log({order})
     FetchPoNumber();
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
-    FetchPoNumber();
+    // FetchPoNumber();
     fetchBrandPaymentDetails();
   };
   useBackgroundUpdater(bgUpdateHandler, defaultLoadTime);
@@ -466,6 +466,8 @@ console.log({order})
     }
     return "null"; // All conditions false
   };
+    const filteredShipments = orderShipment.filter((shipment) => !shipment.own);
+  const ownShipment = orderShipment.find((shipment) => shipment.own);
 
 
   
@@ -1001,7 +1003,10 @@ console.log({order})
                         {orderShipment.length > 0 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                            isOwnShipment = {
+                              ownShipment}
+                            />
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>
@@ -1086,7 +1091,10 @@ console.log({order})
                         {orderShipment.length > 0 ? (
                           <div className={Styles.ShipAdress}>
                             <div className={Styles.shipLabelHolder}>Select Shipping method</div>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect} />
+                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                            isOwnShipment = {
+                              ownShipment}
+                            />
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>
