@@ -91,6 +91,8 @@ function MyBagFinal() {
     "TERMS:PAY",
     "TERMS:SHO",
     "TERMS:UNK",
+    "Check" , 
+    "Wire"
   ];
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
