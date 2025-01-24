@@ -56,7 +56,42 @@ function MyBagFinal() {
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
   const [greenStatus, setGreenStatus] = useState();
-
+  const terms = [
+    "Net",
+    "terms:2%",
+    "TERMS:215",
+    "TERMS:210",
+    "TERMS:245",
+    "TERMS:410",
+    "TERMS:50%",
+    "TERMS:505",
+    "TERMS:AFT",
+    "TERMS:AMA",
+    "TERMS:BR",
+    "TERMS:BRA",
+    "TERMS:CAT",
+    "TERMS:COD",
+    "TERMS:DIS",
+    "TERMS:F30",
+    "TERMS:FA3",
+    "TERMS:GIF",
+    "TERMS:KLA",
+    "TERMS:LOG",
+    "TERMS:N12",
+    "TERMS:N15",
+    "TERMS:N20",
+    "TERMS:N30",
+    "TERMS:N45",
+    "TERMS:N60",
+    "TERMS:N75",
+    "TERMS:N90",
+    "TERMS:NO",
+    "TERMS:NT",
+    "TERMS:OFF",
+    "TERMS:PAY",
+    "TERMS:SHO",
+    "TERMS:UNK",
+  ];
   useEffect(() => {
     if (order?.Account?.id && order?.Manufacturer?.id && order?.items?.length > 0) {
       setButtonActive(true);
@@ -148,7 +183,10 @@ function MyBagFinal() {
           console.log({ brandRes });
 
           setIntentRes(brandRes);
-
+        
+          // Check paymentIntent status and payment types
+          const paymentTypes = brandRes.accountManufacturerData.map((item) => item.Payment_Type__c);
+          const hasNetPaymentType = paymentTypes.some((type) => terms.some((term) => type?.toLowerCase().startsWith(term.toLowerCase())));
           brandRes.accountManufacturerData.map((item) => setPaymentType(item.Payment_Type__c));
 
           // Check for null keys
@@ -160,10 +198,8 @@ function MyBagFinal() {
               SK_KEY: null,
             };
           } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
-!== "pre-order"          ){
+           !== "pre-order" && !hasNetPaymentType ) {
             setIsPlayAble(1)
-
-
           }
           
 
@@ -171,7 +207,7 @@ function MyBagFinal() {
 
           setGreenStatus(paymentIntent);
 
-          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY && !hasNetPaymentType) {
             setIsPlayAble(1);
           } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
             setIsPlayAble(0);
@@ -978,7 +1014,7 @@ if(brandDetails){
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200  ? (
+                        {/* {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus === 200  ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
@@ -999,7 +1035,7 @@ if(brandDetails){
                               </div>
                             </div>
                           </div>
-                        ) : null}
+                        ) : null} */}
                         {orderShipment.length > 0 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
@@ -1066,7 +1102,7 @@ if(brandDetails){
                             <p>No Shipping Address</p>
                           )}
                         </div>
-                        {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus===200 ? (
+                        {/* {hasPaymentType && paymentDetails.PK_KEY != null && paymentDetails.SK_KEY != null && total > 0 && greenStatus===200 ? (
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Payment Type:</label>
                             <div className={Styles.PaymentTypeHolder}>
@@ -1087,7 +1123,7 @@ if(brandDetails){
                               </div>
                             </div>
                           </div>
-                        ) : null}
+                        ) : null} */}
                         {orderShipment.length > 0 ? (
                           <div className={Styles.ShipAdress}>
                             <div className={Styles.shipLabelHolder}>Select Shipping method</div>
