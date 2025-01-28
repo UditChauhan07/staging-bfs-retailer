@@ -167,7 +167,7 @@ function MyBagFinal() {
   };
 
   const handleNameChange = (event) => {
-    const limit = 20;
+    const limit = 10;
     setLimitInput(event.target.value.slice(0, limit));
   };
   const fetchBrandPaymentDetails = async () => {
