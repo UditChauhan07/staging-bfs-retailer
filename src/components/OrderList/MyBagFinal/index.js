@@ -337,7 +337,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
-                                    {/* <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
+                                    <div className={Styles.Mainbox2} style={{ cursor: 'pointer' }}>
                                       {
                                         !productImage.isLoaded ? <LoaderV2 /> :
                                           item?.ProductImage ? <img src={item.ProductImage} className="zoomInEffect 1111" alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} /> :
@@ -347,7 +347,7 @@ function MyBagFinal({ setOrderDetail, generateXLSX, generatePdfServerSide }) {
                                                 : <img src={productImage.images[item.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                               : <img src={"/assets/images/dummy.png"} alt="img" onClick={() => { setProductDetailId(item?.Product2Id) }} />
                                       }
-                                    </div> */}
+                                    </div>
                                     <div className={Styles.Mainbox3}>
                                       <h2 onClick={() => { setProductDetailId(item?.Product2Id) }} style={{ cursor: 'pointer' }}>{item.Name.split(OrderData.Name)}</h2>
                                       <p>
