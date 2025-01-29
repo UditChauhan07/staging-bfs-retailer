@@ -271,7 +271,7 @@ const Accordion = ({
                                   className={styles.ControlStyle}
                                   style={{ cursor: "pointer" }}
                                 >
-                                  {value.ContentDownloadUrl ? (
+                                  {/* {value.ContentDownloadUrl ? (
                                     <img
                                       src={value.ContentDownloadUrl}
                                       className="zoomInEffect"
@@ -338,8 +338,8 @@ const Accordion = ({
                                       }
                                       width={50}
                                     />
-                                  )}
-                                  {/* {!productImage.isLoaded?<LoaderV2/>:productImage.images[value.ProductCode]?<img src={productImage.images[value.ProductCode]?.ContentDownloadUrl?productImage.images[value.ProductCode]?.ContentDownloadUrl:productImage.images[value.ProductCode]} alt="img" width={35} />:<img src={Img1} alt="img" />} */}
+                                  )} */}
+                                  
                                 </td>
                                 <td
                                   className="text-capitalize linkEffect"
