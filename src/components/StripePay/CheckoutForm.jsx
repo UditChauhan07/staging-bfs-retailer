@@ -50,6 +50,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
             card: cardElement,
             billing_details: { name: cardHolderName , email : user?.data?.email  },
         });
+        localStorage.setItem('isEditaAble' , 1)
 
         if (error) {
             setErrorMessage(error.message);
@@ -72,6 +73,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
         } else {
             setErrorMessage("Payment failed. Please try again.");
+           localStorage.removeItem("isEditaAble")
         }
 
         setLoading(false);
@@ -141,6 +143,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                 }
                             }).then(() => {
                                 deleteOrder();
+                                  localStorage.removeItem("isEditaAble")
                                 window.location.href = window.location.origin + '/orderDetails';
                             });
                         }

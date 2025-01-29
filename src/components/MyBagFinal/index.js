@@ -103,7 +103,7 @@ function MyBagFinal() {
   let data = localStorage.getItem("Api Data")
   console.log(data.email)
   
-
+  const editValue = localStorage.getItem("isEditaAble")
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
       setIsPlayAble(0);
@@ -506,7 +506,10 @@ if(brandDetails){
   };
     const filteredShipments = orderShipment.filter((shipment) => !shipment.own);
   const ownShipment = orderShipment.find((shipment) => shipment.own);
-
+const onStatusModalClick = ()=>{
+  setorderStatus({ status: false, message: "" }) 
+  localStorage.removeItem("isEditaAble")
+}
 
   
   if (isOrderPlaced === 1) return <OrderLoader />;
@@ -717,7 +720,7 @@ if(brandDetails){
                         lineHeight: "normal",
                         width: "100px",
                       }}
-                      onClick={() => setorderStatus({ status: false, message: "" })}
+                      onClick={onStatusModalClick}
                     >
                       OK
                     </button>
@@ -1253,7 +1256,7 @@ if(brandDetails){
                         {paymentAccordian ? null : "Clear Bag"}
                       </p>
                     ) : null}
-                    {paymentAccordian ? (
+                    {paymentAccordian && !editValue ? (
                       <p className={`${Styles.ClearBag}`} style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>
                         Edit Bag
                       </p>
