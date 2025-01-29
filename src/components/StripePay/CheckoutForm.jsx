@@ -86,7 +86,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
         }
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
-            setPaymentSuccess(true);
+         
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
         } else {
             setErrorMessage("Payment failed. Please try again.");
@@ -150,6 +150,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                 "OpportunityId",
                                 JSON.stringify(response.orderId)
                             );
+                            setPaymentSuccess(true);
                             Swal.fire({
                                 title: 'Payment Successful!',
                                 text: 'Your payment is successful and order has been placed.',
