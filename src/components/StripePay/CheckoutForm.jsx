@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { GetAuthData, OrderPlaced } from '../../lib/store';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { useCart } from "../../context/CartContent";
@@ -17,7 +17,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
     const [cardErrors, setCardErrors] = useState({});
     const { order, deleteOrder } = useCart();
     const [orderDesc, setOrderDesc] = useState(null);
-
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
     const handleCardInput = (event) => {
         const { error, elementType } = event;
 
@@ -34,6 +34,22 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
             }));
         }
     };
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (!paymentSuccess) {
+                const message = "If you reload, the data you entered will be lost, and your payment has not been processed successfully.";
+                event.preventDefault();
+                event.returnValue = message;  // Standard way to display message
+                return message;  // For some browsers like Chrome
+            }
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+    
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [paymentSuccess]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -70,6 +86,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
         }
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
+            setPaymentSuccess(true);
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
         } else {
             setErrorMessage("Payment failed. Please try again.");
