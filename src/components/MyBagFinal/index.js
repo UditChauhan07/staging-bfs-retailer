@@ -103,7 +103,7 @@ function MyBagFinal() {
   let data = localStorage.getItem("Api Data")
   console.log(data.email)
   
-
+  const editValue = localStorage.getItem("isEditaAble")
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
       setIsPlayAble(0);
@@ -506,7 +506,10 @@ if(brandDetails){
   };
     const filteredShipments = orderShipment.filter((shipment) => !shipment.own);
   const ownShipment = orderShipment.find((shipment) => shipment.own);
-
+const onStatusModalClick = ()=>{
+  setorderStatus({ status: false, message: "" }) 
+  localStorage.removeItem("isEditaAble")
+}
 
   
   if (isOrderPlaced === 1) return <OrderLoader />;
@@ -717,7 +720,7 @@ if(brandDetails){
                         lineHeight: "normal",
                         width: "100px",
                       }}
-                      onClick={() => setorderStatus({ status: false, message: "" })}
+                      onClick={onStatusModalClick}
                     >
                       OK
                     </button>
@@ -832,15 +835,8 @@ if(brandDetails){
                               return (
                                 <div className={Styles.Mainbox}>
                                   <div className={Styles.Mainbox1M}>
-                                    <div className={Styles.Mainbox2} style={{ cursor: "pointer" }}>
-                                      {/* {
-                                        ele?.ContentDownloadUrl ? <img src={ele?.ContentDownloadUrl} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} /> : ele?.ProductImage ? <img src={ele?.ProductImage} f className="zoomInEffect" alt="img" width={50} onClick={() => { setProductDetailId(ele?.Id) }} /> : !productImage.isLoaded ? <LoaderV2 /> :
-                                          productImage.images?.[ele?.ProductCode] ?
-                                            productImage.images[ele?.ProductCode]?.ContentDownloadUrl ?
-                                              <img src={productImage.images[ele?.ProductCode]?.ContentDownloadUrl} alt="img" width={25} onClick={() => { setProductDetailId(ele?.Id) }} />
-                                              : <img src={productImage.images[ele?.ProductCode]} alt="img" width={25} onClick={() => { setProductDetailId(ele?.Id) }} />
-                                            : <img src={Img1} alt="img" onClick={() => { setProductDetailId(ele?.Id) }} />
-                                      } */}
+                                    {/* <div className={Styles.Mainbox2} style={{ cursor: "pointer" }}>
+                                     
 
                                       {ele?.ContentDownloadUrl ? (
                                         <img
@@ -903,7 +899,7 @@ if(brandDetails){
                                           <img src={Img1}></img>
                                         </span>
                                       )}
-                                    </div>
+                                    </div> */}
                                     <div className={Styles.Mainbox3}>
                                       <h2
                                         onClick={() => {
@@ -1253,7 +1249,7 @@ if(brandDetails){
                         {paymentAccordian ? null : "Clear Bag"}
                       </p>
                     ) : null}
-                    {paymentAccordian ? (
+                    {paymentAccordian && !editValue ? (
                       <p className={`${Styles.ClearBag}`} style={{ textAlign: "center", cursor: "pointer" }} onClick={onToggle}>
                         Edit Bag
                       </p>

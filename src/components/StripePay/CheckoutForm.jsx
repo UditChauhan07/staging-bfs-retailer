@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { GetAuthData, OrderPlaced } from '../../lib/store';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { useCart } from "../../context/CartContent";
@@ -15,9 +15,9 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
     const [cardHolderName, setCardHolderName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [cardErrors, setCardErrors] = useState({});
-    const { order, deleteOrder } = useCart();
+    const { order, deleteOrder , deleteCartForever } = useCart();
     const [orderDesc, setOrderDesc] = useState(null);
-
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
     const handleCardInput = (event) => {
         const { error, elementType } = event;
 
@@ -34,6 +34,22 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
             }));
         }
     };
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (!paymentSuccess) {
+                const message = "If you reload, the data you entered will be lost, and your payment has not been processed successfully.";
+                event.preventDefault();
+                event.returnValue = message;  // Standard way to display message
+                return message;  // For some browsers like Chrome
+            }
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+    
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [paymentSuccess]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -50,6 +66,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
             card: cardElement,
             billing_details: { name: cardHolderName , email : user?.data?.email  },
         });
+        localStorage.setItem('isEditaAble' , 1)
 
         if (error) {
             setErrorMessage(error.message);
@@ -69,9 +86,11 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
         }
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
+         
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
         } else {
             setErrorMessage("Payment failed. Please try again.");
+           localStorage.removeItem("isEditaAble")
         }
 
         setLoading(false);
@@ -131,6 +150,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                 "OpportunityId",
                                 JSON.stringify(response.orderId)
                             );
+                            setPaymentSuccess(true);
                             Swal.fire({
                                 title: 'Payment Successful!',
                                 text: 'Your payment is successful and order has been placed.',
@@ -140,8 +160,14 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                     confirmButton: 'swal2-confirm'
                                 }
                             }).then(() => {
+                                localStorage.removeItem("isEditaAble")
                                 deleteOrder();
-                                window.location.href = window.location.origin + '/orderDetails';
+                                deleteCartForever()
+                                 
+                                setTimeout(()=>{
+                                    window.location.href = window.location.origin + '/orderDetails';
+                                },[800])
+                               
                             });
                         }
                     }
