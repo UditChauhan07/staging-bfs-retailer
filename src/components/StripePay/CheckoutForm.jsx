@@ -15,7 +15,7 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
     const [cardHolderName, setCardHolderName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [cardErrors, setCardErrors] = useState({});
-    const { order, deleteOrder } = useCart();
+    const { order, deleteOrder , deleteCartForever } = useCart();
     const [orderDesc, setOrderDesc] = useState(null);
     const [paymentSuccess, setPaymentSuccess] = useState(false);
     const handleCardInput = (event) => {
@@ -160,9 +160,14 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                     confirmButton: 'swal2-confirm'
                                 }
                             }).then(() => {
+                                localStorage.removeItem("isEditaAble")
                                 deleteOrder();
-                                  localStorage.removeItem("isEditaAble")
-                                window.location.href = window.location.origin + '/orderDetails';
+                                deleteCartForever()
+                                 
+                                setTimeout(()=>{
+                                    window.location.href = window.location.origin + '/orderDetails';
+                                },[800])
+                               
                             });
                         }
                     }
