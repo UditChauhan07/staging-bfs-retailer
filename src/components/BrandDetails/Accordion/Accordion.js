@@ -203,7 +203,7 @@ const Accordion = ({
           <table className="table table-hover ">
             <thead>
               <tr>
-                <th>Image</th>
+                {/* <th>Image</th> */}
                 <th style={{ width: "200px" }}>Title</th>
                 <th>Product Code</th>
                 <th>UPC</th>
@@ -267,10 +267,10 @@ const Accordion = ({
                                 className={`${styles.ControlTR} w-full `}
                                 key={indexed}
                               >
-                                <td
+                                {/* <td
                                   className={styles.ControlStyle}
                                   style={{ cursor: "pointer" }}
-                                >
+                                > */}
                                   {/* {value.ContentDownloadUrl ? (
                                     <img
                                       src={value.ContentDownloadUrl}
@@ -340,7 +340,7 @@ const Accordion = ({
                                     />
                                   )} */}
                                   
-                                </td>
+                                {/* </td> */}
                                 <td
                                   className="text-capitalize linkEffect"
                                   style={{
