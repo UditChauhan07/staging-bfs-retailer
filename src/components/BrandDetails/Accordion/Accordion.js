@@ -204,7 +204,7 @@ const Accordion = ({
             <thead>
               <tr>
                 {/* <th>Image</th> */}
-                <th style={{ width: "200px" }}>Title</th>
+                <th style={{ width: "200px" ,  paddingLeft :"22px" }}>Title</th>
                 <th>Product Code</th>
                 <th>UPC</th>
                 <th>List Price</th>
@@ -346,6 +346,7 @@ const Accordion = ({
                                   style={{
                                     fontSize: "13px",
                                     cursor: "pointer",
+                                    paddingLeft :"22px"
                                   }}
                                   onMouseEnter={() =>
                                     setShowName({ index: indexed, type: true })
