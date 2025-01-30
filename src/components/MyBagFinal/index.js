@@ -1229,7 +1229,7 @@ const onStatusModalClick = ()=>{
                           PONumber={PONumber}
                           orderDesc={orderDesc}
                           setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}
-                          AccountName = {order.Account.name}
+                          AccountName = {order.Account?.name}
                             AccountNumber = {intentRes?.accountNumber?.Account_Number__c}
                         />
                       </CustomAccordion>
