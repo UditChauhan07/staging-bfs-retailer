@@ -151,10 +151,15 @@ const OrderListPage = () => {
               label="All Store"
               value={account ? account.length ? account[0] : null : null}
 
-              options={[...accountList.map((month, i) => ({
-                label: month.Name,
-                value: month.Id,
-              })), { label: 'All Store', value: null }]}
+              options={[
+                { label: "All Store", value: null }, // "All Store" first
+                ...[...accountList]
+                  .sort((a, b) => a.Name.localeCompare(b.Name)) // Sorting accountList alphabetically
+                  .map((month) => ({
+                    label: month.Name,
+                    value: month.Id,
+                  })),
+              ]}
               onChange={(value) => {
                 if (value) {
                   orderListHandler([value], filterValue.month);

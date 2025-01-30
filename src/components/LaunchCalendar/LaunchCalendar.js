@@ -100,6 +100,12 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
         />
     );
 };
+const checkAllContentEmpty = (filteredData) => {
+  return filteredData?.every(month => month.content.length === 0);
+}
+
+const resultOfFilter = checkAllContentEmpty(filterData);
+
   return (
     <div id="Calendar">
       <div className="container">
@@ -107,7 +113,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
         <div className="row">
           <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ">
             <ul className="timeline mt-4 mr-4" id="CalenerContainer">
-              {productList.length >0 ? (
+              {!resultOfFilter ? (
                 filterData?.map((month, index) => {
                   if (month.content.length) {
                     return (

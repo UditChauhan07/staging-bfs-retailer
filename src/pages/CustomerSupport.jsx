@@ -154,17 +154,20 @@ const CustomerSupport = () => {
              />
             : null}
        
-          <FilterItem
-            label="Status"
-            name="Status"
-            value={status.length ? status[0] : null}
-            options={statusList?.map((status) => ({
-              label: status,
-              value: status
-            }))}
-            minWidth={'200px'}
-            onChange={(value) => setStatus([value])}
-          />
+       <FilterItem
+  label="Status"
+  name="Status"
+  value={status.length ? status[0] : null}
+  options={statusList
+    .sort((a, b) => a.localeCompare(b))  // Sort alphabetically
+    .map((status) => ({
+      label: status,
+      value: status
+    }))
+  }
+  minWidth={'200px'}
+  onChange={(value) => setStatus([value])}
+/>
           <FilterSearch
             onChange={(e) => setSearchBy(e.target.value)}
             value={searchBy}

@@ -84,7 +84,7 @@ const MarketingCalendar = () => {
     return () => {
       dataStore.subscribe(location.pathname + JSON.stringify(selectYear), (data) => { setProductList(data?.list); setIsloaed(true); });
     }
-  }, [selectYear])
+  }, [selectBrand, selectYear, month, isLoaded])
 
   useBackgroundUpdater(handlePageData,defaultLoadTime)
 
