@@ -101,7 +101,7 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
     );
 };
 const checkAllContentEmpty = (filteredData) => {
-  return filteredData.every(month => month.content.length === 0);
+  return filteredData?.every(month => month.content.length === 0);
 }
 
 const resultOfFilter = checkAllContentEmpty(filterData);
