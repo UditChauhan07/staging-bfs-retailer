@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { GetAuthData, OrderPlaced } from '../../lib/store';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { useCart } from "../../context/CartContent";
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import './style.css'
 import { originAPi } from '../../lib/store';
 import axios from 'axios';
-const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
+const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisabled = null, setorderStatus = null }) => {
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
@@ -15,9 +15,9 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
     const [cardHolderName, setCardHolderName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [cardErrors, setCardErrors] = useState({});
-    const { order, deleteOrder } = useCart();
+    const { order, deleteOrder , deleteCartForever } = useCart();
     const [orderDesc, setOrderDesc] = useState(null);
-
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
     const handleCardInput = (event) => {
         const { error, elementType } = event;
 
@@ -34,6 +34,22 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
             }));
         }
     };
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (!paymentSuccess) {
+                const message = "If you reload, the data you entered will be lost, and your payment has not been processed successfully.";
+                event.preventDefault();
+                event.returnValue = message;  // Standard way to display message
+                return message;  // For some browsers like Chrome
+            }
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+    
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [paymentSuccess]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -42,13 +58,15 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
         setLoading(true);
         setErrorMessage('');
         setCardErrors({});
-
+        var user = await GetAuthData()
+       
         const cardElement = elements.getElement(CardNumberElement);
         const { paymentMethod, error } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardElement,
-            billing_details: { name: cardHolderName },
+            billing_details: { name: cardHolderName , email : user?.data?.email  },
         });
+        localStorage.setItem('isEditaAble' , 1)
 
         if (error) {
             setErrorMessage(error.message);
@@ -68,21 +86,11 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
         }
 
         if (paymentIntent && paymentIntent.status === 'succeeded') {
+         
             await orderPlaceHandler(paymentIntent.status, paymentIntent.id);
-            Swal.fire({
-                title: 'Payment Successful!',
-                text: 'Your payment is successful and order has been placed.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'swal2-confirm'
-                }
-            }).then( () => {
-                 deleteOrder();
-                window.location.href = window.location.origin+'/orderDetails';
-            });
         } else {
             setErrorMessage("Payment failed. Please try again.");
+           localStorage.removeItem("isEditaAble")
         }
 
         setLoading(false);
@@ -127,18 +135,43 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes }) => {
                         Payment_Status__c: paymentStatus,
                         Transaction_ID__c: paymentId
                     };
-                   
+
                     const response = await OrderPlaced({ order: orderData, cartId: order.id });
-                    if (response?.orderId) {
-
-                        localStorage.setItem(
-                            "OpportunityId",
-                            JSON.stringify(response.orderId)
-                        );
-                     
-
+                    if (response) {
+                        if (response?.err) {
+                            setIsDisabled?.(false);
+                            setorderStatus?.({
+                                status: true,
+                                message: response?.err[0].message,
+                            });
+                        }
+                        if (response?.orderId) {
+                            localStorage.setItem(
+                                "OpportunityId",
+                                JSON.stringify(response.orderId)
+                            );
+                            setPaymentSuccess(true);
+                            Swal.fire({
+                                title: 'Payment Successful!',
+                                text: 'Your payment is successful and order has been placed.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    confirmButton: 'swal2-confirm'
+                                }
+                            }).then(() => {
+                                localStorage.removeItem("isEditaAble")
+                                deleteOrder();
+                                deleteCartForever()
+                                 
+                                setTimeout(()=>{
+                                    window.location.href = window.location.origin + '/orderDetails';
+                                },[800])
+                               
+                            });
+                        }
                     }
-                    else{
+                    else {
                         Swal.fire({
                             title: 'Order Creation fail',
                             text: 'Your payment is successful and order has not been placed.',

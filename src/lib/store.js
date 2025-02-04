@@ -1,8 +1,8 @@
 import axios from "axios";
 export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
-// export const originAPi = "https://dev.beautyfashionsales.com"
-// export const originAPi = "http://localhost:2611"
-// export const originAPi = "https://live.beautyfashionsales.com"
+
+// export const originAPi = "http://localhost:5001"
+
 export const defaultLoadTime = 1800000;
 
 let url = `${originAPi}/retailer/`;
@@ -89,6 +89,34 @@ export async function getBrandPaymentDetails({ key, Id, AccountId }) {
     return data.data || {};
   }
 }
+export async function checkPaymentKey({ paymentId }) {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  try {
+    let response = await fetch(originAPi + "/stripe/payment-intent", {
+      method: "POST",
+      body: JSON.stringify({
+        amount: "100",
+        paymentId,
+      }),
+      headers: headersList,
+    });
+
+    // Check if the response is ok (status in the range 200-299)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Return the status code
+    return response.status;
+  } catch (error) {
+    console.error("Error checking payment key:", error);
+    throw error; // Rethrow the error for further handling if needed
+  }
+}
 
 export async function POGenerator({ orderDetails }) {
 
@@ -96,16 +124,24 @@ export async function POGenerator({ orderDetails }) {
     if (orderDetails.Manufacturer?.id && orderDetails.Account?.id) {
 
       let date = new Date();
-
+      const sanitizeString = (str) =>
+        str
+          .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+          .replace(/\s+/g, " ")          // Replace multiple spaces with a single space
+          .trim(); 
+      const sanitizedAccountName = sanitizeString(orderDetails.Account?.name || "");
+      const sanitizedManufacturerName = sanitizeString(orderDetails.Manufacturer?.name || "");
+  
       //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
       const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+       
         body: JSON.stringify({
-          accountName: orderDetails.Account?.name,
-          manufacturerName: orderDetails.Manufacturer?.name,
+          accountName: sanitizedAccountName,
+          manufacturerName: sanitizedManufacturerName,
           orderDate: date.toISOString(),
           accountId: orderDetails.Account?.id,
           manufacturerId: orderDetails.Manufacturer?.id

@@ -302,10 +302,12 @@ const SalesReport = () => {
                 label="All Store"
                 value={JSON.parse(accountIds).length == 1 ? JSON.parse(accountIds)[0] : null}
 
-                options={[...accountList.map((month, i) => ({
+                options={[
+                  { label: 'All Accounts', value: null } , 
+                  ...accountList.map((month, i) => ({
                   label: month.Name,
                   value: month.Id,
-                })), { label: 'All Accounts', value: null }]}
+                })), ]}
                 onChange={(value) => {
                   if (value) {
                     setAccountids(JSON.stringify([value]));

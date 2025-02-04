@@ -41,6 +41,8 @@ import { CartProvider } from "./context/CartContent";
 import CartHover from "./components/CartHover";
 import ProductPage from "./components/ProductPage/ProductPage";
 import { AnimatePresence } from 'framer-motion';
+import ThankYou from "./pages/ThankYou";
+import Failed from "./pages/Failed";
 function App() {
   return (
     <AnimatePresence>
@@ -86,6 +88,8 @@ function App() {
               <Route path="/Brand/:id" element={<BrandDetails />} />
               <Route path="/productPage/:id" element={<ProductPage />} />
               <Route path="/logout" element={<Logout />}></Route>
+              <Route path="/thank-you" element={<ThankYou />}></Route>
+              <Route path="/payment-failed" element={<Failed />}></Route>
               <Route path="*" element={<PageNotFound />}></Route>
             </Routes>
           </BrowserRouter>

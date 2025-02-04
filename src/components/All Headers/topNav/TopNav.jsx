@@ -21,7 +21,7 @@ const TopNav = () => {
 
   useEffect(()=>{
     GetAuthData().then((user)=>{      
-      setUserName(user?.data?.firstName +" "+ user?.data?.lastName)
+      setUserName((user?.data?.firstName || "") + " " + (user?.data?.lastName || ""));
       getSessionStatus({key:user.data?.x_access_token,retailerId:user.data?.retailerId}).then((status)=>{
 
       }).catch((statusErr)=>{
