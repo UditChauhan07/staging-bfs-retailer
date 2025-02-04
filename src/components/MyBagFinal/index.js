@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails , checkPaymentKey } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails, checkPaymentKey, getProductList } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -71,7 +71,7 @@ function MyBagFinal() {
     "TERMS:BRA",
     "TERMS:CAT",
     "TERMS:COD",
-   
+
     "TERMS:F30",
     "TERMS:FA3",
     "TERMS:GIF",
@@ -91,7 +91,7 @@ function MyBagFinal() {
     "TERMS:PAY",
     "TERMS:SHO",
     "TERMS:UNK",
-    "Check" , 
+    "Check",
     "Wire"
   ];
   useEffect(() => {
@@ -102,13 +102,13 @@ function MyBagFinal() {
 
   let data = localStorage.getItem("Api Data")
   console.log(data.email)
-  
+
   const editValue = localStorage.getItem("isEditaAble")
   useEffect(() => {
-    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null   ) {
+    if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
       setIsPlayAble(0);
     }
-    else if (paymentDetails.PK_KEY ===  paymentDetails.SK_KEY){
+    else if (paymentDetails.PK_KEY === paymentDetails.SK_KEY) {
       setIsPlayAble(0);
     }
   }, [paymentDetails]);
@@ -129,6 +129,25 @@ function MyBagFinal() {
     };
   }, []);
   const handleAccordian = () => {
+    let OOSPIncludes = false;
+    if (checkProduct.isLoad) {
+      if (outoOfStockAllow && order.items.length) {
+        order.items.map((product) => {
+          if (product.qty > product.Available_Quantity__c) {
+            OOSPIncludes = true;
+          }
+        })
+      }
+    }
+    if (OOSPIncludes) {
+      setConfirm(false);
+      return Swal.fire({
+        title: "Alert!",
+        text: "You've added more products than are available in stock. Please update your cart before submitting your order.",
+        icon: "warning",
+        confirmButtonColor: "#000", // Black
+      });
+    }
     if (order?.items?.length) {
       if (PONumber.length) {
         if (order?.items?.length > 100) {
@@ -185,7 +204,7 @@ function MyBagFinal() {
           console.log({ brandRes });
 
           setIntentRes(brandRes);
-        
+
           // Check paymentIntent status and payment types
           const paymentTypes = brandRes.accountManufacturerData.map((item) => item.Payment_Type__c);
           const hasNetPaymentType = paymentTypes.some((type) => terms.some((term) => type?.toLowerCase().startsWith(term.toLowerCase())));
@@ -199,13 +218,13 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else if(brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
-           !== "pre-order" && !hasNetPaymentType ) {
+          } else if (brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
+            !== "pre-order" && !hasNetPaymentType) {
             setIsPlayAble(1)
           }
-          
 
-          let paymentIntent = await checkPaymentKey({paymentId:brandRes?.brandDetails?.Stripe_Secret_key_test__c});
+
+          let paymentIntent = await checkPaymentKey({ paymentId: brandRes?.brandDetails?.Stripe_Secret_key_test__c });
 
           setGreenStatus(paymentIntent);
 
@@ -233,19 +252,50 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-useEffect(()=>{
-if(brandDetails){
+  useEffect(() => {
+    if (brandDetails) {
 
-}
-}, [])
+    }
+  }, [])
   useEffect(() => {
     fetchBrandPaymentDetails();
-  }, [buttonActive  ]);
+  }, [buttonActive]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
   }, [order]);
 
+
+  const [checkProduct, setCheckProduct] = useState({ beingLoading: false, isLoad: false, list: [], discount: {} });
+  const [outoOfStockAllow, setOutOfStockAllow] = useState(false);
+  const CheckOutStockProduct = (order) => {
+    if (order?.Account?.id && order?.Manufacturer?.id && order?.Account?.SalesRepId && !checkProduct?.isLoad && !checkProduct.beingLoading) {
+      setCheckProduct({ beingLoading: true, isLoad: false, list: [], discount: {} })
+      console.error("********************* enter ***********************");
+
+      GetAuthData().then(user => {
+        let rawData = {
+          key: user.data.x_access_token,
+          Sales_Rep__c: order?.Account?.SalesRepId,
+          Manufacturer: order.Manufacturer.id,
+          AccountId__c: order.Account.id,
+        };
+        console.log({ rawData });
+
+        getProductList({ rawData }).then((list) => {
+          console.log({ list });
+
+          setOutOfStockAllow(list?.discount?.portalProductManage || false)
+          setCheckProduct({ isLoad: true, list: list?.data?.records || [], discount: list?.discount || {} })
+        }).catch((err) => {
+          console.log({ err });
+        })
+      })
+    }
+  }
+  useEffect(() => {
+    CheckOutStockProduct(order)
+  }, [order])
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -380,6 +430,25 @@ if(brandDetails){
   }, []);
 
   const orderPlaceHandler = () => {
+    let OOSPIncludes = false;
+    if (checkProduct.isLoad) {
+      if (outoOfStockAllow && order.items.length) {
+        order.items.map((product) => {
+          if (product.qty > product.Available_Quantity__c) {
+            OOSPIncludes = true;
+          }
+        })
+      }
+    }
+    if (OOSPIncludes) {
+      setConfirm(false);
+      return Swal.fire({
+        title: "Alert!",
+        text: "You've added more products than are available in stock. Please update your cart before submitting your order.",
+        icon: "warning",
+        confirmButtonColor: "#000", // Black
+      });
+    }
     if (order?.Account?.SalesRepId) {
       setIsOrderPlaced(1);
       setIsDisabled(true);
@@ -504,14 +573,14 @@ if(brandDetails){
     }
     return "null"; // All conditions false
   };
-    const filteredShipments = orderShipment.filter((shipment) => !shipment.own);
+  const filteredShipments = orderShipment.filter((shipment) => !shipment.own);
   const ownShipment = orderShipment.find((shipment) => shipment.own);
-const onStatusModalClick = ()=>{
-  setorderStatus({ status: false, message: "" }) 
-  localStorage.removeItem("isEditaAble")
-}
+  const onStatusModalClick = () => {
+    setorderStatus({ status: false, message: "" })
+    localStorage.removeItem("isEditaAble")
+  }
 
-  
+
   if (isOrderPlaced === 1) return <OrderLoader />;
   return (
     <div className="mt-4">
@@ -772,7 +841,7 @@ const onStatusModalClick = ()=>{
                       <b>
                         {buttonActive
                           ? // If it's a Pre Order and PONumber doesn't already start with "PRE", prepend "PRE"
-                            PONumber
+                          PONumber
                           : "---"}
                       </b>
                     ) : (
@@ -831,9 +900,20 @@ const onStatusModalClick = ()=>{
                                   listPrice = 0;
                                 }
                               }
+                              let errorProduct = false;
+                              let stockAvailable = 0;
+                              if (outoOfStockAllow) {
+                                stockAvailable = checkProduct?.list?.find(item => item.Id === ele?.Id)?.Available_Quantity__c;
+                                if (stockAvailable < 1) {
+                                  stockAvailable = 0;
+                                }
 
+                                if (ele.qty > stockAvailable) {
+                                  errorProduct = true;
+                                }
+                              }
                               return (
-                                <div className={Styles.Mainbox}>
+                                <div className={Styles.Mainbox} style={errorProduct ? { border: '1px solid red', borderRadius: '5px' } : {}}>
                                   <div className={Styles.Mainbox1M}>
                                     {/* <div className={Styles.Mainbox2} style={{ cursor: "pointer" }}>
                                      
@@ -907,7 +987,7 @@ const onStatusModalClick = ()=>{
                                         }}
                                         style={{ cursor: "pointer" }}
                                       >
-                                        {ele?.Name}
+                                        {ele?.Name}&nbsp;{errorProduct ? stockAvailable ? <small style={{ color: '#c68282' }}>Hurry! Only {stockAvailable} units left in stock.</small> : <small style={{ color: '#c68282' }}>Oops! This item is currently out of stock.</small> : null}
                                       </h2>
                                       <p>
                                         <span className={Styles.Span1}>{`$${listPrice}`}</span>
@@ -944,6 +1024,26 @@ const onStatusModalClick = ()=>{
                                           <QuantitySelector
                                             min={ele?.Min_Order_QTY__c || 0}
                                             onChange={(quantity) => {
+                                              if (outoOfStockAllow) {
+                                                if (stockAvailable) {
+                                                  if (quantity > stockAvailable && quantity > ele.qty) {
+                                                    return Swal.fire({
+                                                      title: "Alert!",
+                                                      text: "Oops! You’re trying to add more than what’s available. We only have " + stockAvailable + " left in stock.",
+                                                      confirmButtonColor: "#000", // Black
+                                                    });
+                                                  }
+                                                } else {
+                                                  if (quantity > ele.qty) {
+                                                    return Swal.fire({
+                                                      title: "Oops!",
+                                                      text: "The product you're trying to add to your cart is currently out of stock. Please check back soon",
+                                                      icon: "warning",
+                                                      confirmButtonColor: "#000", // Black
+                                                    });
+                                                  }
+                                                }
+                                              }
                                               updateProductQty(ele.Id, quantity);
                                             }}
                                             value={ele.qty}
@@ -1038,8 +1138,8 @@ const onStatusModalClick = ()=>{
                           <div className={Styles.PaymentType}>
                             <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
                             <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                            isOwnShipment = {
-                              ownShipment}
+                              isOwnShipment={
+                                ownShipment}
                             />
                           </div>
                         ) : null}
@@ -1126,8 +1226,8 @@ const onStatusModalClick = ()=>{
                           <div className={Styles.ShipAdress}>
                             <div className={Styles.shipLabelHolder}>Select Shipping method</div>
                             <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                            isOwnShipment = {
-                              ownShipment}
+                              isOwnShipment={
+                                ownShipment}
                             />
                           </div>
                         ) : null}
@@ -1229,8 +1329,8 @@ const onStatusModalClick = ()=>{
                           PONumber={PONumber}
                           orderDesc={orderDesc}
                           setIsDisabled={setIsDisabled} setorderStatus={setorderStatus}
-                          AccountName = {order.Account?.name}
-                            AccountNumber = {intentRes?.accountNumber?.Account_Number__c}
+                          AccountName={order.Account?.name}
+                          AccountNumber={intentRes?.accountNumber?.Account_Number__c}
                         />
                       </CustomAccordion>
                     ) : null}

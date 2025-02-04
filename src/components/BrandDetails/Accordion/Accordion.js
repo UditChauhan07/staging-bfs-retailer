@@ -24,7 +24,7 @@ const Accordion = ({
     removeProduct,
     deleteOrder,
     isProductCarted,
-    isCategoryCarted,deleteCartForever
+    isCategoryCarted, deleteCartForever
   } = useCart();
   const [replaceCartModalOpen, setReplaceCartModalOpen] = useState(false);
   // console.log(productCartSchema)
@@ -87,18 +87,38 @@ const Accordion = ({
 
 
   const onQuantityChange = async (element, quantity) => {
+    let checkProduct = isProductCarted(element.Id);
+
+    if (data.discount.portalProductManage) {
+      if (element.Available_Quantity__c) {
+        if (quantity > element.Available_Quantity__c && quantity > checkProduct?.items?.qty) {
+          return Swal.fire({
+            title: "Alert!",
+            text: "Oops! You’re trying to add more than what’s available. We only have " + element.Available_Quantity__c + " left in stock.",
+            confirmButtonColor: "#000", // Black
+          });
+        }
+      } else {
+
+        if (quantity > checkProduct?.items?.qty) {
+          return Swal.fire({
+            title: "Oops!",
+            text: "The product you're trying to add to your cart is currently out of stock. Please check back soon",
+            confirmButtonColor: "#000", // Black
+          });
+        }
+      }
+    }
     if (!quantity) {
       quantity = element.Min_Order_QTY__c;
     }
-    console.log({element});
-    
-    let checkProduct = isProductCarted(element.Id);
+
 
     if (checkProduct) {
       if (order?.Account?.id === localStorage.getItem("AccountId__c")) {
         updateProductQty(element.Id, quantity);
         return;
-      } 
+      }
     }
 
     let listPrice = Number(element?.usdRetail__c?.replace("$", "")?.replace(",", ""));
@@ -134,11 +154,11 @@ const Accordion = ({
     let salesPrice = (+listPrice - ((discount || 0) / 100) * +listPrice).toFixed(2);
     element.price = salesPrice;
     element.qty = quantity;
-    console.log({order});
+    console.log({ order });
 
     addOrder(element, account, manufacturer);
   };
-  
+
 
   const orderSetting = (product, quantity) => {
     setReplaceCartModalOpen(false);
@@ -204,11 +224,11 @@ const Accordion = ({
             <thead>
               <tr>
                 {/* <th>Image</th> */}
-                <th style={{ width: "200px" ,  paddingLeft :"22px" }}>Title</th>
+                <th style={{ width: "200px", paddingLeft: "22px" }}>Title</th>
                 <th>Product Code</th>
                 <th>UPC</th>
-                <th>List Price</th>
-                <th style={{ width: "175px" }}>Sale Price</th>
+                <th>MSRP</th>
+                <th style={{ width: "175px" }}>Cost</th>
                 <th>Min Qty</th>
                 <th>Qty</th>
                 <th>Total</th>
@@ -271,7 +291,7 @@ const Accordion = ({
                                   className={styles.ControlStyle}
                                   style={{ cursor: "pointer" }}
                                 > */}
-                                  {/* {value.ContentDownloadUrl ? (
+                                {/* {value.ContentDownloadUrl ? (
                                     <img
                                       src={value.ContentDownloadUrl}
                                       className="zoomInEffect"
@@ -339,14 +359,14 @@ const Accordion = ({
                                       width={50}
                                     />
                                   )} */}
-                                  
+
                                 {/* </td> */}
                                 <td
                                   className="text-capitalize linkEffect"
                                   style={{
                                     fontSize: "13px",
                                     cursor: "pointer",
-                                    paddingLeft :"22px"
+                                    paddingLeft: "22px"
                                   }}
                                   onMouseEnter={() =>
                                     setShowName({ index: indexed, type: true })
@@ -388,10 +408,23 @@ const Accordion = ({
                                   <QuantitySelector
                                     min={value.Min_Order_QTY__c || 0}
                                     onChange={(quantity) => {
+
                                       if (quantity) {
+                                        if (data.discount.portalProductManage) {
+                                          if (value.Available_Quantity__c<1) {
+                                            return Swal.fire({
+                                              title: "Oops!",
+                                              text: "The product you're trying to add to your cart is currently out of stock. Please check back soon",
+                                              icon: "warning",
+                                              confirmButtonColor: "#000", // Black
+                                            });
+                                          }
+                                        }
                                         onQuantityChange(value, quantity);
                                       } else {
+                                        // if (order?.Account?.id === localStorage.getItem("AccountId__c") && isProductCarted(value.Id)) {
                                         removeProduct(value.Id);
+                                        // }
                                       }
                                     }}
                                     value={
