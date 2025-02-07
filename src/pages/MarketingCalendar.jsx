@@ -263,14 +263,14 @@ const MarketingCalendar = () => {
           if (selectBrand) {
             if (selectBrand == item.ManufacturerName__c) {
               if (month == "TBD") {
-                return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+                return parseInt(item.Ship_Date__c.split("-")[2]) == 27 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
               } else {
                 return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
               }
             }
           } else {
             if (month == "TBD") {
-              return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+              return parseInt(item.Ship_Date__c.split("-")[2]) == 27 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             } else {
               return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && brand.some((brand) => brand.Name === item.ManufacturerName__c);
             }

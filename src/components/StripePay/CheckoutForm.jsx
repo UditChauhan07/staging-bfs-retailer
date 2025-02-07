@@ -159,10 +159,10 @@ const CheckoutForm = ({ amount, clientSecretkKey, PONumber, orderDes, setIsDisab
                                 customClass: {
                                     confirmButton: 'swal2-confirm'
                                 }
-                            }).then(() => {
+                            }).then(async () => {
                                 localStorage.removeItem("isEditaAble")
                                 deleteOrder();
-                                deleteCartForever()
+                                await deleteCartForever()
                                  
                                 setTimeout(()=>{
                                     window.location.href = window.location.origin + '/orderDetails';
