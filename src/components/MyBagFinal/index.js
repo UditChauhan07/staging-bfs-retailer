@@ -20,7 +20,7 @@ import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 import { PaymentElement } from "@stripe/react-stripe-js";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart,              deleteCartForever } = useCart();
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -496,7 +496,7 @@ function MyBagFinal() {
               Payment_Type__c: paymentValue,
             };
             OrderPlaced({ order: begToOrder, cartId: order.id })
-              .then((response) => {
+              .then(async (response) => {
                 if (response) {
                   if (response?.err) {
                     setIsDisabled(false);
@@ -509,6 +509,7 @@ function MyBagFinal() {
                   if (response?.orderId) {
                     setIsDisabled(false);
                     let status = deleteOrder();
+                    await deleteCartForever()
                     setConfirm(false);
                     localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
                     window.location.href = window.location.origin + "/orderDetails";
