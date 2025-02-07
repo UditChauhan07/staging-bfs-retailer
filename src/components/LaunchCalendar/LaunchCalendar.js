@@ -41,14 +41,14 @@ function LaunchCalendar({ productList, selectBrand, brand, month }) {
             if (selectBrand) {
               if (selectBrand == item.ManufacturerName__c) {
                 if (month == "TBD") {
-                  return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+                  return parseInt(item.Ship_Date__c.split("-")[2]) == 27 && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
                 } else {
                   return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && selectBrand === item.ManufacturerName__c && brand.some((brand) => brand.Name === item.ManufacturerName__c);
                 }
               }
             } else {
               if (month == "TBD") {
-                return parseInt(item.Ship_Date__c.split("-")[2]) == 15 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
+                return parseInt(item.Ship_Date__c.split("-")[2]) == 27 && brand.some((brand) => brand.Name === item.ManufacturerName__c);
               } else {
                 return monthNames[parseInt(item.Ship_Date__c.split("-")[1]) - 1].toLowerCase() == month.toLowerCase() && brand.some((brand) => brand.Name === item.ManufacturerName__c);
               }
@@ -138,11 +138,11 @@ const resultOfFilter = checkAllContentEmpty(filterData);
                                       <div className="ShipDate">
                                         <span style={{ textTransform: 'uppercase' }}>Ship Date</span>
                                         {/* style={{ backgroundColor: hexabrand[product.ManufacturerId__c], color: hexabrandText[product.ManufacturerId__c] }} */}
-                                        <div className={`DateCurrent0${(index % 3) + 1}`} style={{ color: '#000' }}>{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 15 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'NA'}</div>
+                                        <div className={`DateCurrent0${(index % 3) + 1}`} style={{ color: '#000' }}>{product.Ship_Date__c ? (product.Ship_Date__c.split("-")[2] == 27 ? 'TBD' : product.Ship_Date__c.split("-")[2]) + '/' + monthNames[parseInt(product.Ship_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Ship_Date__c.split("-")[0] : 'TBD'}</div>
                                       </div>
                                       <div className="ShipDate EDate">
                                         <span>OCD</span>
-                                        <div className="DateEod">{product.Launch_Date__c ? product.Launch_Date__c.split("-")[2] + '/' + monthNames[parseInt(product.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Launch_Date__c.split("-")[0] : 'NA'}</div>
+                                        <div className="DateEod">{product.Launch_Date__c ? product.Launch_Date__c.split("-")[2] + '/' + monthNames[parseInt(product.Launch_Date__c.split("-")[1]) - 1].toUpperCase() + '/' + product.Launch_Date__c.split("-")[0] : 'TBD'}</div>
                                       </div>
                                     </div>
                                     <div className="d-flex mt-2">
