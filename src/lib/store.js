@@ -511,6 +511,35 @@ export async function cartSync({ cart }) {
   }
 }
 
+export async function CartHandler({ op = null, cart }) {
+  let cartUrl = url2;
+  if (op == 'update' || op == 'create') {
+    cartUrl += 'cuvSzxcfV2LK5ic';
+  } else if (op == 'delete') {
+    cartUrl += 'CDllYsPY4teyTCA';
+  } else {
+    cartUrl += "ZvOE66yNOVlk3TB"
+  }
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+  
+  let response = await fetch(cartUrl, {
+    method: "POST",
+    body: JSON.stringify(cart),
+    headers: headersList,
+  });
+  let data = JSON.parse(await response.text());
+  
+  if (data?.data) {
+    return data.data;
+  }else{
+    if(data.status ==200){
+      return true;
+    }
+  }
+}
 export async function OrderPlaced({ order, cartId }) {
   let orderinit = {
     info: order, cartId
