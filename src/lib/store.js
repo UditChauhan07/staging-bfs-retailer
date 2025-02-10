@@ -117,7 +117,31 @@ export async function checkPaymentKey({ paymentId }) {
     throw error; // Rethrow the error for further handling if needed
   }
 }
+export async function FreeShipHandler({ brandId }) {
+  let user = await GetAuthData();
+  let accessToken = user?.x_access_token || null;
+  if (accessToken) {
+    let headersList = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    };
+    let response = await fetch(originAPi + "qX8COmFYnyAj4e2/kSutd4qwJEYbKSo", {
+      method: "POST",
+      body: JSON.stringify({ key: accessToken, brandId }),
+      headers: headersList,
+    });
+    let data = JSON.parse(await response.text());
 
+    if (data.status == 200) {
+      return data?.freeShipping || false;
+    } else {
+      return data.message;
+    }
+  } else {
+    DestoryAuth();
+    return false;
+  }
+}
 export async function POGenerator({ orderDetails }) {
 
   try {
@@ -161,8 +185,9 @@ export async function POGenerator({ orderDetails }) {
         let brandShipping = res?.brandShipping;
         let shippingMethod = res?.shippingMethod;
         let checkBrandAllow = res?.checkBrandAllow;
+        let freeShipping = res?.freeShipping;
 
-        return { poNumber, address, brandShipping, shippingMethod, checkBrandAllow };
+        return { poNumber, address, brandShipping, shippingMethod, checkBrandAllow,freeShipping };
       } else {
         console.error('Failed to generate PO number:', res.message);
         return null;
