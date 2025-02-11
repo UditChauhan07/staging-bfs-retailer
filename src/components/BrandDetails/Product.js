@@ -180,20 +180,20 @@ function Product() {
     })
   }
   const handleProductUpdate = (products) => {
-    let data = ShareDrive();
-    if (!data) {
-      data = {};
-    }
-    if (!data[localStorage.getItem("ManufacturerId__c")]) {
-      data[localStorage.getItem("ManufacturerId__c")] = {};
-    }
-    if (data[localStorage.getItem("ManufacturerId__c")]) {
-      if (Object.values(data[localStorage.getItem("ManufacturerId__c")]).length > 0) {
-        setProductImage({ isLoaded: true, images: data[localStorage.getItem("ManufacturerId__c")] })
-      } else {
-        setProductImage({ isLoaded: false, images: {} })
-      }
-    }
+    // let data = ShareDrive();
+    // if (!data) {
+    //   data = {};
+    // }
+    // if (!data[localStorage.getItem("ManufacturerId__c")]) {
+    //   data[localStorage.getItem("ManufacturerId__c")] = {};
+    // }
+    // if (data[localStorage.getItem("ManufacturerId__c")]) {
+    //   if (Object.values(data[localStorage.getItem("ManufacturerId__c")]).length > 0) {
+    //     setProductImage({ isLoaded: true, images: data[localStorage.getItem("ManufacturerId__c")] })
+    //   } else {
+    //     setProductImage({ isLoaded: false, images: {} })
+    //   }
+    // }
     let productData = products.data.records || []
     let discount = products.discount;
     setProductCartSchema({ testerInclude: discount?.testerInclude || true, sampleInclude: discount?.sampleInclude || true })
@@ -212,26 +212,26 @@ function Product() {
     // })
 
     // version 2
-    let productCode = "";
-    productData.map((product, index) => {
-      productCode += `'${product?.ProductCode}'`
-      if (productData.length - 1 != index) productCode += ', ';
-    })
-    getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
-      if (res) {
-        if (data[localStorage.getItem("ManufacturerId__c")]) {
-          data[localStorage.getItem("ManufacturerId__c")] = { ...data[localStorage.getItem("ManufacturerId__c")], ...res }
-        } else {
-          data[localStorage.getItem("ManufacturerId__c")] = res
-        }
-        ShareDrive(data)
-        setProductImage({ isLoaded: true, images: res });
-      } else {
-        setProductImage({ isLoaded: true, images: {} });
-      }
-    }).catch((err) => {
-      console.log({ err });
-    })
+    // let productCode = "";
+    // productData.map((product, index) => {
+    //   productCode += `'${product?.ProductCode}'`
+    //   if (productData.length - 1 != index) productCode += ', ';
+    // })
+    // getProductImageAll({ rawData: { codes: productCode } }).then((res) => {
+    //   if (res) {
+    //     if (data[localStorage.getItem("ManufacturerId__c")]) {
+    //       data[localStorage.getItem("ManufacturerId__c")] = { ...data[localStorage.getItem("ManufacturerId__c")], ...res }
+    //     } else {
+    //       data[localStorage.getItem("ManufacturerId__c")] = res
+    //     }
+    //     ShareDrive(data)
+    //     setProductImage({ isLoaded: true, images: res });
+    //   } else {
+    //     setProductImage({ isLoaded: true, images: {} });
+    //   }
+    // }).catch((err) => {
+    //   console.log({ err });
+    // })
   }
   useEffect(() => {
 

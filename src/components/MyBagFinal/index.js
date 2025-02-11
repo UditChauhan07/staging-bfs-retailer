@@ -491,8 +491,6 @@ function MyBagFinal() {
 
 
   useEffect(() => {
-    fetchCart();
-
     FetchPoNumber();
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
