@@ -119,17 +119,18 @@ export async function checkPaymentKey({ paymentId }) {
 }
 export async function FreeShipHandler({ brandId }) {
   let user = await GetAuthData();
-  let accessToken = user?.x_access_token || null;
+  let accessToken = user?.data?.x_access_token || null;
   if (accessToken) {
     let headersList = {
       Accept: "*/*",
       "Content-Type": "application/json",
     };
-    let response = await fetch(originAPi + "qX8COmFYnyAj4e2/kSutd4qwJEYbKSo", {
+    let response = await fetch(originAPi + "/qX8COmFYnyAj4e2/kSutd4qwJEYbKSo", {
       method: "POST",
       body: JSON.stringify({ key: accessToken, brandId }),
       headers: headersList,
     });
+
     let data = JSON.parse(await response.text());
 
     if (data.status == 200) {
@@ -152,17 +153,17 @@ export async function POGenerator({ orderDetails }) {
         str
           .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
           .replace(/\s+/g, " ")          // Replace multiple spaces with a single space
-          .trim(); 
+          .trim();
       const sanitizedAccountName = sanitizeString(orderDetails.Account?.name || "");
       const sanitizedManufacturerName = sanitizeString(orderDetails.Manufacturer?.name || "");
-  
+
       //  const response = await fetch( "http://localhost:2611/PoNumber/generatepo"
       const response = await fetch(originAPi + "/qX8COmFYnyAj4e2/generatepov2", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-       
+
         body: JSON.stringify({
           accountName: sanitizedAccountName,
           manufacturerName: sanitizedManufacturerName,
@@ -187,7 +188,7 @@ export async function POGenerator({ orderDetails }) {
         let checkBrandAllow = res?.checkBrandAllow;
         let freeShipping = res?.freeShipping;
 
-        return { poNumber, address, brandShipping, shippingMethod, checkBrandAllow,freeShipping };
+        return { poNumber, address, brandShipping, shippingMethod, checkBrandAllow, freeShipping };
       } else {
         console.error('Failed to generate PO number:', res.message);
         return null;
@@ -536,31 +537,34 @@ export async function cartSync({ cart }) {
   }
 }
 
-export async function CartHandler({ op = null, cart }) {
+export async function CartHandler({ op = 'get', cart }) {
   let cartUrl = url2;
+
   if (op == 'update' || op == 'create') {
-    cartUrl += 'cuvSzxcfV2LK5ic';
-  } else if (op == 'delete') {
+    cartUrl += 'WdNhFjhMj08ReQp';
+  }
+  if (op == 'delete') {
     cartUrl += 'CDllYsPY4teyTCA';
-  } else {
+  }
+  if (op == 'get') {
     cartUrl += "ZvOE66yNOVlk3TB"
   }
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-  
+
   let response = await fetch(cartUrl, {
     method: "POST",
     body: JSON.stringify(cart),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  
+
   if (data?.data) {
     return data.data;
-  }else{
-    if(data.status ==200){
+  } else {
+    if (data.status == 200) {
       return true;
     }
   }
