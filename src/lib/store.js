@@ -119,7 +119,7 @@ export async function checkPaymentKey({ paymentId }) {
 }
 export async function FreeShipHandler({ brandId }) {
   let user = await GetAuthData();
-  let accessToken = user?.x_access_token || null;
+  let accessToken = user?.data?.x_access_token || null;
   if (accessToken) {
     let headersList = {
       Accept: "*/*",
@@ -131,7 +131,6 @@ export async function FreeShipHandler({ brandId }) {
       headers: headersList,
     });
     let data = JSON.parse(await response.text());
-
     if (data.status == 200) {
       return data?.freeShipping || false;
     } else {
@@ -539,7 +538,7 @@ export async function cartSync({ cart }) {
 export async function CartHandler({ op = null, cart }) {
   let cartUrl = url2;
   if (op == 'update' || op == 'create') {
-    cartUrl += 'cuvSzxcfV2LK5ic';
+    cartUrl += 'WdNhFjhMj08ReQp';
   } else if (op == 'delete') {
     cartUrl += 'CDllYsPY4teyTCA';
   } else {

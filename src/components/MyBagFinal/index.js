@@ -125,7 +125,7 @@ function MyBagFinal() {
       }
       if (document.visibilityState === 'visible') {
         CheckOutStockProduct();
-        // FetchFreeShipHandler();
+        FetchFreeShipHandler();
       }
     };
 
@@ -349,7 +349,7 @@ function MyBagFinal() {
               console.log("************ amount true **************");
               tempOrder.shippingMethod = {
                 cal: 0,
-                method: "FedEx",
+                method: "Free Shipping",
                 name: "Free Shipping",
                 number: null,
                 freeApplied: true
@@ -361,7 +361,7 @@ function MyBagFinal() {
               console.log("************ date true **************");
               tempOrder.shippingMethod = {
                 cal: 0,
-                method: "FedEx",
+                method: "Free Shipping",
                 name: "Free Shipping",
                 number: null,
                 freeApplied: true
