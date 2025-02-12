@@ -560,7 +560,8 @@ export async function CartHandler({ op = 'get', cart }) {
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-
+  console.warn({data});
+  
   if (data?.data) {
     return data.data;
   } else {
