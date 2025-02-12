@@ -301,7 +301,7 @@ function MyBagFinal() {
   useEffect(() => {
     CheckOutStockProduct(order)
     if (freeShipping) {
-      freeShippingHandler({ shipObj: freeShipping, orderObj: order })
+      // freeShippingHandler({ shipObj: freeShipping, orderObj: order })
     }
   }, [order])
 
@@ -444,9 +444,9 @@ function MyBagFinal() {
       const res = await POGenerator({ orderDetails: order });
 
       if (res) {
-        if (res?.freeShipping) {
-          setFreeShipping(res?.freeShipping)
-        }
+        // if (res?.freeShipping) {
+        //   setFreeShipping(res?.freeShipping)
+        // }
         if (res?.shippingMethod) {
           setOwnShipping(res?.shippingMethod);
         }
