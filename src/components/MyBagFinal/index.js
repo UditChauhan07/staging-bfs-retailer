@@ -481,6 +481,7 @@ function MyBagFinal() {
 
 
   useEffect(() => {
+    if (order?.Account?.id && order?.Manufacturer?.id) {
     Promise.all([fetchCart(),FetchPoNumber(),
     fetchBrandPaymentDetails(),
     CheckOutStockProduct(order)])
@@ -491,6 +492,9 @@ function MyBagFinal() {
         console.error("Error fetching data:", error);
         setIsLoading(false); // Set loading to false even if an error occurs
       });
+    }else{
+      setIsLoading(false)
+    }
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
     // FetchPoNumber();
