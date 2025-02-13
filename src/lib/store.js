@@ -553,16 +553,15 @@ export async function CartHandler({ op = 'get', cart }) {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
-  console.log({cart,cartUrl});
   
-
+  
   let response = await fetch(cartUrl, {
     method: "POST",
     body: JSON.stringify(cart),
     headers: headersList,
   });
   let data = JSON.parse(await response.text());
-  console.warn({data});
+  console.table({cart,cartUrl,data});
   
   if (data?.data) {
     return data.data;
