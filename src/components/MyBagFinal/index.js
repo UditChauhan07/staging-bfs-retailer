@@ -137,11 +137,13 @@ function MyBagFinal() {
     if (checkProduct.isLoad) {
       if (outoOfStockAllow && order.items.length) {
         order.items.map((product) => {
-          if (product.qty > product.Available_Quantity__c) {
+          const foundItem = checkProduct.list?.find(item => item.Id === product.Id);
+          if (product.qty > (foundItem?.Available_Quantity__c || 0)) {
             OOSPIncludes = true;
           }
         })
       }
+
     }
     if (OOSPIncludes) {
       setConfirm(false);
@@ -442,7 +444,7 @@ function MyBagFinal() {
       const res = await POGenerator({ orderDetails: order });
 
       if (res) {
-        if (res?.freeShipping &&iswholeSale) {
+        if (res?.freeShipping && iswholeSale) {
           setFreeShipping(res?.freeShipping)
         }
         if (res?.shippingMethod) {
@@ -562,7 +564,8 @@ function MyBagFinal() {
     if (checkProduct.isLoad) {
       if (outoOfStockAllow && order.items.length) {
         order.items.map((product) => {
-          if (product.qty > product.Available_Quantity__c) {
+          const foundItem = checkProduct.list?.find(item => item.Id === product.Id);
+          if (product.qty > (foundItem?.Available_Quantity__c || 0)) {
             OOSPIncludes = true;
           }
         })
@@ -636,12 +639,14 @@ function MyBagFinal() {
                   }
                   if (response?.orderId) {
                     setIsDisabled(false);
-                    let status = deleteOrder();
-                    await deleteCartForever()
-                    setConfirm(false);
-                    localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
-                    window.location.href = window.location.origin + "/orderDetails";
-                    setIsOrderPlaced(2);
+                    let localStatus = await deleteOrder();
+                    if (localStatus) {
+                      setConfirm(false);
+
+                      localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
+                      window.location.href = window.location.origin + "/orderDetails";
+                      setIsOrderPlaced(2);
+                    }
                   }
                 }
               })
