@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Styles from "./Styles.module.css";
 import QuantitySelector from "../BrandDetails/Accordion/QuantitySelector";
 import { Link, useNavigate } from "react-router-dom";
-import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails, checkPaymentKey, getProductList } from "../../lib/store";
+import { GetAuthData, OrderPlaced, POGenerator, ShareDrive, getProductImageAll, getBrandPaymentDetails, defaultLoadTime, brandDetails, checkPaymentKey, getProductList, FreeShipHandler } from "../../lib/store";
 import OrderLoader from "../loader";
 import ModalPage from "../Modal UI";
 import StylesModal from "../Modal UI/Styles.module.css";
@@ -18,9 +18,10 @@ import Swal from "sweetalert2";
 import ShipmentHandler from "./ShipmentHandler";
 import useBackgroundUpdater from "../../utilities/Hooks/useBackgroundUpdater";
 import { PaymentElement } from "@stripe/react-stripe-js";
+import { BiCheckboxChecked } from "react-icons/bi";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart,              deleteCartForever } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -56,6 +57,8 @@ function MyBagFinal() {
   const [orderShipment, setOrderShipment] = useState([]);
   const [isSelect, setIsSelect] = useState(false);
   const [greenStatus, setGreenStatus] = useState();
+  const [freeShipping, setFreeShipping] = useState(false);
+  const [ownShipping, setOwnShipping] = useState({});
   const terms = [
     "Net",
     "terms:2%",
@@ -100,9 +103,6 @@ function MyBagFinal() {
     }
   }, [order, buttonActive]);
 
-  let data = localStorage.getItem("Api Data")
-  console.log(data.email)
-
   const editValue = localStorage.getItem("isEditaAble")
   useEffect(() => {
     if (paymentDetails.PK_KEY === null && paymentDetails.SK_KEY === null) {
@@ -115,10 +115,15 @@ function MyBagFinal() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        setQuantityChange(false);
-        setIsAccordianOpen(false);
-        setDetailsAccordian(true);
-        setPaymentAccordian(false);
+        // setQuantityChange(false);
+        // setIsAccordianOpen(false);
+        // setDetailsAccordian(true);
+        // setPaymentAccordian(false);
+      }
+      if (document.visibilityState === 'visible') {
+        setIsPOEditable(false);
+        CheckOutStockProduct();
+        FetchFreeShipHandler();
       }
     };
 
@@ -133,11 +138,13 @@ function MyBagFinal() {
     if (checkProduct.isLoad) {
       if (outoOfStockAllow && order.items.length) {
         order.items.map((product) => {
-          if (product.qty > product.Available_Quantity__c) {
+          const foundItem = checkProduct.list?.find(item => item.Id === product.Id);
+          if (product.qty > (foundItem?.Available_Quantity__c || 0)) {
             OOSPIncludes = true;
           }
         })
       }
+
     }
     if (OOSPIncludes) {
       setConfirm(false);
@@ -184,7 +191,9 @@ function MyBagFinal() {
       setPaymentAccordian(false);
     }
   };
-
+  const iswholeSale = useMemo(() => {
+    return order?.ordertype == "wholesale"
+  }, [order])
   const handleNameChange = (event) => {
     const limit = 10;
     setLimitInput(event.target.value.slice(0, limit));
@@ -196,12 +205,11 @@ function MyBagFinal() {
       if (id && AccountID) {
         const user = await GetAuthData();
 
-        const brandRes = await getBrandPaymentDetails({
+        getBrandPaymentDetails({
           key: user.data.x_access_token,
           Id: id,
           AccountId: AccountID,
         }).then(async (brandRes) => {
-          console.log({ brandRes });
 
           setIntentRes(brandRes);
 
@@ -218,22 +226,21 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else if (brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
-            !== "pre-order" && !hasNetPaymentType) {
+          } else if (brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && iswholeSale && !hasNetPaymentType) {
             setIsPlayAble(1)
           }
 
 
-          let paymentIntent = await checkPaymentKey({ paymentId: brandRes?.brandDetails?.Stripe_Secret_key_test__c });
+          // let paymentIntent = await checkPaymentKey({ paymentId: brandRes?.brandDetails?.Stripe_Secret_key_test__c });
 
-          setGreenStatus(paymentIntent);
+          // setGreenStatus(paymentIntent);
 
-          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY && !hasNetPaymentType) {
-            setIsPlayAble(1);
-          } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-            setIsPlayAble(0);
-            console.log(isPlayAble, "is play able ");
-          }
+          // if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY && !hasNetPaymentType) {
+          //   setIsPlayAble(1);
+          // } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+          //   setIsPlayAble(0);
+          //   console.log(isPlayAble, "is play able ");
+          // }
 
           setPaymentDetails({
             PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
@@ -252,14 +259,6 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-  useEffect(() => {
-    if (brandDetails) {
-
-    }
-  }, [])
-  useEffect(() => {
-    fetchBrandPaymentDetails();
-  }, [buttonActive]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
@@ -280,12 +279,10 @@ function MyBagFinal() {
           Manufacturer: order.Manufacturer.id,
           AccountId__c: order.Account.id,
         };
-        console.log({ rawData });
 
         getProductList({ rawData }).then((list) => {
-          console.log({ list });
 
-          setOutOfStockAllow(list?.discount?.portalProductManage || false)
+          setOutOfStockAllow((list?.discount?.portalProductManage && iswholeSale) ? true : false)
           setCheckProduct({ isLoad: true, list: list?.data?.records || [], discount: list?.discount || {} })
         }).catch((err) => {
           console.log({ err });
@@ -293,9 +290,7 @@ function MyBagFinal() {
       })
     }
   }
-  useEffect(() => {
-    CheckOutStockProduct(order)
-  }, [order])
+
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -314,12 +309,137 @@ function MyBagFinal() {
   //     document.removeEventListener('visibilitychange', handleVisibilityChange);
   //   };
   // }, []);
+  const FetchFreeShipHandler = () => {
+    if (order?.Manufacturer?.id) {
+      FreeShipHandler({ brandId: order?.Manufacturer?.id }).then((res) => {
+        setFreeShipping(res)
+        freeShippingHandler({ shipObj: res, orderObj: order })
+      })
+    }
+  }
+  const freeShippingHandler = async ({ shipObj, orderObj }) => {
+    // Check if the order is eligiable for shipping address
+    if (orderObj?.Account?.id && orderObj?.Manufacturer?.id) {
+      if (shipObj && iswholeSale) {
+        if (shipObj?.type) {
+          let tempOrder = order.Account;
+          if ((shipObj?.start && shipObj?.end) || shipObj?.amount) {
+            let date = new Date();
+            let start = new Date(shipObj?.start);
+            let end = new Date(shipObj?.end);
+            date.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+
+
+            if (shipObj?.amount && orderObj?.total >= shipObj?.amount && shipObj?.type == "Amount Based") {
+              if (!order?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ amount true **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "Free Shipping",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else if (date >= start && date <= end && shipObj?.type == "Date Range Based") {
+              if (!order?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ date true **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "Free Shipping",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else {
+              if (orderObj?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ escape **************");
+                if (ownShipping?.number || ownShipping?.method) {
+                  tempOrder.shippingMethod = ownShipping
+                } else {
+                  tempOrder.shippingMethod = null;
+                }
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            }
+          }
+        } else {
+          if (shipObj?.start && shipObj?.end && shipObj?.amount && false) {
+            let date = new Date();
+            let start = new Date(shipObj?.start);
+            let end = new Date(shipObj?.end);
+            date.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            let tempOrder = order.Account;
+            if (orderObj?.total >= shipObj?.amount && (date >= start && date <= end)) {
+              if (!orderObj?.Account?.shippingMethod?.freeApplied) {
+                console.log("************ both apply **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "FedEx",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else {
+              if (orderObj?.Account?.shippingMethod?.freeApplied) {
+                console.log("************ escape **************");
+                if (ownShipping?.number || ownShipping?.method) {
+                  tempOrder.shippingMethod = ownShipping
+                } else {
+                  tempOrder.shippingMethod = null;
+                }
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            }
+          } else {
+            if (orderObj?.Account?.shippingMethod?.freeApplied) {
+              // console.log("************ escape **************");
+              let tempOrder = order.Account;
+              if (ownShipping?.number || ownShipping?.method) {
+                tempOrder.shippingMethod = ownShipping
+              } else {
+                tempOrder.shippingMethod = null;
+              }
+              keyBasedUpdateCart({ Account: tempOrder });
+            }
+          }
+        }
+      } else {
+        if (orderObj?.Account?.shippingMethod?.freeApplied) {
+          // console.log("************ escape **************");
+          let tempOrder = order.Account;
+          if (ownShipping?.number || ownShipping?.method) {
+            tempOrder.shippingMethod = ownShipping
+          } else {
+            tempOrder.shippingMethod = null;
+          }
+          keyBasedUpdateCart({ Account: tempOrder });
+        }
+      }
+    }
+  }
   const FetchPoNumber = async () => {
     try {
       await order?.Account?.id;
       const res = await POGenerator({ orderDetails: order });
 
       if (res) {
+        if (res?.freeShipping && iswholeSale) {
+          freeShippingHandler({ shipObj: res?.freeShipping, orderObj: order })
+          setFreeShipping(res?.freeShipping)
+        }
+        if (res?.shippingMethod) {
+          setOwnShipping(res?.shippingMethod);
+        }
         if (res?.address || res?.brandShipping) {
           let tempOrder = order.Account;
           if (res?.address) {
@@ -338,7 +458,9 @@ function MyBagFinal() {
               tempOrder = { ...tempOrder, shippingMethod: null };
             }
           }
-          keyBasedUpdateCart({ Account: tempOrder });
+          if (order?.Account?.id && order?.Manufacturer?.id) {
+            keyBasedUpdateCart({ Account: tempOrder });
+          }
           if (res?.brandShipping) {
             if (res?.brandShipping.length) {
               setOrderShipment(res?.brandShipping);
@@ -352,18 +474,27 @@ function MyBagFinal() {
         }
         setPONumber(poInit);
       }
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching PO number:", error);
-      setIsLoading(false);
     }
   };
 
 
   useEffect(() => {
-    fetchCart();
-
-    FetchPoNumber();
+    if (order?.Account?.id && order?.Manufacturer?.id) {
+    Promise.all([fetchCart(),FetchPoNumber(),
+    fetchBrandPaymentDetails(),
+    CheckOutStockProduct(order)])
+      .then(() => setTimeout(() => {
+        setIsLoading(false)
+      }, 2000)) // Set loading to false after all API calls complete
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setIsLoading(false); // Set loading to false even if an error occurs
+      });
+    }else{
+      setIsLoading(false)
+    }
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
     // FetchPoNumber();
@@ -377,53 +508,55 @@ function MyBagFinal() {
   });
 
   useEffect(() => {
-    let data = ShareDrive();
-    if (!data) {
-      data = {};
-    }
-    if (order) {
-      if (order?.Manufacturer) {
-        if (order?.Manufacturer?.id) {
-          if (!data[order?.Manufacturer?.id]) {
-            data[order?.Manufacturer?.id] = {};
-          }
-          if (Object.values(data[order.Manufacturer.id]).length > 0) {
-            setProductImage({
-              isLoaded: true,
-              images: data[order.Manufacturer.id],
-            });
-          } else {
-            setProductImage({ isLoaded: false, images: {} });
+    if (false) {
+      let data = ShareDrive();
+      if (!data) {
+        data = {};
+      }
+      if (order) {
+        if (order?.Manufacturer) {
+          if (order?.Manufacturer?.id) {
+            if (!data[order?.Manufacturer?.id]) {
+              data[order?.Manufacturer?.id] = {};
+            }
+            if (Object.values(data[order.Manufacturer.id]).length > 0) {
+              setProductImage({
+                isLoaded: true,
+                images: data[order.Manufacturer.id],
+              });
+            } else {
+              setProductImage({ isLoaded: false, images: {} });
+            }
           }
         }
-      }
-      if (order.items) {
-        if (order.items.length > 0) {
-          let productCode = "";
-          order.items.map((element, index) => {
-            productCode += `'${element.product?.ProductCode}'`;
-            if (order.items.length - 1 != index) productCode += ", ";
-          });
-          getProductImageAll({ rawData: { codes: productCode } })
-            .then((res) => {
-              if (res) {
-                if (data[order.Manufacturer.id]) {
-                  data[order.Manufacturer.id] = {
-                    ...data[order.Manufacturer.id],
-                    ...res,
-                  };
-                } else {
-                  data[order.Manufacturer.id] = res;
-                }
-                ShareDrive(data);
-                setProductImage({ isLoaded: true, images: res });
-              } else {
-                setProductImage({ isLoaded: true, images: {} });
-              }
-            })
-            .catch((err) => {
-              console.log({ err });
+        if (order.items) {
+          if (order.items.length > 0) {
+            let productCode = "";
+            order.items.map((element, index) => {
+              productCode += `'${element.product?.ProductCode}'`;
+              if (order.items.length - 1 != index) productCode += ", ";
             });
+            getProductImageAll({ rawData: { codes: productCode } })
+              .then((res) => {
+                if (res) {
+                  if (data[order.Manufacturer.id]) {
+                    data[order.Manufacturer.id] = {
+                      ...data[order.Manufacturer.id],
+                      ...res,
+                    };
+                  } else {
+                    data[order.Manufacturer.id] = res;
+                  }
+                  ShareDrive(data);
+                  setProductImage({ isLoaded: true, images: res });
+                } else {
+                  setProductImage({ isLoaded: true, images: {} });
+                }
+              })
+              .catch((err) => {
+                console.log({ err });
+              });
+          }
         }
       }
     }
@@ -434,7 +567,8 @@ function MyBagFinal() {
     if (checkProduct.isLoad) {
       if (outoOfStockAllow && order.items.length) {
         order.items.map((product) => {
-          if (product.qty > product.Available_Quantity__c) {
+          const foundItem = checkProduct.list?.find(item => item.Id === product.Id);
+          if (product.qty > (foundItem?.Available_Quantity__c || 0)) {
             OOSPIncludes = true;
           }
         })
@@ -508,12 +642,14 @@ function MyBagFinal() {
                   }
                   if (response?.orderId) {
                     setIsDisabled(false);
-                    let status = deleteOrder();
-                    await deleteCartForever()
-                    setConfirm(false);
-                    localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
-                    window.location.href = window.location.origin + "/orderDetails";
-                    setIsOrderPlaced(2);
+                    let localStatus = await deleteOrder();
+                    if (localStatus) {
+                      setConfirm(false);
+
+                      localStorage.setItem("OpportunityId", JSON.stringify(response.orderId));
+                      window.location.href = window.location.origin + "/orderDetails";
+                      setIsOrderPlaced(2);
+                    }
                   }
                 }
               })
@@ -1137,11 +1273,16 @@ function MyBagFinal() {
                         ) : null} */}
                         {orderShipment.length > 0 ? (
                           <div className={Styles.PaymentType}>
-                            <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                              isOwnShipment={
-                                ownShipment}
-                            />
+                            {order?.Account?.shippingMethod?.freeApplied ? (
+                              <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
+                            ) : (
+                              <>
+                                <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
+                                <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                                  isOwnShipment={
+                                    ownShipment}
+                                />
+                              </>)}
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>
@@ -1225,11 +1366,16 @@ function MyBagFinal() {
                         ) : null} */}
                         {orderShipment.length > 0 ? (
                           <div className={Styles.ShipAdress}>
-                            <div className={Styles.shipLabelHolder}>Select Shipping method</div>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                              isOwnShipment={
-                                ownShipment}
-                            />
+                            {order?.Account?.shippingMethod?.freeApplied ? (
+                              <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
+                            ) : (
+                              <>
+                                <div className={Styles.shipLabelHolder}>Select Shipping method</div>
+                                <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                                  isOwnShipment={
+                                    ownShipment}
+                                />
+                              </>)}
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>

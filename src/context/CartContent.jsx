@@ -46,9 +46,9 @@ const CartProvider = ({ children }) => {
     useEffect(() => {
         if (!initialOrder.CreatedBy) {
             GetAuthData().then((user) => {
-                if (user) {
-                    if (user?.Sales_Rep__c) {
-                        initialOrder.CreatedBy = user?.Sales_Rep__c;
+                if (user) {                    
+                    if (user?.data?.retailerId) {
+                        initialOrder.CreatedBy = user?.data?.retailerId;
                     }
                 }
             })
@@ -59,9 +59,11 @@ const CartProvider = ({ children }) => {
         try {
             const user = await GetAuthData();
             const getOrder = { CreatedBy: user?.data?.retailerId };
+            
             const cart = await CartHandler({ cart: getOrder });
+            
             // Validate if the fetched cart has essential content like Account and Manufacturer
-            if (cart.Account?.id && cart.Manufacturer?.id) {
+            if (cart?.Account?.id && cart.Manufacturer?.id) {
                 setOrder(cart); // Set the fetched cart if valid
                 localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
                 return cart;
@@ -189,6 +191,7 @@ const CartProvider = ({ children }) => {
             setOrder(orderRaw);
 
             localStorage.setItem(orderCartKey, JSON.stringify(orderRaw));
+            
             await CartHandler({ cart: orderRaw, op: 'create' });
 
             return {

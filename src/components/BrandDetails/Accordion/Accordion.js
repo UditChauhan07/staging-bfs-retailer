@@ -13,6 +13,7 @@ const Accordion = ({
   formattedData,
   productImage = [],
   productCartSchema = {},
+  isWholeSales=false
 }) => {
   const { testerInclude, sampleInclude } = productCartSchema || true;
 
@@ -89,7 +90,7 @@ const Accordion = ({
   const onQuantityChange = async (element, quantity) => {
     let checkProduct = isProductCarted(element.Id);
 
-    if (data.discount.portalProductManage) {
+    if (data.discount.portalProductManage&&isWholeSales) {
       if (element.Available_Quantity__c) {
         if (quantity > element.Available_Quantity__c && quantity > checkProduct?.items?.qty) {
           return Swal.fire({
@@ -410,7 +411,7 @@ const Accordion = ({
                                     onChange={(quantity) => {
 
                                       if (quantity) {
-                                        if (data.discount.portalProductManage) {
+                                        if (data.discount.portalProductManage&&isWholeSales) {
                                           if (value.Available_Quantity__c<1) {
                                             return Swal.fire({
                                               title: "Oops!",
