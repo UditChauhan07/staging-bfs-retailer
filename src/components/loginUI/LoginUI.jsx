@@ -33,7 +33,7 @@ const LoginUI = () => {
         localStorage.setItem("passwordB2B", values.password);
       }
       window.hj('identify', apiData.data.retailerId, {
-        userName: apiData.data.firstName +' '+apiData.data.lastName ,
+        userName: apiData.data.firstName + ' ' + apiData.data.lastName,
         email: apiData.data.email
       });
       localStorage.setItem("Name", apiData?.data?.Name);
@@ -60,16 +60,14 @@ const LoginUI = () => {
   return (
     <>
       {loading ? (
-        <ModalPage
-          open
-          content={
-            <div>
-              <Loading />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="max-w-md p-4 shadow-lg rounded-2xl bg-white" style={{ width: '200px' }}>
+            <Loading />
+            <p className="flex justify-center">
               Loading ...
-            </div>
-          }
-          onClose={() => setLoading(false)}
-        />
+            </p>
+          </div>
+        </div>
       ) : null}
       <Formik initialValues={initialValues} validationSchema={LoginFormSchema} onSubmit={onSubmit}>
         <div>
@@ -142,7 +140,7 @@ const LoginUI = () => {
 
             <div className={styles.PolicyA}>
               <p>
-              By signing in or clicking "Login", you agree to our <a href="https://beautyfashionsales.com/terms-and-services" style={{color:'#000',fontWeight:'bold'}}>Terms of Service </a> Please also read our<a href="https://beautyfashionsales.com/privacy-policy" style={{color:'#000',fontWeight:'bold'}}> Privacy Policy </a>
+                By signing in or clicking "Login", you agree to our <a href="https://beautyfashionsales.com/terms-and-services" style={{ color: '#000', fontWeight: 'bold' }}>Terms of Service </a> Please also read our<a href="https://beautyfashionsales.com/privacy-policy" style={{ color: '#000', fontWeight: 'bold' }}> Privacy Policy </a>
               </p>
             </div>
           </div>
