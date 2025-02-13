@@ -59,8 +59,8 @@ const CartProvider = ({ children }) => {
         try {
             const user = await GetAuthData();
             const getOrder = { CreatedBy: user?.data?.retailerId };
+            
             const cart = await CartHandler({ cart: getOrder });
-            console.log({cart});
             
             // Validate if the fetched cart has essential content like Account and Manufacturer
             if (cart?.Account?.id && cart.Manufacturer?.id) {
@@ -191,6 +191,7 @@ const CartProvider = ({ children }) => {
             setOrder(orderRaw);
 
             localStorage.setItem(orderCartKey, JSON.stringify(orderRaw));
+            
             await CartHandler({ cart: orderRaw, op: 'create' });
 
             return {

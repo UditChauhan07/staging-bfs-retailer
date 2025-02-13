@@ -21,7 +21,7 @@ import { PaymentElement } from "@stripe/react-stripe-js";
 import { BiCheckboxChecked } from "react-icons/bi";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart, deleteCartForever } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart } = useCart();
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -121,6 +121,7 @@ function MyBagFinal() {
         setPaymentAccordian(false);
       }
       if (document.visibilityState === 'visible') {
+        setIsPOEditable(false);
         CheckOutStockProduct();
         FetchFreeShipHandler();
       }
@@ -204,12 +205,11 @@ function MyBagFinal() {
       if (id && AccountID) {
         const user = await GetAuthData();
 
-        const brandRes = await getBrandPaymentDetails({
+        getBrandPaymentDetails({
           key: user.data.x_access_token,
           Id: id,
           AccountId: AccountID,
         }).then(async (brandRes) => {
-          console.log({ brandRes });
 
           setIntentRes(brandRes);
 
@@ -259,14 +259,6 @@ function MyBagFinal() {
     }
   };
   const hasPaymentType = intentRes?.accountManufacturerData?.some((item) => item.Payment_Type__c);
-  useEffect(() => {
-    if (brandDetails) {
-
-    }
-  }, [])
-  useEffect(() => {
-    fetchBrandPaymentDetails();
-  }, [buttonActive]);
 
   useEffect(() => {
     setTotal(getOrderTotal() ?? 0);
@@ -298,12 +290,7 @@ function MyBagFinal() {
       })
     }
   }
-  useEffect(() => {
-    CheckOutStockProduct(order)
-    if (freeShipping && iswholeSale) {
-      freeShippingHandler({ shipObj: freeShipping, orderObj: order })
-    }
-  }, [order])
+
 
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -332,45 +319,91 @@ function MyBagFinal() {
   }
   const freeShippingHandler = async ({ shipObj, orderObj }) => {
     // Check if the order is eligiable for shipping address
-    if (shipObj && iswholeSale) {
-      if (shipObj?.type) {
-        let tempOrder = order.Account;
-        if ((shipObj?.start && shipObj?.end) || shipObj?.amount) {
-          let date = new Date();
-          let start = new Date(shipObj?.start);
-          let end = new Date(shipObj?.end);
-          date.setHours(0, 0, 0, 0);
-          start.setHours(0, 0, 0, 0);
-          end.setHours(0, 0, 0, 0);
+    if (orderObj?.Account?.id && orderObj?.Manufacturer?.id) {
+      if (shipObj && iswholeSale) {
+        if (shipObj?.type) {
+          let tempOrder = order.Account;
+          if ((shipObj?.start && shipObj?.end) || shipObj?.amount) {
+            let date = new Date();
+            let start = new Date(shipObj?.start);
+            let end = new Date(shipObj?.end);
+            date.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
 
 
-          if (orderObj?.total >= shipObj?.amount && shipObj?.type == "Amount Based") {
-            if (!order?.Account?.shippingMethod?.freeApplied) {
-              console.log("************ amount true **************");
-              tempOrder.shippingMethod = {
-                cal: 0,
-                method: "Free Shipping",
-                name: "Free Shipping",
-                number: null,
-                freeApplied: true
-              };
-              keyBasedUpdateCart({ Account: tempOrder });
+            if (shipObj?.amount && orderObj?.total >= shipObj?.amount && shipObj?.type == "Amount Based") {
+              if (!order?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ amount true **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "Free Shipping",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else if (date >= start && date <= end && shipObj?.type == "Date Range Based") {
+              if (!order?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ date true **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "Free Shipping",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else {
+              if (orderObj?.Account?.shippingMethod?.freeApplied) {
+                // console.log("************ escape **************");
+                if (ownShipping?.number || ownShipping?.method) {
+                  tempOrder.shippingMethod = ownShipping
+                } else {
+                  tempOrder.shippingMethod = null;
+                }
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
             }
-          } else if (date >= start && date <= end && shipObj?.type == "Date Range Based") {
-            if (!order?.Account?.shippingMethod?.freeApplied) {
-              console.log("************ date true **************");
-              tempOrder.shippingMethod = {
-                cal: 0,
-                method: "Free Shipping",
-                name: "Free Shipping",
-                number: null,
-                freeApplied: true
-              };
-              keyBasedUpdateCart({ Account: tempOrder });
+          }
+        } else {
+          if (shipObj?.start && shipObj?.end && shipObj?.amount && false) {
+            let date = new Date();
+            let start = new Date(shipObj?.start);
+            let end = new Date(shipObj?.end);
+            date.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            let tempOrder = order.Account;
+            if (orderObj?.total >= shipObj?.amount && (date >= start && date <= end)) {
+              if (!orderObj?.Account?.shippingMethod?.freeApplied) {
+                console.log("************ both apply **************");
+                tempOrder.shippingMethod = {
+                  cal: 0,
+                  method: "FedEx",
+                  name: "Free Shipping",
+                  number: null,
+                  freeApplied: true
+                };
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
+            } else {
+              if (orderObj?.Account?.shippingMethod?.freeApplied) {
+                console.log("************ escape **************");
+                if (ownShipping?.number || ownShipping?.method) {
+                  tempOrder.shippingMethod = ownShipping
+                } else {
+                  tempOrder.shippingMethod = null;
+                }
+                keyBasedUpdateCart({ Account: tempOrder });
+              }
             }
           } else {
             if (orderObj?.Account?.shippingMethod?.freeApplied) {
-              console.log("************ escape **************");
+              // console.log("************ escape **************");
+              let tempOrder = order.Account;
               if (ownShipping?.number || ownShipping?.method) {
                 tempOrder.shippingMethod = ownShipping
               } else {
@@ -381,60 +414,16 @@ function MyBagFinal() {
           }
         }
       } else {
-        if (shipObj?.start && shipObj?.end && shipObj?.amount && false) {
-          let date = new Date();
-          let start = new Date(shipObj?.start);
-          let end = new Date(shipObj?.end);
-          date.setHours(0, 0, 0, 0);
-          start.setHours(0, 0, 0, 0);
-          end.setHours(0, 0, 0, 0);
+        if (orderObj?.Account?.shippingMethod?.freeApplied) {
+          // console.log("************ escape **************");
           let tempOrder = order.Account;
-          if (orderObj?.total >= shipObj?.amount && (date >= start && date <= end)) {
-            if (!orderObj?.Account?.shippingMethod?.freeApplied) {
-              console.log("************ both apply **************");
-              tempOrder.shippingMethod = {
-                cal: 0,
-                method: "FedEx",
-                name: "Free Shipping",
-                number: null,
-                freeApplied: true
-              };
-              keyBasedUpdateCart({ Account: tempOrder });
-            }
+          if (ownShipping?.number || ownShipping?.method) {
+            tempOrder.shippingMethod = ownShipping
           } else {
-            if (orderObj?.Account?.shippingMethod?.freeApplied) {
-              console.log("************ escape **************");
-              if (ownShipping?.number || ownShipping?.method) {
-                tempOrder.shippingMethod = ownShipping
-              } else {
-                tempOrder.shippingMethod = null;
-              }
-              keyBasedUpdateCart({ Account: tempOrder });
-            }
+            tempOrder.shippingMethod = null;
           }
-        } else {
-          if (orderObj?.Account?.shippingMethod?.freeApplied) {
-            console.log("************ escape **************");
-            let tempOrder = order.Account;
-            if (ownShipping?.number || ownShipping?.method) {
-              tempOrder.shippingMethod = ownShipping
-            } else {
-              tempOrder.shippingMethod = null;
-            }
-            keyBasedUpdateCart({ Account: tempOrder });
-          }
+          keyBasedUpdateCart({ Account: tempOrder });
         }
-      }
-    } else {
-      if (orderObj?.Account?.shippingMethod?.freeApplied) {
-        console.log("************ escape **************");
-        let tempOrder = order.Account;
-        if (ownShipping?.number || ownShipping?.method) {
-          tempOrder.shippingMethod = ownShipping
-        } else {
-          tempOrder.shippingMethod = null;
-        }
-        keyBasedUpdateCart({ Account: tempOrder });
       }
     }
   }
@@ -445,6 +434,7 @@ function MyBagFinal() {
 
       if (res) {
         if (res?.freeShipping && iswholeSale) {
+          freeShippingHandler({ shipObj: res?.freeShipping, orderObj: order })
           setFreeShipping(res?.freeShipping)
         }
         if (res?.shippingMethod) {
@@ -468,7 +458,9 @@ function MyBagFinal() {
               tempOrder = { ...tempOrder, shippingMethod: null };
             }
           }
-          keyBasedUpdateCart({ Account: tempOrder });
+          if (order?.Account?.id && order?.Manufacturer?.id) {
+            keyBasedUpdateCart({ Account: tempOrder });
+          }
           if (res?.brandShipping) {
             if (res?.brandShipping.length) {
               setOrderShipment(res?.brandShipping);
@@ -482,16 +474,23 @@ function MyBagFinal() {
         }
         setPONumber(poInit);
       }
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching PO number:", error);
-      setIsLoading(false);
     }
   };
 
 
   useEffect(() => {
-    FetchPoNumber();
+    Promise.all([fetchCart(),FetchPoNumber(),
+    fetchBrandPaymentDetails(),
+    CheckOutStockProduct(order)])
+      .then(() => setTimeout(() => {
+        setIsLoading(false)
+      }, 2000)) // Set loading to false after all API calls complete
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setIsLoading(false); // Set loading to false even if an error occurs
+      });
   }, [buttonActive, isSelect]);
   const bgUpdateHandler = () => {
     // FetchPoNumber();
