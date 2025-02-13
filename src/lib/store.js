@@ -553,6 +553,8 @@ export async function CartHandler({ op = 'get', cart }) {
     Accept: "*/*",
     "Content-Type": "application/json",
   };
+  console.log({cart,cartUrl});
+  
 
   let response = await fetch(cartUrl, {
     method: "POST",

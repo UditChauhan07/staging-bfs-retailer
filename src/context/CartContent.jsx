@@ -63,7 +63,7 @@ const CartProvider = ({ children }) => {
             console.log({cart});
             
             // Validate if the fetched cart has essential content like Account and Manufacturer
-            if (cart.Account?.id && cart.Manufacturer?.id) {
+            if (cart?.Account?.id && cart.Manufacturer?.id) {
                 setOrder(cart); // Set the fetched cart if valid
                 localStorage.setItem(orderCartKey, JSON.stringify(cart)); // Store in local storage
                 return cart;
