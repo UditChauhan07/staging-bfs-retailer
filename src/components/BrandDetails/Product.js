@@ -554,7 +554,7 @@ function Product() {
                           }}
                         >
 
-                          <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage} productCartSchema={productCartSchema}></Accordion>
+                          <Accordion data={productList} formattedData={formattedFilterData} productImage={productImage} productCartSchema={productCartSchema} isWholeSales={productTypeFilter=="Wholesale"}></Accordion>
 
                         </div>
                         <div className={`${styles.TotalSide} `}>

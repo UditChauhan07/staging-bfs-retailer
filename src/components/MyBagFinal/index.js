@@ -21,7 +21,7 @@ import { PaymentElement } from "@stripe/react-stripe-js";
 import { BiCheckboxChecked } from "react-icons/bi";
 function MyBagFinal() {
   let Img1 = "/assets/images/dummy.png";
-  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart,              deleteCartForever } = useCart();
+  const { order, updateProductQty, removeProduct, deleteOrder, keyBasedUpdateCart, getOrderTotal, fetchCart, deleteCartForever } = useCart();
 
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -102,9 +102,6 @@ function MyBagFinal() {
       setButtonActive(true);
     }
   }, [order, buttonActive]);
-
-  let data = localStorage.getItem("Api Data")
-  console.log(data.email)
 
   const editValue = localStorage.getItem("isEditaAble")
   useEffect(() => {
@@ -191,7 +188,9 @@ function MyBagFinal() {
       setPaymentAccordian(false);
     }
   };
-
+  const iswholeSale = useMemo(() => {
+    return order?.ordertype == "wholesale"
+  }, [order])
   const handleNameChange = (event) => {
     const limit = 10;
     setLimitInput(event.target.value.slice(0, limit));
@@ -225,22 +224,21 @@ function MyBagFinal() {
               PK_KEY: null,
               SK_KEY: null,
             };
-          } else if (brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && order?.ordertype
-            !== "pre-order" && !hasNetPaymentType) {
+          } else if (brandRes?.brandDetails.Stripe_Secret_key_test__c && brandRes?.brandDetails.Stripe_Publishable_key_test__c && paymentType == null && iswholeSale && !hasNetPaymentType) {
             setIsPlayAble(1)
           }
 
 
-          let paymentIntent = await checkPaymentKey({ paymentId: brandRes?.brandDetails?.Stripe_Secret_key_test__c });
+          // let paymentIntent = await checkPaymentKey({ paymentId: brandRes?.brandDetails?.Stripe_Secret_key_test__c });
 
-          setGreenStatus(paymentIntent);
+          // setGreenStatus(paymentIntent);
 
-          if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY && !hasNetPaymentType) {
-            setIsPlayAble(1);
-          } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
-            setIsPlayAble(0);
-            console.log(isPlayAble, "is play able ");
-          }
+          // if (paymentIntent === 200 && paymentDetails.PK_KEY !== paymentDetails.SK_KEY && !hasNetPaymentType) {
+          //   setIsPlayAble(1);
+          // } else if (paymentIntent === 400 || paymentDetails.PK_KEY !== paymentDetails.SK_KEY) {
+          //   setIsPlayAble(0);
+          //   console.log(isPlayAble, "is play able ");
+          // }
 
           setPaymentDetails({
             PK_KEY: brandRes?.brandDetails.Stripe_Publishable_key_test__c,
@@ -290,7 +288,7 @@ function MyBagFinal() {
 
         getProductList({ rawData }).then((list) => {
 
-          setOutOfStockAllow(list?.discount?.portalProductManage || false)
+          setOutOfStockAllow((list?.discount?.portalProductManage && iswholeSale) ? true : false)
           setCheckProduct({ isLoad: true, list: list?.data?.records || [], discount: list?.discount || {} })
         }).catch((err) => {
           console.log({ err });
@@ -300,8 +298,8 @@ function MyBagFinal() {
   }
   useEffect(() => {
     CheckOutStockProduct(order)
-    if (freeShipping) {
-      // freeShippingHandler({ shipObj: freeShipping, orderObj: order })
+    if (freeShipping && iswholeSale) {
+      freeShippingHandler({ shipObj: freeShipping, orderObj: order })
     }
   }, [order])
 
@@ -325,14 +323,14 @@ function MyBagFinal() {
   const FetchFreeShipHandler = () => {
     if (order?.Manufacturer?.id) {
       FreeShipHandler({ brandId: order?.Manufacturer?.id }).then((res) => {
-          setFreeShipping(res)
-        freeShippingHandler({shipObj:res,orderObj:order})
+        setFreeShipping(res)
+        freeShippingHandler({ shipObj: res, orderObj: order })
       })
     }
   }
   const freeShippingHandler = async ({ shipObj, orderObj }) => {
     // Check if the order is eligiable for shipping address
-    if (shipObj) {
+    if (shipObj && iswholeSale) {
       if (shipObj?.type) {
         let tempOrder = order.Account;
         if ((shipObj?.start && shipObj?.end) || shipObj?.amount) {
@@ -412,7 +410,7 @@ function MyBagFinal() {
               keyBasedUpdateCart({ Account: tempOrder });
             }
           }
-        }else{
+        } else {
           if (orderObj?.Account?.shippingMethod?.freeApplied) {
             console.log("************ escape **************");
             let tempOrder = order.Account;
@@ -425,7 +423,7 @@ function MyBagFinal() {
           }
         }
       }
-    }else{
+    } else {
       if (orderObj?.Account?.shippingMethod?.freeApplied) {
         console.log("************ escape **************");
         let tempOrder = order.Account;
@@ -444,9 +442,9 @@ function MyBagFinal() {
       const res = await POGenerator({ orderDetails: order });
 
       if (res) {
-        // if (res?.freeShipping) {
-        //   setFreeShipping(res?.freeShipping)
-        // }
+        if (res?.freeShipping &&iswholeSale) {
+          setFreeShipping(res?.freeShipping)
+        }
         if (res?.shippingMethod) {
           setOwnShipping(res?.shippingMethod);
         }
@@ -505,58 +503,58 @@ function MyBagFinal() {
   });
 
   useEffect(() => {
-    if(false){
-    let data = ShareDrive();
-    if (!data) {
-      data = {};
-    }
-    if (order) {
-      if (order?.Manufacturer) {
-        if (order?.Manufacturer?.id) {
-          if (!data[order?.Manufacturer?.id]) {
-            data[order?.Manufacturer?.id] = {};
-          }
-          if (Object.values(data[order.Manufacturer.id]).length > 0) {
-            setProductImage({
-              isLoaded: true,
-              images: data[order.Manufacturer.id],
-            });
-          } else {
-            setProductImage({ isLoaded: false, images: {} });
+    if (false) {
+      let data = ShareDrive();
+      if (!data) {
+        data = {};
+      }
+      if (order) {
+        if (order?.Manufacturer) {
+          if (order?.Manufacturer?.id) {
+            if (!data[order?.Manufacturer?.id]) {
+              data[order?.Manufacturer?.id] = {};
+            }
+            if (Object.values(data[order.Manufacturer.id]).length > 0) {
+              setProductImage({
+                isLoaded: true,
+                images: data[order.Manufacturer.id],
+              });
+            } else {
+              setProductImage({ isLoaded: false, images: {} });
+            }
           }
         }
-      }
-      if (order.items) {
-        if (order.items.length > 0) {
-          let productCode = "";
-          order.items.map((element, index) => {
-            productCode += `'${element.product?.ProductCode}'`;
-            if (order.items.length - 1 != index) productCode += ", ";
-          });
-          getProductImageAll({ rawData: { codes: productCode } })
-            .then((res) => {
-              if (res) {
-                if (data[order.Manufacturer.id]) {
-                  data[order.Manufacturer.id] = {
-                    ...data[order.Manufacturer.id],
-                    ...res,
-                  };
+        if (order.items) {
+          if (order.items.length > 0) {
+            let productCode = "";
+            order.items.map((element, index) => {
+              productCode += `'${element.product?.ProductCode}'`;
+              if (order.items.length - 1 != index) productCode += ", ";
+            });
+            getProductImageAll({ rawData: { codes: productCode } })
+              .then((res) => {
+                if (res) {
+                  if (data[order.Manufacturer.id]) {
+                    data[order.Manufacturer.id] = {
+                      ...data[order.Manufacturer.id],
+                      ...res,
+                    };
+                  } else {
+                    data[order.Manufacturer.id] = res;
+                  }
+                  ShareDrive(data);
+                  setProductImage({ isLoaded: true, images: res });
                 } else {
-                  data[order.Manufacturer.id] = res;
+                  setProductImage({ isLoaded: true, images: {} });
                 }
-                ShareDrive(data);
-                setProductImage({ isLoaded: true, images: res });
-              } else {
-                setProductImage({ isLoaded: true, images: {} });
-              }
-            })
-            .catch((err) => {
-              console.log({ err });
-            });
+              })
+              .catch((err) => {
+                console.log({ err });
+              });
+          }
         }
       }
     }
-  }
   }, []);
 
   const orderPlaceHandler = () => {
@@ -1268,15 +1266,15 @@ function MyBagFinal() {
                         {orderShipment.length > 0 ? (
                           <div className={Styles.PaymentType}>
                             {order?.Account?.shippingMethod?.freeApplied ? (
-                                <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
-                              ) : (
-                                <>
-                            <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                              isOwnShipment={
-                                ownShipment}
-                            />
-                            </>)}
+                              <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
+                            ) : (
+                              <>
+                                <label className={Styles.shipLabelHolder}>Select Shipping method:</label>
+                                <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                                  isOwnShipment={
+                                    ownShipment}
+                                />
+                              </>)}
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>
@@ -1361,15 +1359,15 @@ function MyBagFinal() {
                         {orderShipment.length > 0 ? (
                           <div className={Styles.ShipAdress}>
                             {order?.Account?.shippingMethod?.freeApplied ? (
-                                <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
-                              ) : (
-                                <>
-                            <div className={Styles.shipLabelHolder}>Select Shipping method</div>
-                            <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
-                              isOwnShipment={
-                                ownShipment}
-                            />
-                            </>)}
+                              <p className="d-flex align-items-center m-0"><BiCheckboxChecked size={22} />Free shipping Applied</p>
+                            ) : (
+                              <>
+                                <div className={Styles.shipLabelHolder}>Select Shipping method</div>
+                                <ShipmentHandler data={orderShipment} total={total} setIsSelect={setIsSelect}
+                                  isOwnShipment={
+                                    ownShipment}
+                                />
+                              </>)}
                           </div>
                         ) : null}
                         <div className={Styles.ShipAdress2}>
