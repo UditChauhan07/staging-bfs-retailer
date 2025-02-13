@@ -115,10 +115,10 @@ function MyBagFinal() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        setQuantityChange(false);
-        setIsAccordianOpen(false);
-        setDetailsAccordian(true);
-        setPaymentAccordian(false);
+        // setQuantityChange(false);
+        // setIsAccordianOpen(false);
+        // setDetailsAccordian(true);
+        // setPaymentAccordian(false);
       }
       if (document.visibilityState === 'visible') {
         setIsPOEditable(false);
