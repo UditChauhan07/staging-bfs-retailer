@@ -45,7 +45,7 @@ function CreateAccountForm() {
   const redirecting = () => {
     setTimeout(() => {
       navigate("/");
-    }, 2000);
+    }, 6000);
   };
   const handleSubmit = async (values, action) => {
     setLoading(true);
