@@ -10,6 +10,7 @@ import { useNavigate } from "react-router";
 import ModalPage from "../Modal UI";
 import Loading from "../Loading";
 import { usePublicManufacturers } from "../../api/usePublicManufacturers";
+import Swal from "sweetalert2";
 
 function CreateAccountForm() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ function CreateAccountForm() {
   };
   const handleSubmit = async (values, action) => {
     setLoading(true);
-    const result = await api.newUserSignUp(values);
+    const result = await api.newUserSignUp(values,files);
     setLoading(false);
     if (!Array.isArray(result) && result === 200) {
       action.resetForm();
@@ -66,7 +67,6 @@ function CreateAccountForm() {
       setRedirect(true);
     } else {
       setInitialValues(values);
-      console.log({initialValues});
       
       let message = "Something went wrong. Try Again!";
       if (result.length) {
@@ -86,21 +86,30 @@ function CreateAccountForm() {
   };
   
   function handleChange(e) {
-    // let tempFile = [...files];
-    let tempFile = [];
-    let reqfiles = e.target.files;
+    let tempFile = []; // Existing files
+    let reqfiles = e.target.files; // Newly selected files
+
     if (reqfiles) {
-      if (reqfiles.length > 0) {
-        Object.keys(reqfiles).map((index) => {
-          let url = URL.createObjectURL(reqfiles[index])
-          if (url) {
-            tempFile.push({ preview: url, file: reqfiles[index] });
-          }
-          // this thoughing me Failed to execute 'createObjectURL' on 'URL': Overload resolution failed?
-        })
+      Array.from(reqfiles).forEach((file) => {
+        let url = URL.createObjectURL(file); // Create a preview URL
+        tempFile.push({ preview: url, file });
+      });
+      // Check if the total number of files exceeds 5
+      if (tempFile.length > 5) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Limit Exceeded',
+          text: 'You cannot add more than 5 files.',
+          confirmButtonColor: '#000',
+        }).then(() => {
+          e.target.value = ''; // Clear the input
+        });
+        setFile([]);
+        return; // Stop further execution
       }
+      setFile(tempFile); // Update state with valid files
+      // console.log(`Total files selected: ${tempFile.length}`); // Log the total number of files
     }
-    setFile(tempFile);
   }
   const fileRemoveHandler = (index) => {
     let tempFile = [...files];
