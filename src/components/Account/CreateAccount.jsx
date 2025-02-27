@@ -187,14 +187,14 @@ function CreateAccountForm() {
                       <div className={style.labelIN}>
                         <label htmlFor="firstName">First Name</label>
                         <br />
-                        <Field type="text" name="firstName" placeholder="Enter your first name" />
+                        <Field type="text" name="firstName" id="firstName" placeholder="Enter your first name" />
                         <ErrorMessage component={TextError} name="firstName" />
                       </div>
 
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Last Name</label>
+                        <label htmlFor="lastName">Last Name</label>
                         <br />
-                        <Field type="text" name="lastName" placeholder="Enter your last name" />
+                        <Field type="text" name="lastName" id="lastName" placeholder="Enter your last name" />
                         <ErrorMessage component={TextError} name="lastName" />
                       </div>
                     </div>
@@ -206,16 +206,16 @@ function CreateAccountForm() {
                     </div>
                     <div className={style.labelDivMain}>
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Your Email</label>
+                        <label htmlFor="email">Your Email</label>
                         <br />
-                        <Field type="email" name="email" placeholder="Enter your email" />
+                        <Field type="email" name="email" id="email" placeholder="Enter your email" />
                         <ErrorMessage component={TextError} name="email" />
                       </div>
 
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Phone Number</label>
+                        <label htmlFor="contact">Phone Number</label>
                         <br />
-                        <Field type="number" name="contact" placeholder="Enter your contact" />
+                        <Field type="number" name="contact" id="contact" placeholder="Enter your contact" />
                         <ErrorMessage component={TextError} name="contact" />
                       </div>
                     </div>
@@ -227,16 +227,16 @@ function CreateAccountForm() {
                     </div>
                     <div className={style.labelDivMain}>
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Store Name</label>
+                        <label htmlFor="storeName">Store Name</label>
                         <br />
-                        <Field type="text" name="storeName" placeholder="Enter your store name" />
+                        <Field type="text" name="storeName" id="storeName" placeholder="Enter your store name" />
                         <ErrorMessage component={TextError} name="storeName" />
                       </div>
 
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Store Location</label>
+                        <label htmlFor="storeLocation">Store Location</label>
                         <br />
-                        <Field type="text" name="storeLocation" placeholder="Enter your store location" />
+                        <Field type="text" name="storeLocation" id="storeLocation" placeholder="Enter your store location" />
                         <ErrorMessage component={TextError} name="storeLocation" />
                       </div>
                     </div>
@@ -248,9 +248,9 @@ function CreateAccountForm() {
                     </div>
                     <div className={style.labelDivMain}>
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Describe your Store</label>
+                        <label htmlFor="descriptionOfStore">Describe your Store</label>
                         <br />
-                        <Field type="text" name="descriptionOfStore" placeholder="Enter your store description" className="w-95" />
+                        <Field type="text" name="descriptionOfStore" id="descriptionOfStore" placeholder="Enter your store description" className="w-95" />
                         <ErrorMessage component={TextError} name="descriptionOfStore" />
                       </div>
                     </div>
@@ -262,7 +262,7 @@ function CreateAccountForm() {
                     </div>
                     <div className={style.labelDivMain}>
                       <div className={style.labelIN}>
-                        <label htmlFor="name">Picture (Multiple)</label>
+                        <label htmlFor="images">Picture (Multiple)</label>
                         <br />
                         <input className="w-95" type="file" name="images" id="images" onChange={handleChange} accept="image/*" multiple />
                         <div className={style.imgHolder}>
@@ -385,8 +385,10 @@ function CreateAccountForm() {
 
                           <div className={style.BySigning}>
                             <p>
-                              <input type="checkbox" />
+                              <input type="checkbox" id="termBox" />
+                              <label htmlFor="termBox">
                               By signing in or clicking "Apply for an Account", you agree to our Terms of Service. Please also read our Privacy Policy.
+                              </label>
                             </p>
 
                             <button type="submit" className="mt-2">
