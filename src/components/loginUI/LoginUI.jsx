@@ -75,7 +75,7 @@ const LoginUI = () => {
             <div className={styles.LoginMain}>
               <div className="d-flex col-12">
                 <div className="col-6">
-                  <a className={styles.tabNotActive} href={'https://portal.beautyfashionsales.com/'}>
+                  <a className={styles.tabNotActive} href={'https://bfsg-sandbox-partial.vercel.app/'}>
                     Sales Rep Login
                   </a>
                   <hr />
