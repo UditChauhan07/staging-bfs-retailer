@@ -1,5 +1,5 @@
 import axios from "axios";
-export const originAPi = process.env.REACT_APP_OA_URL || "https://live.beautyfashionsales.com"
+export const originAPi = process.env.REACT_APP_OA_URL || "https://staging.beautyfashionsales.com"
 
 // export const originAPi = "http://localhost:5001"
 
@@ -266,12 +266,12 @@ export function supportClear() {
 
 
 export async function DestoryAuth() {
-  for (var key in localStorage) {
-    if (localStorage.hasOwnProperty(key) && (key != "AA0KfX2OoNJvz7x" && key != "passwordB2B" && key != "emailB2B")) {
-      localStorage.removeItem(key);
-    }
-  }
-  window.location.href = window.location.origin;
+  // for (var key in localStorage) {
+  //   if (localStorage.hasOwnProperty(key) && (key != "AA0KfX2OoNJvz7x" && key != "passwordB2B" && key != "emailB2B")) {
+  //     localStorage.removeItem(key);
+  //   }
+  // }
+  // window.location.href = window.location.origin;
   return true;
 }
 export async function getAttachment(token, caseId) {
